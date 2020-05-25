@@ -1,9 +1,14 @@
 const PATH = "public/src/main/feature/product/infrastructure/ProductConfigurationService.js";
 
-class ProductConfigurationService
+export default class ProductConfigurationService
 {
 	constructor()
 	{
 
+	}
+
+	getValidOptionVariantIds(productType)
+	{
+		
 	}
 }
