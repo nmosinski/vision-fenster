@@ -1,10 +1,10 @@
 const PATH = "public/src/main/feature/order/model/IOrderRepository.js";
 
-export default class IOrderRepository
+const IOrderRepository = (superclass) => class extends superclass
 {
-	constructor()
+	constructor(...args)
 	{
-
+		super(args);
 	}
 
 	getOrder(orderId)
@@ -27,3 +27,5 @@ export default class IOrderRepository
 		
 	}
 }
+
+export default IOrderRepository;

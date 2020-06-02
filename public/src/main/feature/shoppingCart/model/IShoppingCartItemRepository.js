@@ -1,10 +1,10 @@
 const PATH = "public/src/main/feature/shoppingCart/model/IShoppingCartItemRepository.js";
 
-export default class IShoppingCartItemRepository
+const IShoppingCartItemRepository = (superclass) => class extends superclass
 {
-	constructor()
+	constructor(...args)
 	{
-
+		super(args);
 	}
 
 	getShoppingCartItem(shoppingCartItemId)
@@ -27,3 +27,5 @@ export default class IShoppingCartItemRepository
 		
 	}
 }
+
+export default IShoppingCartItemRepository;

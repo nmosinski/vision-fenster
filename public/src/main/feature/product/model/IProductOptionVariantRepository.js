@@ -1,10 +1,10 @@
 const PATH = "public/src/main/feature/product/model/IProductOptionVariantRepository.js";
 
-export default class IProductOptionVariantRepository
+const IProductOptionVariantRepository = (superclass) => class extends superclass
 {
-	constructor()
+	constructor(...args)
 	{
-		
+		super(args);
 	}
 
 	getProductOptionVariant(productOptionVariantId)
@@ -27,3 +27,5 @@ export default class IProductOptionVariantRepository
 		
 	}
 }
+
+export default IProductOptionVariantRepository;

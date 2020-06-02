@@ -1,12 +1,10 @@
 const PATH = "public/src/main/feature/product/model/IProductRepository.js";
 
-import AbstractEntity from "public/src/main/common/AbstractEntity.js"
-
-export default class IProductRepository
+const IProductRepository = (superclass) => class extends superclass
 {
-	constructor()
+	constructor(...args)
 	{
-
+		super(args);
 	}
 
 	getProduct(productId)
@@ -30,3 +28,5 @@ export default class IProductRepository
 	}
 
 }
+
+export default IProductRepository;

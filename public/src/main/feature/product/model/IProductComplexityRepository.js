@@ -1,10 +1,10 @@
 const PATH = "public/src/main/feature/product/model/IProductComplexityRepository.js";
 
-export default class IProductComplexityRepository
+const IProductComplexityRepository = (superclass) => class extends superclass
 {
-	constructor()
+	constructor(...args)
 	{
-
+		super(args);
 	}
 
 	getProductComplexity(productComplexityId)
@@ -27,3 +27,5 @@ export default class IProductComplexityRepository
 		
 	}
 }
+
+export default IProductComplexityRepository;

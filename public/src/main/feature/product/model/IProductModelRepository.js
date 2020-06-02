@@ -1,10 +1,10 @@
 const PATH = "public/src/main/feature/product/model/IProductModelRepository.js";
 
-export default class IProductModelRepository
+const IProductModelRepository = (superclass) => class extends superclass
 {
-	constructor()
+	constructor(...args)
 	{
-
+		super(args);
 	}
 
 	getProductModel(productModelId)
@@ -27,3 +27,5 @@ export default class IProductModelRepository
 		
 	}
 }
+
+export default IProductModelRepository;
