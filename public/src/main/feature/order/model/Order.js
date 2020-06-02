@@ -1,9 +1,33 @@
 const PATH = "public/src/main/feature/order/model/Order.js";
 
-class Order
-{
-	constructor()
-	{
+import AbstractEntity from "public/src/main/common/AbstractEntity.js"
 
+export default class Order
+{
+	constructor(id, memberId, orderItems)
+	{
+		super(id);
+		this.memberId = memberId;
+		this.orderItems = orderItems;
+	}
+
+	set memberId(memberId)
+	{
+		this._memberId = memberId;
+	}
+
+	set orderItems(orderItems)
+	{
+		this._orderItems = orderItems;
+	}
+
+	get memberId()
+	{
+		return this._memberId;
+	}
+
+	get orderItems()
+	{
+		return this._orderItems;
 	}
 }

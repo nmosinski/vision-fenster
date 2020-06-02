@@ -1,9 +1,29 @@
-const PATH = "public/src/main/feature/product/model/ProductModelRepository.js";
+const PATH = "public/src/main/feature/product/model/IProductModelRepository.js";
 
-class ProductModelRepository
+export default class IProductModelRepository
 {
 	constructor()
 	{
 
+	}
+
+	getProductModel(productModelId)
+	{
+
+	}
+
+	saveProductModel(productModel)
+	{
+
+	}
+
+	updateProductModel(productModel)
+	{
+
+	}
+
+	deleteProductModel(productModelId)
+	{
+		
 	}
 }

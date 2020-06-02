@@ -1,8 +1,8 @@
-const PATH = "public/src/main/feature/product/model/ProductOptionVariantRepository.js";
+const PATH = "public/src/main/feature/product/model/ProductOptionVariant.js";
 
 import AbstractEntity from "public/src/main/common/AbstractEntity.js"
 
-export default class ProductOptionVariantRepository extends AbstractEntity
+export default class ProductOptionVariant extends AbstractEntity
 {
 	constructor(id, productOptionId, title, image=null)
 	{

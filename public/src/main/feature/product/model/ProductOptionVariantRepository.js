@@ -1,42 +1,29 @@
-const PATH = "public/src/main/feature/product/model/ProductOptionVariantRepository.js";
+const PATH = "public/src/main/feature/product/model/IProductOptionVariantRepository.js";
 
-export default class ProductOptionVariantRepository
+export default class IProductOptionVariantRepository
 {
-	constructor(id, productOptionId, title, imageSrc=null)
+	constructor()
 	{
-		super(id);
-		this.setProductOptionId(productOptionId);
-		this.setTitle(title);
-		this.setImageSrc(imageSrc);
+		
 	}
 
-	getProductOptionId()
+	getProductOptionVariant(productOptionVariantId)
 	{
-		return this.productOptionId;
+
 	}
 
-	getTitle()
+	saveProductOptionVariant(productOptionVariant)
 	{
-		return this.title;
+
 	}
 
-	getImageSrc()
+	updateProductOptionVariant(productOptionVariant)
 	{
-		return this.imageSrc;
+
 	}
 
-	setProductOptionId(productOptionId)
+	deleteProductOptionVariant(productOptionVariantId)
 	{
-		this.productOptionId = productOptionId;
-	}
-
-	setTitle(title)
-	{
-		this.title = title;
-	}
-
-	setImageSrc(imageSrc)
-	{
-		this.imageSrc = imageSrc;
+		
 	}
 }

@@ -1,9 +1,29 @@
-const PATH = "public/src/main/feature/shoppingCart/model/ShoppingCartItemRepository.js";
+const PATH = "public/src/main/feature/shoppingCart/model/IShoppingCartItemRepository.js";
 
-class ShoppingCartItemRepository
+export default class IShoppingCartItemRepository
 {
 	constructor()
 	{
 
+	}
+
+	getShoppingCartItem(shoppingCartItemId)
+	{
+
+	}
+
+	saveShoppingCartItem(shoppingCartItem)
+	{
+
+	}
+
+	updateShoppingCartItem(shoppingCartItem)
+	{
+
+	}
+
+	deleteShoppingCartItemById(shoppingCartItemId)
+	{
+		
 	}
 }
