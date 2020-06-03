@@ -30,12 +30,24 @@ export default class Product extends AbstractEntity
 		this.productOptionVariants[variant.productOptionId] = variant;
 	}
 
-	hasVariant(variant)
+	deleteProductOptionVariantOfProductOptionId(productOptionId)
 	{
-		let variants = this.productOptionVariants;
-		if(variants[variant.productOptionId] === undefined || variants[variant.productOptionId] === null)
+		delete this.productOptionVariants.productOptionId;
+	}
+
+	hasProductOptionVariant(variant)
+	{
+		if(!this.hasAnyProductOptionVariantOfProductOption(variant.productOptionId))
 			return false;
-		if(!variants[variant.productOptionId].equals(variant))
+		if(!this.productOptionVariants[variant.productOptionId].equals(variant))
+			return false;
+		return true;
+	}
+
+	hasAnyProductOptionVariantOfProductOption(productOptionId)
+	{
+		let variant = this.productOptionVariants[productOptionId];
+		if(variant === undefined || variant === null)
 			return false;
 		return true;
 	}
