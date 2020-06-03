@@ -1,31 +1,22 @@
 const PATH = "public/src/main/feature/product/model/IProductOptionVariantRepository.js";
 
-const IProductOptionVariantRepository = (superclass) => class extends superclass
+const IProductOptionVariantRepository = (superclass) => 
+
+/**
+ * @alias IProductOptionVariantRepository
+ * @interface
+ */
+class extends superclass
 {
-	constructor(...args)
-	{
-		super(args);
-	}
+	constructor(...args){super(args);}
 
-	getProductOptionVariant(productOptionVariantId)
-	{
+	getProductOptionVariant(productOptionVariantId){}
 
-	}
+	saveProductOptionVariant(productOptionVariant){}
 
-	saveProductOptionVariant(productOptionVariant)
-	{
+	updateProductOptionVariant(productOptionVariant){}
 
-	}
-
-	updateProductOptionVariant(productOptionVariant)
-	{
-
-	}
-
-	deleteProductOptionVariant(productOptionVariantId)
-	{
-		
-	}
+	deleteProductOptionVariant(productOptionVariantId){}
 }
 
 export default IProductOptionVariantRepository;

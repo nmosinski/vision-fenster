@@ -1,31 +1,22 @@
 const PATH = "public/src/main/feature/product/model/IProductModelRepository.js";
 
-const IProductModelRepository = (superclass) => class extends superclass
+const IProductModelRepository = (superclass) => 
+
+/**
+ * @alias IProductModelRepository
+ * @interface
+ */
+class extends superclass
 {
-	constructor(...args)
-	{
-		super(args);
-	}
+	constructor(...args){super(args);}
 
-	getProductModel(productModelId)
-	{
+	getProductModel(productModelId){}
 
-	}
+	saveProductModel(productModel){}
 
-	saveProductModel(productModel)
-	{
+	updateProductModel(productModel){}
 
-	}
-
-	updateProductModel(productModel)
-	{
-
-	}
-
-	deleteProductModel(productModelId)
-	{
-		
-	}
+	deleteProductModel(productModelId){}
 }
 
 export default IProductModelRepository;

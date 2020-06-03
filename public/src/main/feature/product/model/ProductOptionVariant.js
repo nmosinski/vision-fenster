@@ -2,7 +2,7 @@ const PATH = "public/src/main/feature/product/model/ProductOptionVariant.js";
 
 import AbstractEntity from "public/src/main/common/AbstractEntity.js"
 
-export default class ProductOptionVariant extends AbstractEntity
+class ProductOptionVariant extends AbstractEntity
 {
 	constructor(id, productOptionId, title, image=null)
 	{
@@ -42,3 +42,5 @@ export default class ProductOptionVariant extends AbstractEntity
 		this._image = image;
 	}
 }
+
+export default ProductOptionVariant

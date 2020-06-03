@@ -1,31 +1,22 @@
 const PATH = "public/src/main/feature/order/model/IOrderRepository.js";
 
-const IOrderRepository = (superclass) => class extends superclass
+const IOrderRepository = (superclass) => 
+
+/**
+ * @alias IOrderRepository
+ * @interface
+ */
+class extends superclass
 {
-	constructor(...args)
-	{
-		super(args);
-	}
+	constructor(...args){super(args);}
 
-	getOrder(orderId)
-	{
+	getOrder(orderId){}
 
-	}
+	saveOrder(order){}
 
-	saveOrder(order)
-	{
+	updateOrder(order){}
 
-	}
-
-	updateOrder(order)
-	{
-
-	}
-
-	deleteOrder(orderId)
-	{
-		
-	}
+	deleteOrder(orderId){}
 }
 
 export default IOrderRepository;

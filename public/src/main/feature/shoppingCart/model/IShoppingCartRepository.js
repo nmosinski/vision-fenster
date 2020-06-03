@@ -1,31 +1,22 @@
 const PATH = "public/src/main/feature/shoppingCart/model/IShoppingCartRepository.js";
 
-const IShoppingCartRepository = (superclass) => class extends superclass
+const IShoppingCartRepository = (superclass) => 
+
+/**
+ * @alias IShoppingCartRepository
+ * @interface
+ */
+class extends superclass
 {
-	constructor(...args)
-	{
-		super(args);
-	}
+	constructor(...args){super(args);}
 
-	getShoppingCart(shoppingCartId)
-	{
+	getShoppingCart(shoppingCartId){}
 
-	}
+	saveShoppingCart(shoppingCart){}
 
-	saveShoppingCart(shoppingCart)
-	{
+	updateShoppingCart(shoppingCart){}
 
-	}
-
-	updateShoppingCart(shoppingCart)
-	{
-
-	}
-
-	deleteShoppingCartById(shoppingCartId)
-	{
-		
-	}
+	deleteShoppingCartById(shoppingCartId){}
 }
 
 export default IShoppingCartRepository;

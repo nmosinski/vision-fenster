@@ -1,31 +1,22 @@
 const PATH = "public/src/main/feature/product/model/IProductComplexityRepository.js";
 
-const IProductComplexityRepository = (superclass) => class extends superclass
+const IProductComplexityRepository = (superclass) => 
+
+/**
+ * @alias IProductComplexityRepository
+ * @interface
+ */
+class extends superclass
 {
-	constructor(...args)
-	{
-		super(args);
-	}
+	constructor(...args){super(args);}
 
-	getProductComplexity(productComplexityId)
-	{
+	getProductComplexity(productComplexityId){}
 
-	}
+	saveProductComplexity(productComplexity){}
 
-	saveProductComplexity(productComplexity)
-	{
+	updateProductComplexity(productComplexity){}
 
-	}
-
-	updateProductComplexity(productComplexity)
-	{
-
-	}
-
-	deleteProductComplexity(productComplexityId)
-	{
-		
-	}
+	deleteProductComplexity(productComplexityId){}
 }
 
 export default IProductComplexityRepository;
