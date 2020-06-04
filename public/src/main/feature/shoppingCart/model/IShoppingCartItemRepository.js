@@ -1,6 +1,6 @@
 const PATH = "public/src/main/feature/shoppingCart/model/IShoppingCartItemRepository.js";
 
-const IShoppingCartItemRepository = (superclass) => 
+const IShoppingCartItemRepository = (superclass=null) => 
 
 /**
  * @alias IShoppingCartItemRepository

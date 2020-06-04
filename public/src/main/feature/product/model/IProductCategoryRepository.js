@@ -1,6 +1,6 @@
 const PATH = "public/src/main/feature/product/model/IProductCategoryRepository.js";
 
-const IProductCategoryRepository = (superclass) => 
+const IProductCategoryRepository = (superclass=null) => 
 /**
  * @alias IProductCategoryRepository
  * @interface

@@ -1,6 +1,6 @@
 const PATH = "public/src/main/feature/order/model/IOrderRepository.js";
 
-const IOrderRepository = (superclass) => 
+const IOrderRepository = (superclass=null) => 
 
 /**
  * @alias IOrderRepository

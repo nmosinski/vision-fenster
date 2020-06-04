@@ -1,12 +1,12 @@
 const PATH = "public/src/main/feature/order/model/IOrderItemRepository.js";
 
-const IOrderItemRepository = (superclass) => 
+const IOrderItemRepository = (superclass=null) => 
 
 /**
  * @alias IOrderItemRepository
  * @interface
  */
-class extends superclass
+ class extends superclass
 {
 	constructor(...args){super(args);}
 
