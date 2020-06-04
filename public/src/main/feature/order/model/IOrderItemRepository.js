@@ -8,8 +8,6 @@ const IOrderItemRepository = (superclass=null) =>
  */
  class extends superclass
 {
-	constructor(...args){super(args);}
-
 	getOrderItem(orderItemId){}
 
 	saveOrderItem(orderItem){}

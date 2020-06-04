@@ -8,8 +8,6 @@ const IProductComplexityRepository = (superclass=null) =>
  */
 class extends superclass
 {
-	constructor(...args){super(args);}
-
 	getProductComplexity(productComplexityId){}
 
 	saveProductComplexity(productComplexity){}

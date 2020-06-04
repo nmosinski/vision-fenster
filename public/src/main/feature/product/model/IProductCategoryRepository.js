@@ -7,8 +7,6 @@ const IProductCategoryRepository = (superclass=null) =>
  */
 class extends superclass
 {
-	constructor(...args){super(args);}
-
 	/**
 	 * Get a product category.
 	 * @param {string} productCategoryId - The id of ProductCategory.

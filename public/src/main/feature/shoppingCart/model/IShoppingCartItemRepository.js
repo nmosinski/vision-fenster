@@ -8,8 +8,6 @@ const IShoppingCartItemRepository = (superclass=null) =>
  */
 class extends superclass
 {
-	constructor(...args){super(args);}
-
 	getShoppingCartItem(shoppingCartItemId){}
 
 	saveShoppingCartItem(shoppingCartItem){}

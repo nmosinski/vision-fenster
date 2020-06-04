@@ -8,8 +8,6 @@ const IProductModelRepository = (superclass=null) =>
  */
 class extends superclass
 {
-	constructor(...args){super(args);}
-
 	getProductModel(productModelId){}
 
 	saveProductModel(productModel){}

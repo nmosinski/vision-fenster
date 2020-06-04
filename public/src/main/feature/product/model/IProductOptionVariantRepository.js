@@ -8,8 +8,6 @@ const IProductOptionVariantRepository = (superclass=null) =>
  */
 class extends superclass
 {
-	constructor(...args){super(args);}
-
 	getProductOptionVariant(productOptionVariantId){}
 
 	saveProductOptionVariant(productOptionVariant){}
