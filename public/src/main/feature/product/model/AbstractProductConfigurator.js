@@ -1,5 +1,7 @@
 const PATH = "public/src/main/feature/product/model/AbstractProductConfigurator.js";
 
+import Logger from "js-logger"
+
 export default class AbstractProductConfigurator
 {
 	constructor(allProductOptions, product)
@@ -10,67 +12,45 @@ export default class AbstractProductConfigurator
 
 	selectProductOptionVariant(productOptionId, productOptionVariantId)
 	{
-		/*
-		for(let optIdx in this.getAllProductOptions())
-			if(this.getAllProductOptions()[optIdx]._id === productOptionId)
-				for(let varIdx in this.allProductOptions[optIdx].variants)
-					{
-						let variant = this.allProductOptions[optIdx].variants[varIdx];
-						if(variant.id === productOptionVariantId)
-							if(this.productOptionVariantCanBeSelected(variant))
-							{
-								this.product.addProductOptionVariant(variant);
-								this.applyDefaultConfiguration();
-							}
-					}
-		*/
-		let productOptions = this.allProductOptions;
-
-		for(let idx1 in productOptions)
-			if(productOptions[idx1].id === productOptionId)
-				for(let idx2 in productOptions[idx1].variants)
-					if(productOptions[idx1].variants[idx2].id === productOptionVariantId)
-						this.product.setProductOptionVariant(productOptions[idx1].variants[idx2]);
+		this.setProductOptionVariant(this.allProductOptions.get(productOptionId).variants.get(productOptionVariantId));
 	}
 
 	getValidProductOptionVariants(productOptionId)
 	{
+		/*
 		for(let idx in this.allProductOptions)
 			if(this.allProductOptions[idx].id === productOptionId)
 				return this.allProductOptions[idx].variants.filter((variant)=>this.optionVariantCanBeSelected(variant));
+		*/
+	}
+
+	setProductOptionVariant(variant)
+	{
+		this.product.addProductOptionVariant(variant);
+		if(this.allProductOptions.get(variant.productOptionId).type === "Offnungsart")
+			this.product.image = variant.image;
+		this.product.price = this.calculatePrice();
 	}
 
 	/**
 	 * @abstract
 	 */
-	applyDefaultConfiguration()
-	{
-
-	}
+	applyDefaultConfiguration(){}
 
 	/**
 	 * @abstract
 	 */
-	productOptionVariantCanBeSelected(option)
-	{
-
-	}
+	productOptionVariantCanBeSelected(option){}
 
 	/**
 	 * @abstract
 	 */
-	productIsValid()
-	{
-
-	}
+	productIsValid(){}
 
 	/**
 	 * @abstract
 	 */
-	calculatePrice()
-	{
-
-	}
+	calculatePrice(){}
 
 	get product()
 	{

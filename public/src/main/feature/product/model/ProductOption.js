@@ -1,20 +1,10 @@
 const PATH = "public/src/main/feature/product/model/ProductOption.js";
 
 import AbstractEntity from "public/src/main/common/AbstractEntity.js"
+import IComparable from "public/src/main/common/util/IComparable.js"
 
-/**
- * Class representing a ProductOption.
- * @extends AbstractEntity
- */
-class ProductOption extends AbstractEntity
+export default class ProductOption extends IComparable(AbstractEntity)
 {
-	/**
-	 * Create a ProductOption.
-	 * @param {string} id - The id of this entity.
-	 * @param {string} productModelId - The id of the productModel.
-	 * @param {String} type - The type of ProductOption.
-	 * @param {array} variants - Variants that belong to this ProductOption.
-	 */
 	constructor(id, productModelId, type, variants)
 	{
 		super(id);
@@ -23,12 +13,6 @@ class ProductOption extends AbstractEntity
 		this.variants = variants;
 	}
 
-	/**
-	 * Get the productModelId.
-	 * @return {string} the productModelId.
-	 * @abstract
-	 * @todo Implement this function.
-	 */
 	get productModelId()
 	{
 		return this._productModelId;
@@ -59,5 +43,3 @@ class ProductOption extends AbstractEntity
 		this._variants = variants;
 	}
 }
-
-export default ProductOption

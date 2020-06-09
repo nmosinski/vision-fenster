@@ -15,39 +15,24 @@ class Product extends AbstractEntity
 
 	addProductOptionVariant(variant)
 	{
-		if(!this.hasProductOptionVariant(variant))
-			this.setProductOptionVariant(variant);
-	}
-
-	updateProductOptionVariant(variant)
-	{
-		if(this.hasProductOptionVariant(variant))
-			this.setProductOptionVariant(variant);
-	}
-
-	setProductOptionVariant(variant)
-	{
-		this.productOptionVariants[variant.productOptionId] = variant;
+		this.productOptionVariants.add(variant.productOptionId, variant);
 	}
 
 	deleteProductOptionVariantOfProductOptionId(productOptionId)
 	{
-		delete this.productOptionVariants.productOptionId;
+		this.productOptionVariants.delete(productOptionId);
 	}
 
 	hasProductOptionVariant(variant)
 	{
-		if(!this.hasAnyProductOptionVariantOfProductOption(variant.productOptionId))
-			return false;
-		if(!this.productOptionVariants[variant.productOptionId].equals(variant))
+		if(!this.productOptionVariants.has(variant))
 			return false;
 		return true;
 	}
 
 	hasAnyProductOptionVariantOfProductOption(productOptionId)
 	{
-		let variant = this.productOptionVariants[productOptionId];
-		if(variant === undefined || variant === null)
+		if(!this.productOptionVariants.hasAny(productOptionId))
 			return false;
 		return true;
 	}
