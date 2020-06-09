@@ -11,7 +11,13 @@ export default class WindowProductConfigurator extends AbstractproductConfigurat
 
 	applyDefaultConfiguration()
 	{
+		let options = this.allProductOptions;
+		let product = this.product;
 
+		this.allProductOptions.values().foreach((productOption)=>{
+			if(!product.hasAnyProductOptionVariantOfProductOption(productOption.id))
+				this.setProductOptionVariant(productOption.variants.values().get(0));
+		});
 	}
 
 	optionCanBeSelected(option)
@@ -26,6 +32,6 @@ export default class WindowProductConfigurator extends AbstractproductConfigurat
 
 	calculatePrice()
 	{
-		return 3;
+		return this.product.price + 1;
 	}
 }
