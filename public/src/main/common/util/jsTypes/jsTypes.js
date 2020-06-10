@@ -69,6 +69,15 @@ class JsTypes
     }
 
     /**
+	 * Check if the given object is a boolean.
+	 * @param {?} [o] [The object to be checked for.]
+	 */
+    static isBoolean(o)
+    {
+    	return typeof(o) === "boolean";
+    }
+
+    /**
 	 * Check if the given object is of type object and not null.
 	 * @param {?} [o] [The object to be checked for.]
 	 */
