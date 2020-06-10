@@ -24,8 +24,8 @@ class KVMap extends IComparable()
         super();
 		this._map = {};
        	if(JsTypes.isObject(object))
-       		for(let idx in object.keys())
-       			this.add(object.keys()[idx], object[object.keys()[idx]]);
+       		for(let idx in Object.keys(object))
+       			this.add(Object.keys(object)[idx], object[Object.keys(object)[idx]]);
 		
 	}
 
