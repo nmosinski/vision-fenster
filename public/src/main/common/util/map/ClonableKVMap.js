@@ -16,6 +16,7 @@ class ClonableKVMap extends IClonable(KVMap)
 {
 	/**
 	 * Create a ClonableKVMap.
+	 * @param {object} [object=null] [Create a ClonableKVMap from the given object.]
 	 */
 	constructor(object={})
 	{

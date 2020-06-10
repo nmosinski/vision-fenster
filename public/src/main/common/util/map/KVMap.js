@@ -12,6 +12,7 @@ import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 /**
  * @class
  * Class representing a KVMap (Key-Value-Map).
+ * @param {object} [object=null] [Create a KVMap from the given object.]
  */
 class KVMap extends IComparable()
 {
