@@ -6,6 +6,8 @@ import IClonable from "public/src/main/common/util/IClonable.js";
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 import VariableValueError from "public/src/main/common/util/error/VariableValueError.js";
 
+import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+
 /**
  * @class
  * Class representing a ClonableKVMap (Clonable Key-Value-Map).
@@ -15,9 +17,12 @@ class ClonableKVMap extends IClonable(KVMap)
 	/**
 	 * Create a ClonableKVMap.
 	 */
-	constructor()
+	constructor(object={})
 	{
 		super();
+		if(JsTypes.isObject(object))
+       		for(let idx in object.keys())
+       			this.add(object.keys()[idx], object[object.keys()[idx]]);
 	}
 
 	/**

@@ -18,10 +18,14 @@ class KVMap extends IComparable()
 	/**
 	 * Create a KVMap.
 	 */
-	constructor()
+	constructor(object={})
 	{
         super();
 		this._map = {};
+       	if(JsTypes.isObject(object))
+       		for(let idx in object.keys())
+       			this.add(object.keys()[idx], object[object.keys()[idx]]);
+		
 	}
 
     /**
@@ -46,6 +50,13 @@ class KVMap extends IComparable()
         	return false;
 
         return true;
+    }
+
+    toObject()
+    {
+    	let o = {};
+    	this.keys().foreach((k)=>o[k] = this.get(k));
+    	return o;
     }
 
 	/**
