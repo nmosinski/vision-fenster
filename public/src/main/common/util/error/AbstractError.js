@@ -56,7 +56,7 @@ class AbstractError
 
 	/**
 	 * Set the location description of where the error occurred inside the given file.
-	 * @param {string} [location] [The location of the error inside the given file.]
+	 * @param {string} [location] The location of the error inside the given file.
 	 */
 	set location(location)
 	{
@@ -68,7 +68,7 @@ class AbstractError
 
 	/**
 	 * Get the error description of the error.
-	 * @return {string} [The description of the error.]
+	 * @return {string} The description of the error.
 	 */
 	get errorDescription()
 	{
@@ -77,7 +77,7 @@ class AbstractError
 
 	/**
 	 * Get the file path.
-	 * @return {string} [The file path of where the error occurred.]
+	 * @return {string} The file path of where the error occurred.
 	 */
 	get file()
 	{
@@ -86,7 +86,7 @@ class AbstractError
 
 	/**
 	 * Get the location inside the given file of where the error occurred.
-	 * @return {string} [The location.]
+	 * @return {string} The location.
 	 */
 	get location()
 	{

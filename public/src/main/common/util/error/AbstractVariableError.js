@@ -36,7 +36,7 @@ class AbstractVariableError extends AbstractError
 
 	/**
 	 * Set the object that caused the error.
-	 * @param {?} [subject] [The object that caused the error.]
+	 * @param {?} [subject] The object that caused the error.
 	 */
 	set subject(subject)
 	{

@@ -17,9 +17,9 @@ class WixData
 	/**
 	 * Wix.wix-data.get - wrapper.
 	 * Retrieves an item with the given id from the given collection.
-	 * @param {string} [collectionName] [The name of the collection the item will be retrieved from.]
-	 * @param {string} [itemId] [The id of the item to be retrived.]
-	 * @param {object} [options=null] [The options for this operation like in wix documentation explained.]
+	 * @param {string} [collectionName] The name of the collection the item will be retrieved from.
+	 * @param {string} [itemId] The id of the item to be retrived.
+	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If collectionName and/or itemId is not a string.
 	 * @throws {VariableValueError} If collectionName and/or itemId is empty.
@@ -42,10 +42,10 @@ class WixData
 	/**
 	 * Wix.wix-data.query - wrapper.
 	 * Get a query that specifies an item selection from a collection.
-	 * @param {string} [collectionName] [The name of the collection the item will be retrieved from.]
-	 * @param {number} [itemLimit=50] [The limit of the number of items to be retrieved.]
-	 * @param {object} [options=null] [The options for this operation like in wix documentation explained.]
-	 * @return {wix-data.query} [The query.]
+	 * @param {string} [collectionName] The name of the collection the item will be retrieved from.
+	 * @param {number} [itemLimit=50] The limit of the number of items to be retrieved.
+	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
+	 * @return {wix-data.query} The query.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If collectionName is not a string and/or itemLimit is not a number.
 	 * @throws {VariableValueError} If collectionName is empty and/or itemLimit is <1.
@@ -68,8 +68,8 @@ class WixData
 	/**
 	 * Wix.wix-data.find - wrapper.
 	 * Executes a query.
-	 * @param {wix-data.query} [query] [The query to be executed.]
-	 * @return {Object} [An object representingthe results of the executed query.]
+	 * @param {wix-data.query} [query] The query to be executed.
+	 * @return {Object} An object representingthe results of the executed query.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If query is empty.
 	 */
@@ -84,9 +84,9 @@ class WixData
 	/**
 	 * Wix.wix-data.insert - wrapper.
 	 * Inserts an item into the given collection.
-	 * @param {string} [collectionName] [The name of the collection the item will be inserted in.]
-	 * @param {object} [item] [An object representing the item to be inserted.]
-	 * @param {object} [options=null] [The options for this operation like in wix documentation explained.]
+	 * @param {string} [collectionName] The name of the collection the item will be inserted in.
+	 * @param {object} [item] An object representing the item to be inserted.
+	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If collectionName is not a string and/or item is empty.
 	 * @throws {VariableValueError} If collectionName is empty.
@@ -107,9 +107,9 @@ class WixData
 	/**
 	 * Wix.wix-data.save - wrapper.
 	 * Saves an item in the given collection. If the item already exists in the given collection, it will be overwritten.
-	 * @param {string} [collectionName] [The name of the collection the item will be saved in.]
-	 * @param {object} [item] [An object representing the item to be saved.]
-	 * @param {object} [options=null] [The options for this operation like in wix documentation explained.]
+	 * @param {string} [collectionName] The name of the collection the item will be saved in.
+	 * @param {object} [item] An object representing the item to be saved.
+	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If collectionName is not a string and/or item is empty.
 	 * @throws {VariableValueError} If collectionName is empty.
@@ -130,9 +130,9 @@ class WixData
 	/**
 	 * Wix.wix-data.update - wrapper.
 	 * Updates an item in the given collection.
-	 * @param {string} [collectionName] [The name of the collection the item will be updated in.]
-	 * @param {object} [item] [An object that describes the item to be updated.]
-	 * @param {object} [options=null] [The options for this operation like in wix documentation explained.]
+	 * @param {string} [collectionName] The name of the collection the item will be updated in.
+	 * @param {object} [item] An object that describes the item to be updated.
+	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If collectionName is not a string and/or item is empty.
 	 * @throws {VariableValueError} If collectionName is empty.
@@ -153,9 +153,9 @@ class WixData
 	/**
 	 * Wix.wix-data.remove - wrapper.
 	 * Removes an item from the given collection.
-	 * @param {string} [collectionName] [The name of the collection the item will be removed from.]
-	 * @param {string} [itemId] [The id of the item to be removed.]
-	 * @param {object} [options=null] [The options for this operation like in wix documentation explained.]
+	 * @param {string} [collectionName] The name of the collection the item will be removed from.
+	 * @param {string} [itemId] The id of the item to be removed.
+	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If collectionName and/or itemId is not a string.
 	 * @throws {VariableValueError} If collectionName and/or itemId is empty.

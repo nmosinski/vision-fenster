@@ -35,7 +35,7 @@ class ForeignError extends AbstractError
 
 	/**
 	 * Set the error.
-	 * @param {?} [error] [The error.]
+	 * @param {?} [error] The error.
 	 */
 	set error(error)
 	{

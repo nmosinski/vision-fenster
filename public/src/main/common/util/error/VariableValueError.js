@@ -39,7 +39,7 @@ class VariableValueError extends AbstractVariableError
 
 	/**
 	 * Set the description of the expected value.
-	 * @param {string} [type] [The expected value.]
+	 * @param {string} [type] The expected value.
 	 */
 	set expected(expected)
 	{
@@ -51,7 +51,7 @@ class VariableValueError extends AbstractVariableError
 
 	/**
 	 * Get the description of the expected value.
-	 * @return {string} [The description of the expected value.]
+	 * @return {string} The description of the expected value.
 	 */
 	get expected()
 	{

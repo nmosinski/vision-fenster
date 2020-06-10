@@ -8,7 +8,7 @@ class JsTypes
 {
 	/**
 	 * Check if the given object is a js primitive (boolean or number or string).
-	 * @param {?} [o] [The object to be checked for.]
+	 * @param {?} [o] The object to be checked for.
 	 */
 	static isPrimitive(o)
 	{
@@ -19,7 +19,7 @@ class JsTypes
 
 	/**
 	 * Check if the given object is a number.
-	 * @param {?} [o] [The object to be checked for.]
+	 * @param {?} [o] The object to be checked for.
 	 */
 	static isNumber(o)
 	{
@@ -30,7 +30,7 @@ class JsTypes
 
 	/**
 	 * Check if the given object is empty (null or undefined or an empty string).
-	 * @param {?} [o] [The object to be checked for.]
+	 * @param {?} [o] The object to be checked for.
 	 */
 	static isEmpty(o)
 	{
@@ -43,7 +43,7 @@ class JsTypes
 
 	/**
 	 * Check if the given object is a function.
-	 * @param {?} [o] [The object to be checked for.]
+	 * @param {?} [o] The object to be checked for.
 	 */
 	static isFunction(o)
 	{
@@ -52,7 +52,7 @@ class JsTypes
 
 	/**
 	 * Check if the given object is an array.
-	 * @param {?} [o] [The object to be checked for.]
+	 * @param {?} [o] The object to be checked for.
 	 */
     static isArray(o)
     {
@@ -61,7 +61,7 @@ class JsTypes
 
     /**
 	 * Check if the given object is a string.
-	 * @param {?} [o] [The object to be checked for.]
+	 * @param {?} [o] The object to be checked for.
 	 */
     static isString(o)
     {
@@ -70,7 +70,7 @@ class JsTypes
 
     /**
 	 * Check if the given object is a boolean.
-	 * @param {?} [o] [The object to be checked for.]
+	 * @param {?} [o] The object to be checked for.
 	 */
     static isBoolean(o)
     {
@@ -79,7 +79,7 @@ class JsTypes
 
     /**
 	 * Check if the given object is of type object and not null.
-	 * @param {?} [o] [The object to be checked for.]
+	 * @param {?} [o] The object to be checked for.
 	 */
     static isObject(o)
     {

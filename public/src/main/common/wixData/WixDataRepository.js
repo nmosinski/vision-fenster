@@ -15,8 +15,8 @@ class WixDataRepository
 	/**
 	 * Create a WixDataRepository.
 	 * @param {string} collectionName - The name of the collection this repository is pointing to.
-	 * @param {boolean} [authorisation=true] [Defines if authorisation should be done.]
-	 * @param {boolean} [hooks=true] [Defines if hooks should be considered.]
+	 * @param {boolean} [authorisation=true] Defines if authorisation should be done.
+	 * @param {boolean} [hooks=true] Defines if hooks should be considered.
 	 * @throws {VariableTypeError} If collectionName is not a string or authorisation and/or hooks are not boolean.
 	 * @throws {VariableValueError} If collectionName is empty.
 	 */
@@ -39,7 +39,7 @@ class WixDataRepository
 
 	/**
 	 * Retrieves an item with the given id.
-	 * @param {string} [itemId] [The id of the item to be retrived.]
+	 * @param {string} [itemId] The id of the item to be retrived.
 	 * @return {object | null} The retrieved item or null if there was no item with the given id.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If itemId is not a string.
@@ -57,8 +57,8 @@ class WixDataRepository
 
 	/**
 	 * Get a query that specifies an item selection.
-	 * @param {number} [itemLimit=50] [The limit of the number of items to be retrieved.]
-	 * @return {wix-data.query} [The query.]
+	 * @param {number} [itemLimit=50] The limit of the number of items to be retrieved.
+	 * @return {wix-data.query} The query.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If itemLimit is not a number.
 	 * @throws {VariableValueError} If itemLimit is < 1.
@@ -75,8 +75,8 @@ class WixDataRepository
 
 	/**
 	 * Executes a query.
-	 * @param {wix-data.query} [query] [The query to be executed.]
-	 * @return {Object} [An object representing the results of the executed query.]
+	 * @param {wix-data.query} [query] The query to be executed.
+	 * @return {Object} An object representing the results of the executed query.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If query is empty.
 	 */
@@ -90,7 +90,7 @@ class WixDataRepository
 
 	/**
 	 * Inserts an item.
-	 * @param {object} [item] [An object representing the item to be inserted.]
+	 * @param {object} [item] An object representing the item to be inserted.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If item is empty.
 	 */
@@ -104,7 +104,7 @@ class WixDataRepository
 
 	/**
 	 * Saves an item. If the item already exists, it will be overwritten.
-	 * @param {object} [item] [An object representing the item to be saved.]
+	 * @param {object} [item] An object representing the item to be saved.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If item is empty.
 	 */
@@ -118,7 +118,7 @@ class WixDataRepository
 
 	/**
 	 * Updates an item.
-	 * @param {object} [item] [An object that describes the item to be updated.]
+	 * @param {object} [item] An object that describes the item to be updated.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If item is empty.
 	 */
@@ -132,7 +132,7 @@ class WixDataRepository
 
 	/**
 	 * Removes an item.
-	 * @param {string} [itemId] [The id of the item to be removed.]
+	 * @param {string} [itemId] The id of the item to be removed.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If itemId is not a string.
 	 * @throws {VariableValueError} If itemId is empty.

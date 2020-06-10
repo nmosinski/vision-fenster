@@ -39,7 +39,7 @@ class VariableTypeError extends AbstractVariableError
 
 	/**
 	 * Set the description of the expected type.
-	 * @param {string} [type] [The expected type.]
+	 * @param {string} [type] The expected type.
 	 */
 	set expected(expected)
 	{
@@ -51,7 +51,7 @@ class VariableTypeError extends AbstractVariableError
 
 	/**
 	 * Get the description of the expected type.
-	 * @return {string} [The description of the expected type.]
+	 * @return {string} The description of the expected type.
 	 */
 	get expected()
 	{
