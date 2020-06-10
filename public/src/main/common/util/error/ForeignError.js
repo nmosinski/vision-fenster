@@ -16,7 +16,7 @@ class ForeignError extends AbstractError
 	 * @param {string} location - A closer description of the location in the file in which the error occurred.
 	 * @param {Object} error - The error.
 	 */
-	constructor(description, file, location, error)
+	constructor(file, location, error)
 	{
 		super("An error was thrown by a foreign library.", file, location);
 		this.error = error;
@@ -46,7 +46,7 @@ class ForeignError extends AbstractError
 	 * Get the error.
 	 * @return The error.
 	 */
-	get subject()
+	get error()
 	{
 		return this._error;
 	}
