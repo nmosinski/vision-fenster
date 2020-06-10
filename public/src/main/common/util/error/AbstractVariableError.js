@@ -2,6 +2,8 @@ const PATH = "public/src/main/common/util/error/AbstractVariableError.js";
 
 import AbstractError from "public/src/main/common/util/error/AbstractError.js"
 
+import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+
 /**
  * @class
  * Class representing an abstract error with a variable.
@@ -19,6 +21,17 @@ class AbstractVariableError extends AbstractError
 	{
 		super(description, file, location);
 		this.subject = subject;
+	}
+
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
+	toString()
+	{
+		if(!JsTypes.isEmpty(this.subject))
+			return super.toString() + "\n" + JSON.stringify(this.subject);
+		return super.toString();
 	}
 
 	/**

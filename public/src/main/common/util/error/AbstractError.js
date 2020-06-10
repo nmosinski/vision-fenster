@@ -1,5 +1,7 @@
 const PATH = "public/src/main/common/util/error/AbstractError.js";
 
+import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+
 /**
  * @class
  * Class representing an abstract error.
@@ -34,7 +36,7 @@ class AbstractError
 	 */
 	set errorDescription(errorDescription)
 	{
-		if(typeof errorDescription === "string")
+		if(JsTypes.isString(errorDescription))
 			this._errorDescription = errorDescription;
 		else
 			this._errorDescription = "";
@@ -46,7 +48,7 @@ class AbstractError
 	 */
 	set file(file)
 	{
-		if(typeof file === "string")
+		if(JsTypes.isString(file))
 			this._file = file;
 		else
 			this._file = "";
@@ -58,7 +60,7 @@ class AbstractError
 	 */
 	set location(location)
 	{
-		if(typeof location === "string")
+		if(JsTypes.isString(location))
 			this._location = location;
 		else
 			this._location = "";

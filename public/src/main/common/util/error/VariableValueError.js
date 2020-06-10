@@ -2,6 +2,8 @@ const PATH = "public/src/main/common/util/error/VariableValueError.js";
 
 import AbstractVariableError from "public/src/main/common/util/error/AbstractVariableError.js"
 
+import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+
 /**
  * @class
  * Class representing a value error of a variable.
@@ -29,7 +31,7 @@ class VariableValueError extends AbstractVariableError
 	{
 		let ret = super.toString();
 		
-		if(this.expected !== "")
+		if(!JsTypes.isEmpty(this.expected))
 			ret += "\nExpected: " + this.expected;
 
 		return ret;
@@ -41,7 +43,7 @@ class VariableValueError extends AbstractVariableError
 	 */
 	set expected(expected)
 	{
-		if(typeof expected === "string")
+		if(JsTypes.isString(expected))
 			this._expected = expected;
 		else
 			this._expected = "";
