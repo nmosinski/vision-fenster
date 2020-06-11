@@ -131,7 +131,7 @@ class WixDataRepository
 	 * Inserts an item.
 	 * @param {object} [object] An object representing the item to be inserted.
 	 * @throws {ForeignError} If the wix-data library throws an error.
-	 * @throws {VariableTypeError} If item is empty.
+	 * @throws {VariableTypeError} If object is empty.
 	 */
 	async insert(object)
 	{
@@ -143,30 +143,30 @@ class WixDataRepository
 
 	/**
 	 * Saves an item. If the item already exists, it will be overwritten.
-	 * @param {object} [item] An object representing the item to be saved.
+	 * @param {object} [object] An object representing the item to be saved.
 	 * @throws {ForeignError} If the wix-data library throws an error.
-	 * @throws {VariableTypeError} If item is empty.
+	 * @throws {VariableTypeError} If object is empty.
 	 */
-	async save(item)
+	async save(object)
 	{
-		if(JsTypes.isEmpty(item))
-			throw new VariableTypeError(PATH, "WixDataRepository.save()", item, "Object.");
+		if(JsTypes.isEmpty(object))
+			throw new VariableTypeError(PATH, "WixDataRepository.save()", object, "Object.");
 
-		await WixData.save(this.collectionName, this.toItem(item), this._options);
+		await WixData.save(this.collectionName, this.toItem(object), this._options);
 	}
 
 	/**
 	 * Updates an item.
-	 * @param {object} [item] An object that describes the item to be updated.
+	 * @param {object} [object] An object that describes the item to be updated.
 	 * @throws {ForeignError} If the wix-data library throws an error.
-	 * @throws {VariableTypeError} If item is empty.
+	 * @throws {VariableTypeError} If object is empty.
 	 */
-	async update(item)
+	async update(object)
 	{
-		if(JsTypes.isEmpty(item))
-			throw new VariableTypeError(PATH, "WixDataRepository.update()", item, "Object.");
+		if(JsTypes.isEmpty(object))
+			throw new VariableTypeError(PATH, "WixDataRepository.update()", object, "Object.");
 
-		await WixData.update(this.collectionName, this.toItem(item), this._options);
+		await WixData.update(this.collectionName, this.toItem(object), this._options);
 	}
 
 	/**

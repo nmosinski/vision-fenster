@@ -10,8 +10,8 @@ import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
 let VARIANT_COLLECTION_NAME = "product_option_variant"
 let IMAGE_COLLECTION_NAME = "product_option_variant_image"
-let VARIANT_MAPPING = {"_id":"_id", "productOptionId":"productOptionId", "title": "title"};
-let IMAGE_MAPPING = {"_id":"_id", "productOptionVariantId":"productOptionVariantId", "title": "title", "image": "image"};
+let VARIANT_MAPPING = {"id":"_id", "productOptionId":"productOptionId", "title": "title"};
+let IMAGE_MAPPING = {"id":"_id", "productOptionVariantId":"productOptionVariantId", "title": "title", "image": "image"};
 
 class WixDbProductOptionVariantRepository extends IProductOptionVariantRepository(WixDataRepository)
 {
@@ -29,7 +29,7 @@ class WixDbProductOptionVariantRepository extends IProductOptionVariantRepositor
 	{
 		return this.get(productOptionVariantId).then((v) => {
 			return (JsTypes.isEmpty(v))?null:this._wixDataImageRepository.getImage(productOptionVariantId).then((image) => {
-                return new ProductOptionVariant(v._id, v.productOptionId, v.title, image);
+                return new ProductOptionVariant(v.id, v.productOptionId, v.title, image);
 			});	
 		});
 	}
