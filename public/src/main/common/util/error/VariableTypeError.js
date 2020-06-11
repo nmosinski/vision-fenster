@@ -19,45 +19,8 @@ class VariableTypeError extends AbstractVariableError
 	 */
 	constructor(file, location, subject, expected)
 	{
-		super("Variable is of a wrong type.", file, location, subject);
-		this.expected = expected;
+		super("Variable is of a wrong type.", file, location, subject, expected);
 	}
-
-	/**
-	 * @override
-	 * @inheritDoc
-	 */
-	toString()
-	{
-		let ret = super.toString();
-		
-		if(!JsTypes.isEmpty(this.expected))
-			ret += "\nExpected: " + this.expected;
-
-		return ret;
-	}
-
-	/**
-	 * Set the description of the expected type.
-	 * @param {string} [type] The expected type.
-	 */
-	set expected(expected)
-	{
-		if(JsTypes.isString(expected))
-			this._expected = expected;
-		else
-			this._expected = "";
-	}
-
-	/**
-	 * Get the description of the expected type.
-	 * @return {string} The description of the expected type.
-	 */
-	get expected()
-	{
-		return this._expected;
-	}
-
 }
 
 export default VariableTypeError;

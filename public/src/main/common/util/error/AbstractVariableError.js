@@ -16,11 +16,13 @@ class AbstractVariableError extends AbstractError
 	 * @param {string} file - The file path of the error occurance.
 	 * @param {string} location - A closer description of the location in the file in which the error occurred.
 	 * @param {Object} subject - The object that caused the error.
+	 * @param {string} expected - A description of what was expected.
 	 */
-	constructor(description, file, location, subject)
+	constructor(description, file, location, subject, expected)
 	{
 		super(description, file, location);
 		this.subject = subject;
+		this.expected = expected;
 	}
 
 	/**
@@ -31,6 +33,10 @@ class AbstractVariableError extends AbstractError
 	{
 		if(!JsTypes.isEmpty(this.subject))
 			return super.toString() + "\n" + JSON.stringify(this.subject);
+
+		if(!JsTypes.isEmpty(this.expected))
+			ret += "\nExpected: " + this.expected;
+
 		return super.toString();
 	}
 
@@ -50,6 +56,27 @@ class AbstractVariableError extends AbstractError
 	get subject()
 	{
 		return this._subject;
+	}
+
+	/**
+	 * Set the description of what was expected.
+	 * @param {string} [expected] The description.
+	 */
+	set expected(expected)
+	{
+		if(JsTypes.isString(expected))
+			this._expected = expected;
+		else
+			this._expected = "";
+	}
+
+	/**
+	 * Get the description of what was expected.
+	 * @return {string} The description of what was expected.
+	 */
+	get expected()
+	{
+		return this._expected;
 	}
 }
 
