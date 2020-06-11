@@ -1,23 +1,37 @@
 const PATH = "public/src/main/feature/product/model/IProductRepository.js";
 
+import NotImplementedError from "public/src/main/common/util/error/NotImplementedError.js"
+
+import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+
 const IProductRepository = (superclass=null) => 
-
-/**
- * @alias IProductRepository
- * @interface
- */
-class extends superclass
 {
-	getProduct(productId){}
+	Object.defineProperty(IProductRepository, Symbol.hasInstance, {value: function(instance) { 
+		return JsTypes.isFunction(instance.getProduct) &&
+		JsTypes.isFunction(instance.saveProduct) &&
+		JsTypes.isFunction(instance.updateProduct) &&
+		JsTypes.isFunction(instance.deleteProduct) &&
+		JsTypes.isFunction(instance.getProductsByProductModelId); 
+	}, configurable: true});
 
-	saveProduct(product){}
+	/**
+	 * @alias IProductRepository
+	 * @interface
+	 */
+	const C = class extends superclass
+	{
+		getProduct(productId){throw new NotImplementedError(PATH, "IProductRepository.getProduct()");}
 
-	updateProduct(product){}
+		getProductsByProductModelId(productModelId){throw new NotImplementedError(PATH, "IProductRepository.getProductsByProductModelId()");}
 
-	deleteProduct(productId){}
+		saveProduct(product){throw new NotImplementedError(PATH, "IProductRepository.saveProduct()");}
 
-	getNextEntity(){}
+		updateProduct(product){throw new NotImplementedError(PATH, "IProductRepository.updateProduct()");}
 
+		deleteProduct(productId){throw new NotImplementedError(PATH, "IProductRepository.deleteProduct()");}
+	}
+
+	return C;
 }
 
 export default IProductRepository;

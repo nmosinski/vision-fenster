@@ -1,20 +1,34 @@
 const PATH = "public/src/main/feature/shoppingCart/model/IShoppingCartRepository.js";
 
+import NotImplementedError from "public/src/main/common/util/error/NotImplementedError.js"
+
+import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+
 const IShoppingCartRepository = (superclass=null) => 
-
-/**
- * @alias IShoppingCartRepository
- * @interface
- */
-class extends superclass
 {
-	getShoppingCart(shoppingCartId){}
+	Object.defineProperty(IShoppingCartRepository, Symbol.hasInstance, {value: function(instance) { 
+		return JsTypes.isFunction(instance.getShoppingCart) &&
+		JsTypes.isFunction(instance.saveShoppingCart) &&
+		JsTypes.isFunction(instance.updateShoppingCart) &&
+		JsTypes.isFunction(instance.deleteShoppingCart); 
+	}, configurable: true});
 
-	saveShoppingCart(shoppingCart){}
+	/**
+	 * @alias IShoppingCartRepository
+	 * @interface
+	 */
+	const C = class extends superclass
+	{
+		getShoppingCart(shoppingCartId){throw new NotImplementedError(PATH, "IShoppingCartRepository.getShoppingCart()");}
 
-	updateShoppingCart(shoppingCart){}
+		saveShoppingCart(shoppingCart){throw new NotImplementedError(PATH, "IShoppingCartRepository.saveShoppingCart()");}
 
-	deleteShoppingCartById(shoppingCartId){}
+		updateShoppingCart(shoppingCart){throw new NotImplementedError(PATH, "IShoppingCartRepository.updateShoppingCart()");}
+
+		deleteShoppingCart(shoppingCartId){throw new NotImplementedError(PATH, "IShoppingCartRepository.deleteShoppingCart()");}
+	}
+
+	return C;
 }
 
 export default IShoppingCartRepository;
