@@ -30,8 +30,6 @@ class List extends IComparable()
 	/**
 	 * Iterate through all elements of this list and calls the passed function.
 	 * @param {function} f - The function to be called by each element of this list.
-	 * @throws {VariableTypeError} If f is not a function.
-	 * @todo Parameter real object?
 	 */
     foreach(f)
     {
@@ -78,7 +76,6 @@ class List extends IComparable()
 	/**
 	 * Add an element.
 	 * @param {IComparable | string | number | boolean} element - The element.
-	 * @throws {VariableTypeError} If element is not of type IComparable or primitive.
 	 */
 	add(element)
 	{
@@ -92,8 +89,6 @@ class List extends IComparable()
 	 * Get the element at the given index.
 	 * @param {number} elementIdx - The index.
 	 * @return {?} The element.
-	 * @throws {VariableTypeError} If elementIdx is not a number.
-	 * @throws {VariableValueError} If elementIdx out of range.
 	 */
 	get(elementIdx)
 	{
@@ -109,8 +104,6 @@ class List extends IComparable()
 	/**
 	 * Deletes the element at the given index.
 	 * @param {number} elementIdx - The index.
-	 * @throws {VariableTypeError} If elementIdx is not a number.
-	 * @throws {VariableValueError} If elementIdx out of range.
 	 */
 	delete(elementIdx)
 	{

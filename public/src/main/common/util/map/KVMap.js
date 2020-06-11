@@ -64,7 +64,6 @@ class KVMap extends IComparable()
 	 * Get a value corresponding to the key.
 	 * @param {string} key - The key.
 	 * @return {IComparable | string | number | boolean} The corresponding value.
-	 * @throws {VarableTypeError} If key is not a string.
 	 */
 	get(key)
 	{
@@ -80,8 +79,6 @@ class KVMap extends IComparable()
 	 * Add a key-value pair.
 	 * @param {string} key - The key.
 	 * @param {IComparable | string | number | boolean} value - The value.
-	 * @throws {VariableTypeError} If key is not a string and/or value is not IComparable or a primitive.
-	 * @throws {VariableValueError} If key is an empty string.
 	 */
 	add(key, value)
 	{
@@ -98,8 +95,6 @@ class KVMap extends IComparable()
 	/**
 	 * Delete a key-value pair.
 	 * @param {string} key - The key of the key-value pair to be deleted.
-	 * @throws {VariableTypeError} If key is not a string.
-	 * @throws {VariableValueError} If key is an empty string.
 	 */
 	delete(key)
 	{

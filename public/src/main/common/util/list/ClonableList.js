@@ -34,7 +34,6 @@ class ClonableList extends IClonable(List)
 	/**
 	 * Add an element.
 	 * @param {IComparableANDIClonable | string | number | boolean} element - The element.
-	 * @throws {VariableTypeError} If element is not of type IComparable and IClonable or a primitive.
 	 */
 	add(element)
 	{	

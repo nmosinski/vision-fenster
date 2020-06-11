@@ -20,8 +20,6 @@ class WixDataRepository
 	 * @param {KVMap | empty} [mapping] The mapping between the js object and the wix db item (object key -> item key). Empty if identical mapping.
 	 * @param {boolean} [authorisation=true] Defines if authorisation should be done.
 	 * @param {boolean} [hooks=true] Defines if hooks should be considered.
-	 * @throws {VariableTypeError} If collectionName is not a string and/or mapping is not empty or not a KVMap and/or authorisation and/or hooks are not boolean.
-	 * @throws {VariableValueError} If collectionName is empty.
 	 */
 	constructor(collectionName, mapping=null, authorisation=true, hooks=true)
 	{	
@@ -37,7 +35,6 @@ class WixDataRepository
 	 * Transforms an object to a wix db item considering the given mapping.
 	 * @param {object} [o] The object to be transformed.
 	 * @return {object} The wix db item.
-	 * @throws {VariableTypeError} If o is not an object.
 	 */
 	toItem(o)
 	{
@@ -56,7 +53,6 @@ class WixDataRepository
 	 * Transforms a wix db item to an object considering the given mapping.
 	 * @param {object} [i] The item to be transformed.
 	 * @return {object} The resulting object.
-	 * @throws {VariableTypeError} If i is not an object.
 	 */
 	toObject(i)
 	{
@@ -75,9 +71,6 @@ class WixDataRepository
 	 * Retrieves an item with the given id.
 	 * @param {string} [itemId] The id of the item to be retrived.
 	 * @return {object | null} Object representing the retrieved item or null if there was no item with the given id.
-	 * @throws {ForeignError} If the wix-data library throws an error.
-	 * @throws {VariableTypeError} If itemId is not a string.
-	 * @throws {VariableValueError} If itemId is empty.
 	 */
 	async get(itemId)
 	{
@@ -93,9 +86,6 @@ class WixDataRepository
 	 * Get a query that specifies an item selection.
 	 * @param {number} [itemLimit=50] The limit of the number of items to be retrieved.
 	 * @return {wix-data.query} The query.
-	 * @throws {ForeignError} If the wix-data library throws an error.
-	 * @throws {VariableTypeError} If itemLimit is not a number.
-	 * @throws {VariableValueError} If itemLimit is < 1.
 	 */
 	query(itemLimit = 50)
 	{
@@ -111,8 +101,6 @@ class WixDataRepository
 	 * Executes a query.
 	 * @param {wix-data.query} [query] The query to be executed.
 	 * @return {Array.<?>} The resulting items of the executed query.
-	 * @throws {ForeignError} If the wix-data library throws an error.
-	 * @throws {VariableTypeError} If query is empty.
 	 */
 	async find(query)
 	{
@@ -130,8 +118,6 @@ class WixDataRepository
 	/**
 	 * Inserts an item.
 	 * @param {object} [object] An object representing the item to be inserted.
-	 * @throws {ForeignError} If the wix-data library throws an error.
-	 * @throws {VariableTypeError} If object is empty.
 	 */
 	async insert(object)
 	{
@@ -144,8 +130,6 @@ class WixDataRepository
 	/**
 	 * Saves an item. If the item already exists, it will be overwritten.
 	 * @param {object} [object] An object representing the item to be saved.
-	 * @throws {ForeignError} If the wix-data library throws an error.
-	 * @throws {VariableTypeError} If object is empty.
 	 */
 	async save(object)
 	{
@@ -158,8 +142,6 @@ class WixDataRepository
 	/**
 	 * Updates an item.
 	 * @param {object} [object] An object that describes the item to be updated.
-	 * @throws {ForeignError} If the wix-data library throws an error.
-	 * @throws {VariableTypeError} If object is empty.
 	 */
 	async update(object)
 	{
@@ -172,9 +154,6 @@ class WixDataRepository
 	/**
 	 * Removes an item.
 	 * @param {string} [itemId] The id of the item to be removed.
-	 * @throws {ForeignError} If the wix-data library throws an error.
-	 * @throws {VariableTypeError} If itemId is not a string.
-	 * @throws {VariableValueError} If itemId is empty.
 	 */
 	async remove(itemId)
 	{
@@ -189,8 +168,6 @@ class WixDataRepository
 	/**
 	 * Set collectionName.
 	 * @param {string} [collectionName] The name of the collection.
-	 * @throws {VariableTypeError} If collectionName is not a string.
-	 * @throws {VariableValueError} If collectionName is empty.
 	 */
 	set collectionName(collectionName)
 	{
@@ -205,7 +182,6 @@ class WixDataRepository
 	/**
 	 * Set mapping.
 	 * @param {KVMap} [mapping] The mapping between an js object and an wix db item.
-	 * @throws {VariableTypeError} If mapping is not empty or not a KVMap.
 	 */
 	set mapping(mapping)
 	{

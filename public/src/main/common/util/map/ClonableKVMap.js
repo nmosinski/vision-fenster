@@ -31,8 +31,6 @@ class ClonableKVMap extends IClonable(KVMap)
 	 * @typedef {(IComparable | IClonable)} IComparableANDIClonable
 	 * @param {string} key - The key.
 	 * @param {IComparableANDIClonable | string | number | boolean} value - The value.
-	 * @throws {VariableTypeError} If key is not a string and/or value is not IComparable and IClonable or primitive.
-	 * @throws {VariableValueError} If key is an empty string.
 	 */
 	add(key, value)
 	{
