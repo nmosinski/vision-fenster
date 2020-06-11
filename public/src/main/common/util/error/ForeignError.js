@@ -1,6 +1,6 @@
 const PATH = "public/src/main/common/util/error/ForeignError.js";
 
-import AbstractError from "public/src/main/common/util/error/AbstractError.js"
+import AbstractUncheckedError from "public/src/main/common/util/error/AbstractUncheckedError.js"
 
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
@@ -8,7 +8,7 @@ import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
  * @class
  * Class representing an error thrown by foreign libraries.
  */
-class ForeignError extends AbstractError
+class ForeignError extends AbstractUncheckedError
 {
 	/**
 	 * Create a ForeignError.

@@ -1,6 +1,6 @@
 const PATH = "public/src/main/common/util/error/AbstractVariableError.js";
 
-import AbstractError from "public/src/main/common/util/error/AbstractError.js"
+import AbstractUncheckedError from "public/src/main/common/util/error/AbstractUncheckedError.js"
 
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
@@ -8,7 +8,7 @@ import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
  * @class
  * Class representing an abstract error with a variable.
  */
-class AbstractVariableError extends AbstractError
+class AbstractVariableError extends AbstractUncheckedError
 {
 	/**
 	 * Create an AbstractVariableError.
@@ -31,13 +31,14 @@ class AbstractVariableError extends AbstractError
 	 */
 	toString()
 	{
+		let ret = super.toString();
 		if(!JsTypes.isEmpty(this.subject))
-			return super.toString() + "\n" + JSON.stringify(this.subject);
+			ret += "\n" + JSON.stringify(this.subject);
 
 		if(!JsTypes.isEmpty(this.expected))
 			ret += "\nExpected: " + this.expected;
 
-		return super.toString();
+		return ret;
 	}
 
 	/**

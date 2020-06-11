@@ -1,12 +1,12 @@
 const PATH = "public/src/main/common/util/error/NotImplementedError.js";
 
-import AbstractError from "public/src/main/common/util/error/AbstractError.js"
+import AbstractUncheckedError from "public/src/main/common/util/error/AbstractUncheckedError.js"
 
 /**
  * @class
  * Class representing an error that occurrs if a method has not been implemented.
  */
-class NotImplementedError extends AbstractError
+class NotImplementedError extends AbstractUncheckedError
 {
 	/**
 	 * Create a NotImplementedError.

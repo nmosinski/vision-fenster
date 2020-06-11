@@ -19,6 +19,7 @@ class AbstractError
 		this.errorDescription = errorDescription;
 		this.file = file;
 		this.location = location;
+		this.stack = Error().stack;
 	}
 
 	/**
