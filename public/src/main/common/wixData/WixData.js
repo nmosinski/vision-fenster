@@ -91,7 +91,7 @@ class WixData
 	 * @throws {VariableTypeError} If collectionName is not a string and/or item is empty.
 	 * @throws {VariableValueError} If collectionName is empty.
 	 */
-	static insert(collectionName, item, options = null)
+	static async insert(collectionName, item, options = null)
 	{
 		if(!JsTypes.isString(collectionName))
 			throw new VariableTypeError(PATH, "WixData.insert()", collectionName, "string");
@@ -101,7 +101,13 @@ class WixData
 		if(JsTypes.isEmpty(item))
 			throw new VariableTypeError(PATH, "WixData.insert()", item, "Object.");
 
-		wixData.insert(collectionName, item, options).then().catch(err=>{throw new ForeignError(PATH, "WixData.insert(...)", err)});
+		try
+		{
+			await wixData.insert(collectionName, item, options);
+		}catch(err)
+		{
+			throw new ForeignError(PATH, "WixData.insert(...)", err);
+		}
 	}
 
 	/**
@@ -114,7 +120,7 @@ class WixData
 	 * @throws {VariableTypeError} If collectionName is not a string and/or item is empty.
 	 * @throws {VariableValueError} If collectionName is empty.
 	 */
-	static save(collectionName, item, options = null)
+	static async save(collectionName, item, options = null)
 	{
 		if(!JsTypes.isString(collectionName))
 			throw new VariableTypeError(PATH, "WixData.save()", collectionName, "string");
@@ -124,7 +130,13 @@ class WixData
 		if(JsTypes.isEmpty(item))
 			throw new VariableTypeError(PATH, "WixData.save()", item, "Object.");
 
-		wixData.save(collectionName, item, options).then().catch(err=>{throw new ForeignError(PATH, "WixData.save(...)", err)});
+		try
+		{
+			await wixData.save(collectionName, item, options);
+		}catch(err)
+		{
+			throw new ForeignError(PATH, "WixData.save(...)", err);
+		}
 	}
 
 	/**
@@ -137,7 +149,7 @@ class WixData
 	 * @throws {VariableTypeError} If collectionName is not a string and/or item is empty.
 	 * @throws {VariableValueError} If collectionName is empty.
 	 */
-	static update(collectionName, item, options = null)
+	static async update(collectionName, item, options = null)
 	{
 		if(!JsTypes.isString(collectionName))
 			throw new VariableTypeError(PATH, "WixData.update()", collectionName, "string");
@@ -147,7 +159,13 @@ class WixData
 		if(JsTypes.isEmpty(item))
 			throw new VariableTypeError(PATH, "WixData.update()", item, "Object.");
 
-		wixData.update(collectionName, item, options).then().catch(err=>{throw new ForeignError(PATH, "WixData.update(...)", err)});
+		try
+		{
+			await wixData.update(collectionName, item, options);
+		}catch(err)
+		{
+			throw new ForeignError(PATH, "WixData.update(...)", err);
+		}
 	}
 
 	/**
@@ -160,7 +178,7 @@ class WixData
 	 * @throws {VariableTypeError} If collectionName and/or itemId is not a string.
 	 * @throws {VariableValueError} If collectionName and/or itemId is empty.
 	 */
-	static remove(collectionName, itemId, options = null)
+	static async remove(collectionName, itemId, options = null)
 	{
 		if(!JsTypes.isString(collectionName))
 			throw new VariableTypeError(PATH, "WixData.remove(...)", collectionName, "string");
@@ -171,8 +189,14 @@ class WixData
 			throw new VariableTypeError(PATH, "WixData.remove()", itemId, "string");
 		if(JsTypes.isEmpty(itemId))
 			throw new VariableValueError(PATH, "WixData.remove()", itemId, "The id of the item, not empty.");
-
-		wixData.remove(collectionName, itemId, options).then().catch(err=>{throw new ForeignError(PATH, "WixData.remove(...)", err)});
+		
+		try
+		{
+			await wixData.remove(collectionName, itemId, options);
+		}catch(err)
+		{
+			throw new ForeignError(PATH, "WixData.remove(...)", err);
+		}
 	}
 }
 

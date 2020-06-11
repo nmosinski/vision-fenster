@@ -1,5 +1,7 @@
 const PATH = "public/src/main/common/wixData/WixDataRepository.js";
 
+import KVMap from "public/src/main/common/util/map/KVMap.js"
+
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
@@ -15,32 +17,64 @@ class WixDataRepository
 	/**
 	 * Create a WixDataRepository.
 	 * @param {string} collectionName - The name of the collection this repository is pointing to.
+	 * @param {KVMap | empty} [mapping] The mapping between the js object and the wix db item (object key -> item key). Empty if identical mapping.
 	 * @param {boolean} [authorisation=true] Defines if authorisation should be done.
 	 * @param {boolean} [hooks=true] Defines if hooks should be considered.
-	 * @throws {VariableTypeError} If collectionName is not a string or authorisation and/or hooks are not boolean.
+	 * @throws {VariableTypeError} If collectionName is not a string and/or mapping is not empty or not a KVMap and/or authorisation and/or hooks are not boolean.
 	 * @throws {VariableValueError} If collectionName is empty.
 	 */
-	constructor(collectionName, authorisation=true, hooks=true)
+	constructor(collectionName, mapping=null, authorisation=true, hooks=true)
+	{	
+		this._options = {};
+
+		this.collectionName = collectionName;
+		this.mapping = mapping;
+		this.authorisation = authorisation;
+		this.hooks = hooks;
+	}
+
+	/**
+	 * Transforms an object to a wix db item considering the given mapping.
+	 * @param {object} [o] The object to be transformed.
+	 * @return {object} The wix db item.
+	 * @throws {VariableTypeError} If o is not an object.
+	 */
+	toItem(o)
 	{
-		if(!JsTypes.isString(collectionName))
-			throw new VariableTypeError(PATH, "WixDataRepository.constructor(...)", collectionName, "string");
-		if(JsTypes.isEmpty(collectionName))
-			throw new VariableValueError(PATH, "WixDataRepository.constructor(...)", collectionName, "The name of the collection, not empty.");
+		if(JsTypes.isEmpty(this.mapping))
+			return o;
 
-		if(!JsTypes.isBoolean(authorisation))
-			throw new VariableTypeError(PATH, "WixDataRepository.constructor(...)", authorisation, "boolean");
-
-		if(!JsTypes.isBoolean(hooks))
-			throw new VariableTypeError(PATH, "WixDataRepository.constructor(...)", hooks, "hooks");
+		if(!JsTypes.isObject(o))
+			throw new VariableTypeError(PATH, "WixDataRepository.toItem()", o, "object");
 		
-		this._collectionName = collectionName;
-		this._options = {"suppressAuth": !authorisation, "suppressHooks": !hooks};
+		let i = {};
+		this.mapping.keys().foreach(key => i[this.mapping.get(key)] = o[key]);
+		return i;
+	}
+
+	/**
+	 * Transforms a wix db item to an object considering the given mapping.
+	 * @param {object} [i] The item to be transformed.
+	 * @return {object} The resulting object.
+	 * @throws {VariableTypeError} If i is not an object.
+	 */
+	toObject(i)
+	{
+		if(JsTypes.isEmpty(this.mapping))
+			return i;
+
+		if(!JsTypes.isObject(i))
+			throw new VariableTypeError(PATH, "WixDataRepository.toObject()", i, "object");
+
+		let o = {};
+		this.mapping.keys().foreach(key => o[key] = i[this.mapping.get(key)]);
+		return o;
 	}
 
 	/**
 	 * Retrieves an item with the given id.
 	 * @param {string} [itemId] The id of the item to be retrived.
-	 * @return {object | null} The retrieved item or null if there was no item with the given id.
+	 * @return {object | null} Object representing the retrieved item or null if there was no item with the given id.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If itemId is not a string.
 	 * @throws {VariableValueError} If itemId is empty.
@@ -52,7 +86,7 @@ class WixDataRepository
 		if(JsTypes.isEmpty(itemId))
 			throw new VariableValueError(PATH, "WixDataRepository.get()", itemId, "The id of the item, not empty.");
 
-		return WixData.get(this._collectionName, itemId, this._options).then((item) => {return item;});
+		return WixData.get(this.collectionName, itemId, this._options).then((item) => {return (JsTypes.isEmpty(item))?null:this.toObject(item);});
 	}
 
 	/**
@@ -70,13 +104,13 @@ class WixDataRepository
 		if(itemLimit < 1)
 			throw new VariableValueError(PATH, "WixDataRepository.query()", itemLimit, "Limit > 0");
 
-		return WixData.query(this._collectionName, itemLimit, this._options);
+		return WixData.query(this.collectionName, itemLimit, this._options);
 	}
 
 	/**
 	 * Executes a query.
 	 * @param {wix-data.query} [query] The query to be executed.
-	 * @return {Object} An object representing the results of the executed query.
+	 * @return {Array.<?>} The resulting items of the executed query.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If query is empty.
 	 */
@@ -85,21 +119,26 @@ class WixDataRepository
 		if(JsTypes.isEmpty(query))
 			throw new VariableTypeError(PATH, "WixDataRepository.find()", query, "A wix-data query.");
 
-		return query.find().then((result) => {return result;});
+		return query.find().then((result) => {
+			let ret = [];
+			for(let idx in result.items)
+				ret.push((JsTypes.isEmpty(result.items[idx]))?null:this.toObject(result.items[idx]));
+			return ret;
+		});
 	} 
 
 	/**
 	 * Inserts an item.
-	 * @param {object} [item] An object representing the item to be inserted.
+	 * @param {object} [object] An object representing the item to be inserted.
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If item is empty.
 	 */
-	insert(item)
+	async insert(object)
 	{
-		if(JsTypes.isEmpty(item))
-			throw new VariableTypeError(PATH, "WixDataRepository.insert()", item, "Object.");
+		if(JsTypes.isEmpty(object))
+			throw new VariableTypeError(PATH, "WixDataRepository.insert()", object, "object");
 
-		WixData.insert(this._collectionName, item, this._options);
+		await WixData.insert(this.collectionName, this.toItem(object), this._options);
 	}
 
 	/**
@@ -108,12 +147,12 @@ class WixDataRepository
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If item is empty.
 	 */
-	save(item)
+	async save(item)
 	{
 		if(JsTypes.isEmpty(item))
 			throw new VariableTypeError(PATH, "WixDataRepository.save()", item, "Object.");
 
-		WixData.save(item);
+		await WixData.save(this.collectionName, this.toItem(item), this._options);
 	}
 
 	/**
@@ -122,12 +161,12 @@ class WixDataRepository
 	 * @throws {ForeignError} If the wix-data library throws an error.
 	 * @throws {VariableTypeError} If item is empty.
 	 */
-	update(item)
+	async update(item)
 	{
 		if(JsTypes.isEmpty(item))
 			throw new VariableTypeError(PATH, "WixDataRepository.update()", item, "Object.");
 
-		WixData.update(this._collectionName, item, this._options);
+		await WixData.update(this.collectionName, this.toItem(item), this._options);
 	}
 
 	/**
@@ -137,14 +176,98 @@ class WixDataRepository
 	 * @throws {VariableTypeError} If itemId is not a string.
 	 * @throws {VariableValueError} If itemId is empty.
 	 */
-	remove(itemId)
+	async remove(itemId)
 	{
 		if(!JsTypes.isString(itemId))
 			throw new VariableTypeError(PATH, "WixDataRepository.remove()", itemId, "string");
 		if(JsTypes.isEmpty(itemId))
 			throw new VariableValueError(PATH, "WixDataRepository.remove()", itemId, "The id of the item, not empty.");
 
-		WixData.remove(this._collectionName, itemId, this._options);
+		await WixData.remove(this.collectionName, itemId, this._options);
+	}
+
+	/**
+	 * Set collectionName.
+	 * @param {string} [collectionName] The name of the collection.
+	 * @throws {VariableTypeError} If collectionName is not a string.
+	 * @throws {VariableValueError} If collectionName is empty.
+	 */
+	set collectionName(collectionName)
+	{
+		if(!JsTypes.isString(collectionName))
+			throw new VariableTypeError(PATH, "WixDataRepository.set collectionName(...)", collectionName, "string");
+		if(JsTypes.isEmpty(collectionName))
+			throw new VariableValueError(PATH, "WixDataRepository.set collectionName(...)", collectionName, "The name of the collection, not empty.");
+
+		this._collectionName = collectionName;
+	}
+
+	/**
+	 * Set mapping.
+	 * @param {KVMap} [mapping] The mapping between an js object and an wix db item.
+	 * @throws {VariableTypeError} If mapping is not empty or not a KVMap.
+	 */
+	set mapping(mapping)
+	{
+		if(!JsTypes.isEmpty(mapping))
+			if(!(mapping instanceof KVMap))
+				throw new VariableTypeError(PATH, "WixDataRepository.set mapping(...)", mapping, "KVMap or empty");
+
+		this._mapping = mapping;
+	}
+
+	set authorisation(authorisation)
+	{
+		if(!JsTypes.isBoolean(authorisation))
+			throw new VariableTypeError(PATH, "WixDataRepository.set authorisation(...)", authorisation, "boolean");
+		
+		this._options["suppressAuth"] = !authorisation;
+		this._authorisation = authorisation;
+	}
+
+	set hooks(hooks)
+	{
+		if(!JsTypes.isBoolean(hooks))
+			throw new VariableTypeError(PATH, "WixDataRepository.set hooks(...)", hooks, "hooks");
+		
+		this._options["suppressHooks"] = !hooks;
+		this._hooks = hooks;
+	}
+
+	/**
+	 * Get collectionName.
+	 * @return {string} The name of the collection.
+	 */
+	get collectionName()
+	{	
+		return this._collectionName;
+	}
+
+	/**
+	 * Get mapping.
+	 * @return {KVMap} The mapping between an js object and an wix db item.
+	 */
+	get mapping()
+	{
+		return this._mapping;
+	}
+
+	/**
+	 * Get authorisation property.
+	 * @return {boolean} The authorisation property.
+	 */
+	get authorisation()
+	{	
+		return this._collectionName;
+	}
+
+	/**
+	 * Get hooks.
+	 * @return {boolean} The hooks property.
+	 */
+	get hooks()
+	{
+		return this._hooks;
 	}
 }
 
