@@ -1,11 +1,11 @@
-const PATH = "public/src/main/feature/product/infrastructure/data/wixDb/WixDbProductOptionRepository.js";
+const PATH = "public/src/main/feature/product/infrastructure/data/wixData/WixDataProductOptionRepository.js";
 
 import wixData from "wix-data"
 import ProductOption from "public/src/main/feature/product/model/ProductOption.js"
 import ProductOptionVariant from "public/src/main/feature/product/model/ProductOptionVariant.js"
 import ClonableList from "public/src/main/common/util/list/ClonableList.js"
 
-export default class WixDbProductOptionRepository
+export default class WixDataProductOptionRepository
 {
 	constructor()
 	{

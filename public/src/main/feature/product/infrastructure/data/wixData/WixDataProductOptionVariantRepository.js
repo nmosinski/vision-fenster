@@ -1,8 +1,7 @@
-const PATH = "public/src/main/feature/product/infrastructure/data/wixDb/WixDbProductOptionVariantRepository.js";
+const PATH = "public/src/main/feature/product/infrastructure/data/wixData/WixDataProductOptionVariantRepository.js";
 
 import ProductOptionVariant from "public/src/main/feature/product/model/ProductOptionVariant.js"
 import IProductOptionVariantRepository from "public/src/main/feature/product/model/IProductOptionVariantRepository.js"
-import ClonableList from "public/src/main/common/util/list/ClonableList.js"
 import KVMap from "public/src/main/common/util/map/KVMap.js"
 import WixDataRepository from "public/src/main/common/wixData/WixDataRepository.js"
 
@@ -13,7 +12,7 @@ let IMAGE_COLLECTION_NAME = "product_option_variant_image"
 let VARIANT_MAPPING = {"id":"_id", "productOptionId":"productOptionId", "title": "title"};
 let IMAGE_MAPPING = {"id":"_id", "productOptionVariantId":"productOptionVariantId", "title": "title", "image": "image"};
 
-class WixDbProductOptionVariantRepository extends IProductOptionVariantRepository(WixDataRepository)
+class WixDataProductOptionVariantRepository extends IProductOptionVariantRepository(WixDataRepository)
 {
 	constructor(authorisation=true, hooks=true)
 	{
@@ -93,4 +92,4 @@ class WixDataImageRepository extends WixDataRepository
 	}
 }
 
-export default WixDbProductOptionVariantRepository
+export default WixDataProductOptionVariantRepository
