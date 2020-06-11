@@ -12,20 +12,20 @@ import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 /**
  * @class
  * Class representing a KVMap (Key-Value-Map).
- * @param {object} [object=null] Create a KVMap from the given object.
+ * @param {elements} [elements=null] Create a KVMap from the given object.
  */
 class KVMap extends IComparable()
 {
 	/**
 	 * Create a KVMap.
 	 */
-	constructor(object={})
+	constructor(elements={})
 	{
         super();
 		this._map = {};
-       	if(JsTypes.isObject(object))
-       		for(let idx in Object.keys(object))
-       			this.add(Object.keys(object)[idx], object[Object.keys(object)[idx]]);
+       	if(JsTypes.isObject(elements))
+       		for(let idx in Object.keys(elements))
+       			this.add(Object.keys(elements)[idx], elements[Object.keys(elements)[idx]]);
 		
 	}
 

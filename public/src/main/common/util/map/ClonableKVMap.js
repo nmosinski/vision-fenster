@@ -16,14 +16,14 @@ class ClonableKVMap extends IClonable(KVMap)
 {
 	/**
 	 * Create a ClonableKVMap.
-	 * @param {object} [object=null] Create a ClonableKVMap from the given object.
+	 * @param {elements} [elements=null] Create a ClonableKVMap from the given object.
 	 */
-	constructor(object={})
+	constructor(elements={})
 	{
 		super();
-		if(JsTypes.isObject(object))
-       		for(let idx in Object.keys(object))
-       			this.add(Object.keys(object)[idx], object[Object.keys(object)[idx]]);
+		if(JsTypes.isObject(elements))
+       		for(let idx in Object.keys(elements))
+       			this.add(Object.keys(elements)[idx], elements[Object.keys(elements)[idx]]);
 	}
 
 	/**

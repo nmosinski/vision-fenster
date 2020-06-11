@@ -20,15 +20,15 @@ class ClonableList extends IClonable(List)
 	/**
 	 * Create a ClonableList.
 	 * @typedef {(IComparable | IClonable)} IComparableANDIClonable
-	 * @param {Array<IComparableANDIClonable | string | number | boolean>} [array=null] - An array of elements that the list will contain from the beginning.
+	 * @param {Array<IComparableANDIClonable | string | number | boolean>} [elements=null] - An array of elements that the list will contain from the beginning.
 	 */
-	constructor(array=[])
+	constructor(elements=[])
 	{
 		super();
 
-		if(JsTypes.isArray(array))
-			for(let idx in array)
-				this.add(array[idx]);
+		if(JsTypes.isArray(elements))
+			for(let idx in elements)
+				this.add(elements[idx]);
 	}
 
 	/**

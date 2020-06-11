@@ -15,16 +15,16 @@ class List extends IComparable()
 {
 	/**
 	 * Create a List.
-	 * @param {Array<IComparable | string | boolean | number>} [array=[]] - An array of elements that the list will contain from the beginning.
+	 * @param {Array<IComparable | string | boolean | number>} [elements=[]] - An array of elements that the list will contain from the beginning.
 	 */
-	constructor(array=[])
+	constructor(elements=[])
 	{
 		super();
 		this._elements = [];
 
-		if(JsTypes.isArray(array))
-			for(let idx in array)
-				this.add(array[idx]);
+		if(JsTypes.isArray(elements))
+			for(let idx in elements)
+				this.add(elements[idx]);
 	}
 
 	/**
@@ -91,7 +91,7 @@ class List extends IComparable()
 	/**
 	 * Get the element at the given index.
 	 * @param {number} elementIdx - The index.
-	 * @return {AnyANDIComparable} The element.
+	 * @return {?} The element.
 	 * @throws {VariableTypeError} If elementIdx is not a number.
 	 * @throws {VariableValueError} If elementIdx out of range.
 	 */
