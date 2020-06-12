@@ -3,7 +3,7 @@ const PATH = "public/src/main/feature/product/infrastructure//WindowProductConfi
 import AbstractproductConfigurator from "public/src/main/feature/product/model/AbstractProductConfigurator.js"
 import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
 
-export default class WindowProductConfigurator extends AbstractproductConfigurator
+class WindowProductConfigurator extends AbstractproductConfigurator
 {
 	constructor(productOptions, product)
 	{
@@ -35,3 +35,5 @@ export default class WindowProductConfigurator extends AbstractproductConfigurat
 		return this.product.price + 1;
 	}
 }
+
+export default WindowProductConfigurator

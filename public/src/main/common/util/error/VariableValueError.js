@@ -2,8 +2,6 @@ const PATH = "public/src/main/common/util/error/VariableValueError.js";
 
 import AbstractVariableError from "public/src/main/common/util/error/AbstractVariableError.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
-
 /**
  * @class
  * Class representing a value error of a variable.

@@ -1,14 +1,12 @@
 const PATH = "public/src/main/feature/product/model/ProductOption.js";
 
-import AbstractEntity from "public/src/main/common/AbstractEntity.js"
 import IComparable from "public/src/main/common/util/IComparable.js"
 import IClonable from "public/src/main/common/util/IClonable.js"
 import ClonableKVMap from "public/src/main/common/util/map/ClonableKVMap.js"
-import List from "public/src/main/common/util/list/List.js"
 import ProductOptionType from "public/src/main/feature/product/model/ProductOptionType.js"
 import ProductOptionVariant from "public/src/main/feature/product/model/ProductOptionVariant.js"
-import InvalidOperationError from "public/src/main/common/util/error/InvalidOperationError.js"
 
+import InvalidOperationError from "public/src/main/common/util/error/InvalidOperationError.js"
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
 

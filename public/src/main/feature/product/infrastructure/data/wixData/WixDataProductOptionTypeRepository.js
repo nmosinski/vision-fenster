@@ -8,8 +8,8 @@ import List from "public/src/main/common/util/list/List.js"
 
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
-let COLLECTION_NAME = "product_option_type"
-let MAPPING = {"id":"_id", "productModelId":"productModelId", "title": "title"};
+const COLLECTION_NAME = "product_option_type"
+const MAPPING = {"id":"_id", "productModelId":"productModelId", "title": "title"};
 
 class WixDataProductOptionTypeRepository extends IProductOptionTypeRepository(WixDataRepository)
 {

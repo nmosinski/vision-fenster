@@ -2,7 +2,6 @@ const PATH = "public/src/main/common/util/error/VariableTypeError.js";
 
 import AbstractVariableError from "public/src/main/common/util/error/AbstractVariableError.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
 /**
  * @class

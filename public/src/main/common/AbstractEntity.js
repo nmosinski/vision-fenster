@@ -9,7 +9,7 @@ import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
  * @class
  * A class representing an abstract entity.
  */
-export default class AbstractEntity
+class AbstractEntity
 {
 	/**
 	 * Create AbstractEntity.
@@ -43,3 +43,5 @@ export default class AbstractEntity
 		this._id = id;
 	}
 }
+
+export default AbstractEntity

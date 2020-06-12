@@ -3,7 +3,6 @@ const PATH = "public/src/main/common/util/list/ClonableList.js";
 import List from "public/src/main/common/util/list/List.js";
 
 import IClonable from "public/src/main/common/util/IClonable.js";
-import IComparable from "public/src/main/common/util/IComparable.js";
 
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 

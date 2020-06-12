@@ -4,7 +4,6 @@ import AbstractEntity from "public/src/main/common/AbstractEntity.js"
 import IComparable from "public/src/main/common/util/IComparable.js"
 import IClonable from "public/src/main/common/util/IClonable.js"
 import ClonableKVMap from "public/src/main/common/util/map/ClonableKVMap.js"
-import List from "public/src/main/common/util/list/List.js"
 import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
 
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"

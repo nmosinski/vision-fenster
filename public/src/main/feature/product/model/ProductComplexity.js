@@ -2,7 +2,7 @@ const PATH = "public/src/main/feature/product/model/ProductComplexity.js";
 
 import AbstractEntity from "public/src/main/common/AbstractEntity.js"
 
-class ProductComplexity
+class ProductComplexity extends AbstractEntity
 {
 	constructor(id, title)
 	{

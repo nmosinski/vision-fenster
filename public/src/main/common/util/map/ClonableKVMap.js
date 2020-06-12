@@ -4,7 +4,6 @@ import KVMap from "public/src/main/common/util/map/KVMap.js";
 import IClonable from "public/src/main/common/util/IClonable.js";
 
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
-import VariableValueError from "public/src/main/common/util/error/VariableValueError.js";
 
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 

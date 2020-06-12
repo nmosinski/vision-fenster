@@ -8,10 +8,10 @@ import WixDataRepository from "public/src/main/common/wixData/WixDataRepository.
 
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
-let VARIANT_COLLECTION_NAME = "product_option_variant"
-let IMAGE_COLLECTION_NAME = "product_option_variant_image"
-let VARIANT_MAPPING = {"id":"_id", "productOptionTypeId":"productOptionTypeId", "title": "title"};
-let IMAGE_MAPPING = {"id":"_id", "productOptionVariantId":"productOptionVariantId", "title": "title", "image": "image"};
+const VARIANT_COLLECTION_NAME = "product_option_variant"
+const IMAGE_COLLECTION_NAME = "product_option_variant_image"
+const VARIANT_MAPPING = {"id":"_id", "productOptionTypeId":"productOptionTypeId", "title": "title"};
+const IMAGE_MAPPING = {"id":"_id", "productOptionVariantId":"productOptionVariantId", "title": "title", "image": "image"};
 
 class WixDataProductOptionVariantRepository extends IProductOptionVariantRepository(WixDataRepository)
 {

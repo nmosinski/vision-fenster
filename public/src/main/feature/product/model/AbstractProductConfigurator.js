@@ -4,11 +4,10 @@ import ProductOptionChoice from "public/src/main/feature/product/model/ProductOp
 import ProductOption from "public/src/main/feature/product/model/ProductOption.js"
 
 import ClonableKVMap from "public/src/main/common/util/map/ClonableKVMap.js"
-import List from "public/src/main/common/util/list/List.js"
 
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 
-export default class AbstractProductConfigurator
+class AbstractProductConfigurator
 {
 	/**
 	 * Create AbstractProductConfigurator.
@@ -96,3 +95,5 @@ export default class AbstractProductConfigurator
 		options.values().foreach(option => {this.saveProductOption(option)});
 	}
 }
+
+export default AbstractProductConfigurator
