@@ -2,6 +2,7 @@ const PATH = "public/src/main/feature/product/model/ProductOptionType.js";
 
 import AbstractEntity from "public/src/main/common/AbstractEntity.js"
 import IComparable from "public/src/main/common/util/IComparable.js"
+import IClonable from "public/src/main/common/util/IClonable.js"
 
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
@@ -12,7 +13,7 @@ import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
  * @class
  * Class representing a type of an option of a product.
  */
-class ProductOptionType extends IComparable(AbstractEntity)
+class ProductOptionType extends IComparable(IClonable(AbstractEntity))
 {
 	/**
 	 * Create ProductOptionType.
@@ -35,13 +36,22 @@ class ProductOptionType extends IComparable(AbstractEntity)
 	{
 		if(! (o instanceof ProductOptionType))
 			return false;
-		if(!this.id === o.id)
+		if(!this._id === o.id)
 			return false;
-		if(!this.productModelId === o.productModelId)
+		if(!this._productModelId === o.productModelId)
 			return false;
-		if(!this.title === o.title)
+		if(!this._title === o.title)
 			return false;
 		return true;
+	}
+
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
+	clone()
+	{
+		return new ProductOptionType(this.id, this.productModelId, this.title);
 	}
 
 	/**

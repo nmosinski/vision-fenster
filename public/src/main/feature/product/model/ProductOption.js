@@ -2,7 +2,8 @@ const PATH = "public/src/main/feature/product/model/ProductOption.js";
 
 import AbstractEntity from "public/src/main/common/AbstractEntity.js"
 import IComparable from "public/src/main/common/util/IComparable.js"
-import KVMap from "public/src/main/common/util/map/KVMap.js"
+import IClonable from "public/src/main/common/util/IClonable.js"
+import ClonableKVMap from "public/src/main/common/util/map/ClonableKVMap.js"
 import List from "public/src/main/common/util/list/List.js"
 import ProductOptionType from "public/src/main/feature/product/model/ProductOptionType.js"
 import ProductOptionVariant from "public/src/main/feature/product/model/ProductOptionVariant.js"
@@ -16,23 +17,22 @@ import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
  * @class
  * Class representing an option of a product.
  */
-class ProductOption extends IComparable()
+class ProductOption extends IComparable(IClonable())
 {
 	/**
 	 * Create ProductOption.
 	 * @param {ProductOptionType} [type] The type of this product option.
-	 * @param {List<ProductOptionVariant>} [variants] The variants of this product option.
+	 * @param {ClonableKVMap<ProductOptionVariant>} [variants] The variants of this product option (variant id => variant).
 	 */
 	constructor(type, variants)
 	{
 		super();
 		this.type = type;
-		this.variants = new KVMap();
 
-		if(!(variants instanceof List))
-			throw new VariableTypeError(PATH, "ProductOption.constructor()", variants, "List<ProductOptionVariant>");
-		
-		variants.foreach(variant => {this.addVariant(variant)});
+		if(!(variants instanceof ClonableKVMap))
+			throw new VariableTypeError(PATH, "ProductOption.constructor()", variants, "ClonableKVMap<ProductOptionVariant>");
+		this.variants = variants;
+
 	}
 
 	/**
@@ -43,11 +43,20 @@ class ProductOption extends IComparable()
 	{
 		if(!(o instanceof ProductOption))
 			return false;
-		if(!this.type.equals(o.type))
+		if(!this._type.equals(o.type))
 			return false;
-		if(!this.variant.equals(o.variant))
+		if(!this._variants.equals(o.variants))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
+	clone()
+	{
+		return new ProductOption(this.type, this.variants);
 	}
 
 	/**
@@ -58,7 +67,8 @@ class ProductOption extends IComparable()
 	{
 		if(!(variant instanceof ProductOptionVariant))
 			throw new VariableTypeError(PATH, "ProductOption.addVariant()", variant, "ProductOptionVariant");
-		this.variants.add(variant.id, variant);
+		
+		this._variants.add(variant.id, variant);
 	}
 
 	/**
@@ -72,16 +82,8 @@ class ProductOption extends IComparable()
 			throw new VariableTypeError(PATH, "ProductOption.getVariant()", variantId, "string");
 		if(JsTypes.isEmpty(variantId))
 			throw new VariableValueError(PATH, "ProductOption.getVariant()", variantId, "string");
-		return this.variants.get(variantId);
-	}
-
-	/**
-	 * Get all product option variants.
-	 * @return {List<ProductOptionVariant>} The variants.
-	 */
-	getAllVariants()
-	{
-		return this.variants.values();
+		
+		return this._variants.get(variantId).clone();
 	}
 
 	/**
@@ -94,22 +96,8 @@ class ProductOption extends IComparable()
 			throw new VariableTypeError(PATH, "ProductOption.deleteVariant()", variantId, "string");
 		if(JsTypes.isEmpty(variantId))
 			throw new VariableValueError(PATH, "ProductOption.deleteVariant()", variantId, "string");
-		this.variants.delete(variantId);
-	}
-
-	/**
-	 * @override
-	 * @inheritDoc
-	 */
-	equals(o)
-	{
-		if(!(o instanceof ProductOption))
-			return false;
-		if(!this.type === o.type)
-			return false;
-		if(!this.variants === o.variants)
-			return false;
-		return true;
+		
+		this._variants.delete(variantId);
 	}
 
 	/**
@@ -118,7 +106,7 @@ class ProductOption extends IComparable()
 	 */
 	get type()
 	{
-		return this._type;
+		return this._type.clone();
 	}
 
 	/**
@@ -127,7 +115,7 @@ class ProductOption extends IComparable()
 	 */
 	get variants()
 	{
-		return this._variants;
+		return this._variants.clone();
 	}
 
 	/**
@@ -138,18 +126,20 @@ class ProductOption extends IComparable()
 	{
 		if(!(type instanceof ProductOptionType))
 			throw new VariableTypeError(PATH, "ProductOption.set type()", type, "ProductOptionType");
-		this._type = type;
+		this._type = type.clone();
 	}
 
 	/**
 	 * Set variants.
-	 * @param {KVMap<ProductOptionVariant>} [variants] The variants that belong to this productOption.
+	 * @param {ClonableKVMap<ProductOptionVariant>} [variants] The variants that belong to this productOption.
 	 */
 	set variants(variants)
 	{
-		if(!(variants instanceof KVMap))
-			throw new VariableTypeError(PATH, "ProductOption.set variants()", variants, "KVMap");
-		this._variants = variants;
+		if(!(variants instanceof ClonableKVMap))
+			throw new VariableTypeError(PATH, "ProductOption.set variants()", variants, "ClonableKVMap");
+		
+		this._variants = new ClonableKVMap();
+		variants.values().foreach(variant=>{this.addVariant(variant)});
 	}
 }
 

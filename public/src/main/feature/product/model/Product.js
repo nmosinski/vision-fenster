@@ -2,7 +2,8 @@ const PATH = "public/src/main/feature/product/model/Product.js";
 
 import AbstractEntity from "public/src/main/common/AbstractEntity.js"
 import IComparable from "public/src/main/common/util/IComparable.js"
-import KVMap from "public/src/main/common/util/map/KVMap.js"
+import IClonable from "public/src/main/common/util/IClonable.js"
+import ClonableKVMap from "public/src/main/common/util/map/ClonableKVMap.js"
 import List from "public/src/main/common/util/list/List.js"
 import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
 
@@ -11,31 +12,31 @@ import VariableValueError from "public/src/main/common/util/error/VariableValueE
 
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
-class Product extends IComparable(AbstractEntity)
+class Product extends IComparable(IClonable(AbstractEntity))
 {
 	/**
 	 * Create a Product.
 	 * @param {string} [id] The id of this product.
 	 * @param {string} [productModelId] The id of the product model this product belongs to.
-	 * @param {List<ProductOptionChoice> | empty} [productOptionChoices=null] A list with all productOptionChoices of this product.
+	 * @param {ClonableKVMap<ProductOptionChoice> | empty} [productOptionChoices=null] A map with all productOptionChoices of this product (product) (productOptionTypeId -> productChoice).
 	 * @param {number} [price] The price of this product.
 	 * @param {string} [image] The link to an image represeenting this product.
 	 */
-	constructor(id, productModelId, price, image, productOptionChoices)
+	constructor(id, productModelId, price, image, productOptionChoices=null)
 	{
 		super(id);
 		this.productModelId = productModelId;
-		this.productOptionChoices = new KVMap();
 		this.price = price;
 		this.image = image;
 
-		if(!(productOptionChoices instanceof List))
+		if(!(productOptionChoices instanceof ClonableKVMap))
 		{
 			if(!JsTypes.isEmpty(productOptionChoices))
-				throw new VariableTypeError(PATH, "Product.constructor()", productOptionChoices, "List");
+				throw new VariableTypeError(PATH, "Product.constructor()", productOptionChoices, "ClonableKVMap");
+			this.productOptionChoices = new ClonableKVMap();
 		}
 		else
-			productOptionChoices.foreach(productOptionChoice => {this.saveProductOptionChoice(productOptionChoice)});
+			this.productOptionChoices = productOptionChoices;
 	}
 
 	/**
@@ -46,17 +47,26 @@ class Product extends IComparable(AbstractEntity)
 	{
 		if(!(o instanceof Product))
 			return false;
-		if(this.id !== o.id)
+		if(this._id !== o.id)
 			return false;
-		if(this.productModelId !== o.produtModelId)
+		if(this._productModelId !== o.produtModelId)
 			return false;
-		if(this.productOptionChoices !== o.productOptionChoices)
+		if(this._price !== o.price)
 			return false;
-		if(this.price !== o.price)
+		if(this._image !== o.image)
 			return false;
-		if(this.image !== o.image)
+		if(this._productOptionChoices !== o.productOptionChoices)
 			return false;
 		return true;
+	}
+
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
+	clone()
+	{
+		return new Product(this.id, this.productModelId, this.price, this.image, this.productOptionChoices);
 	}
 
 	/**
@@ -67,7 +77,8 @@ class Product extends IComparable(AbstractEntity)
 	{
 		if(!(productOptionChoice instanceof ProductOptionChoice))
 			throw new VariableTypeError(PATH, "Product.saveProductOptionChoice()", productOptionChoice, "ProductOptionChoice");
-		this.productOptionChoices.add(productOptionChoice.productOptionType.id, productOptionChoice);
+		
+		this._productOptionChoices.add(productOptionChoice.productOptionType.id, productOptionChoice);
 	}
 
 	/**
@@ -81,7 +92,7 @@ class Product extends IComparable(AbstractEntity)
 		if(JsTypes.isEmpty(productOptionTypeId))
 			throw new VariableValueError(PATH, "Product.deleteProductOptionChoiceOfProductOptionTypeId()", productOptionTypeId, "string");
 
-		this.productOptionVariants.delete(productOptionTypeId);
+		this._productOptionChoices.delete(productOptionTypeId);
 	}
 
 	/**
@@ -94,7 +105,7 @@ class Product extends IComparable(AbstractEntity)
 		if(!(productOptionChoice instanceof ProductOptionChoice))
 			throw new VariableTypeError(PATH, "Product.hasProductOptionChoice()", productOptionChoice, "ProductOptionChoice");
 
-		if(!this.productOptionChoices.has(productOptionChoice))
+		if(!this._productOptionChoices.has(productOptionChoice))
 			return false;
 		return true;
 	}
@@ -111,7 +122,7 @@ class Product extends IComparable(AbstractEntity)
 		if(JsTypes.isEmpty(productOptionTypeId))
 			throw new VariableValueError(PATH, "Product.hasAnyProductOptionChoiceOfProductOptionTypeId()", productOptionTypeId, "string");
 
-		if(!this.productOptionChoices.hasAny(productOptionTypeId))
+		if(!this._productOptionChoices.hasAny(productOptionTypeId))
 			return false;
 		return true;
 	}
@@ -131,7 +142,7 @@ class Product extends IComparable(AbstractEntity)
 	 */
 	get productOptionChoices()
 	{
-		return this._productOptionChoices;
+		return this._productOptionChoices.clone();
 	}
 
 	/**
@@ -163,13 +174,15 @@ class Product extends IComparable(AbstractEntity)
 
 	/**
 	 * Set productOptionChoices.
-	 * @param {KVMap<ProductOptionChoice>} [productOptionChoices] The product option choices.
+	 * @param {ClonableKVMap<ProductOptionChoice>} [productOptionChoices] The product option choices.
 	 */
 	set productOptionChoices(productOptionChoices)
 	{
-		if(!(productOptionChoices instanceof KVMap))
-			throw new VariableTypeError(PATH, "Product. set productOptionChoices()", productOptionChoices, "KVMap<ProductOptionChoice>");
-		this._productOptionChoices = productOptionChoices;
+		if(!(productOptionChoices instanceof ClonableKVMap))
+			throw new VariableTypeError(PATH, "Product. set productOptionChoices()", productOptionChoices, "ClonableKVMap<ProductOptionChoice>");
+		
+		this._productOptionChoices = new ClonableKVMap();
+		productOptionChoices.values().foreach(choice => {this.saveProductOptionChoice(choice);});
 	}
 
 	/**

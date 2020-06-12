@@ -39,16 +39,16 @@ class ProductOptionVariant extends IComparable(IClonable(AbstractEntity))
 		if(! (object instanceof ProductOptionVariant))
 			return false;
 		
-		if(this.id !== object.id)
+		if(this._id !== object.id)
 			return false;
 
-		if(this.productOptionTypeId !== object.productOptionTypeId)
+		if(this._productOptionTypeId !== object.productOptionTypeId)
 			return false;
 
-		if(this.title !== object.title)
+		if(this._title !== object.title)
 			return false;
 
-		if(this.image !== object.image)
+		if(this._image !== object.image)
 			return false;
 		return true;
 	}

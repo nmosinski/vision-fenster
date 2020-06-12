@@ -2,6 +2,7 @@ const PATH = "public/src/main/feature/product/model/ProductOptionChoice.js";
 
 import AbstractEntity from "public/src/main/common/AbstractEntity.js"
 import IComparable from "public/src/main/common/util/IComparable.js"
+import IClonable from "public/src/main/common/util/IClonable.js"
 import KVMap from "public/src/main/common/util/map/KVMap.js"
 import ProductOptionType from "public/src/main/feature/product/model/ProductOptionType.js"
 import ProductOptionVariant from "public/src/main/feature/product/model/ProductOptionVariant.js"
@@ -15,7 +16,7 @@ import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
  * @class
  * Class representing an option choice of a product.
  */
-class ProductOptionChoice extends(IComparable())
+class ProductOptionChoice extends(IComparable(IClonable()))
 {
 	/**
 	 * Create ProductOptionChoice.
@@ -37,11 +38,20 @@ class ProductOptionChoice extends(IComparable())
 	{
 		if(!(o instanceof ProductOptionChoice))
 			return false;
-		if(!this.productOptionType === o.productOptionType)
+		if(!this._productOptionType.equals(o.productOptionType))
 			return false;
-		if(!this.productOptionVariant === o.productOptionVariant)
+		if(!this._productOptionVariant.equals(o.productOptionVariant))
 			return false;
 		return true;
+	}
+
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
+	clone()
+	{
+		return new ProductOptionChoice(this.productOptionType, this.productOptionVariant);
 	}
 
 	/**
@@ -50,7 +60,7 @@ class ProductOptionChoice extends(IComparable())
 	 */
 	get productOptionType()
 	{
-		return this._productOptionType;
+		return this._productOptionType.clone();
 	}
 
 	/**
@@ -59,7 +69,7 @@ class ProductOptionChoice extends(IComparable())
 	 */
 	get productOptionVariant()
 	{
-		return this._productOptionVariant;
+		return this._productOptionVariant.clone();
 	}
 
 	/**
@@ -70,7 +80,7 @@ class ProductOptionChoice extends(IComparable())
 	{
 		if(!(productOptionType instanceof ProductOptionType))
 			throw new VariableTypeError(PATH, "ProductOptionChoice.set productOptionType()", productOptionType, "ProductOptionType");
-		this._productOptionType = productOptionType;
+		this._productOptionType = productOptionType.clone();
 	}
 
 	/**
@@ -81,7 +91,7 @@ class ProductOptionChoice extends(IComparable())
 	{
 		if(!(productOptionVariant instanceof ProductOptionVariant))
 			throw new VariableTypeError(PATH, "ProductOptionChoice.set productOptionVariant()", productOptionVariant, "ProductOptionVariant");
-		this._productOptionVariant = productOptionVariant;
+		this._productOptionVariant = productOptionVariant.clone();
 	}
 }
 

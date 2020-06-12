@@ -12,11 +12,11 @@ export default class WindowProductConfigurator extends AbstractproductConfigurat
 
 	applyDefaultConfiguration()
 	{
-		let product = this.product;
+		let product = this._product;
 
-		this.productOptions.values().foreach((productOption)=>{
+		this._productOptions.values().foreach((productOption)=>{
 			if(!product.hasAnyProductOptionChoiceOfProductOptionTypeId(productOption.type.id))
-				this.saveProductOptionChoice(new ProductOptionChoice(productOption.type, productOption.getAllVariants().get(0)));
+				this.saveProductOptionChoice(new ProductOptionChoice(productOption.type, productOption.variants.values().get(0)));
 		});
 	}
 
