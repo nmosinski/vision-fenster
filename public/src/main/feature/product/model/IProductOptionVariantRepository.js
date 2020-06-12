@@ -11,7 +11,7 @@ const IProductOptionVariantRepository = (superclass=null) =>
 		JsTypes.isFunction(instance.saveProductOptionVariant) &&
 		JsTypes.isFunction(instance.updateProductOptionVariant) &&
 		JsTypes.isFunction(instance.deleteProductOptionVariant) &&
-		JsTypes.isFunction(instance.getProductOptionVariantsByProductOptionId); 
+		JsTypes.isFunction(instance.getProductOptionVariantsByProductOptionTypeId); 
 	}, configurable: true});
 
 	/**
@@ -22,7 +22,7 @@ const IProductOptionVariantRepository = (superclass=null) =>
 	{
 		getProductOptionVariant(productOptionVariantId){throw new NotImplementedError(PATH, "IProductOptionVariantRepository.getProductOptionVariant()");}
 
-		getProductOptionVariantsByProductOptionId(productOptionId){throw new NotImplementedError(PATH, "IProductOptionVariantRepository.getProductOptionVariantsByProductOptionId()");}
+		getProductOptionVariantsByProductOptionTypeId(productOptionTypeId){throw new NotImplementedError(PATH, "IProductOptionVariantRepository.getProductOptionVariantsByProductOptionTypeId()");}
 
 		saveProductOptionVariant(productOptionVariant){throw new NotImplementedError(PATH, "IProductOptionVariantRepository.saveProductOptionVariant()");}
 

@@ -1,6 +1,7 @@
 const PATH = "public/src/main/feature/product/infrastructure//WindowProductConfigurator.js";
 
 import AbstractproductConfigurator from "public/src/main/feature/product/model/AbstractProductConfigurator.js"
+import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
 
 export default class WindowProductConfigurator extends AbstractproductConfigurator
 {
@@ -11,12 +12,11 @@ export default class WindowProductConfigurator extends AbstractproductConfigurat
 
 	applyDefaultConfiguration()
 	{
-		let options = this.allProductOptions;
 		let product = this.product;
 
-		this.allProductOptions.values().foreach((productOption)=>{
-			if(!product.hasAnyProductOptionVariantOfProductOption(productOption.id))
-				this.setProductOptionVariant(productOption.variants.values().get(0));
+		this.productOptions.values().foreach((productOption)=>{
+			if(!product.hasAnyProductOptionChoiceOfProductOptionTypeId(productOption.type.id))
+				this.saveProductOptionChoice(new ProductOptionChoice(productOption.type, productOption.getAllVariants().get(0)));
 		});
 	}
 

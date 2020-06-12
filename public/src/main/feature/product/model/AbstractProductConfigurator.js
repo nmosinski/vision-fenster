@@ -1,18 +1,42 @@
 const PATH = "public/src/main/feature/product/model/AbstractProductConfigurator.js";
 
-import Logger from "js-logger"
+import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
+import ProductOption from "public/src/main/feature/product/model/ProductOption.js"
+
+import KVMap from "public/src/main/common/util/map/KVMap.js"
+import List from "public/src/main/common/util/list/List.js"
+
+import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 
 export default class AbstractProductConfigurator
 {
-	constructor(allProductOptions, product)
+	/**
+	 * Create AbstractProductConfigurator.
+	 * @param {List<ProductOption>} [productOptions] ProductOptions belonging to the actual product being configurated.
+	 */
+	constructor(productOptions, product)
 	{
-		this.allProductOptions = allProductOptions;
+		this.productOptions = new KVMap();
 		this.product = product;
+
+		if(!(productOptions instanceof List))
+			throw new VariableTypeError(PATH, "AbstractProductConfigurator.constructor()", productOptions, "List<ProductOptions>");
+
+		productOptions.foreach(productOption => {this.saveProductOption(productOption)});
 	}
 
-	selectProductOptionVariant(productOptionId, productOptionVariantId)
+	saveProductOption(productOption)
 	{
-		this.setProductOptionVariant(this.allProductOptions.get(productOptionId).variants.get(productOptionVariantId));
+		if(!(productOption instanceof ProductOption))
+			throw new VariableTypeError(PATH, "AbstractProductConfigurator.saveProductOption()", productOption, "ProductOption");
+
+		this.productOptions.add(productOption.type.id, productOption);
+	}
+
+	selectProductOptionChoice(productOptionTypeId, productOptionVariantId)
+	{
+		let productOption = this.productOptions.get(productOptionTypeId);
+		this.saveProductOptionChoice(new ProductOptionChoice(productOption.type, productOption.variants.get(productOptionVariantId)));
 	}
 
 	getValidProductOptionVariants(productOptionId)
@@ -24,11 +48,11 @@ export default class AbstractProductConfigurator
 		*/
 	}
 
-	setProductOptionVariant(variant)
+	saveProductOptionChoice(productOptionChoice)
 	{
-		this.product.addProductOptionVariant(variant);
-		if(this.allProductOptions.get(variant.productOptionId).type === "Offnungsart")
-			this.product.image = variant.image;
+		this.product.saveProductOptionChoice(productOptionChoice);
+		if(productOptionChoice.productOptionType.title === "Offnungsart")
+			this.product.image = productOptionChoice.productOptionVariant.image;
 		this.product.price = this.calculatePrice();
 	}
 
@@ -57,9 +81,9 @@ export default class AbstractProductConfigurator
 		return this._product;
 	}
 
-	get allProductOptions()
+	get productOptions()
 	{
-		return this._allProductOptions;
+		return this._productOptions;
 	}
 
 	set product(product)
@@ -67,8 +91,8 @@ export default class AbstractProductConfigurator
 		this._product = product;
 	}
 
-	set allProductOptions(options)
+	set productOptions(options)
 	{
-		this._allProductOptions = options;
+		this._productOptions = options;
 	}
 }
