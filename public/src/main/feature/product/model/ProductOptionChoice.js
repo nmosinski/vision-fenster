@@ -9,6 +9,7 @@ import ProductOptionVariant from "public/src/main/feature/product/model/ProductO
 
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
+import InvalidOperationError from "public/src/main/common/util/error/InvalidOperationError.js"
 
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
@@ -78,6 +79,8 @@ class ProductOptionChoice extends(IComparable(IClonable()))
 	 */
 	set productOptionType(productOptionType)
 	{
+		if(!(JsTypes.isEmpty(this._productOptionType)))
+			throw new InvalidOperationError(PATH, "ProductOptionChoice.set productOptionType()", "Can not change productOptionType after it has been set.");
 		if(!(productOptionType instanceof ProductOptionType))
 			throw new VariableTypeError(PATH, "ProductOptionChoice.set productOptionType()", productOptionType, "ProductOptionType");
 		this._productOptionType = productOptionType.clone();
@@ -91,6 +94,8 @@ class ProductOptionChoice extends(IComparable(IClonable()))
 	{
 		if(!(productOptionVariant instanceof ProductOptionVariant))
 			throw new VariableTypeError(PATH, "ProductOptionChoice.set productOptionVariant()", productOptionVariant, "ProductOptionVariant");
+		if(productOptionVariant.productOptionTypeId !== this._productOptionType.id)
+			throw new VariableValueError(PATH, "ProductOptionChoice.set productOptionVariant()", productOptionVariant, "ProductOptionVariant has to have same productOptionTypeId as the productOptionType");
 		this._productOptionVariant = productOptionVariant.clone();
 	}
 }

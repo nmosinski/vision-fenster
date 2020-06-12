@@ -9,6 +9,7 @@ import ProductOptionChoice from "public/src/main/feature/product/model/ProductOp
 
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
+import InvalidOperationError from "public/src/main/common/util/error/InvalidOperationError.js"
 
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
@@ -77,7 +78,9 @@ class Product extends IComparable(IClonable(AbstractEntity))
 	{
 		if(!(productOptionChoice instanceof ProductOptionChoice))
 			throw new VariableTypeError(PATH, "Product.saveProductOptionChoice()", productOptionChoice, "ProductOptionChoice");
-		
+		if(productOptionChoice.productOptionType.productModelId !== this._productModelId)
+			throw new VariableValueError(PATH, "Product.saveProductOptionChoice()", productOptionChoice, "ProductOptionChoice must be compatible with the given productModelId (" + this._productModelId + ")");
+
 		this._productOptionChoices.add(productOptionChoice.productOptionType.id, productOptionChoice);
 	}
 
@@ -169,6 +172,13 @@ class Product extends IComparable(IClonable(AbstractEntity))
 	 */
 	set productModelId(productModelId)
 	{
+		if(!JsTypes.isEmpty(this._productOptionChoices))
+			throw new InvalidOperationError(PATH, "Product.set productModelId()", "Can not cange productModelId after it has been set.");
+		if(!JsTypes.isString(productModelId))
+			throw new VariableTypeError(PATH, "Product.set productModelId()", productModelId, "string");
+		if(JsTypes.isEmpty(productModelId))
+			throw new VariableValueError(PATH, "Product.set productModelId()", productModelId, "Not empty string");
+		
 		this._productModelId = productModelId;
 	}
 

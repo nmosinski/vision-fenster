@@ -7,6 +7,7 @@ import ClonableKVMap from "public/src/main/common/util/map/ClonableKVMap.js"
 import List from "public/src/main/common/util/list/List.js"
 import ProductOptionType from "public/src/main/feature/product/model/ProductOptionType.js"
 import ProductOptionVariant from "public/src/main/feature/product/model/ProductOptionVariant.js"
+import InvalidOperationError from "public/src/main/common/util/error/InvalidOperationError.js"
 
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
@@ -27,10 +28,8 @@ class ProductOption extends IComparable(IClonable())
 	constructor(type, variants)
 	{
 		super();
-		this.type = type;
 
-		if(!(variants instanceof ClonableKVMap))
-			throw new VariableTypeError(PATH, "ProductOption.constructor()", variants, "ClonableKVMap<ProductOptionVariant>");
+		this.type = type;
 		this.variants = variants;
 
 	}
@@ -67,6 +66,8 @@ class ProductOption extends IComparable(IClonable())
 	{
 		if(!(variant instanceof ProductOptionVariant))
 			throw new VariableTypeError(PATH, "ProductOption.addVariant()", variant, "ProductOptionVariant");
+		if(variant.productOptionTypeId !== this._type.id)
+			throw new VariableValueError(PATH, "ProductOption.addVariant()", variant, "ProductOptionVariant has to have same productOptionTypeId as the productOptionType");
 		
 		this._variants.add(variant.id, variant);
 	}
@@ -124,8 +125,11 @@ class ProductOption extends IComparable(IClonable())
 	 */
 	set type(type)
 	{
+		if(!(JsTypes.isEmpty(this._type)))
+			throw new InvalidOperationError(PATH, "ProductOption.set type()", "Can not change type after it has been set.");
 		if(!(type instanceof ProductOptionType))
 			throw new VariableTypeError(PATH, "ProductOption.set type()", type, "ProductOptionType");
+		
 		this._type = type.clone();
 	}
 
