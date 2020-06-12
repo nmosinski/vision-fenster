@@ -51,7 +51,7 @@ class WixData
 		if(JsTypes.isEmpty(collectionName))
 			throw new VariableValueError(PATH, "WixData.query()", collectionName, "The name of the collection, not empty.");
 		
-		if(!JsTypes.isNumber())
+		if(!JsTypes.isNumber(itemLimit))
 			throw new VariableTypeError(PATH, "WixData.query()", itemLimit, "number");
 		if(itemLimit < 1)
 			throw new VariableValueError(PATH, "WixData.query()", itemLimit, "Limit > 0");

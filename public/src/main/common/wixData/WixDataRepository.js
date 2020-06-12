@@ -89,7 +89,7 @@ class WixDataRepository
 	 */
 	query(itemLimit = 50)
 	{
-		if(!JsTypes.isNumber())
+		if(!JsTypes.isNumber(itemLimit))
 			throw new VariableTypeError(PATH, "WixDataRepository.query()", itemLimit, "number");
 		if(itemLimit < 1)
 			throw new VariableValueError(PATH, "WixDataRepository.query()", itemLimit, "Limit > 0");
