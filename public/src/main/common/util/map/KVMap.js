@@ -167,6 +167,15 @@ class KVMap extends IComparable()
 	{
 		return new List(Object.values(this._map));
 	}
+
+	/**
+	 * Create a copy of this KVMap that refers to the same elements.
+	 * @return {KVMap} A shallow copy of this KVMap.
+	 */
+	shallowCopy()
+	{
+		return new KVMap(this.toObject());
+	}
 }
 
 export default KVMap;

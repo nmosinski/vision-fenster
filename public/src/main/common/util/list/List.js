@@ -157,6 +157,15 @@ class List extends IComparable()
 	{
 		return this._elements.length;
 	}
+
+	/**
+	 * Create a copy of this list that refers to the same elements.
+	 * @return {List} A shallow copy of this list.
+	 */
+	shallowCopy()
+	{
+		return new List(this.toArray());
+	}
 }
 
 export default List;
