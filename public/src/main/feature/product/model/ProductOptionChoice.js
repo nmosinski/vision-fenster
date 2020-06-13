@@ -15,7 +15,7 @@ import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
  * @class
  * Class representing an option choice of a product.
  */
-class ProductOptionChoice extends(IComparable(IClonable()))
+class ProductOptionChoice extends IComparable(IClonable())
 {
 	/**
 	 * Create ProductOptionChoice.

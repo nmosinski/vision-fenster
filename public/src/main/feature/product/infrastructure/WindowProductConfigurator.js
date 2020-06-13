@@ -1,9 +1,9 @@
 const PATH = "public/src/main/feature/product/infrastructure//WindowProductConfigurator.js";
 
-import AbstractproductConfigurator from "public/src/main/feature/product/model/AbstractProductConfigurator.js"
+import AbstractProductConfigurator from "public/src/main/feature/product/model/AbstractProductConfigurator.js"
 import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
 
-class WindowProductConfigurator extends AbstractproductConfigurator
+class WindowProductConfigurator extends AbstractProductConfigurator
 {
 	constructor(productOptions, product)
 	{
