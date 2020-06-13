@@ -22,7 +22,7 @@ class KVMap extends IComparable()
 	constructor(elements={})
 	{
         super();
-		this._map = {};
+		this._elements = {};
        	if(JsTypes.isObject(elements))
        		for(let idx in Object.keys(elements))
        			this.add(Object.keys(elements)[idx], elements[Object.keys(elements)[idx]]);
@@ -72,7 +72,7 @@ class KVMap extends IComparable()
 		if(JsTypes.isEmpty(key))
 			throw new VariableValueError(PATH, "KVMap.get(key)", key, "A not empty string");
 		
-		return this._map[key];
+		return this._elements[key];
 	}
 
 	/**
@@ -89,7 +89,7 @@ class KVMap extends IComparable()
 		if(JsTypes.isEmpty(key))
 			throw new VariableValueError(PATH, "KVMap.add(key, value)", key, "A not empty string");
 
-		this._map[key] = value;
+		this._elements[key] = value;
 	}
 
 	/**
@@ -103,7 +103,7 @@ class KVMap extends IComparable()
 		if(JsTypes.isEmpty(key))
 			throw new VariableValueError(PATH, "KVMap.add(key, value)", key, "A not empty string");
 		
-		delete this._map.key;
+		delete this._elements.key;
 	}
 
 	/**
@@ -156,7 +156,7 @@ class KVMap extends IComparable()
      */
 	keys()
 	{
-		return new List(Object.keys(this._map));
+		return new List(Object.keys(this._elements));
 	}
 
     /**
@@ -165,7 +165,7 @@ class KVMap extends IComparable()
      */
 	values()
 	{
-		return new List(Object.values(this._map));
+		return new List(Object.values(this._elements));
 	}
 
 	/**

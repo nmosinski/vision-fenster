@@ -37,16 +37,16 @@ class WixDataRepository
 	 * @param {object} [o] The object to be transformed.
 	 * @return {object} The wix db item.
 	 */
-	toItem(o)
+	_toItem(o)
 	{
-		if(JsTypes.isEmpty(this.mapping))
+		if(JsTypes.isEmpty(this._mapping))
 			return o;
 
 		if(!JsTypes.isObject(o))
-			throw new VariableTypeError(PATH, "WixDataRepository.toItem()", o, "object");
+			throw new VariableTypeError(PATH, "WixDataRepository._toItem()", o, "object");
 		
 		let i = {};
-		this.mapping.keys().foreach(key => i[this.mapping.get(key)] = o[key]);
+		this._mapping.keys().foreach(key => i[this._mapping.get(key)] = o[key]);
 		return i;
 	}
 
@@ -55,16 +55,16 @@ class WixDataRepository
 	 * @param {object} [i] The item to be transformed.
 	 * @return {object} The resulting object.
 	 */
-	toObject(i)
+	_toObject(i)
 	{
-		if(JsTypes.isEmpty(this.mapping))
+		if(JsTypes.isEmpty(this._mapping))
 			return i;
 
 		if(!JsTypes.isObject(i))
-			throw new VariableTypeError(PATH, "WixDataRepository.toObject()", i, "object");
+			throw new VariableTypeError(PATH, "WixDataRepository._toObject()", i, "object");
 
 		let o = {};
-		this.mapping.keys().foreach(key => o[key] = i[this.mapping.get(key)]);
+		this._mapping.keys().foreach(key => o[key] = i[this._mapping.get(key)]);
 		return o;
 	}
 
@@ -80,7 +80,7 @@ class WixDataRepository
 		if(JsTypes.isEmpty(itemId))
 			throw new VariableValueError(PATH, "WixDataRepository.get()", itemId, "The id of the item, not empty.");
 
-		return WixData.get(this.collectionName, itemId, this._options).then((item) => {return (JsTypes.isEmpty(item))?null:this.toObject(item);});
+		return WixData.get(this.collectionName, itemId, this._options).then((item) => {return (JsTypes.isEmpty(item))?null:this._toObject(item);});
 	}
 
 	/**
@@ -111,7 +111,7 @@ class WixDataRepository
 		return query.find().then((result) => {
 			let ret = [];
 			for(let idx in result.items)
-				ret.push((JsTypes.isEmpty(result.items[idx]))?null:this.toObject(result.items[idx]));
+				ret.push((JsTypes.isEmpty(result.items[idx]))?null:this._toObject(result.items[idx]));
 			return ret;
 		});
 	} 
@@ -125,7 +125,7 @@ class WixDataRepository
 		if(JsTypes.isEmpty(object))
 			throw new VariableTypeError(PATH, "WixDataRepository.insert()", object, "object");
 
-		await WixData.insert(this.collectionName, this.toItem(object), this._options);
+		await WixData.insert(this.collectionName, this._toItem(object), this._options);
 	}
 
 	/**
@@ -137,7 +137,7 @@ class WixDataRepository
 		if(JsTypes.isEmpty(object))
 			throw new VariableTypeError(PATH, "WixDataRepository.save()", object, "Object.");
 
-		await WixData.save(this.collectionName, this.toItem(object), this._options);
+		await WixData.save(this.collectionName, this._toItem(object), this._options);
 	}
 
 	/**
@@ -149,7 +149,7 @@ class WixDataRepository
 		if(JsTypes.isEmpty(object))
 			throw new VariableTypeError(PATH, "WixDataRepository.update()", object, "Object.");
 
-		await WixData.update(this.collectionName, this.toItem(object), this._options);
+		await WixData.update(this.collectionName, this._toItem(object), this._options);
 	}
 
 	/**
@@ -218,15 +218,6 @@ class WixDataRepository
 	get collectionName()
 	{	
 		return this._collectionName;
-	}
-
-	/**
-	 * Get mapping.
-	 * @return {KVMap} The mapping between an js object and an wix db item.
-	 */
-	get mapping()
-	{
-		return this._mapping;
 	}
 
 	/**
