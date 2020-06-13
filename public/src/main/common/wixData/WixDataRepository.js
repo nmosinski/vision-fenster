@@ -237,4 +237,4 @@ class WixDataRepository
 	}
 }
 
-export default WixDataRepository
+export default WixDataRepository;

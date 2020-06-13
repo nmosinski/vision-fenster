@@ -32,4 +32,4 @@ class ProductModel extends AbstractEntity
 	}
 }
 
-export default ProductModel
+export default ProductModel;

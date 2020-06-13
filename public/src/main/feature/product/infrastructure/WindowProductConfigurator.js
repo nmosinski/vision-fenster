@@ -36,4 +36,4 @@ class WindowProductConfigurator extends AbstractProductConfigurator
 	}
 }
 
-export default WindowProductConfigurator
+export default WindowProductConfigurator;

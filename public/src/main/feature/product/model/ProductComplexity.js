@@ -21,4 +21,4 @@ class ProductComplexity extends AbstractEntity
 	}
 }
 
-export default ProductComplexity
+export default ProductComplexity;

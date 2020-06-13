@@ -180,4 +180,4 @@ class WixData
 	}
 }
 
-export default WixData
+export default WixData;

@@ -47,4 +47,4 @@ class AbstractEntity
 	}
 }
 
-export default AbstractEntity
+export default AbstractEntity;

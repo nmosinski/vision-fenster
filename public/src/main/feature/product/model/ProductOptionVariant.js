@@ -138,4 +138,4 @@ class ProductOptionVariant extends IComparable(IClonable(AbstractEntity))
 	}
 }
 
-export default ProductOptionVariant
+export default ProductOptionVariant;

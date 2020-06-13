@@ -108,4 +108,4 @@ class JsTypes
     }
 }
 
-export default JsTypes
+export default JsTypes;

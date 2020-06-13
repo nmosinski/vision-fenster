@@ -221,4 +221,4 @@ class Product extends IComparable(IClonable(AbstractEntity))
 	}
 }
 
-export default Product
+export default Product;

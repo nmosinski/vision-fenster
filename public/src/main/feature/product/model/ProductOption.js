@@ -145,4 +145,4 @@ class ProductOption extends IComparable(IClonable())
 	}
 }
 
-export default ProductOption
+export default ProductOption;

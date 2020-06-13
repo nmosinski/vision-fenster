@@ -21,4 +21,4 @@ class ProductCategory extends AbstractEntity
 	}
 }
 
-export default ProductCategory
+export default ProductCategory;
