@@ -107,7 +107,7 @@ class List extends IComparable()
 	 */
 	delete(elementIdx)
 	{
-		if(typeof elementIdx !== "number")
+		if(!JsTypes.isNumber(elementIdx))
 			throw new VariableTypeError(PATH, "List.get(elementIdx)", elementIdx, "Number");
 
 		if(elementIdx < 0 || elementIdx >= this.length())
