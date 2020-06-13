@@ -16,7 +16,7 @@ const IComparable = (superclass=null) =>
 	 * @alias IComparable
 	 * @interface
 	 */
-	let C = class extends superclass
+	const C = class extends superclass
 	{
 		/**
 		 * Compares an object to this object checking for equality.

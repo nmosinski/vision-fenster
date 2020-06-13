@@ -16,7 +16,7 @@ const IClonable = (superclass=null) =>
 	 * @alias IClonable
 	 * @interface
 	 */
-	let C = class extends superclass
+	const C = class extends superclass
 	{
 		/**
 		 * Clones this object.

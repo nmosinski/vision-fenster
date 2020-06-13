@@ -43,9 +43,9 @@ class JsTypes
 			return true;
 		if(JsTypes.isObject(o) && Object.keys(o).length === 0)
 			return true;
-		if(o instanceof List && o.length() === 0)
+		if((o instanceof List) && o.length() === 0)
 			return true;
-		if(o instanceof KVMap && o.keys().length() === 0)
+		if((o instanceof KVMap) && o.keys().length() === 0)
 			return true;
 		return false;
 	}
