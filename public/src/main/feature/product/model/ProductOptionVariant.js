@@ -128,7 +128,7 @@ class ProductOptionVariant extends IComparable(IClonable(AbstractEntity))
 			else
 				throw new VariableValueError(PATH, "ProductOptionVariant.set image()", image, "Not empty string or empty");
 		}
-		else if(JsTypes.isEmpty(image))
+		else if(JsTypes.isUnspecified(image))
 		{
 				this._image = image;
 		}

@@ -28,9 +28,7 @@ class InvalidOperationError extends AbstractUncheckedError
 	 */
 	toString()
 	{
-		if(!JsTypes.isEmpty(this.explanation))
-			return super.toString() + "\nExplanation: " + this.explanation;
-		else return super.toString();
+		return super.toString() + "\nExplanation: " + this.explanation;
 	}
 
 	/**

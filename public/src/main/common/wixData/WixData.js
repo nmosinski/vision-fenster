@@ -67,7 +67,7 @@ class WixData
 	 */
 	static async find(query)
 	{
-		if(JsTypes.isEmpty(query))
+		if(JsTypes.isUnspecified(query))
 			throw new VariableTypeError(PATH, "WixData.find()", query, "A wix-data query.");
 
 		return query.find().then((result) => {return result;}).catch(err=>{throw new ForeignError(PATH, "WixData.get(...)", err)});
@@ -87,7 +87,7 @@ class WixData
 		if(JsTypes.isEmpty(collectionName))
 			throw new VariableValueError(PATH, "WixData.insert()", collectionName, "The name of the collection, not empty.");
 
-		if(JsTypes.isEmpty(item))
+		if(JsTypes.isUnspecified(item))
 			throw new VariableTypeError(PATH, "WixData.insert()", item, "Object.");
 
 		try
@@ -113,7 +113,7 @@ class WixData
 		if(JsTypes.isEmpty(collectionName))
 			throw new VariableValueError(PATH, "WixData.save()", collectionName, "The name of the collection, not empty.");
 
-		if(JsTypes.isEmpty(item))
+		if(JsTypes.isUnspecified(item))
 			throw new VariableTypeError(PATH, "WixData.save()", item, "Object.");
 
 		try
@@ -139,7 +139,7 @@ class WixData
 		if(JsTypes.isEmpty(collectionName))
 			throw new VariableValueError(PATH, "WixData.update()", collectionName, "The name of the collection, not empty.");
 
-		if(JsTypes.isEmpty(item))
+		if(JsTypes.isUnspecified(item))
 			throw new VariableTypeError(PATH, "WixData.update()", item, "Object.");
 
 		try

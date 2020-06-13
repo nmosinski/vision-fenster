@@ -39,11 +39,8 @@ class WixDataRepository
 	 */
 	_toItem(o)
 	{
-		if(JsTypes.isEmpty(this._mapping))
+		if(JsTypes.isUnspecified(this._mapping) || JsTypes.isUnspecified(i))
 			return o;
-
-		if(!JsTypes.isObject(o))
-			throw new VariableTypeError(PATH, "WixDataRepository._toItem()", o, "object");
 		
 		let i = {};
 		this._mapping.keys().foreach(key => i[this._mapping.get(key)] = o[key]);
@@ -57,11 +54,8 @@ class WixDataRepository
 	 */
 	_toObject(i)
 	{
-		if(JsTypes.isEmpty(this._mapping))
+		if(JsTypes.isUnspecified(this._mapping) || JsTypes.isUnspecified(i))
 			return i;
-
-		if(!JsTypes.isObject(i))
-			throw new VariableTypeError(PATH, "WixDataRepository._toObject()", i, "object");
 
 		let o = {};
 		this._mapping.keys().foreach(key => o[key] = i[this._mapping.get(key)]);
@@ -80,7 +74,7 @@ class WixDataRepository
 		if(JsTypes.isEmpty(itemId))
 			throw new VariableValueError(PATH, "WixDataRepository.get()", itemId, "The id of the item, not empty.");
 
-		return WixData.get(this.collectionName, itemId, this._options).then((item) => {return (JsTypes.isEmpty(item))?null:this._toObject(item);});
+		return WixData.get(this.collectionName, itemId, this._options).then((item) => {return this._toObject(item);});
 	}
 
 	/**
@@ -105,13 +99,13 @@ class WixDataRepository
 	 */
 	async find(query)
 	{
-		if(JsTypes.isEmpty(query))
+		if(JsTypes.isUnspecified(query))
 			throw new VariableTypeError(PATH, "WixDataRepository.find()", query, "A wix-data query.");
 
 		return query.find().then((result) => {
 			let ret = [];
 			for(let idx in result.items)
-				ret.push((JsTypes.isEmpty(result.items[idx]))?null:this._toObject(result.items[idx]));
+				ret.push(this._toObject(result.items[idx]));
 			return ret;
 		});
 	} 
@@ -122,7 +116,7 @@ class WixDataRepository
 	 */
 	async insert(object)
 	{
-		if(JsTypes.isEmpty(object))
+		if(JsTypes.isUnspecified(object))
 			throw new VariableTypeError(PATH, "WixDataRepository.insert()", object, "object");
 
 		await WixData.insert(this.collectionName, this._toItem(object), this._options);
@@ -134,7 +128,7 @@ class WixDataRepository
 	 */
 	async save(object)
 	{
-		if(JsTypes.isEmpty(object))
+		if(JsTypes.isUnspecified(object))
 			throw new VariableTypeError(PATH, "WixDataRepository.save()", object, "Object.");
 
 		await WixData.save(this.collectionName, this._toItem(object), this._options);
@@ -146,7 +140,7 @@ class WixDataRepository
 	 */
 	async update(object)
 	{
-		if(JsTypes.isEmpty(object))
+		if(JsTypes.isUnspecified(object))
 			throw new VariableTypeError(PATH, "WixDataRepository.update()", object, "Object.");
 
 		await WixData.update(this.collectionName, this._toItem(object), this._options);
@@ -186,11 +180,15 @@ class WixDataRepository
 	 */
 	set mapping(mapping)
 	{
-		if(!JsTypes.isEmpty(mapping))
+		if(!JsTypes.isUnspecified(mapping))
+		{
 			if(!(mapping instanceof KVMap))
 				throw new VariableTypeError(PATH, "WixDataRepository.set mapping(...)", mapping, "KVMap or empty");
-
-		this._mapping = mapping;
+			else
+				this._mapping = mapping;
+		}
+		else
+			this._mapping = mapping;
 	}
 
 	set authorisation(authorisation)

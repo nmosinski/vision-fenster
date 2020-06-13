@@ -31,7 +31,7 @@ class Product extends IComparable(IClonable(AbstractEntity))
 
 		if(!(productOptionChoices instanceof ClonableKVMap))
 		{
-			if(!JsTypes.isEmpty(productOptionChoices))
+			if(!JsTypes.isUnspecified(productOptionChoices))
 				throw new VariableTypeError(PATH, "Product.constructor()", productOptionChoices, "ClonableKVMap");
 			this.productOptionChoices = new ClonableKVMap();
 		}

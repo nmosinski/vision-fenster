@@ -32,11 +32,10 @@ class AbstractVariableError extends AbstractUncheckedError
 	toString()
 	{
 		let ret = super.toString();
-		if(!JsTypes.isEmpty(this.subject))
-			ret += "\n" + JSON.stringify(this.subject);
+		
+		ret += "\n" + JSON.stringify(this.subject);
 
-		if(!JsTypes.isEmpty(this.expected))
-			ret += "\nExpected: " + this.expected;
+		ret += "\nExpected: " + this.expected;
 
 		return ret;
 	}

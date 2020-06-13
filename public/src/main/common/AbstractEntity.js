@@ -36,7 +36,7 @@ class AbstractEntity
 	 */
 	set id(id)
 	{
-		if(!JsTypes.isEmpty(this._id))
+		if(!JsTypes.isUnspecified(this._id))
 			throw new InvalidOperationError(PATH, "AbstractEntity.set id()", "Id of an entity can not be redefined.");
 		if(!JsTypes.isString(id))
 			throw new VariableTypeError(PATH, "AbstractEntity.set id()", id, "string");

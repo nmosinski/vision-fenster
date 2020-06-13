@@ -1,5 +1,8 @@
 const PATH = "public/src/main/common/util/jsTypes/JsTypes.js";
 
+import List from "public/src/main/common/util/list/List.js"
+import KVMap from "public/src/main/common/util/map/KVMap.js"
+
 /**
  * @class
  * Provides helper methods for type checking.
@@ -34,10 +37,28 @@ class JsTypes
 	 */
 	static isEmpty(o)
 	{
-		if(o === null || o === undefined)
-			return true;
 		if(JsTypes.isString(o) && o === "")
 			return true;
+		if(JsTypes.isArray(o) && o.length === 0)
+			return true;
+		if(JsTypes.isObject(o) && Object.keys(o).length === 0)
+			return true;
+		if(o instanceof List && o.length() === 0)
+			return true;
+		if(o instanceof KVMap && o.keys().length() === 0)
+			return true;
+		return false;
+	}
+
+	/**
+	 * Check if the given object is unspecified (null or undefined).
+	 * @param {?} [o] The object to be checked for.
+	 */
+	static isUnspecified(o)
+	{
+		if(o === null || o === undefined)
+			return true;
+
 		return false;
 	}
 
@@ -83,7 +104,7 @@ class JsTypes
 	 */
     static isObject(o)
     {
-    	return typeof(o) === "object" && !JsTypes.isEmpty(o);
+    	return typeof(o) === "object" && !JsTypes.isUnspecified(o);
     }
 }
 

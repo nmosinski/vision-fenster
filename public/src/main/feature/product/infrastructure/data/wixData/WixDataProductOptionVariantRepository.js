@@ -28,7 +28,7 @@ class WixDataProductOptionVariantRepository extends IProductOptionVariantReposit
 	async getProductOptionVariant(productOptionVariantId)
 	{
 		return this.get(productOptionVariantId).then((v) => {
-			return (JsTypes.isEmpty(v))?null:this._wixDataImageRepository.getImage(productOptionVariantId).then((image) => {
+			return (JsTypes.isUnspecified(v))?null:this._wixDataImageRepository.getImage(productOptionVariantId).then((image) => {
                 return new ProductOptionVariant(v.id, v.productOptionId, v.title, image);
 			});	
 		});
@@ -42,7 +42,7 @@ class WixDataProductOptionVariantRepository extends IProductOptionVariantReposit
 	{
 		let query = this.query().eq("productOptionTypeId", productOptionTypeId);
 		let objects = await this.find(query);
-		if(JsTypes.isEmpty(objects))
+		if(JsTypes.isUnspecified(objects))
 			return null;
 			
 		let variants = new List();
@@ -98,7 +98,7 @@ class WixDataImageRepository extends WixDataRepository
 
 	async getImage(productOptionVariantId)
 	{
-		return this.get(productOptionVariantId).then(object=>{return (JsTypes.isEmpty(object))?null:object.image});
+		return this.get(productOptionVariantId).then(object=>{return (JsTypes.isUnspecified(object))?null:object.image});
 	}
 
 	async saveImage(productOptionVariant)

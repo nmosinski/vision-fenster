@@ -77,7 +77,7 @@ class ProductOptionChoice extends(IComparable(IClonable()))
 	 */
 	set productOptionType(productOptionType)
 	{
-		if(!(JsTypes.isEmpty(this._productOptionType)))
+		if(!(JsTypes.isUnspecified(this._productOptionType)))
 			throw new InvalidOperationError(PATH, "ProductOptionChoice.set productOptionType()", "Can not change productOptionType after it has been set.");
 		if(!(productOptionType instanceof ProductOptionType))
 			throw new VariableTypeError(PATH, "ProductOptionChoice.set productOptionType()", productOptionType, "ProductOptionType");

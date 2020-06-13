@@ -2,8 +2,6 @@ const PATH = "public/src/main/common/util/error/ForeignError.js";
 
 import AbstractUncheckedError from "public/src/main/common/util/error/AbstractUncheckedError.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
-
 /**
  * @class
  * Class representing an error thrown by foreign libraries.
@@ -28,9 +26,7 @@ class ForeignError extends AbstractUncheckedError
 	 */
 	toString()
 	{
-		if(!JsTypes.isEmpty(this.error))
-			return super.toString() + "\n" + JSON.stringify(this.error);
-		else return super.toString();
+		return super.toString() + "\nError: " + JSON.stringify(this.error);
 	}
 
 	/**
