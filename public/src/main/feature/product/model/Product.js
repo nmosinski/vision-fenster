@@ -171,7 +171,7 @@ class Product extends IComparable(IClonable(AbstractEntity))
 	 */
 	set productModelId(productModelId)
 	{
-		if(!JsTypes.isEmpty(this._productOptionChoices))
+		if(!JsTypes.isUnspecified(this._productModelId))
 			throw new InvalidOperationError(PATH, "Product.set productModelId()", "Can not cange productModelId after it has been set.");
 		if(!JsTypes.isString(productModelId))
 			throw new VariableTypeError(PATH, "Product.set productModelId()", productModelId, "string");
