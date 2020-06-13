@@ -2,7 +2,6 @@ const PATH = "public/src/main/common/util/error/InvalidOperationError.js";
 
 import AbstractUncheckedError from "public/src/main/common/util/error/AbstractUncheckedError.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
 /**
  * @class

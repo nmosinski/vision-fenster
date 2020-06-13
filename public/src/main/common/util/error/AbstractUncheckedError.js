@@ -2,8 +2,6 @@ const PATH = "public/src/main/common/util/error/AbstractUncheckedError.js";
 
 import AbstractError from "public/src/main/common/util/error/AbstractError.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
-
 /**
  * @class
  * Class representing an abstract unchecked error. Unchecked errors are never being catched because they can not be handled.
