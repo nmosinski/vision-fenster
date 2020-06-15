@@ -24,6 +24,7 @@ const IProductRepository = (superclass=null) =>
 		 * Get Product.
 		 * @param  {string} productId - The id of Product.
 		 * @return {Product} The Product.
+		 * @throws {EntityNotFoundError} If the requested entity doesnt't exist.
 		 */
 		getProduct(productId){throw new NotImplementedError(PATH, "IProductRepository.getProduct()");}
 
@@ -31,6 +32,7 @@ const IProductRepository = (superclass=null) =>
 		 * Get all Products with the given product model id.
 		 * @param  {string} productModelId - The product model id.
 		 * @return {List<Product>} A list with the requested Products.
+		 * @throws {EntityNotFoundError} If no entity matching the request exists.
 		 */
 		getProductsByProductModelId(productModelId){throw new NotImplementedError(PATH, "IProductRepository.getProductsByProductModelId()");}
 

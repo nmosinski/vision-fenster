@@ -24,6 +24,7 @@ const IProductOptionTypeRepository = (superclass=null) =>
 		 * Get ProductOptionType.
 		 * @param  {string} productOptionTypeId - The id of ProductOptionType.
 		 * @return {ProductOptionType} The ProductOptionType.
+		 * @throws {EntityNotFoundError} If the requested entity doesnt't exist.
 		 */
 		getProductOptionType(productOptionTypeId){throw new NotImplementedError(PATH, "IProductOptionTypeRepository.getProductOptionType()");}
 
@@ -31,6 +32,7 @@ const IProductOptionTypeRepository = (superclass=null) =>
 		 * Get all ProductOptionTypes with the given product model id.
 		 * @param  {string} productModelId - The product model id.
 		 * @return {List<ProductOptionType>} A list with the requested ProductOptionTypes.
+		 * @throws {EntityNotFoundError} If no entity matching the request exists.
 		 */
 		getProductOptionTypesByProductModelId(productModelId){throw new NotImplementedError(PATH, "IProductOptionTypeRepository.getProductOptionTypesByProductModelId()");}
 

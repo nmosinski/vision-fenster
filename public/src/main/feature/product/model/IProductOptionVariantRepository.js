@@ -24,6 +24,7 @@ const IProductOptionVariantRepository = (superclass=null) =>
 		 * Get ProductOptionVariant.
 		 * @param  {string} ProductOptionVariantId - The id of ProductOptionVariant.
 		 * @return {ProductOptionVariant} The ProductOptionVariant.
+		 * @throws {EntityNotFoundError} If the requested entity doesnt't exist.
 		 */
 		getProductOptionVariant(productOptionVariantId){throw new NotImplementedError(PATH, "IProductOptionVariantRepository.getProductOptionVariant()");}
 
@@ -31,6 +32,7 @@ const IProductOptionVariantRepository = (superclass=null) =>
 		 * Get all ProductOptionVariants with the given product option type id.
 		 * @param  {string} productOptionTypeId - The product option type id.
 		 * @return {List<ProductOptionVariant>} A list with the requested ProductOptionVariants.
+		 * @throws {EntityNotFoundError} If no entity matching the request exists.
 		 */
 		getProductOptionVariantsByProductOptionTypeId(productOptionTypeId){throw new NotImplementedError(PATH, "IProductOptionVariantRepository.getProductOptionVariantsByProductOptionTypeId()");}
 
