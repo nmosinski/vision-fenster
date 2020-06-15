@@ -64,7 +64,7 @@ class WixDataProductOptionVariantRepository extends IProductOptionVariantReposit
 	 */
 	async saveProductOptionVariant(productOptionVariant)
 	{
-		await this.insert(productOptionVariant);
+		await this.save(productOptionVariant);
 		await this._wixDataImageRepository.saveImage(productOptionVariant);
 	}
 
@@ -103,7 +103,7 @@ class WixDataImageRepository extends WixDataRepository
 
 	async saveImage(productOptionVariant)
 	{
-		await this.insert(productOptionVariant);
+		await this.save(productOptionVariant);
 	}
 	
 	async updateImage(productOptionVariant)

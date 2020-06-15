@@ -51,7 +51,7 @@ class WixDataProductOptionTypeRepository extends IProductOptionTypeRepository(Wi
 	 */
 	async saveProductOptionType(productOptionType)
 	{
-		await this.insert(productOptionType);
+		await this.save(productOptionType);
 	}
 
 	/**
