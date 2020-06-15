@@ -6,6 +6,8 @@ import WixDataRepository from "public/src/main/common/wixData/WixDataRepository.
 import KVMap from "public/src/main/common/util/map/KVMap.js"
 import List from "public/src/main/common/util/list/List.js"
 
+import EntityNotFoundError from "public/src/main/feature/product/model/EntityNotFoundError.js"
+
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
 const COLLECTION_NAME = "product_option_type"
@@ -25,7 +27,9 @@ class WixDataProductOptionTypeRepository extends IProductOptionTypeRepository(Wi
 	async getProductOptionType(productOptionTypeId)
 	{
 		return this.get(productOptionTypeId).then((v) => {
-                return new ProductOptionType(v.id, v.productOptionModelId, v.title);	
+			if(JsTypes.isUnspecified(v))
+				throw new EntityNotFoundError(PATH, "WixDataProductOptionTypeRepository.getProductOptionType()", productOptionTypeId);
+            return new ProductOptionType(v.id, v.productOptionModelId, v.title);	
 		});
 	}
 
@@ -37,6 +41,8 @@ class WixDataProductOptionTypeRepository extends IProductOptionTypeRepository(Wi
 	{
 		let query = this.query().eq("productModelId", productModelId);
 		let objects = await this.find(query);
+		if(JsTypes.isEmpty(objects))
+			throw new EntityNotFoundError(PATH, "WixDataProductOptionTypeRepository.getProductOptionTypesByProductModelId()", productModelId);
 		
 		let variants = new List();
 		for(let idx in objects)

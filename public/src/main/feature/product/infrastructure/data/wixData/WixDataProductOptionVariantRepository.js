@@ -6,6 +6,8 @@ import KVMap from "public/src/main/common/util/map/KVMap.js"
 import List from "public/src/main/common/util/list/List.js"
 import WixDataRepository from "public/src/main/common/wixData/WixDataRepository.js"
 
+import EntityNotFoundError from "public/src/main/feature/product/model/EntityNotFoundError.js"
+
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
 const VARIANT_COLLECTION_NAME = "product_option_variant"
@@ -28,8 +30,10 @@ class WixDataProductOptionVariantRepository extends IProductOptionVariantReposit
 	async getProductOptionVariant(productOptionVariantId)
 	{
 		return this.get(productOptionVariantId).then((v) => {
+			if(JsTypes.isUnspecified(v))
+				throw new EntityNotFoundError(PATH, "WixDataProductOptionVariantRepository.getProductOptionVariant()", productOptionVariantId);
 			return (JsTypes.isUnspecified(v))?null:this._wixDataImageRepository.getImage(productOptionVariantId).then((image) => {
-                return new ProductOptionVariant(v.id, v.productOptionId, v.title, image);
+                return new ProductOptionVariant(v.id, v.productOptionTypeId, v.title, image);
 			});	
 		});
 	}
@@ -42,8 +46,8 @@ class WixDataProductOptionVariantRepository extends IProductOptionVariantReposit
 	{
 		let query = this.query().eq("productOptionTypeId", productOptionTypeId);
 		let objects = await this.find(query);
-		if(JsTypes.isUnspecified(objects))
-			return null;
+		if(JsTypes.isEmpty(objects))
+			throw new EntityNotFoundError(PATH, "WixDataProductOptionVariantRepository.getProductOptionVariantsByProductOptionTypeId()", productOptionTypeId);
 			
 		let variants = new List();
 		for(let idx in objects)
