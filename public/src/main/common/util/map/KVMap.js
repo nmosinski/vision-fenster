@@ -53,6 +53,10 @@ class KVMap extends IComparable()
         return true;
     }
 
+    /**
+     * Transform this map to an object containing the keys and values.
+     * @return {object} This map as an object.
+     */
     toObject()
     {
     	let o = {};
