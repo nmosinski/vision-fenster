@@ -20,14 +20,36 @@ const IProductOptionVariantRepository = (superclass=null) =>
 	 */
 	const C = class extends superclass
 	{
+		/**
+		 * Get ProductOptionVariant.
+		 * @param  {string} ProductOptionVariantId - The id of ProductOptionVariant.
+		 * @return {ProductOptionVariant} The ProductOptionVariant.
+		 */
 		getProductOptionVariant(productOptionVariantId){throw new NotImplementedError(PATH, "IProductOptionVariantRepository.getProductOptionVariant()");}
 
+		/**
+		 * Get all ProductOptionVariants with the given product option type id.
+		 * @param  {string} productOptionTypeId - The product option type id.
+		 * @return {List<ProductOptionVariant>} A list with the requested ProductOptionVariants.
+		 */
 		getProductOptionVariantsByProductOptionTypeId(productOptionTypeId){throw new NotImplementedError(PATH, "IProductOptionVariantRepository.getProductOptionVariantsByProductOptionTypeId()");}
 
+		/**
+		 * Save ProductOptionVariant.
+		 * @param  {ProductOptionVariant} productOptionVariant - The ProductOptionVariant.
+		 */
 		saveProductOptionVariant(productOptionVariant){throw new NotImplementedError(PATH, "IProductOptionVariantRepository.saveProductOptionVariant()");}
 
+		/**
+		 * Update ProductOptionVariant.
+		 * @param  {ProductOptionVariant} productOptionVariant - The ProductOptionVariant.
+		 */
 		updateProductOptionVariant(productOptionVariant){throw new NotImplementedError(PATH, "IProductOptionVariantRepository.updateProductOptionVariant()");}
 
+		/**
+		 * Delete ProductOptionVariant.
+		 * @param  {string} productOptionVariantId - The id of the ProductOptionVariant.
+		 */
 		deleteProductOptionVariant(productOptionVariantId){throw new NotImplementedError(PATH, "IProductOptionVariantRepository.deleteProductOptionVariant()");}
 	}
 

@@ -20,14 +20,36 @@ const IProductRepository = (superclass=null) =>
 	 */
 	const C = class extends superclass
 	{
+		/**
+		 * Get Product.
+		 * @param  {string} productId - The id of Product.
+		 * @return {Product} The Product.
+		 */
 		getProduct(productId){throw new NotImplementedError(PATH, "IProductRepository.getProduct()");}
 
+		/**
+		 * Get all Products with the given product model id.
+		 * @param  {string} productModelId - The product model id.
+		 * @return {List<Product>} A list with the requested Products.
+		 */
 		getProductsByProductModelId(productModelId){throw new NotImplementedError(PATH, "IProductRepository.getProductsByProductModelId()");}
 
+		/**
+		 * Save Product.
+		 * @param  {Product} product - The Product.
+		 */
 		saveProduct(product){throw new NotImplementedError(PATH, "IProductRepository.saveProduct()");}
 
+		/**
+		 * Update Product.
+		 * @param  {Product} product - The Product.
+		 */
 		updateProduct(product){throw new NotImplementedError(PATH, "IProductRepository.updateProduct()");}
 
+		/**
+		 * Delete Product.
+		 * @param  {string} productId - The id of the Product.
+		 */
 		deleteProduct(productId){throw new NotImplementedError(PATH, "IProductRepository.deleteProduct()");}
 	}
 

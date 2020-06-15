@@ -20,14 +20,36 @@ const IProductOptionTypeRepository = (superclass=null) =>
 	 */
 	const C = class extends superclass
 	{
+		/**
+		 * Get ProductOptionType.
+		 * @param  {string} productOptionTypeId - The id of ProductOptionType.
+		 * @return {ProductOptionType} The ProductOptionType.
+		 */
 		getProductOptionType(productOptionTypeId){throw new NotImplementedError(PATH, "IProductOptionTypeRepository.getProductOptionType()");}
 
+		/**
+		 * Get all ProductOptionTypes with the given product model id.
+		 * @param  {string} productModelId - The product model id.
+		 * @return {List<ProductOptionType>} A list with the requested ProductOptionTypes.
+		 */
 		getProductOptionTypesByProductModelId(productModelId){throw new NotImplementedError(PATH, "IProductOptionTypeRepository.getProductOptionTypesByProductModelId()");}
 
+		/**
+		 * Save ProductOptionType.
+		 * @param  {ProductOptionType} productOptionType - The ProductOptionType.
+		 */
 		saveProductOptionType(productOptionType){throw new NotImplementedError(PATH, "IProductOptionTypeRepository.saveProductOptionType()");}
 
+		/**
+		 * Update ProductOptionType.
+		 * @param  {ProductOptionType} productOptionType - The ProductOptionType.
+		 */
 		updateProductOptionType(productOptionType){throw new NotImplementedError(PATH, "IProductOptionTypeRepository.updateProductOptionType()");}
 
+		/**
+		 * Delete ProductOptionType.
+		 * @param  {string} productOptionTypeId - The id of the ProductOptionType.
+		 */
 		deleteProductOptionType(productOptionTypeId){throw new NotImplementedError(PATH, "IProductOptionTypeRepository.deleteProductOptionType()");}
 	}
 

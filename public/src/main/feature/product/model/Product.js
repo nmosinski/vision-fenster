@@ -12,6 +12,10 @@ import InvalidOperationError from "public/src/main/common/util/error/InvalidOper
 
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
+/**
+ * @class
+ * Class representing a product.
+ */
 class Product extends IComparable(IClonable(AbstractEntity))
 {
 	/**
