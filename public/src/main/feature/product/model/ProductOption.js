@@ -60,7 +60,7 @@ class ProductOption extends IComparable(IClonable())
 	 * Add a possible product option variant.
 	 * @param {ProductOptionVariant} [variant] The variant to be added.
 	 */
-	addVariant(variant)
+	saveVariant(variant)
 	{
 		if(!(variant instanceof ProductOptionVariant))
 			throw new VariableTypeError(PATH, "ProductOption.addVariant()", variant, "ProductOptionVariant");
@@ -141,7 +141,7 @@ class ProductOption extends IComparable(IClonable())
 			throw new VariableTypeError(PATH, "ProductOption.set variants()", variants, "ClonableKVMap");
 		
 		this._variants = new ClonableKVMap();
-		variants.values().foreach(variant=>{this.addVariant(variant)});
+		variants.values().foreach(variant=>{this.saveVariant(variant)});
 	}
 }
 
