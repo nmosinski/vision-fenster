@@ -17,9 +17,9 @@ class ProductOptionType extends IComparable(IClonable(AbstractEntity))
 {
 	/**
 	 * Create ProductOptionType.
-	 * @param {string} [id] The id of this entity.
-	 * @param {string} [productModelId] The id of the product model this product option belongs to.
-	 * @param {string} [title] The title of this product option type.
+	 * @param {string} id The id of this entity.
+	 * @param {string} productModelId The id of the product model this product option belongs to.
+	 * @param {string} title The title of this product option type.
 	 */
 	constructor(id, productModelId, title)
 	{
