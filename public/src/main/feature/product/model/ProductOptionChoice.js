@@ -19,8 +19,8 @@ class ProductOptionChoice extends IComparable(IClonable())
 {
 	/**
 	 * Create ProductOptionChoice.
-	 * @param {ProductOptionType} [productOptionType] The type of this product option.
-	 * @param {ProductOptionVariant} [productOptionVariant] One of the variants of this product option.
+	 * @param {ProductOptionType} productOptionType The type of this product option.
+	 * @param {ProductOptionVariant} productOptionVariant One of the variants of this product option.
 	 */
 	constructor(productOptionType, productOptionVariant)
 	{
