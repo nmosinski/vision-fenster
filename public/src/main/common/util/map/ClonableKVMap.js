@@ -27,9 +27,8 @@ class ClonableKVMap extends IClonable(KVMap)
 
 	/**
 	 * Add a key-value pair.
-	 * @typedef {(IComparable | IClonable)} IComparableANDIClonable
 	 * @param {string} key - The key.
-	 * @param {IComparableANDIClonable | string | number | boolean} value - The value.
+	 * @param {IClonable | string | number | boolean} value - The value.
 	 */
 	add(key, value)
 	{
@@ -40,7 +39,7 @@ class ClonableKVMap extends IClonable(KVMap)
 
 	/**
 	 * Clone this map.
-	 * @return {ClonableKVMap<string, IComparableANDIClonable | string | boolean | number>} A copy of this map.
+	 * @return {ClonableKVMap<string, IClonable | string | boolean | number>} A copy of this map.
 	 */
 	clone()
 	{

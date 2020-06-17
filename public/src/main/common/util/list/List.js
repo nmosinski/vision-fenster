@@ -15,7 +15,7 @@ class List extends IComparable()
 {
 	/**
 	 * Create a List.
-	 * @param {Array<IComparable | string | boolean | number>} [elements=[]] - An array of elements that the list will contain from the beginning.
+	 * @param {array} [elements=[]] - An array of elements that the list will contain from the beginning.
 	 */
 	constructor(elements=[])
 	{
@@ -83,7 +83,7 @@ class List extends IComparable()
 
 	/**
 	 * Get all elements of this list as array.
-	 * @return {Array<IComparable | string | number | boolean>} The elements.
+	 * @return {array} The elements.
 	 */
     toArray()
     {
@@ -97,13 +97,10 @@ class List extends IComparable()
 
 	/**
 	 * Add an element.
-	 * @param {IComparable | string | number | boolean} element - The element.
+	 * @param {?} element - The element.
 	 */
 	add(element)
 	{
-		if(!((element instanceof IComparable) || JsTypes.isPrimitive(element)))
-			throw new VariableTypeError(PATH, "List.add(element)", element, "IComparable | string | number | boolean");
-		
 		this._elements.push(element);
 	}
 

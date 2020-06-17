@@ -18,8 +18,7 @@ class ClonableList extends IClonable(List)
 {
 	/**
 	 * Create a ClonableList.
-	 * @typedef {(IComparable | IClonable)} IComparableANDIClonable
-	 * @param {Array<IComparableANDIClonable | string | number | boolean>} [elements=null] - An array of elements that the list will contain from the beginning.
+	 * @param {Array<IClonable | string | number | boolean>} [elements=null] - An array of elements that the list will contain from the beginning.
 	 */
 	constructor(elements=[])
 	{
@@ -32,7 +31,7 @@ class ClonableList extends IClonable(List)
 
 	/**
 	 * Add an element.
-	 * @param {IComparableANDIClonable | string | number | boolean} element - The element.
+	 * @param {IClonable | string | number | boolean} element - The element.
 	 */
 	add(element)
 	{	

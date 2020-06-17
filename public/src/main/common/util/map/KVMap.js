@@ -67,7 +67,7 @@ class KVMap extends IComparable()
 	/**
 	 * Get a value corresponding to the key.
 	 * @param {string} key - The key.
-	 * @return {IComparable | string | number | boolean} The corresponding value.
+	 * @return {?} The corresponding value.
 	 */
 	get(key)
 	{
@@ -82,14 +82,12 @@ class KVMap extends IComparable()
 	/**
 	 * Add a key-value pair.
 	 * @param {string} key - The key.
-	 * @param {IComparable | string | number | boolean} value - The value.
+	 * @param {?} value - The value.
 	 */
 	add(key, value)
 	{
 		if(!JsTypes.isString(key))
 			throw new VariableTypeError(PATH, "KVMap.add(key, value)", key, "string");
-		if(!((value instanceof IComparable) || JsTypes.isPrimitive(value)))
-			throw new VariableTypeError(PATH, "KVMap.add(key, value)", key, "IComparable | string | number | boolean");
 		if(JsTypes.isEmpty(key))
 			throw new VariableValueError(PATH, "KVMap.add(key, value)", key, "A not empty string");
 
