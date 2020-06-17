@@ -66,7 +66,7 @@ class WixDataProductOptionVariantRepository extends IProductOptionVariantReposit
 	 * @override
 	 * @inheritDoc
 	 */
-	async getManyProductOptionVariantsByIds(productOptionVariantIds)
+	async getManyProductOptionVariants(productOptionVariantIds)
 	{
 		let query = this.query().hasSome(VARIANT_MAPPING.id, productOptionVariantIds.toArray());
 		let objects = await this.find(query);

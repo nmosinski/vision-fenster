@@ -44,18 +44,18 @@ class WixDataProductOptionTypeRepository extends IProductOptionTypeRepository(Wi
 		if(JsTypes.isEmpty(objects))
 			throw new EntityNotFoundError(PATH, "WixDataProductOptionTypeRepository.getProductOptionTypesByProductModelId()", productModelId);
 		
-		let variants = new List();
+		let types = new List();
 		for(let idx in objects)
-			variants.add(new ProductOptionType(objects[idx].id, objects[idx].productModelId, objects[idx].title));
+			types.add(new ProductOptionType(objects[idx].id, objects[idx].productModelId, objects[idx].title));
 
-		return variants;
+		return types;
 	}
 
 	/**
 	 * @override
 	 * @inheritDoc
 	 */
-	async getManyProductOptionTypesByIds(productOptionTypeIds)
+	async getManyProductOptionTypes(productOptionTypeIds)
 	{
 		let query = this.query().hasSome(MAPPING.id, productOptionTypeIds.toArray());
 		let objects = await this.find(query);
@@ -65,7 +65,7 @@ class WixDataProductOptionTypeRepository extends IProductOptionTypeRepository(Wi
 			
 		let types = new List();
 		for(let idx in objects)
-			types.add(new ProductOptionType(objects[idx].id, objects[idx].productOptionModelId, objects[idx].title));
+			types.add(new ProductOptionType(objects[idx].id, objects[idx].productModelId, objects[idx].title));
 
 		return types;
 	}

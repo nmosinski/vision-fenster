@@ -11,7 +11,8 @@ const IProductRepository = (superclass=null) =>
 		JsTypes.isFunction(instance.saveProduct) &&
 		JsTypes.isFunction(instance.updateProduct) &&
 		JsTypes.isFunction(instance.deleteProduct) &&
-		JsTypes.isFunction(instance.getProductsByProductModelId); 
+		JsTypes.isFunction(instance.getProductsByProductModelId) &&
+		JsTypes.isFunction(instance.nextIdentity); 
 	}, configurable: true});
 
 	/**
@@ -20,6 +21,12 @@ const IProductRepository = (superclass=null) =>
 	 */
 	const C = class extends superclass
 	{
+		/**
+		 * Get the next identity for this entity.
+		 * @return {string} The next idendity.
+		 */
+		nextIdentity(){throw new NotImplementedError(PATH, "IProductRepository.nextIdentity()");}
+
 		/**
 		 * Get Product.
 		 * @param  {string} productId - The id of Product.
