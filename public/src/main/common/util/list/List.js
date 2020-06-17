@@ -40,6 +40,28 @@ class List extends IComparable()
             f(this.get(idx));
     }
 
+    /**
+     * Filters all elements of this list by the given expression and returns a new list with the elements that match.
+     * @param {function} f A function representing the filtering expression.
+     * @return {List} A new list with the filtered elements.
+     */
+    filter(f)
+    {
+    	if(!JsTypes.isFunction(f))
+    		throw new VariableTypeError(PATH, "List.foreach(f)", f, "function");
+
+    	let ret = [];
+
+    	for(let idx = 0; idx < this.length(); idx++)
+        {
+        	let el = this.get(idx);
+        	if(f(el))
+            	ret.push(el);
+		}
+
+		return new List(ret);
+    }
+
 	/**
 	 * Check if another list equals this list.
 	 * @override
