@@ -34,22 +34,22 @@ class WixDataRepository
 	}
 
 	/**
-	 * Transforms an object to a wix db item considering the given mapping.
+	 * Transform an object to a wix db item considering the given mapping.
 	 * @param {object} [o] The object to be transformed.
 	 * @return {object} The wix db item.
 	 */
 	_toItem(o)
 	{
-		if(JsTypes.isUnspecified(this._mapping) || JsTypes.isUnspecified(i))
+		if(JsTypes.isUnspecified(this._mapping) || JsTypes.isUnspecified(o))
 			return o;
-		
+
 		let i = {};
 		this._mapping.keys().foreach(key => i[this._mapping.get(key)] = o[key]);
 		return i;
 	}
 
 	/**
-	 * Transforms a wix db item to an object considering the given mapping.
+	 * Transform a wix db item to an object considering the given mapping.
 	 * @param {object} [i] The item to be transformed.
 	 * @return {object} The resulting object.
 	 */
@@ -64,7 +64,7 @@ class WixDataRepository
 	}
 
 	/**
-	 * Retrieves an item with the given id.
+	 * Retrieve an item with the given id.
 	 * @param {string} [itemId] The id of the item to be retrived.
 	 * @return {object | null} Object representing the retrieved item or null if there was no item with the given id.
 	 */
@@ -94,7 +94,7 @@ class WixDataRepository
 	}
 
 	/**
-	 * Executes a query.
+	 * Execute a query.
 	 * @param {wix-data.query} [query] The query to be executed.
 	 * @return {Array.<?>} The resulting items of the executed query.
 	 */
@@ -112,7 +112,7 @@ class WixDataRepository
 	} 
 
 	/**
-	 * Inserts an item.
+	 * Insert an item.
 	 * @param {object} [object] An object representing the item to be inserted.
 	 */
 	async insert(object)
@@ -124,19 +124,35 @@ class WixDataRepository
 	}
 
 	/**
-	 * Saves an item. If the item already exists, it will be overwritten.
+	 * Insert many items. If an item already exists, it will be overwritten.
+	 * @param {List<object>} [objects] A List of objects representing the items to be saved.
+	 */
+	async insertMany(objects)
+	{
+		if(!(objects instanceof List))
+			throw new VariableTypeError(PATH, "WixDataRepository.insertMany()", objects, "List<object>.");
+
+		let items = [];
+
+		objects.foreach( object => {items.push(this._toItem(object));});
+
+		await WixData.bulkInsert(this.collectionName, items, this._options);
+	}
+
+	/**
+	 * Save an item. If the item already exists, it will be overwritten.
 	 * @param {object} [object] An object representing the item to be saved.
 	 */
 	async save(object)
 	{
 		if(JsTypes.isUnspecified(object))
 			throw new VariableTypeError(PATH, "WixDataRepository.save()", object, "Object.");
-
+		
 		await WixData.save(this.collectionName, this._toItem(object), this._options);
 	}
 
 	/**
-	 * Saves many items. If an item already exists, it will be overwritten.
+	 * Save many items. If an item already exists, it will be overwritten.
 	 * @param {List<object>} [objects] A List of objects representing the items to be saved.
 	 */
 	async saveMany(objects)
@@ -146,13 +162,13 @@ class WixDataRepository
 
 		let items = [];
 
-			objects.foreach( object => {items.push(this._toItem(object));});
+		objects.foreach( object => {items.push(this._toItem(object));});
 
-		await WixData.save(this.collectionName, items, this._options);
+		await WixData.bulkSave(this.collectionName, items, this._options);
 	}
 
 	/**
-	 * Updates an item.
+	 * Update an item.
 	 * @param {object} [object] An object that describes the item to be updated.
 	 */
 	async update(object)
@@ -164,7 +180,7 @@ class WixDataRepository
 	}
 
 	/**
-	 * Removes an item.
+	 * Remove an item.
 	 * @param {string} [itemId] The id of the item to be removed.
 	 */
 	async remove(itemId)
@@ -184,7 +200,7 @@ class WixDataRepository
 	async removeMany(objects)
 	{
 		if(!(objects instanceof List))
-			throw new VariableTypeError(PATH, "WixDataRepository.saveMany()", objects, "List<string>.");
+			throw new VariableTypeError(PATH, "WixDataRepository.removeMany()", objects, "List<string>.");
 
 		await WixData.bulkRemove(this.collectionName, objects.toArray(), this._options);
 	}

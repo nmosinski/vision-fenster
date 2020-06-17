@@ -16,7 +16,7 @@ class WixData
 {
 	/**
 	 * Wix.wix-data.get - wrapper.
-	 * Retrieves an item with the given id from the given collection.
+	 * Retrieve an item with the given id from the given collection.
 	 * @param {string} [collectionName] The name of the collection the item will be retrieved from.
 	 * @param {string} [itemId] The id of the item to be retrived.
 	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
@@ -61,7 +61,7 @@ class WixData
 
 	/**
 	 * Wix.wix-data.find - wrapper.
-	 * Executes a query.
+	 * Execute a query.
 	 * @param {wix-data.query} [query] The query to be executed.
 	 * @return {Object} An object representingthe results of the executed query.
 	 */
@@ -75,7 +75,7 @@ class WixData
 
 	/**
 	 * Wix.wix-data.insert - wrapper.
-	 * Inserts an item into the given collection.
+	 * Insert an item into the given collection.
 	 * @param {string} [collectionName] The name of the collection the item will be inserted in.
 	 * @param {object} [item] An object representing the item to be inserted.
 	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
@@ -100,8 +100,37 @@ class WixData
 	}
 
 	/**
+	 * Wix.wix-data.bulkInsert - wrapper.
+	 * Insert multiple items in the given collection. If the item already exists in the given collection, it will be overwritten.
+	 * @param {string} [collectionName] The name of the collection the item will be saved in.
+	 * @param {object} [item] An object representing the item to be saved.
+	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
+	 */
+	static async bulkInsert(collectionName, items, options = null)
+	{
+		if(!JsTypes.isString(collectionName))
+			throw new VariableTypeError(PATH, "WixData.bulkInsert()", collectionName, "string");
+		if(JsTypes.isEmpty(collectionName))
+			throw new VariableValueError(PATH, "WixData.bulkInsert()", collectionName, "An array with the names of the collections, not empty.");
+
+		if(!JsTypes.isArray(items))
+			throw new VariableTypeError(PATH, "WixData.bulkInsert()", items, "array<string>");
+		if(JsTypes.isEmpty(items))
+			throw new VariableValueError(PATH, "WixData.bulkInsert()", items, "An array with the items, not empty.");
+	
+
+		try
+		{
+			await wixData.bulkInsert(collectionName, items, options);
+		}catch(err)
+		{
+			throw new ForeignError(PATH, "WixData.bulkInsert(...)", err);
+		}
+	}
+
+	/**
 	 * Wix.wix-data.save - wrapper.
-	 * Saves an item in the given collection. If the item already exists in the given collection, it will be overwritten.
+	 * Save an item in the given collection. If the item already exists in the given collection, it will be overwritten.
 	 * @param {string} [collectionName] The name of the collection the item will be saved in.
 	 * @param {object} [item] An object representing the item to be saved.
 	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
@@ -127,7 +156,7 @@ class WixData
 
 	/**
 	 * Wix.wix-data.bulkSave - wrapper.
-	 * Saves an item in the given collection. If the item already exists in the given collection, it will be overwritten.
+	 * Save multiple items in the given collection. If the item already exists in the given collection, it will be overwritten.
 	 * @param {string} [collectionName] The name of the collection the item will be saved in.
 	 * @param {object} [item] An object representing the item to be saved.
 	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
@@ -156,7 +185,7 @@ class WixData
 
 	/**
 	 * Wix.wix-data.update - wrapper.
-	 * Updates an item in the given collection.
+	 * Update an item in the given collection.
 	 * @param {string} [collectionName] The name of the collection the item will be updated in.
 	 * @param {object} [item] An object that describes the item to be updated.
 	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
@@ -182,7 +211,7 @@ class WixData
 
 	/**
 	 * Wix.wix-data.remove - wrapper.
-	 * Removes an item from the given collection.
+	 * Remove an item from the given collection.
 	 * @param {string} [collectionName] The name of the collection the item will be removed from.
 	 * @param {string} [itemId] The id of the item to be removed.
 	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
@@ -210,7 +239,7 @@ class WixData
 
 	/**
 	 * Wix.wix-data.bulkRemove - wrapper.
-	 * Removes an item from the given collection.
+	 * Remove an item from the given collection.
 	 * @param {string} [collectionName] The name of the collection the item will be removed from.
 	 * @param {Array<string>} [itemIds] The an array of ids of the items to be removed.
 	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
