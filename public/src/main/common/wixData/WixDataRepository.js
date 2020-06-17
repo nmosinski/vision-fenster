@@ -1,6 +1,7 @@
 const PATH = "public/src/main/common/wixData/WixDataRepository.js";
 
 import KVMap from "public/src/main/common/util/map/KVMap.js"
+import List from "public/src/main/common/util/list/List.js"
 
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
@@ -135,6 +136,22 @@ class WixDataRepository
 	}
 
 	/**
+	 * Saves many items. If an item already exists, it will be overwritten.
+	 * @param {List<object>} [objects] A List of objects representing the items to be saved.
+	 */
+	async saveMany(objects)
+	{
+		if(!(objects instanceof List))
+			throw new VariableTypeError(PATH, "WixDataRepository.saveMany()", objects, "List<object>.");
+
+		let items = [];
+
+			objects.foreach( object => {items.push(this._toItem(object));});
+
+		await WixData.save(this.collectionName, items, this._options);
+	}
+
+	/**
 	 * Updates an item.
 	 * @param {object} [object] An object that describes the item to be updated.
 	 */
@@ -158,6 +175,18 @@ class WixDataRepository
 			throw new VariableValueError(PATH, "WixDataRepository.remove()", itemId, "The id of the item, not empty.");
 
 		await WixData.remove(this.collectionName, itemId, this._options);
+	}
+
+	/**
+	 * Remove many items.
+	 * @param {List<string>} [objects] A List of objects representing the items to be removed.
+	 */
+	async removeMany(objects)
+	{
+		if(!(objects instanceof List))
+			throw new VariableTypeError(PATH, "WixDataRepository.saveMany()", objects, "List<string>.");
+
+		await WixData.bulkRemove(this.collectionName, objects.toArray(), this._options);
 	}
 
 	/**

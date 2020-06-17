@@ -126,6 +126,35 @@ class WixData
 	}
 
 	/**
+	 * Wix.wix-data.bulkSave - wrapper.
+	 * Saves an item in the given collection. If the item already exists in the given collection, it will be overwritten.
+	 * @param {string} [collectionName] The name of the collection the item will be saved in.
+	 * @param {object} [item] An object representing the item to be saved.
+	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
+	 */
+	static async bulkSave(collectionName, items, options = null)
+	{
+		if(!JsTypes.isString(collectionName))
+			throw new VariableTypeError(PATH, "WixData.bulkSave()", collectionName, "string");
+		if(JsTypes.isEmpty(collectionName))
+			throw new VariableValueError(PATH, "WixData.bulkSave()", collectionName, "An array with the names of the collections, not empty.");
+
+		if(!JsTypes.isArray(items))
+			throw new VariableTypeError(PATH, "WixData.bulkSave()", items, "array<string>");
+		if(JsTypes.isEmpty(items))
+			throw new VariableValueError(PATH, "WixData.bulkSave()", items, "An array with the items, not empty.");
+	
+
+		try
+		{
+			await wixData.bulkSave(collectionName, items, options);
+		}catch(err)
+		{
+			throw new ForeignError(PATH, "WixData.bulkSave(...)", err);
+		}
+	}
+
+	/**
 	 * Wix.wix-data.update - wrapper.
 	 * Updates an item in the given collection.
 	 * @param {string} [collectionName] The name of the collection the item will be updated in.
@@ -176,6 +205,34 @@ class WixData
 		}catch(err)
 		{
 			throw new ForeignError(PATH, "WixData.remove(...)", err);
+		}
+	}
+
+	/**
+	 * Wix.wix-data.bulkRemove - wrapper.
+	 * Removes an item from the given collection.
+	 * @param {string} [collectionName] The name of the collection the item will be removed from.
+	 * @param {Array<string>} [itemIds] The an array of ids of the items to be removed.
+	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
+	 */
+	static async bulkRemove(collectionName, itemIds, options = null)
+	{
+		if(!JsTypes.isString(collectionName))
+			throw new VariableTypeError(PATH, "WixData.remove(...)", collectionName, "string");
+		if(JsTypes.isEmpty(collectionName))
+			throw new VariableValueError(PATH, "WixData.remove(...)", collectionName, "The name of the collection, not empty.");
+		
+		if(!JsTypes.isArray(itemIds))
+			throw new VariableTypeError(PATH, "WixData.bulkRemove()", itemIds, "array<string>");
+		if(JsTypes.isEmpty(itemIds))
+			throw new VariableValueError(PATH, "WixData.bulkRemove()", itemIds, "An array with the ids of the items, not empty.");
+		
+		try
+		{
+			await wixData.bulkRemove(collectionName, itemIds, options);
+		}catch(err)
+		{
+			throw new ForeignError(PATH, "WixData.bulkRemove(...)", err);
 		}
 	}
 }
