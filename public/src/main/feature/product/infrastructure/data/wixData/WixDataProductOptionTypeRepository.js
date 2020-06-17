@@ -55,6 +55,25 @@ class WixDataProductOptionTypeRepository extends IProductOptionTypeRepository(Wi
 	 * @override
 	 * @inheritDoc
 	 */
+	async getManyProductOptionTypesByIds(productOptionTypeIds)
+	{
+		let query = this.query().hasSome(MAPPING.id, productOptionTypeIds.toArray());
+		let objects = await this.find(query);
+		
+		if(JsTypes.isEmpty(objects))
+			throw new EntityNotFoundError(PATH, "WixDataProductOptionTypeRepository.getManyProductOptionTypesByIds()", productOptionTypeIds);
+			
+		let types = new List();
+		for(let idx in objects)
+			types.add(new ProductOptionType(objects[idx].id, objects[idx].productOptionModelId, objects[idx].title));
+
+		return types;
+	}
+
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
 	async saveProductOptionType(productOptionType)
 	{
 		await this.save(productOptionType);

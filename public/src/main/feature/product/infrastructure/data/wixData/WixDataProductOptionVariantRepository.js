@@ -66,6 +66,31 @@ class WixDataProductOptionVariantRepository extends IProductOptionVariantReposit
 	 * @override
 	 * @inheritDoc
 	 */
+	async getManyProductOptionVariantsByIds(productOptionVariantIds)
+	{
+		let query = this.query().hasSome(VARIANT_MAPPING.id, productOptionVariantIds.toArray());
+		let objects = await this.find(query);
+		
+		if(JsTypes.isEmpty(objects))
+			throw new EntityNotFoundError(PATH, "WixDataProductOptionVariantRepository.getManyProductOptionVariantsByIds()", productOptionVariantIds);
+			
+		let variants = new List();
+		for(let idx in objects)
+			variants.add(new ProductOptionVariant(objects[idx].id, objects[idx].productOptionTypeId, objects[idx].title));
+
+		let tmpVariantArr = variants.toArray();
+		for(let idx in tmpVariantArr)
+		{
+			let image = await this._wixDataImageRepository.getImage(tmpVariantArr[idx].id);
+			tmpVariantArr[idx].image = image;
+		}
+		return variants;
+	}
+
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
 	async saveProductOptionVariant(productOptionVariant)
 	{
 		await this.save(productOptionVariant);

@@ -11,7 +11,8 @@ const IProductOptionVariantRepository = (superclass=null) =>
 		JsTypes.isFunction(instance.saveProductOptionVariant) &&
 		JsTypes.isFunction(instance.updateProductOptionVariant) &&
 		JsTypes.isFunction(instance.deleteProductOptionVariant) &&
-		JsTypes.isFunction(instance.getProductOptionVariantsByProductOptionTypeId); 
+		JsTypes.isFunction(instance.getProductOptionVariantsByProductOptionTypeId) &&
+		JsTypes.isFunction(instance.getManyProductOptionVariantsByIds); 
 	}, configurable: true});
 
 	/**
@@ -35,6 +36,14 @@ const IProductOptionVariantRepository = (superclass=null) =>
 		 * @throws {EntityNotFoundError} If no entity matching the request exists.
 		 */
 		getProductOptionVariantsByProductOptionTypeId(productOptionTypeId){throw new NotImplementedError(PATH, "IProductOptionVariantRepository.getProductOptionVariantsByProductOptionTypeId()");}
+
+		/**
+		 * Get many ProductOptionVariants with the given product option variant ids.
+		 * @param  {List<string>} productOptionVariantIds - The product option variant ids.
+		 * @return {List<ProductOptionVariant>} A list with the requested ProductOptionVariants.
+		 * @throws {EntityNotFoundError} If no entity matching the request exists.
+		 */
+		getManyProductOptionVariantsByIds(productOptionVariantIds){throw new NotImplementedError(PATH, "IProductOptionVariantRepository.getManyProductOptionVariantsByIds()");}
 
 		/**
 		 * Save ProductOptionVariant.
