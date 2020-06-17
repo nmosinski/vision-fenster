@@ -1,10 +1,17 @@
 const PATH = "public/src/main/feature/product/infrastructure//WindowProductConfigurator.js";
 
 import AbstractProductConfigurator from "public/src/main/feature/product/model/AbstractProductConfigurator.js"
-import ProductOptionVariant from "public/src/main/feature/product/model/ProductOptionVariant.js"
+import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
 
+/**
+ * @class
+ * Class representing a WindowProductConfigurator.
+ */
 class WindowProductConfigurator extends AbstractProductConfigurator
 {
+	/**
+	 * Create WindowProductConfigurator.
+	 */
 	constructor()
 	{
 		super();
@@ -12,13 +19,12 @@ class WindowProductConfigurator extends AbstractProductConfigurator
 
 	/**
 	 * @override
-	 * @inheritDoc
 	 */
 	applyDefaultConfiguration(productOptions, product)
 	{
 		productOptions.values().foreach((productOption)=>{
-			if(!product.hasAnyProductOptionVariantOfProductOptionTypeId(productOption.type.id))
-				this.saveProductOptionVariant(productOption.variants.get(0), product);
+			if(!product.hasAnyProductOptionChoiceOfProductOptionTypeId(productOption.type.id))
+				this.saveProductOptionChoice(new ProductOptionChoice(productOption.type, productOption.variants.values().get(0)), product);
 		});
 	}
 
@@ -46,7 +52,7 @@ class WindowProductConfigurator extends AbstractProductConfigurator
 	 */
 	calculatePrice(product)
 	{
-		return this.product.price + 1;
+		return product.price + 1;
 	}
 }
 

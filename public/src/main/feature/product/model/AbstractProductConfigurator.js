@@ -7,6 +7,10 @@ import ClonableKVMap from "public/src/main/common/util/map/ClonableKVMap.js"
 
 import NotImplementedError from "public/src/main/common/util/error/NotImplementedError.js"
 
+/**
+ * @class
+ * Class representing an abstract product configurator.
+ */
 class AbstractProductConfigurator
 {
 	/**
@@ -18,22 +22,22 @@ class AbstractProductConfigurator
 	}
 
 	/**
-	 * Save a ProductOptionVariant for the given Product.
-	 * @param {ProductOptionChoice} productOptionChoice - The ProductOptionChoice containing the ProductOptionVariant to be saved and it's ProductOptionType.
+	 * Save a ProductOptionChoice for the given Product.
+	 * @param {ProductOptionChoice} productOptionChoice - The ProductOptionChoice to be saved.
 	 * @param {product} product - The Product to be configured.
 	 * @return {Product} The configurated product.
 	 */
-	saveProductOptionVariant(productOptionChoice, product)
+	saveProductOptionChoice(productOptionChoice, product)
 	{
-		if(this.productOptionVariantIsValid(productOptionChoice, product))
-			this._product.saveProductOptionVariant(productOptionChoice.productOptionVariant);
+		if(this.productOptionChoiceIsValid(productOptionChoice, product))
+			product.saveProductOptionChoice(productOptionChoice);
 		else
 			return;
 
-		if(ProductOptionChoice.productOptionType.title === "Offnungsart")
-			this._product.image = productOptionChoice.productOptionVariant.image;
+		if(productOptionChoice.productOptionType.title === "Offnungsart")
+			product.image = productOptionChoice.productOptionVariant.image;
 		
-		this._product.price = this.calculatePrice();
+		product.price = this.calculatePrice(product);
 		
 		return product;
 	}
@@ -52,7 +56,7 @@ class AbstractProductConfigurator
 	 * @param {Product} product - The product to be configurated.
 	 * @abstract
 	 */
-	productOptionVariantIsValid(productOptionChoice, product){throw new NotImplementedError(PATH, "AbstractProductConfigurator.productOptionVariantIsValid()");}
+	productOptionChoiceIsValid(productOptionChoice, product){throw new NotImplementedError(PATH, "AbstractProductConfigurator.productOptionChoiceIsValid()");}
 
 	/**
 	 * Check if product is valid.
