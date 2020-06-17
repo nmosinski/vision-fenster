@@ -5,95 +5,70 @@ import ProductOption from "public/src/main/feature/product/model/ProductOption.j
 
 import ClonableKVMap from "public/src/main/common/util/map/ClonableKVMap.js"
 
-import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
+import NotImplementedError from "public/src/main/common/util/error/NotImplementedError.js"
 
 class AbstractProductConfigurator
 {
 	/**
 	 * Create AbstractProductConfigurator.
-	 * @param {ClonableKVMap<ProductOption>} [productOptions] ProductOptions belonging to the actual product being configurated.
 	 */
-	constructor(productOptions, product)
+	constructor()
 	{
-		this.product = product;
 
-		if(!(productOptions instanceof ClonableKVMap))
-			throw new VariableTypeError(PATH, "AbstractProductConfigurator.constructor()", productOptions, "ClonableKVMap<ProductOption>");
-
-		this.productOptions = productOptions;
 	}
 
-	saveProductOption(productOption)
+	/**
+	 * Save a ProductOptionVariant for the given Product.
+	 * @param {ProductOptionChoice} productOptionChoice - The ProductOptionChoice containing the ProductOptionVariant to be saved and it's ProductOptionType.
+	 * @param {product} product - The Product to be configured.
+	 * @return {Product} The configurated product.
+	 */
+	saveProductOptionVariant(productOptionChoice, product)
 	{
-		if(!(productOption instanceof ProductOption))
-			throw new VariableTypeError(PATH, "AbstractProductConfigurator.saveProductOption()", productOption, "ProductOption");
+		if(this.productOptionVariantIsValid(productOptionChoice, product))
+			this._product.saveProductOptionVariant(productOptionChoice.productOptionVariant);
+		else
+			return;
 
-		this._productOptions.add(productOption.type.id, productOption);
-	}
-
-	selectProductOptionChoice(productOptionTypeId, productOptionVariantId)
-	{
-		let productOption = this._productOptions.get(productOptionTypeId);
-		this.saveProductOptionChoice(new ProductOptionChoice(productOption.type, productOption.variants.get(productOptionVariantId)));
-	}
-
-	getValidProductOptionVariants(productOptionId)
-	{
-		/*
-		for(let idx in this.allProductOptions)
-			if(this.allProductOptions[idx].id === productOptionId)
-				return this.allProductOptions[idx].variants.filter((variant)=>this.optionVariantCanBeSelected(variant));
-		*/
-	}
-
-	saveProductOptionChoice(productOptionChoice)
-	{
-		this._product.saveProductOptionChoice(productOptionChoice);
-		if(productOptionChoice.productOptionType.title === "Offnungsart")
+		if(ProductOptionChoice.productOptionType.title === "Offnungsart")
 			this._product.image = productOptionChoice.productOptionVariant.image;
+		
 		this._product.price = this.calculatePrice();
+		
+		return product;
 	}
 
 	/**
+	 * Apply default configuration for a product.
+	 * @param {Map<ProductOption>} productOptions - A map containing the product options (productOption.productOptionType.id -> productOption).
+	 * @param {Product} product - The product to be configurated.
 	 * @abstract
 	 */
-	applyDefaultConfiguration(){}
+	applyDefaultConfiguration(productOptions, product){throw new NotImplementedError(PATH, "AbstractProductConfigurator.applyDefaultConfiguration()");}
 
 	/**
+	 * Check if a ProductOptionChoice is valid for a product.
+	 * @param {ProductOptionChoice} productOptionChoice - The ProductOptionChoice containing the productOptionVariant to be set and it's ProductOptionType.
+	 * @param {Product} product - The product to be configurated.
 	 * @abstract
 	 */
-	productOptionVariantCanBeSelected(option){}
+	productOptionVariantIsValid(productOptionChoice, product){throw new NotImplementedError(PATH, "AbstractProductConfigurator.productOptionVariantIsValid()");}
 
 	/**
+	 * Check if product is valid.
+	 * @param {Product} product - The product to be configurated.
+	 * @return {boolean} True if product is valid, else false.
 	 * @abstract
 	 */
-	productIsValid(){}
+	productIsValid(product){throw new NotImplementedError(PATH, "AbstractProductConfigurator.productIsValid()");}
 
 	/**
+	 * Calculate the price of this product.
+	 * @param {Product} product - The product to be configurated.
+	 * @return {number} The price of this product.
 	 * @abstract
 	 */
-	calculatePrice(){}
-
-	get product()
-	{
-		return this._product.clone();
-	}
-
-	get productOptions()
-	{
-		return this._productOptions.clone();
-	}
-
-	set product(product)
-	{
-		this._product = product.clone();
-	}
-
-	set productOptions(options)
-	{
-		this._productOptions = new ClonableKVMap();
-		options.values().foreach(option => {this.saveProductOption(option)});
-	}
+	calculatePrice(product){throw new NotImplementedError(PATH, "AbstractProductConfigurator.calculatePrice()");}
 }
 
 export default AbstractProductConfigurator
