@@ -19,6 +19,7 @@ class WindowProductConfigurator extends AbstractProductConfigurator
 
 	/**
 	 * @override
+	 * @inheritDoc
 	 */
 	applyDefaultConfiguration(productOptions, product)
 	{
@@ -26,6 +27,20 @@ class WindowProductConfigurator extends AbstractProductConfigurator
 			if(!product.hasAnyProductOptionChoiceOfProductOptionTypeId(productOption.type.id))
 				this.saveProductOptionChoice(new ProductOptionChoice(productOption.type, productOption.variants.values().get(0)), product);
 		});
+	}
+
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
+	saveProductOptionChoice(productOptionChoice, product)
+	{
+		let ret = super.saveProductOptionChoice(productOptionChoice, product);
+
+		if(productOptionChoice.productOptionType.title === "Offnungsart")
+			ret.image = productOptionChoice.productOptionVariant.image;
+
+		return ret;
 	}
 
 	/**

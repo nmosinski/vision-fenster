@@ -2,10 +2,15 @@ const PATH = "public/src/main/feature/product/model/AbstractProductConfigurator.
 
 import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
 import ProductOption from "public/src/main/feature/product/model/ProductOption.js"
+import InvalidProductConfigurationError from "public/src/main/feature/product/model/InvalidProductConfigurationError.js"
+import Product from "public/src/main/feature/product/model/Product.js"
 
 import ClonableKVMap from "public/src/main/common/util/map/ClonableKVMap.js"
 
 import NotImplementedError from "public/src/main/common/util/error/NotImplementedError.js"
+import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
+
+import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
 /**
  * @class
@@ -22,24 +27,39 @@ class AbstractProductConfigurator
 	}
 
 	/**
-	 * Save a ProductOptionChoice for the given Product.
+	 * Save a ProductOptionChoice for the given Product and change its price.
 	 * @param {ProductOptionChoice} productOptionChoice - The ProductOptionChoice to be saved.
 	 * @param {product} product - The Product to be configured.
 	 * @return {Product} The configurated product.
+	 * @throws {InvalidProductConfigurationError} If productOptionChoice can not be set.
 	 */
 	saveProductOptionChoice(productOptionChoice, product)
 	{
+		if(!(productOptionChoice instanceof ProductOptionChoice))
+			throw new VariableTypeError(PATH, "AbstractProductConfigurator.saveProductOptionChoice()", productOptionChoice, "ProductOptionChoice");
+		if(!(product instanceof Product))
+			throw new VariableTypeError(PATH, "AbstractProductConfigurator.saveProductOptionChoice()", product, "Product");
+
 		if(this.productOptionChoiceIsValid(productOptionChoice, product))
 			product.saveProductOptionChoice(productOptionChoice);
 		else
-			return;
-
-		if(productOptionChoice.productOptionType.title === "Offnungsart")
-			product.image = productOptionChoice.productOptionVariant.image;
+			throw new InvalidProductConfigurationError(PATH, "AbstractProductConfigurator.saveProductOptionChoice()", productOptionChoice, product);
 		
 		product.price = this.calculatePrice(product);
 		
 		return product;
+	}
+
+	/**
+	 * Save image of the product.
+	 * @param {string} image - The source of the image of the product.
+	 */
+	saveProductImage(image, product)
+	{
+		if(!(product instanceof Product))
+			throw new VariableTypeError(PATH, "AbstractProductConfigurator.saveProductImage()", product, "Product");
+
+		product.image = image;
 	}
 
 	/**
