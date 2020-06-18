@@ -45,7 +45,7 @@ class ClonableKVMap extends IClonable(KVMap)
 	{
 		let map = new ClonableKVMap();
 
-		for(let idx = 0; idx < this.keys().length(); idx++)
+		for(let idx = 0; idx < this.keys().length; idx++)
 		{
 			let k = this.keys().get(idx);
 			if(this.get(k) instanceof IClonable)

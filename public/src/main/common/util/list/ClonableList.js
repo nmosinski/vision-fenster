@@ -50,7 +50,7 @@ class ClonableList extends IClonable(List)
 	{
 		let list = new ClonableList();
 		
-		for(let idx = 0; idx < this.length(); idx++)
+		for(let idx = 0; idx < this.length; idx++)
 			if(this.get(idx) instanceof IClonable)
 				list.add(this.get(idx).clone());
 			else

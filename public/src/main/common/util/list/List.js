@@ -36,7 +36,7 @@ class List extends IComparable()
     	if(!JsTypes.isFunction(f))
     		throw new VariableTypeError(PATH, "List.foreach(f)", f, "function");
 
-        for(let idx = 0; idx < this.length(); idx++)
+        for(let idx = 0; idx < this.length; idx++)
             f(this.get(idx));
     }
 
@@ -52,7 +52,7 @@ class List extends IComparable()
 
     	let ret = [];
 
-    	for(let idx = 0; idx < this.length(); idx++)
+    	for(let idx = 0; idx < this.length; idx++)
         {
         	let el = this.get(idx);
         	if(f(el))
@@ -71,11 +71,11 @@ class List extends IComparable()
 		if(!(object instanceof List))
 			return false;
 		
-		for(let idx = 0; idx < object.length(); idx++)
+		for(let idx = 0; idx < object.length; idx++)
 			if(!this.has(object.get(idx)))
 				return false;
 		
-		if(!this.length() === object.length())
+		if(!this.length() === object.length)
 			return false;
 
 		return true;
@@ -114,8 +114,8 @@ class List extends IComparable()
 		if(!JsTypes.isNumber(elementIdx))
 			throw new VariableTypeError(PATH, "List.get(elementIdx)", elementIdx, "Number");
 
-		if(elementIdx < 0 || elementIdx >= this.length())
-			throw new VariableValueError(PATH, "List.get(elementIdx)", elementIdx, "-1<x<" + this.length());
+		if(elementIdx < 0 || elementIdx >= this.length)
+			throw new VariableValueError(PATH, "List.get(elementIdx)", elementIdx, "-1<x<" + this.length);
 
 		return this._elements[elementIdx];
 	}
@@ -129,8 +129,8 @@ class List extends IComparable()
 		if(!JsTypes.isNumber(elementIdx))
 			throw new VariableTypeError(PATH, "List.get(elementIdx)", elementIdx, "Number");
 
-		if(elementIdx < 0 || elementIdx >= this.length())
-			throw new VariableValueError(PATH, "List.get(elementIdx)", elementIdx, "-1<x<" + this.length());
+		if(elementIdx < 0 || elementIdx >= this.length)
+			throw new VariableValueError(PATH, "List.get(elementIdx)", elementIdx, "-1<x<" + this.length);
 		
   		delete this._elements[elementIdx];
 	}
@@ -169,21 +169,17 @@ class List extends IComparable()
 	}
 
 	/**
-	 * Get the number of elements this list contains.
-	 * @return {number} The number of elements this list contains.
-	 */
-	length()
-	{
-		return this._elements.length;
-	}
-
-	/**
 	 * Create a copy of this list that refers to the same elements.
 	 * @return {List} A shallow copy of this list.
 	 */
 	shallowCopy()
 	{
 		return new List(this.toArray());
+	}
+
+	get length()
+	{
+		return this._elements.length;
 	}
 }
 

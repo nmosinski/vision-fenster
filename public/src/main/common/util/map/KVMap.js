@@ -38,7 +38,7 @@ class KVMap extends IComparable()
         if(!(object instanceof KVMap))
             return false;
         
-        for(let idx = 0; idx < object.keys().length(); idx++)
+        for(let idx = 0; idx < object.keys().length; idx++)
         {
             let key = object.keys().get(idx);
             if(!this.hasAny(key))
@@ -47,7 +47,7 @@ class KVMap extends IComparable()
                 return false;
         }
 
-        if(!this.keys().length() === object.keys().length())
+        if(!this.keys().length === object.keys().length)
         	return false;
 
         return true;
@@ -116,7 +116,7 @@ class KVMap extends IComparable()
 	has(value)
 	{
         let values = this.values();
-		for(let idx = 0; idx < values.length(); idx++)
+		for(let idx = 0; idx < values.length; idx++)
 		{
 			if(values.get(idx) instanceof IComparable)
 			{

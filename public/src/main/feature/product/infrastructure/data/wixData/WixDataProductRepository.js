@@ -158,7 +158,7 @@ class WixDataProductOptionChoiceRepository extends WixDataRepository
 		for(let idx in objects)
 			toRemove.add(objects[idx]._id);
 		
-		if(toRemove.length() !== 0)
+		if(toRemove.length !== 0)
 			await this.removeMany(toRemove);
 	}
 }
