@@ -1,6 +1,6 @@
 const PATH = "public/src/main/feature/order/application/OrderApplicationService.js";
 
-export default class OrderApplicationService
+class OrderApplicationService
 {
 	constructor(orderRepository, orderItemRepository)
 	{
@@ -28,3 +28,5 @@ export default class OrderApplicationService
 		return this._orderItemRepository;
 	}
 }
+
+export default OrderApplicationService;

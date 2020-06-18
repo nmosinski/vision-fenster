@@ -2,7 +2,7 @@ const PATH = "public/src/main/feature/shoppingCart/model/ShoppingCartItem.js";
 
 import AbstractEntity from "public/src/main/common/AbstractEntity.js"
 
-export default class ShoppingCartItem
+class ShoppingCartItem extends AbstractEntity
 {
 	constructor(id, shoppingCartId, productId, count, singlePrice)
 	{
@@ -53,3 +53,5 @@ export default class ShoppingCartItem
 		return this._singlePrice;
 	}
 }
+
+export default ShoppingCartItem;

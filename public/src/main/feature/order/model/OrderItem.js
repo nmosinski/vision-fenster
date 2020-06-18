@@ -2,7 +2,7 @@ const PATH = "public/src/main/feature/order/model/OrderItem.js";
 
 import AbstractEntity from "public/src/main/common/AbstractEntity.js"
 
-export default class OrderItem
+class OrderItem extends AbstractEntity
 {
 	constructor(id, orderId, productId, price)
 	{
@@ -42,3 +42,5 @@ export default class OrderItem
 		return this._price;
 	}
 }
+
+export default OrderItem;

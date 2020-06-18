@@ -1,6 +1,6 @@
 const PATH = "public/src/main/feature/shoppingCart/application/ShoppingCartApplicationService.js";
 
-export default class ShoppingCartApplicationService
+class ShoppingCartApplicationService
 {
 	constructor(shoppingCartRepository, shoppingCartItemRepository)
 	{
@@ -28,3 +28,5 @@ export default class ShoppingCartApplicationService
 		return this._shoppingCartItemRepository;
 	}
 }
+
+export default ShoppingCartApplicationService;
