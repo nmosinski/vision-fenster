@@ -13,6 +13,11 @@ class ShoppingCartItem extends AbstractEntity
 		this.singlePrice = singlePrice;
 	}
 
+	getTotalPrice()
+	{
+		return this._singlePrice * this._count;
+	}
+
 	set shoppingCartId(shoppingCartId)
 	{
 		this._shoppingCartId = shoppingCartId;
@@ -51,6 +56,11 @@ class ShoppingCartItem extends AbstractEntity
 	get singlePrice()
 	{
 		return this._singlePrice;
+	}
+
+	get totalPrice()
+	{
+		return this._singlePrice * this._count;
 	}
 }
 

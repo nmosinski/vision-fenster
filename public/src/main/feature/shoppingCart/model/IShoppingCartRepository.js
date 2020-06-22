@@ -4,6 +4,10 @@ import NotImplementedError from "public/src/main/common/util/error/NotImplemente
 
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
+/**
+ * @interface
+ * Interface representing a ShoppingCartRepository.
+ */
 const IShoppingCartRepository = (superclass=null) => 
 {
 	Object.defineProperty(IShoppingCartRepository, Symbol.hasInstance, {value: function(instance) { 
@@ -19,12 +23,36 @@ const IShoppingCartRepository = (superclass=null) =>
 	 */
 	const C = class extends superclass
 	{
+		/**
+		 * Get ShoppingCart.
+		 * @param {string} shoppingCartId - The id of ShoppingCart.
+		 * @return {ShoppingCart} - The ShoppingCart.
+		 */
 		getShoppingCart(shoppingCartId){throw new NotImplementedError(PATH, "IShoppingCartRepository.getShoppingCart()");}
 
+		/**
+		 * Get ShoppingCart by member id.
+		 * @param {string} memberId - The id of the member.
+		 * @return {ShoppingCart} - The ShoppingCart.
+		 */
+		getShoppingCartByMemberId(memberId){throw new NotImplementedError(PATH, "IShoppingCartRepository.getShoppingCartByMemberId()");}
+
+		/**
+		 * Save ShoppingCart.
+		 * @param {ShoppingCart} shoppingCart - The ShoppingCart.
+		 */
 		saveShoppingCart(shoppingCart){throw new NotImplementedError(PATH, "IShoppingCartRepository.saveShoppingCart()");}
 
+		/**
+		 * Update ShoppingCart.
+		 * @param {ShoppingCart} shoppingCart - The ShoppingCart.
+		 */
 		updateShoppingCart(shoppingCart){throw new NotImplementedError(PATH, "IShoppingCartRepository.updateShoppingCart()");}
 
+		/**
+		 * Delete ShoppingCart.
+		 * @param {string} shoppingCartId - The id of ShoppingCart.
+		 */
 		deleteShoppingCart(shoppingCartId){throw new NotImplementedError(PATH, "IShoppingCartRepository.deleteShoppingCart()");}
 	}
 
