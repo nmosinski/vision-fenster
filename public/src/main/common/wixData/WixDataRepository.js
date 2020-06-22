@@ -180,6 +180,22 @@ class WixDataRepository
 	}
 
 	/**
+	 * Update many items.
+	 * @param {List<object>} [objects] A List of objects representing the items to be updated.
+	 */
+	async updateMany(objects)
+	{
+		if(!(objects instanceof List))
+			throw new VariableTypeError(PATH, "WixDataRepository.updateMany()", objects, "List<object>.");
+
+		let items = [];
+
+		objects.foreach( object => {items.push(this._toItem(object));});
+
+		await WixData.bulkUpdate(this.collectionName, items, this._options);
+	}
+
+	/**
 	 * Remove an item.
 	 * @param {string} [itemId] The id of the item to be removed.
 	 */

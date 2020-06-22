@@ -210,6 +210,35 @@ class WixData
 	}
 
 	/**
+	 * Wix.wix-data.bulkUpdate - wrapper.
+	 * Update multiple items in the given collection. If the item already exists in the given collection, it will be overwritten.
+	 * @param {string} [collectionName] The name of the collection the item will be updated in.
+	 * @param {object} [item] An object representing the item to be updated.
+	 * @param {object} [options=null] The options for this operation like in wix documentation explained.
+	 */
+	static async bulkUpdate(collectionName, items, options = null)
+	{
+		if(!JsTypes.isString(collectionName))
+			throw new VariableTypeError(PATH, "WixData.bulkUpdate()", collectionName, "string");
+		if(JsTypes.isEmpty(collectionName))
+			throw new VariableValueError(PATH, "WixData.bulkUpdate()", collectionName, "An array with the names of the collections, not empty.");
+
+		if(!JsTypes.isArray(items))
+			throw new VariableTypeError(PATH, "WixData.bulkUpdate()", items, "array<string>");
+		if(JsTypes.isEmpty(items))
+			throw new VariableValueError(PATH, "WixData.bulkUpdate()", items, "An array with the items, not empty.");
+	
+
+		try
+		{
+			await wixData.bulkUpdate(collectionName, items, options);
+		}catch(err)
+		{
+			throw new ForeignError(PATH, "WixData.bulkUpdate(...)", err);
+		}
+	}
+
+	/**
 	 * Wix.wix-data.remove - wrapper.
 	 * Remove an item from the given collection.
 	 * @param {string} [collectionName] The name of the collection the item will be removed from.
