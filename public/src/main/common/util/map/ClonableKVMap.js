@@ -3,6 +3,7 @@ const PATH = "public/src/main/common/util/map/ClonableKVMap.js";
 import KVMap from "public/src/main/common/util/map/KVMap.js";
 import IClonable from "public/src/main/common/util/IClonable.js";
 
+import ClonableList from "public/src/main/common/util/list/ClonableList.js";
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
@@ -55,6 +56,16 @@ class ClonableKVMap extends IClonable(KVMap)
 		}
 		
 		return map;
+	}
+
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
+	
+	values()
+	{
+		return new ClonableList(Object.values(this._elements));
 	}
 }
 

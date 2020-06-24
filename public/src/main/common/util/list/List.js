@@ -177,6 +177,15 @@ class List extends IComparable()
 		return new List(this.toArray());
 	}
 
+	/**
+	 * Check if list is empty.
+	 * @return {boolean} True if empty, else false.
+	 */
+	isEmpty()
+	{
+		return this.length === 0;
+	}
+
 	get length()
 	{
 		return this._elements.length;

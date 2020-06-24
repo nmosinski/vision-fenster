@@ -3,6 +3,7 @@ const PATH = "public/src/main/common/util/map/KVMap.js";
 import IComparable from "public/src/main/common/util/IComparable.js";
 
 import List from "public/src/main/common/util/list/List.js";
+import ClonableList from "public/src/main/common/util/list/ClonableList.js";
 
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 import VariableValueError from "public/src/main/common/util/error/VariableValueError.js";
@@ -158,7 +159,7 @@ class KVMap extends IComparable()
      */
 	keys()
 	{
-		return new List(Object.keys(this._elements));
+		return new ClonableList(Object.keys(this._elements));
 	}
 
     /**
@@ -177,6 +178,20 @@ class KVMap extends IComparable()
 	shallowCopy()
 	{
 		return new KVMap(this.toObject());
+	}
+
+	/**
+	 * Check if map is empty.
+	 * @return {boolean} True if empty, else false.
+	 */
+	isEmpty()
+	{
+		return this.length === 0;
+	}
+
+	get length()
+	{
+		return this.keys().length;
 	}
 }
 
