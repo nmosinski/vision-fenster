@@ -3,6 +3,7 @@ const PATH = "public/src/main/feature/shoppingCart/model/ShoppingCart.js";
 import AbstractEntity from "public/src/main/common/AbstractEntity.js"
 
 import ClonableKVMap from "public/src/main/common/util/map/ClonableKVMap.js"
+import List from "public/src/main/common/util/list/List.js"
 
 /**
  * @class
@@ -14,9 +15,9 @@ class ShoppingCart extends AbstractEntity
 	 * Create ShoppingCart.
 	 * @param {string} id - The id of ShoppingCart.
 	 * @param {string} memberId - The id of the member this cart belongs to.
-	 * @param {List<ShoppingCartItems>} items - A list of ShoppingCartItems this ShoppingCart contains.
+	 * @param {List<ShoppingCartItem>} items - A list of ShoppingCartItems this ShoppingCart contains.
 	 */
-	constructor(id, memberId, items)
+	constructor(id, memberId, items=null)
 	{
 		super(id);
 		this.memberId = memberId;
@@ -29,7 +30,10 @@ class ShoppingCart extends AbstractEntity
 	 */
 	addItem(item)
 	{
-		this._shoppingCartItems.add(item.id, item);
+		if(this._items.has(item))
+			this._items.get(item.id).incCount();
+		else
+			this._items.add(item.id, item);
 	}
 
 	/**
@@ -79,8 +83,8 @@ class ShoppingCart extends AbstractEntity
 	set items(items)
 	{
 		this._items = new ClonableKVMap();
-
-		items.foreach(item => {this.addItem(item);});
+		if(items instanceof List)
+			items.foreach(item => {this.addItem(item);});
 	}
 
 	/**
@@ -98,7 +102,7 @@ class ShoppingCart extends AbstractEntity
 	 */
 	get items()
 	{
-		return this._items.values();
+		return this._items.values().clone();
 	}
 }
 
