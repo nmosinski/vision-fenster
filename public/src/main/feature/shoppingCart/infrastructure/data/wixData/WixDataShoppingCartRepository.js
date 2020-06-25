@@ -12,7 +12,7 @@ import List from "public/src/main/common/util/list/List.js"
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
 const COLLECTION_NAME = "shopping_cart"
-const MAPPING = {"id":"_id", "memberId":"memberId", "totalPrice": "totalPrice"};
+const MAPPING = {"id":"_id", "userId":"userId", "totalPrice": "totalPrice"};
 
 /**
  * @class
@@ -53,16 +53,16 @@ class WixDataShoppingCartRepository extends IShoppingCartRepository(WixDataRepos
 
 		let shoppingCartItemsList = this._wixDataShoppingCartItemRepository.getShoppingCartItemsByShoppingCartId(shoppingCartId);
 
-		return new ShoppingCart(shoppingCartObject.id, shoppingCartObject.memberId, shoppingCartObject.totalPrice, shoppingCartItemsList);
+		return new ShoppingCart(shoppingCartObject.id, shoppingCartObject.userId, shoppingCartObject.totalPrice, shoppingCartItemsList);
 	}
 
 	/**
 	 * @override
 	 * @inheritDoc
 	 */
-	async getShoppingCartByMemberId(memberId)
+	async getShoppingCartByUserId(userId)
 	{
-		let query = this.query().eq(MAPPING.memberId, memberId);
+		let query = this.query().eq(MAPPING.userId, userId);
 		let objects = await this.find(query);
 		let shoppingCartObject = objects[0];
 
@@ -71,7 +71,7 @@ class WixDataShoppingCartRepository extends IShoppingCartRepository(WixDataRepos
 
 		let shoppingCartItemsList = this._wixDataShoppingCartItemRepository.getShoppingCartItemsByShoppingCartId(shoppingCartObject.id);
 
-		return new ShoppingCart(shoppingCartObject.id, shoppingCartObject.memberId, shoppingCartObject.totalPrice, shoppingCartItemsList);
+		return new ShoppingCart(shoppingCartObject.id, shoppingCartObject.userId, shoppingCartObject.totalPrice, shoppingCartItemsList);
 	}
 
 	/**

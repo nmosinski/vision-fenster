@@ -17,11 +17,13 @@ class ProductRepository extends IProductRepository()
 
 	async getProduct(id)
 	{
-		let product = this._foreignProductRepo.getProduct(id);
+		let product = await this._foreignProductRepo.getProduct(id);
 		let productOptions = new List();
-
+		console.log(product);
 		product.productOptionChoices.values().foreach(choice => {productOptions.add(choice.productOptionType.title, choice.productOptionVariant.title);});
 
 		return new Product(product.id, product.price, product.image, productOptions);
 	}
 }
+
+export default ProductRepository;
