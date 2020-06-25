@@ -14,13 +14,13 @@ class ShoppingCart extends AbstractEntity
 	/**
 	 * Create ShoppingCart.
 	 * @param {string} id - The id of ShoppingCart.
-	 * @param {string} memberId - The id of the member this cart belongs to.
+	 * @param {string} userId - The id of the user this cart belongs to.
 	 * @param {List<ShoppingCartItem>} items - A list of ShoppingCartItems this ShoppingCart contains.
 	 */
-	constructor(id, memberId, items=null)
+	constructor(id, userId, items=null)
 	{
 		super(id);
-		this.memberId = memberId;
+		this.userId = userId;
 		this.items = items;
 	}
 
@@ -69,11 +69,11 @@ class ShoppingCart extends AbstractEntity
 
 	/**
 	 * Set the id of the member this shopping cart belongs to.
-	 * @param {string} memberId - The id of the member this shopping cart belongs to.
+	 * @param {string} userId - The id of the member this shopping cart belongs to.
 	 */
-	set memberId(memberId)
+	set userId(userId)
 	{
-		this._memberId = memberId;
+		this._userId = userId;
 	}
 
 	/**
@@ -88,12 +88,12 @@ class ShoppingCart extends AbstractEntity
 	}
 
 	/**
-	 * Get the id of the member this ShoppingCart belongs to.
-	 * @return {string} The id of the member.
+	 * Get the id of the user this ShoppingCart belongs to.
+	 * @return {string} The id of the user.
 	 */
-	get memberId()
+	get userId()
 	{
-		return this._memberId;
+		return this._userId;
 	}
 
 	/**

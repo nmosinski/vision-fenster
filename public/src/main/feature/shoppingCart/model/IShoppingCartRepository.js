@@ -13,6 +13,7 @@ const IShoppingCartRepository = (superclass=null) =>
 	Object.defineProperty(IShoppingCartRepository, Symbol.hasInstance, {value: function(instance) { 
 		return JsTypes.isFunction(instance.nextIdentity) &&
 		JsTypes.isFunction(instance.getShoppingCart) &&
+		JsTypes.isFunction(instance.getShoppingCartByUserId) &&
 		JsTypes.isFunction(instance.saveShoppingCart) &&
 		JsTypes.isFunction(instance.updateShoppingCart) &&
 		JsTypes.isFunction(instance.deleteShoppingCart); 
@@ -38,11 +39,11 @@ const IShoppingCartRepository = (superclass=null) =>
 		getShoppingCart(shoppingCartId){throw new NotImplementedError(PATH, "IShoppingCartRepository.getShoppingCart()");}
 
 		/**
-		 * Get ShoppingCart by member id.
-		 * @param {string} memberId - The id of the member.
+		 * Get ShoppingCart by user id.
+		 * @param {string} memberId - The id of the user.
 		 * @return {ShoppingCart} - The ShoppingCart.
 		 */
-		getShoppingCartByMemberId(memberId){throw new NotImplementedError(PATH, "IShoppingCartRepository.getShoppingCartByMemberId()");}
+		getShoppingCartByUserId(userId){throw new NotImplementedError(PATH, "IShoppingCartRepository.getShoppingCartByUserId()");}
 
 		/**
 		 * Save ShoppingCart.
