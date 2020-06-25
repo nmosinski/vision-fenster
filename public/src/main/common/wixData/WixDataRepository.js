@@ -5,6 +5,7 @@ import List from "public/src/main/common/util/list/List.js"
 
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
+import ItemNotFoundError from "public/src/main/common/wixData/ItemNotFoundError.js"
 
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
@@ -75,7 +76,12 @@ class WixDataRepository
 		if(JsTypes.isEmpty(itemId))
 			throw new VariableValueError(PATH, "WixDataRepository.get()", itemId, "The id of the item, not empty.");
 
-		return WixData.get(this.collectionName, itemId, this._options).then((item) => {return this._toObject(item);});
+		let item = await WixData.get(this.collectionName, itemId, this._options);
+		
+		if(JsTypes.isUnspecified(item))
+			throw new ItemNotFoundError(PATH, "WixDataRepository.get()", itemId);
+
+		return this._toObject(item);
 	}
 
 	/**
