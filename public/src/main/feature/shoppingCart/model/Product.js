@@ -38,7 +38,7 @@ class Product extends AbstractEntity
 	 */
 	get productOptions()
 	{
-		return this._productOptions.clone();
+		return this._productOptions;
 	}
 
 	/**
