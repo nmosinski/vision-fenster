@@ -25,14 +25,14 @@ const IAuthenticationService = (superclass=null) =>
 		 * Get current users id.
 		 * @return {string} - The id of the current user.
 		 */
-		getCurrentUsersId(){throw new NotImplementedError(PATH, "IAuthenticationService.getCurrentUsersId()");}
+		getCurrentUsersId(){throw new NotImplementedError(PATH, "IAuthenticationService.getCurrentUser()");}
 
 		/**
 		 * Check if the given id is the one from the current user.
 		 * @param  {string}  id - The id of the user to be checked for if its the current one.
 		 * @return {boolean} True if the id represents the current user, else false.
 		 */
-		isCurrentUsersId(id){throw new NotImplementedError(PATH, "IAuthenticationService.isCurrentUsersId()");}	
+		isCurrentUsersId(id){throw new NotImplementedError(PATH, "IAuthenticationService.isCurrentUser()");}	
 	}
 
 	return C;
