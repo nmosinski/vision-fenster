@@ -47,7 +47,8 @@ class WixDataProductRepository extends IProductRepository(WixDataRepository)
 		if(JsTypes.isUnspecified(object))
 			throw new EntityNotFoundError(PATH, "WixDataProductRepository.getProduct()", productId);
 		
-		let product = new Product(object.id, object.productOptionModelId, object.price, object.image);
+		console.log(object);
+		let product = new Product(object.id, object.productModelId, object.price, object.image);
 		let productOptionChoicesList = await this._wixDataProductOptionChoiceRepository.getProductOptionChoicesOfProductByProductId(product.id);
 		
 		productOptionChoicesList.foreach(choice=>{product.saveProductOptionChoice(choice);});
@@ -125,19 +126,19 @@ class WixDataProductOptionChoiceRepository extends WixDataRepository
 		let query = this.query().eq("productId", productId);
 		let objects = await this.find(query);
 
-		let productOptionVariantIds = List();
+		let productOptionVariantIds = new List();
 		for(let idx in objects)
 			productOptionVariantIds.add(objects[idx].productOptionVariantId);
-		let productOptionVariants = this._wixDataProductOptionVariantRepository.getManyProductOptionVariants(productOptionVariantIds);
+		let productOptionVariants = await this._wixDataProductOptionVariantRepository.getManyProductOptionVariants(productOptionVariantIds);
 		
-		let productOptionTypeIds = List();
+		let productOptionTypeIds = new List();
 		productOptionVariants.foreach(variant => {productOptionTypeIds.add(variant.productOptionTypeId);});
-		let productOptionTypes = this._wixDataProductOptionTypeRepository.getManyProductOptionTypes(productOptionTypeIds);
+		let productOptionTypes = await this._wixDataProductOptionTypeRepository.getManyProductOptionTypes(productOptionTypeIds);
 		let productOptionTypesMap = new KVMap();
 		productOptionTypes.foreach(type => {productOptionTypesMap.add(type.id, type);});
 
 		let productOptionChoices = new List();
-		productOptionVariants.foreach(variant => {productOptionChoices.add(new ProductOptionChoice(productOptionTypes.get(variant.productOptionTypeId), variant))});
+		productOptionVariants.foreach(variant => {productOptionChoices.add(new ProductOptionChoice(productOptionTypesMap.get(variant.productOptionTypeId), variant))});
 
 		return productOptionChoices;
 	}
