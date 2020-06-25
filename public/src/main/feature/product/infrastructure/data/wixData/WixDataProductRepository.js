@@ -47,7 +47,6 @@ class WixDataProductRepository extends IProductRepository(WixDataRepository)
 		if(JsTypes.isUnspecified(object))
 			throw new EntityNotFoundError(PATH, "WixDataProductRepository.getProduct()", productId);
 		
-		console.log(object);
 		let product = new Product(object.id, object.productModelId, object.price, object.image);
 		let productOptionChoicesList = await this._wixDataProductOptionChoiceRepository.getProductOptionChoicesOfProductByProductId(product.id);
 		
