@@ -1,9 +1,12 @@
-import WixUsers from 'wix-users';
+import WixUsers from "wix-users"
+import wixWindow from "wix-window"
 
 import ShoppingCartRepository from "public/src/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartRepository.js"
 import ShoppingCartItemRepository from "public/src/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartItemRepository.js"
 import ProductRepository from "public/src/main/feature/shoppingCart/infrastructure/data/foreignDomains/ProductRepository.js"
 import ShoppingCartApplicationService from "public/src/main/feature/shoppingCart/application/ShoppingCartApplicationService.js"
+
+import WixUsersFrontendAuthenticationService from "public/src/main/feature/shoppingCart/infrastructure/authenticationService/wixUsers/WixUsersFrontendAuthenticationService.js"
 
 var shoppingCartApplicationService;
 var shoppingCartRepository;
@@ -13,14 +16,19 @@ var shoppingCartId;
 $w.onReady(async function () 
 {
     shoppingCartRepository = new ShoppingCartRepository();
-    shoppingCartApplicationService = new ShoppingCartApplicationService(shoppingCartRepository, new ShoppingCartItemRepository(), new ProductRepository());
-    await updateShoppingCart();
+    shoppingCartApplicationService = new ShoppingCartApplicationService(shoppingCartRepository, new ShoppingCartItemRepository(), new ProductRepository(), new WixUsersFrontendAuthenticationService());
+    
+    if(wixWindow.rendering.env === "browser") 
+    {
+        //await shoppingCartApplicationService.createShoppingCartForCurrentUser();   
+    }
 
+    await updateShoppingCart();
 });
 
 async function updateShoppingCart()
 {    
-    shoppingCart = await shoppingCartRepository.getShoppingCartByMemberId(WixUsers.currentUser.id);
+    shoppingCart = await shoppingCartRepository.getShoppingCartByUserId(WixUsers.currentUser.id);
     console.log(shoppingCart);
 }
 
@@ -62,7 +70,7 @@ var TABLE_BESCHREIBUNG_COL_NAME = "property";
 
 $w.onReady(function () 
 {
-	setupRepeater();
+    setupRepeater();
 });
 
 function setupRepeater()
