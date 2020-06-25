@@ -21,7 +21,7 @@ class WixUsersAuthenticationService extends IAuthenticationService()
 	 */
 	getCurrentUsersId()
 	{
-		this._wixUsersModule.currentUser.id;
+		return this._wixUsersModule.currentUser.id;
 	}
 
 	/**

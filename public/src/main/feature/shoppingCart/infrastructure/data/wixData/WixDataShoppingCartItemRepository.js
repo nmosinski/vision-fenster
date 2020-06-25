@@ -1,5 +1,7 @@
 const PATH = "public/src/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartItemRepository.js";
 
+import {v4 as UUID} from "uuid"
+
 import ShoppingCartItem from "public/src/main/feature/shoppingCart/model/ShoppingCartItem.js"
 import IShoppingCartItemRepository from "public/src/main/feature/shoppingCart/model/IShoppingCartItemRepository.js"
 import WixDataRepository from "public/src/main/common/wixData/WixDataRepository.js"
@@ -25,6 +27,15 @@ class WixDataShoppingCartItemRepository extends IShoppingCartItemRepository(WixD
 	constructor(authorisation=true, hooks=true)
 	{
         super(COLLECTION_NAME, new KVMap(MAPPING), authorisation, hooks);
+	}
+
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
+	nextIdentity()
+	{
+		return UUID();
 	}
 
 	/**

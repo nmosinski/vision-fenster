@@ -11,7 +11,6 @@ class WixUsersFrontendAuthenticationService extends WixUsersAuthenticationServic
 	constructor()
 	{
 		super(WixUsersFrontend);
-		console.log(WixUsersFrontend);
 	}
 }
 

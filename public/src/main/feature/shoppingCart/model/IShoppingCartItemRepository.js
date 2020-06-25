@@ -11,7 +11,8 @@ import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 const IShoppingCartItemRepository = (superclass=null) => 
 {
 	Object.defineProperty(IShoppingCartItemRepository, Symbol.hasInstance, {value: function(instance) { 
-		return JsTypes.isFunction(instance.getShoppingCartItem) &&
+		return JsTypes.isFunction(instance.nextIdentity) &&
+		JsTypes.isFunction(instance.getShoppingCartItem) &&
 		JsTypes.isFunction(instance.saveShoppingCartItem) &&
 		JsTypes.isFunction(instance.updateShoppingCartItem) &&
 		JsTypes.isFunction(instance.deleteShoppingCartItem) &&
@@ -27,6 +28,12 @@ const IShoppingCartItemRepository = (superclass=null) =>
 	 */
 	const C = class extends superclass
 	{
+		/**
+		 * Get next identity for ShoppingCartItem.
+		 * @return {string} The next identity.
+		 */
+		nextIdentity(){throw new NotImplementedError(PATH, "IShoppingCartItemRepository.nextIdentity()");}
+
 		/**
 		 * Get ShoppingCartItem.
 		 * @param {string} shoppingCartItemId - The id of ShoppingCartItem.
