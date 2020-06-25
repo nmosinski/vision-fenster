@@ -17,11 +17,6 @@ $w.onReady(async function ()
 {
     shoppingCartRepository = new ShoppingCartRepository();
     shoppingCartApplicationService = new ShoppingCartApplicationService(shoppingCartRepository, new ShoppingCartItemRepository(), new ProductRepository(), new WixUsersFrontendAuthenticationService());
-    
-    if(wixWindow.rendering.env === "browser") 
-    {
-        //await shoppingCartApplicationService.createShoppingCartForCurrentUser();   
-    }
 
     await updateShoppingCart();
 });
@@ -34,12 +29,50 @@ async function updateShoppingCart()
 
 function initRepeater()
 {
-
+    setOnItemReadyFunctionForRepeater();
+    setDataForRepeater(shoppingCart.items.toArray());
 }
 
 
+function setDataForRepeater(data)
+{
+    $w("#repeaterShoppingCartItems").data = data;
+}
+
+function setOnItemReadyFunctionForRepeater()
+{
+    $w("#repeaterShoppingCartItems").onItemReady(($item, shoppingCartItem, index) => {
+        $item("#imageShoppingCartItem").src = shoppingCartItem.image;
+        $item("#textShoppingCartItemTitle").text = "Fenster";
+        $item("#textShoppingCartItemDetails").text = shoppingCartItem.details;
+        $item("#textShoppingCartItemSinglePrice").text = "" + shoppingCartItem.singlePrice;
+        $item("#textShoppingCartItemTotalPrice").text = "" + shoppingCartItem.totalPrice;
+        $item("#dropdownShoppingCartItemCount").value = "" + shoppingCartItem.count;
+    });
+}
+
+function initRepeater()
+{
+    productOptions.values().foreach((productOption) => {
+        let optionTypeTitle = productOption.type.title;
+        let onItemReadyFunction = getDefaultOnItemReadyRepeaterFunction(optionTypeTitle);
+        setOnItemReadyFunctionForRepeater(repeaterNameByOptionTypeTitle(optionTypeTitle), onItemReadyFunction);
+        setDataForRepeater(repeaterNameByOptionTypeTitle(optionTypeTitle), productOption.variants.values().toArray());
+    });
+
+    setOnItemReadyFunctionForRepeater("#repeaterConfigurationDetails", repeaterConfigurationDetailsOnItemReadyFunction);
+}
 
 
+function getDefaultOnItemReadyRepeaterFunction(optionType)
+{
+    return ($item, itemData, index)=>{
+        $item("#image" + optionType + "Item").src = itemData.image;
+        $item("#image" + optionType + "Item").onClick((event)=>{
+            onProductOptionVariantSelection(itemData.productOptionTypeId, itemData._id);
+        });
+    };
+}
 
 
 
