@@ -12,7 +12,7 @@ import List from "public/src/main/common/util/list/List.js"
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
 const COLLECTION_NAME = "shopping_cart"
-const MAPPING = {"id":"_id", "userId":"userId", "totalPrice": "totalPrice"};
+const MAPPING = {"id":"_id", "userId":"userId"};
 
 /**
  * @class
@@ -53,7 +53,7 @@ class WixDataShoppingCartRepository extends IShoppingCartRepository(WixDataRepos
 
 		let shoppingCartItemsList = this._wixDataShoppingCartItemRepository.getShoppingCartItemsByShoppingCartId(shoppingCartId);
 
-		return new ShoppingCart(shoppingCartObject.id, shoppingCartObject.userId, shoppingCartObject.totalPrice, shoppingCartItemsList);
+		return new ShoppingCart(shoppingCartObject.id, shoppingCartObject.userId, shoppingCartItemsList);
 	}
 
 	/**
@@ -69,9 +69,9 @@ class WixDataShoppingCartRepository extends IShoppingCartRepository(WixDataRepos
 		if(JsTypes.isUnspecified(shoppingCartObject))
 			return;
 
-		let shoppingCartItemsList = this._wixDataShoppingCartItemRepository.getShoppingCartItemsByShoppingCartId(shoppingCartObject.id);
+		let shoppingCartItemsList = await this._wixDataShoppingCartItemRepository.getShoppingCartItemsByShoppingCartId(shoppingCartObject.id);
 
-		return new ShoppingCart(shoppingCartObject.id, shoppingCartObject.userId, shoppingCartObject.totalPrice, shoppingCartItemsList);
+		return new ShoppingCart(shoppingCartObject.id, shoppingCartObject.userId, shoppingCartItemsList);
 	}
 
 	/**

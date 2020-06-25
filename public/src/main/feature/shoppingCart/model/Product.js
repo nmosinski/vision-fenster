@@ -18,13 +18,15 @@ class Product extends AbstractEntity
 	/**
 	 * Create a Product.
 	 * @param {string} [id] The id of this product.
+	 * @param {string} [type] The type of this product.
 	 * @param {number} [price] The price of this product.
 	 * @param {string} [image] The link to an image represeenting this product.
 	 * @param {List<ProductOption>} productOptions - The products options.
 	 */
-	constructor(id, price, image, productOptions=null)
+	constructor(id, type, price, image, productOptions=null)
 	{
 		super(id);
+		this.type = type;
 		this.price = price;
 		this.image = image;
 
@@ -39,6 +41,11 @@ class Product extends AbstractEntity
 	get productOptions()
 	{
 		return this._productOptions;
+	}
+
+	get type()
+	{
+		return this._type;
 	}
 
 	/**
@@ -82,6 +89,11 @@ class Product extends AbstractEntity
 		if(price < 0)
 			throw new VariableValueError(PATH, "Product.set price()", price, "price > -1");
 		this._price = price;
+	}
+
+	set type(type)
+	{
+		this._type = type;
 	}
 
 	/**

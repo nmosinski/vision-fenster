@@ -8,13 +8,15 @@ import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
 class ShoppingCartItem extends IClonable(IComparable(AbstractEntity))
 {
-	constructor(id, shoppingCartId, productId, count, singlePrice, details=null)
+	constructor(id, shoppingCartId, productId, title, count, singlePrice, image, details=null)
 	{
 		super(id);
 		this.shoppingCartId = shoppingCartId;
 		this.productId = productId;
+		this.title = title;
 		this.count = count;
 		this.singlePrice = singlePrice;
+		this.image = image;
 		this.details = details;
 	}
 
@@ -28,11 +30,15 @@ class ShoppingCartItem extends IClonable(IComparable(AbstractEntity))
 			return false;
 		if(this.productId !== o.productId)
 			return false;
+		if(this.title !== o.title)
+			return false;
 		if(this.count !== o.count)
 			return false;
 		if(this.singlePrice !== o.singlePrice)
 			return false;
 		if(this.details !== o.details)
+			return false;
+		if(this.image !== o.image)
 			return false;
 
 		return true;
@@ -40,12 +46,7 @@ class ShoppingCartItem extends IClonable(IComparable(AbstractEntity))
 
 	clone()
 	{
-		return new ShoppingCartItem(this.id, this.shoppingCartId, this.productId, this.count, this.singlePrice, this.details)
-	}
-
-	getTotalPrice()
-	{
-		return this._singlePrice * this._count;
+		return new ShoppingCartItem(this.id, this.shoppingCartId, this.productId, this.title, this.count, this.singlePrice, this.image, this.details)
 	}
 
 	incCount(number=1)
@@ -68,6 +69,11 @@ class ShoppingCartItem extends IClonable(IComparable(AbstractEntity))
 		this._productId = productId;
 	}
 
+	set title(title)
+	{
+		this._title = title;
+	}
+
 	set count(count)
 	{
 		this._count = count;
@@ -76,6 +82,11 @@ class ShoppingCartItem extends IClonable(IComparable(AbstractEntity))
 	set singlePrice(singlePrice)
 	{
 		this._singlePrice = singlePrice;
+	}
+
+	set image(image)
+	{
+		this._image = image;
 	}
 
 	set details(details)
@@ -96,6 +107,11 @@ class ShoppingCartItem extends IClonable(IComparable(AbstractEntity))
 		return this._productId;
 	}
 
+	get title()
+	{
+		return this._title;
+	}
+
 	get count()
 	{
 		return this._count;
@@ -109,6 +125,11 @@ class ShoppingCartItem extends IClonable(IComparable(AbstractEntity))
 	get totalPrice()
 	{
 		return this._singlePrice * this._count;
+	}
+
+	get image()
+	{
+		return this._image;
 	}
 
 	get details()

@@ -11,7 +11,7 @@ import List from "public/src/main/common/util/list/List.js"
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
 const COLLECTION_NAME = "shopping_cart_item"
-const MAPPING = {"id":"_id", "shoppingCartId":"shoppingCartId", "productId":"productId", "count":"count", "price":"price", "details":"details"};
+const MAPPING = {"id":"_id", "shoppingCartId":"shoppingCartId", "productId":"productId", "title":"title", "count":"count", "singlePrice":"singlePrice", "image":"image", "details":"details"};
 
 /**
  * @class
@@ -44,9 +44,9 @@ class WixDataShoppingCartItemRepository extends IShoppingCartItemRepository(WixD
 	 */
 	async getShoppingCartItem(shoppingCartItemId)
 	{
-		let item = await this.get(shoppingCartItemId);
+		let object = await this.get(shoppingCartItemId);
 
-		return new ShoppingCartItem(item.id, item.shoppingCartId, item.productId, item.count, item.singlePrice, item.details);
+		return new ShoppingCartItem(object.id, object.shoppingCartId, object.productId, object.title, object.count, object.singlePrice, object.image, object.details);
 	}
 
 	/**
@@ -60,7 +60,7 @@ class WixDataShoppingCartItemRepository extends IShoppingCartItemRepository(WixD
 		let items = new List();
 
 		for(let idx in objects)
-			items.add(new ShoppingCartItem(objects[idx].id, objects[idx].shoppingCartId, objects[idx].productId, objects[idx].count, objects[idx].singlePrice, objects[idx].details));
+			items.add(new ShoppingCartItem(objects[idx].id, objects[idx].shoppingCartId, objects[idx].productId, objects[idx].title, objects[idx].count, objects[idx].singlePrice, objects[idx].image, objects[idx].details));
 
 		return items;
 	}

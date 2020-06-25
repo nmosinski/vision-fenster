@@ -19,10 +19,9 @@ class ProductRepository extends IProductRepository()
 	{
 		let product = await this._foreignProductRepo.getProduct(id);
 		let productOptions = new List();
-		console.log(product);
-		product.productOptionChoices.values().foreach(choice => {productOptions.add(choice.productOptionType.title, choice.productOptionVariant.title);});
+		product.productOptionChoices.values().foreach(choice => {productOptions.add(new ProductOption(choice.productOptionType.title, choice.productOptionVariant.title));});
 
-		return new Product(product.id, product.price, product.image, productOptions);
+		return new Product(product.id, "Fenster", product.price, product.image, productOptions);
 	}
 }
 
