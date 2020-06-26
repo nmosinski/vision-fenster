@@ -98,7 +98,7 @@ class Product extends IComparable(IClonable(AbstractEntity))
 		if(JsTypes.isEmpty(productOptionTypeId))
 			throw new VariableValueError(PATH, "Product.deleteProductOptionChoiceOfProductOptionTypeId()", productOptionTypeId, "string");
 
-		this._productOptionChoices.delete(productOptionTypeId);
+		this._productOptionChoices.remove(productOptionTypeId);
 	}
 
 	/**

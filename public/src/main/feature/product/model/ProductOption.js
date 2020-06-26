@@ -96,7 +96,7 @@ class ProductOption extends IComparable(IClonable())
 		if(JsTypes.isEmpty(variantId))
 			throw new VariableValueError(PATH, "ProductOption.deleteVariant()", variantId, "string");
 		
-		this._variants.delete(variantId);
+		this._variants.remove(variantId);
 	}
 
 	/**
