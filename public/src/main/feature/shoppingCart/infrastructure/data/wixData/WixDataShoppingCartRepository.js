@@ -51,7 +51,7 @@ class WixDataShoppingCartRepository extends IShoppingCartRepository(WixDataRepos
 		if(JsTypes.isUnspecified(shoppingCartObject))
 			return;
 
-		let shoppingCartItemsList = this._wixDataShoppingCartItemRepository.getShoppingCartItemsByShoppingCartId(shoppingCartId);
+		let shoppingCartItemsList = await this._wixDataShoppingCartItemRepository.getShoppingCartItemsByShoppingCartId(shoppingCartId);
 
 		return new ShoppingCart(shoppingCartObject.id, shoppingCartObject.userId, shoppingCartItemsList);
 	}
