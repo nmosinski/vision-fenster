@@ -28,6 +28,38 @@ class List extends IComparable()
 	}
 
 	/**
+	 * Return a new list containing only those items that are in this list and the one passed as argument.
+	 * @param {List} list - The other list.
+	 * @return {List} A new List containing items that are in both lists.
+	 */
+	AND(list)
+	{
+		if(!(list instanceof List))
+			throw new VariableTypeError(PATH, "List.AND()", list, "List");
+		
+		return this.filter((el)=>{list.has(el);});
+	}
+
+	/**
+	 * Return a new list containing all items that are in this list or the one passed as argument.
+	 * @param {List} list - The other list.
+	 * @return {List} A new List containing all items from both lists.
+	 */
+	OR(list)
+	{
+		if(!(list instanceof List))
+			throw new VariableTypeError(PATH, "List.AND()", list, "List");
+		
+		let l = new List(this.toArray());
+
+		list.foreach((el) => {
+			if(!l.has(el))
+				l.add(el);
+		});
+		return l;
+	}
+
+	/**
 	 * Iterate through all elements of this list and calls the passed function.
 	 * @param {function} f - The function to be called by each element of this list.
 	 */
@@ -121,10 +153,10 @@ class List extends IComparable()
 	}
 
 	/**
-	 * Deletes the element at the given index.
+	 * Remove the element at the given index.
 	 * @param {number} elementIdx - The index.
 	 */
-	delete(elementIdx)
+	remove(elementIdx)
 	{
 		if(!JsTypes.isNumber(elementIdx))
 			throw new VariableTypeError(PATH, "List.get(elementIdx)", elementIdx, "Number");
