@@ -4,6 +4,9 @@ import AbstractEntity from "public/src/main/common/AbstractEntity.js"
 
 import ClonableKVMap from "public/src/main/common/util/map/ClonableKVMap.js"
 import List from "public/src/main/common/util/list/List.js"
+import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
+import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
 
 /**
  * @class
@@ -25,6 +28,28 @@ class ShoppingCart extends AbstractEntity
 	}
 
 	/**
+	 * Set count of an item. Remove the item from cart if count is 0.
+	 * @param {string} itemId - The id of the item the count will be set for.
+	 * @param {number} count - The new count.
+	 */
+	setCountOfItem(itemId, count)
+	{
+		if(!JsTypes.isString(itemId))
+			throw new VariableTypeError(PATH, "this.changeCountOfItem()", itemId, "string");
+		if(!JsTypes.isNumber(count))
+			throw new VariableTypeError(PATH, "this.changeCountOfItem()", count, "number");
+		if(JsTypes.isEmpty(itemId))
+			throw new VariableValueError(PATH, "this.changeCountOfItem()", itemId, "not empty");
+		if(count < 0)
+			throw new VariableValueError(PATH, "this.changeCountOfItem()", count, "count > -1");
+		
+		if(count === 0)
+			this.removeItem(itemId);
+		else
+			this._items.get(itemId).count = count;
+	}
+
+	/**
 	 * Add an item.
 	 * @param {ShoppingCartItem} item - A ShoppingCartItem.
 	 */
@@ -33,7 +58,7 @@ class ShoppingCart extends AbstractEntity
 		if(this._items.has(item))
 			this._items.get(item.id).incCount();
 		else
-			this._items.add(item.id, item);
+			this._items.add(item.id, item.clone());
 	}
 
 	/**
@@ -43,7 +68,12 @@ class ShoppingCart extends AbstractEntity
 	 */
 	getItem(id)
 	{
-		return this._items.get(id);
+		let item = this._items.get(id);
+		
+		if(!JsTypes.isUnspecified(item))
+			return this._items.get(id).clone();
+		else
+			return null;
 	}
 
 	/**
@@ -52,7 +82,7 @@ class ShoppingCart extends AbstractEntity
 	 */
 	removeItem(id)
 	{
-		this._items.delete(id);
+		this._items.remove(id);
 	}
 
 	/**
