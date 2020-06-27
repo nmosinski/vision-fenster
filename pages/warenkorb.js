@@ -1,5 +1,6 @@
 import WixUsers from "wix-users"
 import wixWindow from "wix-window"
+import WixLocation from "wix-location"
 
 import ShoppingCartRepository from "public/src/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartRepository.js"
 import ShoppingCartItemRepository from "public/src/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartItemRepository.js"
@@ -18,64 +19,70 @@ $w.onReady(async function ()
     shoppingCartRepository = new ShoppingCartRepository();
     shoppingCartApplicationService = new ShoppingCartApplicationService(shoppingCartRepository, new ShoppingCartItemRepository(), new ProductRepository(), new WixUsersFrontendAuthenticationService());
 
-    await updateShoppingCart();
+    shoppingCart = await shoppingCartRepository.getShoppingCartByUserId(WixUsers.currentUser.id);
+    initRepeater();
 });
 
 async function updateShoppingCart()
-{    
-    shoppingCart = await shoppingCartRepository.getShoppingCartByUserId(WixUsers.currentUser.id);
-    console.log(shoppingCart);
+{
+    await shoppingCartApplicationService.updateCurrentUsersShoppingCart(shoppingCart);
+}
+
+function updateRepeater()
+{
+    let toUpdate = [];
+    shoppingCart.items.foreach((item)=>{toUpdate.push(item.id);});
+    $w("#repeaterShoppingCartItems").data = shoppingCart.items.toArray();
+    $w("#repeaterShoppingCartItems").forItems(toUpdate, onItemReadyFunctionForRepeater);
 }
 
 function initRepeater()
 {
-    setOnItemReadyFunctionForRepeater();
-    setDataForRepeater(shoppingCart.items.toArray());
+    $w("#repeaterShoppingCartItems").onItemReady(onItemReadyFunctionForRepeater);
+    $w("#repeaterShoppingCartItems").data = shoppingCart.items.toArray();
+}
+
+function onShoppingCartChange()
+{
+    updateRepeater();
+}
+
+async function onPageLeave()
+{
+    await updateShoppingCart();
 }
 
 
-function setDataForRepeater(data)
+function onItemReadyFunctionForRepeater($item, shoppingCartItem, index)
 {
-    $w("#repeaterShoppingCartItems").data = data;
-}
-
-function setOnItemReadyFunctionForRepeater()
-{
-    $w("#repeaterShoppingCartItems").onItemReady(($item, shoppingCartItem, index) => {
-        $item("#imageShoppingCartItem").src = shoppingCartItem.image;
+    $item("#imageShoppingCartItem").src = shoppingCartItem.image;
         $item("#textShoppingCartItemTitle").text = "Fenster";
         $item("#textShoppingCartItemDetails").text = shoppingCartItem.details;
         $item("#textShoppingCartItemSinglePrice").text = "" + shoppingCartItem.singlePrice;
         $item("#textShoppingCartItemTotalPrice").text = "" + shoppingCartItem.totalPrice;
         $item("#dropdownShoppingCartItemCount").value = "" + shoppingCartItem.count;
-    });
-}
 
-function initRepeater()
-{
-    productOptions.values().foreach((productOption) => {
-        let optionTypeTitle = productOption.type.title;
-        let onItemReadyFunction = getDefaultOnItemReadyRepeaterFunction(optionTypeTitle);
-        setOnItemReadyFunctionForRepeater(repeaterNameByOptionTypeTitle(optionTypeTitle), onItemReadyFunction);
-        setDataForRepeater(repeaterNameByOptionTypeTitle(optionTypeTitle), productOption.variants.values().toArray());
-    });
-
-    setOnItemReadyFunctionForRepeater("#repeaterConfigurationDetails", repeaterConfigurationDetailsOnItemReadyFunction);
-}
-
-
-function getDefaultOnItemReadyRepeaterFunction(optionType)
-{
-    return ($item, itemData, index)=>{
-        $item("#image" + optionType + "Item").src = itemData.image;
-        $item("#image" + optionType + "Item").onClick((event)=>{
-            onProductOptionVariantSelection(itemData.productOptionTypeId, itemData._id);
+        $item('#dropdownShoppingCartItemCount').onChange((event)=>{
+            shoppingCart.setCountOfItem(shoppingCartItem.id, parseInt(event.target.value, 10));
+            onShoppingCartChange();
         });
-    };
+        $item("#buttonShoppingCartItemRemove").onClick((event)=>{
+            shoppingCart.removeItem(shoppingCartItem.id);
+            console.log(shoppingCart);
+            onShoppingCartChange();
+        });
+        $item("#buttonShoppingCartItemEdit").onClick(async function(event){
+            await onPageLeave();
+            WixLocation.to("/fensterkonfigurator?id=" + shoppingCartItem.productId);
+            //LeavePage
+        });
 }
 
-
-
+export async function buttonToCheckoutOnClick(event) 
+{
+    await onPageLeave();
+    // Leave page.
+}
 
 
 
@@ -184,3 +191,4 @@ export function buttonHideShow_click(event)
         $w('#container').expand();
 }
 */
+

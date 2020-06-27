@@ -1,5 +1,5 @@
+import WixLocation from "wix-location"
 
-import wixData from 'wix-data'
 import Logger from "js-logger"
 
 import WixUsersFrontendAuthenticationService from "public/src/main/feature/shoppingCart/infrastructure/authenticationService/wixUsers/WixUsersFrontendAuthenticationService.js"
@@ -41,9 +41,15 @@ $w.onReady(async function ()
 	Logger.useDefaults();
 	productOptionTypeRepository = new ProductOptionTypeRepository();
 	productOptionVariantRepository = new ProductOptionVariantRepository();
+	productRepository = new ProductRepository();
+
 	productOptions = new ClonableKVMap();
-	product = new Product("123", PRODUCTMODELID, 20, "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg");
+	if(WixLocation.query.id)
+		product = await productRepository.getProduct(WixLocation.query.id);
+	else
+		product = new Product("123", PRODUCTMODELID, 20, "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg");
 	
+	console.log(product);
 	let productOptionTypes = await productOptionTypeRepository.getProductOptionTypesByProductModelId(PRODUCTMODELID);
 	let tmpProductOptionTypesArr = productOptionTypes.toArray();
 	for(let idx in tmpProductOptionTypesArr)
@@ -54,7 +60,7 @@ $w.onReady(async function ()
 		productOptions.add(tmpProductOptionTypesArr[idx].id, new ProductOption(tmpProductOptionTypesArr[idx], variantsMap));
 	}
 	configurator = new WindowProductConfigurator();
-	productApplicationService = new ProductApplicationService(new ProductRepository(), new ProductModelRepository(), productOptionTypeRepository, productOptionVariantRepository);
+	productApplicationService = new ProductApplicationService(productRepository, new ProductModelRepository(), productOptionTypeRepository, productOptionVariantRepository);
 	shoppingCartApplicationService = new ShoppingCartApplicationService(new ShoppingCartRepository(), new ShoppingCartItemRepository(), new SProductRepository(), new WixUsersFrontendAuthenticationService());
 
 	initRepeater();
@@ -129,5 +135,7 @@ function initRepeater()
 export async function onButtonSaveProductClick(event) 
 {
 	let productId = await productApplicationService.createProduct(CreateProductCommand.fromProduct(product));
-	shoppingCartApplicationService.addNewItemToCurrentUsersShoppingCart(productId).then();
+	await shoppingCartApplicationService.addNewItemToCurrentUsersShoppingCart(productId);
+	WixLocation.to("/warenkorb");
+	
 }
