@@ -24,7 +24,7 @@
 			this._elements = new Map<K,V>();
 			if(map instanceof Map)
 			{
-				for(let [key, value] of this._elements.entries()) 
+				for(let [key, value] of map.entries()) 
 				{
 					this._elements.set(key, value);
 				}
@@ -114,20 +114,21 @@
 		 */
 		get(key: K): V
 		{
+			let ret = null;
 			this.foreach((k:K, v:V) => {
 				try
 				{
 					if(k.equals(key))
-						return v;
+						ret = v;
 				}
 				catch(err)
 				{
 					if(k === key)
-						return v;
+						ret = v;
 				}
 			});
 
-			return null;
+			return ret;
 		}
 
 		/**
