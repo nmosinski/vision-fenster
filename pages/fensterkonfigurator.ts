@@ -132,7 +132,7 @@ function initRepeater()
 
 export async function onButtonSaveProductClick(event) 
 {
-	let productId = await productApplicationService.createProduct(CreateUserProductCommand.fromProduct(product));
+	let productId = await productApplicationService.createUserProduct(CreateUserProductCommand.fromProduct(product));
 	await shoppingCartApplicationService.addNewItemToCurrentUsersShoppingCart(productId);
 	WixLocation.to("/warenkorb");
 	
