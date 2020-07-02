@@ -12,13 +12,15 @@ class ManyToOne<T extends AbstractModel<T>> extends QueryElement<T>
         super(model, previous);
     }
 
-    protected buildQuery(previousQueryResult: QueryResult<AbstractModel<any>>) 
+    protected async relationalFind(previousQueryResult: QueryResult<AbstractModel<any>>): Promise<Array<object>> 
     {
         let query = QueryElement.queryOnTable(this.model.tableName);
         let prevFks: Set<string> = new Set<string>();
         previousQueryResult.all().foreach((entity) => {prevFks.add(entity[this.model.asFk()]);});
         query = query.hasSome(this.model.asPk(), prevFks.toArray());
-        return query;
+        
+        let wixQueryResult = await query.find();
+        return wixQueryResult.items;
     }
 
     save(model: AbstractModel<T>): Promise<void> {

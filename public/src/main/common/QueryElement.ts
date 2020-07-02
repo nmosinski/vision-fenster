@@ -16,41 +16,36 @@ abstract class QueryElement<T extends AbstractModel<T>>
     {
         this.model = model;
         this.previous = previous;
+        this.queryResult = null;
     }
 
-    protected abstract buildQuery(previousQueryResult: QueryResult<AbstractModel<any>>);
+    protected async abstract relationalFind(previousQueryResult: QueryResult<AbstractModel<any>>);
 
     async abstract save(model: AbstractModel<T>): Promise<void>;
     async abstract update(model: AbstractModel<T>): Promise<void>;
     async abstract destroy(model: AbstractModel<T>): Promise<void>;
 
-    async resolve(): Promise<QueryResult<T>>
+    async find(): Promise<QueryResult<T>>
     {
-        let previousQueryResult = await this.previous.resolve();
-        if(previousQueryResult.isEmpty())
-        {
-            this.queryResult = new QueryResult<T>();    
+        // Return result if already resolved before.
+        if(this.queryResult)
             return this.queryResult;
-        }
+  
+        // Init this and previous QueryResult.
+        this.queryResult = new QueryResult<T>();
+        let previousQueryResult = (this.previous)?await this.previous.find():new QueryResult<any>();
 
-        let query = this.buildQuery(previousQueryResult);
-        
-        this.queryResult =  await this.execQuery(query);
+
+        let queryItems = await this.relationalFind(previousQueryResult);
+        this.queryResult = this.queryItemsToQueryResult(queryItems);
+
         return this.queryResult;
     }
 
-    async execQuery(query): Promise<QueryResult<T>>
+    queryItemsToQueryResult(items: List<object>): QueryResult<T>
     {
         let result = new QueryResult<T>();
-        let wixDataQueryResult = await query.find();
-        let items = new List<any>(wixDataQueryResult.items);
-        
-        items.foreach((item)=>{
-            let m = this.model.newInstance();
-            m.fill(item);
-            result.add(m);
-        });
-
+        items.foreach((item)=>{ result.add(this.model.create(item)); });
         return result;
     }
 

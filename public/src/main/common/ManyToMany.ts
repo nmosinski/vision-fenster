@@ -13,16 +13,23 @@ class ManyToMany<T extends AbstractModel<T>> extends QueryElement<T>
         super(model, previous);
     }
 
-    protected buildQuery(previousQueryResult: QueryResult<T>) 
+    protected async relationalFind(previousQueryResult: QueryResult<T>): Promise<Array<object>>
     {
-        let intermediateQueryElement = new OneToMany<RoleModel>(new RoleModel(this.model, this.previous.model), this.previous);
-        this.previous = intermediateQueryElement;
+        // Create a dummy QueryElement that will return previousQueryResult (a) when calling find().
+        let dummyQueryElement = new ManyToMany(this.model, null);
+        dummyQueryElement.queryResult = previousQueryResult;
+
+        // Create an intermediate QueryElement that simulates the relation between a and the role table a_b. Call it's find() method in order to get a_bs.
+        let intermediateQueryElement = new OneToMany<RoleModel>(new RoleModel(this.model, this.previous.model), dummyQueryElement);
+        let intermediateQueryResult = await intermediateQueryElement.find();
 
         let query = QueryElement.queryOnTable(this.model.tableName);
         let prevFks: Set<string> = new Set<string>();
-        previousQueryResult.all().foreach((entity) => {prevFks.add(entity[this.model.asFk()]);});
+        intermediateQueryResult.all().foreach((ab) => {prevFks.add(ab[this.model.asFk()]);});
         query = query.hasSome(this.model.asPk(), prevFks.toArray());
-        return query;
+        
+        let wixQueryResult = await query.find();
+        return wixQueryResult.items;
     }
 
     async save(b: AbstractModel<T>): Promise<void> 
@@ -35,12 +42,12 @@ class ManyToMany<T extends AbstractModel<T>> extends QueryElement<T>
     {
         if(b instanceof AbstractModel)
             b.
-        let bs = await this.resolve();
+        let bs = await this.find();
 
         if(bs.items.has(b))
             return;
 
-        let as = await this.previous.previous.resolve();
+        let as = await this.previous.previous.find();
 
         let toSave = new List<RoleModel>();
         as.items.foreach((a)=>{toSave.add(new RoleModel(a, b));});
@@ -55,7 +62,7 @@ class ManyToMany<T extends AbstractModel<T>> extends QueryElement<T>
 
     async destroy(model: AbstractModel<T>): Promise<void> 
     {
-        let previousQueryResult = await this.previous.resolve();
+        let previousQueryResult = await this.previous.find();
         await this.previous.destroyMany(previousQueryResult);
     }
 }

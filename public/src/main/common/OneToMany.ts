@@ -11,11 +11,13 @@ class OneToMany<T extends AbstractModel<T>> extends QueryElement<T>
         super(model, previous);
     }
 
-    protected buildQuery(previousQueryResult: QueryResult<T>)
+    protected async relationalFind(previousQueryResult: QueryResult<T>): Promise<Array<object>>
     {
         let query = QueryElement.queryOnTable(this.model.tableName);
         query = query.hasSome(this.previous.model.asFk(), previousQueryResult.toPks().toArray());
-        return query;
+        
+        let wixQueryResult = await query.find();
+        return wixQueryResult.items;
     }
 
     save(model: AbstractModel<T>): Promise<void> 

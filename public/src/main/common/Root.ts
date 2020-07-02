@@ -2,6 +2,7 @@ import QueryElement from "public/src/main/common/QueryElement.js"
 import AbstractModel from "public/src/main/common/AbstractModel.js"
 import List from "./util/collections/list/List";
 import QueryResult from "./QueryResult";
+import Product from "../feature/shoppingCart/model/Product";
 
 
 class Root<T extends AbstractModel<T>> extends QueryElement<T>
@@ -11,19 +12,9 @@ class Root<T extends AbstractModel<T>> extends QueryElement<T>
         super(rootElement, null);
     }
 
-    protected buildQuery(previousQueryResult: QueryResult<T>) 
+    protected async relationalFind(previousQueryResult: QueryResult<T>): Promise<Array<object>>
     {
-        return null;
-    }
-
-    /**
-     * @override
-     */
-    async resolve(): Promise<QueryResult<T>>
-    {
-        let res = new QueryResult<T>();
-        res.add(this.model);
-        return res;
+        return [this.model];
     }
 
     async save(model: AbstractModel<T>): Promise<void> 
