@@ -8,8 +8,8 @@ import IProductRepository from "public/src/main/feature/product/model/IProductRe
 import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
 import Product from "public/src/main/feature/product/model/Product.js"
 import WixDataRepository from "public/src/main/common/wixData/WixDataRepository.js"
-import KVMap from "public/src/main/common/util/map/KVMap.js"
-import List from "public/src/main/common/util/list/List.js"
+import KVMap from "../../../../../common/util/collections/map/KVMap.js"
+import List from "../../../../../common/util/collections/list/List.js"
 
 import EntityNotFoundError from "public/src/main/feature/product/model/EntityNotFoundError.js"
 

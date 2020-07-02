@@ -4,7 +4,7 @@ import AbstractProductConfigurator from "public/src/main/feature/product/model/A
 import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
 import Product from "public/src/main/feature/product/model/Product.js"
 import ProductOption from "public/src/main/feature/product/model/ProductOption.js"
-import KVMap from "public/src/main/common/util/map/KVMap.js"
+import KVMap from "../../../../common/util/collections/map/KVMap.js"
 
 /**
  * @class

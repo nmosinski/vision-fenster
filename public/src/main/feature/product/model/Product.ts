@@ -1,9 +1,9 @@
 const PATH = "public/src/main/feature/product/model/Product.js";
 
-import AbstractEntity from "public/src/main/common/AbstractEntity.js"
+import AbstractModel from "public/src/main/common/AbstractModel.js"
 import IComparable from "public/src/main/common/util/IComparable.js"
 import IClonable from "public/src/main/common/util/IClonable.js"
-import KVMap from "public/src/main/common/util/map/KVMap.js"
+import KVMap from "../../../common/util/collections/map/KVMap.js"
 import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
 
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
@@ -16,7 +16,7 @@ import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
  * @class
  * Class representing a product.
  */
-class Product extends AbstractEntity implements IComparable<Product>, IClonable<Product>
+class Product extends AbstractModel implements IComparable<Product>, IClonable<Product>
 {
 	private _image: string;
 	private _price: number;

@@ -2,10 +2,11 @@ const PATH = "public/src/main/feature/shoppingCart/model/ShoppingCart.js";
 
 import ShoppingCartItem from "public/src/main/feature/shoppingCart/model/ShoppingCartItem.js"
 
-import AbstractEntity from "public/src/main/common/AbstractEntity.js"
+import AbstractModel from "public/src/main/common/AbstractModel.js"
+import Associations from "public/src/main/common/Associations.js"
 
-import KVMap from "public/src/main/common/util/map/KVMap.js"
-import List from "public/src/main/common/util/list/List.js"
+import KVMap from "../../../common/util/collections/map/KVMap.js"
+import List from "../../../common/util/collections/list/List.js"
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
@@ -14,22 +15,38 @@ import VariableValueError from "public/src/main/common/util/error/VariableValueE
  * @class
  * Class representing a shopping cart.
  */
-class ShoppingCart extends AbstractEntity
+class ShoppingCart extends AbstractModel
 {
+	static self = ShoppingCart;
+	static tableName: string = "ShoppingCart";
+	protected associations: Associations;
 	private _userId: string;
 	private _items: KVMap<string, ShoppingCartItem>;
+
+	
+
 	/**
 	 * Create ShoppingCart.
 	 * @param {string} id - The id of ShoppingCart.
 	 * @param {string} userId - The id of the user this cart belongs to.
 	 * @param {List<ShoppingCartItem>} items - A list of ShoppingCartItems this ShoppingCart contains.
 	 */
-	constructor(id: string, userId: string, items: List<ShoppingCartItem>=null)
+	constructor(id?: string, userId?: string, items?: List<ShoppingCartItem>)
 	{
 		super(id);
 		this.userId = userId;
 		this.items = items;
 	}
+
+	static create(id?: string, userId?: string, items?: List<ShoppingCartItem>)
+	{
+		let model = new ShoppingCart(id, userId, items);
+		
+		this.associations = new Associations().
+		hasChildren(ShoppingCartItem).
+		hasParents();
+	}
+
 
 	/**
 	 * Set count of an item. Remove the item from cart if count is 0.

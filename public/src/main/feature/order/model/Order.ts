@@ -1,14 +1,14 @@
 const PATH = "public/src/main/feature/order/model/Order.js";
 
-import AbstractEntity from "public/src/main/common/AbstractEntity.js"
-import List from "public/src/main/common/util/list/List.js"
+import AbstractModel from "public/src/main/common/AbstractModel.js"
+import List from "../../../common/util/collections/list/List.js"
 import OrderItem from "public/src/main/feature/order/model/OrderItem.js"
 
 /**
  * @class
  * A class representing an Order.
  */
-class Order extends AbstractEntity
+class Order extends AbstractModel
 {
 	private _orderItems: List<OrderItem>;
 	private _userId: string;

@@ -3,7 +3,7 @@ const PATH = "public/src/main/feature/product/application/ProductApplicationServ
 import Product from "public/src/main/feature/product/model/Product.js"
 import ProductOption from "public/src/main/feature/product/model/ProductOption.js"
 import IProductRepository from "public/src/main/feature/product/model/IProductRepository.js"
-import KVMap from "public/src/main/common/util/map/KVMap.js"
+import KVMap from "../../../../common/util/collections/map/KVMap.js"
 
 import WindowProductConfigurator from "public/src/main/feature/product/infrastructure/configurator/WindowProductConfigurator.js"
 

@@ -13,8 +13,8 @@ import IProductOptionVariantRepository from "public/src/main/feature/product/mod
 
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 
-import List from "public/src/main/common/util/list/List.js"
-import KVMap from "public/src/main/common/util/map/KVMap.js"
+import List from "../../../common/util/collections/list/List.js"
+import KVMap from "../../../common/util/collections/map/KVMap.js"
 import ProductOptionVariant from "../model/ProductOptionVariant";
 
 /**

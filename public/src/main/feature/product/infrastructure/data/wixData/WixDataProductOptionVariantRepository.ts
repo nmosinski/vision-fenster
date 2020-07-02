@@ -2,8 +2,8 @@ const PATH = "public/src/main/feature/product/infrastructure/data/wixData/WixDat
 
 import ProductOptionVariant from "public/src/main/feature/product/model/ProductOptionVariant.js"
 import IProductOptionVariantRepository from "public/src/main/feature/product/model/IProductOptionVariantRepository.js"
-import KVMap from "public/src/main/common/util/map/KVMap.js"
-import List from "public/src/main/common/util/list/List.js"
+import KVMap from "../../../../../common/util/collections/map/KVMap.js"
+import List from "../../../../../common/util/collections/list/List.js"
 import WixDataRepository from "public/src/main/common/wixData/WixDataRepository.js"
 
 import EntityNotFoundError from "public/src/main/feature/product/model/EntityNotFoundError.js"

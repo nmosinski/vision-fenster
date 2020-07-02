@@ -1,12 +1,12 @@
 const PATH = "public/src/main/feature/product/model/ProductCategory.js";
 
-import AbstractEntity from "public/src/main/common/AbstractEntity.js"
+import AbstractModel from "public/src/main/common/AbstractModel.js"
 
 /**
  * @class
  * A class representing a product category.
  */
-class ProductCategory extends AbstractEntity
+class ProductCategory extends AbstractModel
 {
 	private _title: string;
 

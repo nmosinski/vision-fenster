@@ -1,7 +1,7 @@
 const PATH = "public/src/main/feature/shoppingCart/model/Product.js";
 
-import AbstractEntity from "public/src/main/common/AbstractEntity.js"
-import List from "public/src/main/common/util/list/List.js"
+import AbstractModel from "public/src/main/common/AbstractModel.js"
+import List from "../../../common/util/collections/list/List.js"
 import ProductOption from "public/src/main/feature/shoppingCart/model/ProductOption.js"
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
@@ -12,7 +12,7 @@ import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
  * @class
  * Class representing a product.
  */
-class Product extends AbstractEntity
+class Product extends AbstractModel
 {
 	private _type: string;
 	private _price: number;

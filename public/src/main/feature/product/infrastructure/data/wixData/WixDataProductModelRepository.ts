@@ -3,7 +3,7 @@ const PATH = "public/src/main/feature/product/infrastructure/data/wixData/WixDat
 import ProductModel from "public/src/main/feature/product/model/ProductModel.js"
 import IProductModelRepository from "public/src/main/feature/product/model/IProductModelRepository.js"
 import WixDataRepository from "public/src/main/common/wixData/WixDataRepository.js"
-import KVMap from "public/src/main/common/util/map/KVMap.js"
+import KVMap from "../../../../../common/util/collections/map/KVMap.js"
 
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 

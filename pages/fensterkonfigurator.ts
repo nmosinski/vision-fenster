@@ -21,7 +21,7 @@ import Product from "public/src/main/feature/product/model/Product.js"
 import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
 import ProductOptionVariant from "public/src/main/feature/product/model/ProductOptionVariant.js"
 import ProductOption from "public/src/main/feature/product/model/ProductOption.js"
-import KVMap from "public/src/main/common/util/map/KVMap.js"
+import KVMap from "../public/src/main/common/util/collections/map/KVMap.js"
 
 const PRODUCTMODELID = "6b0df06c-cb22-4d60-9550-af1df7de9f3c";
 let productRepository;

@@ -5,7 +5,7 @@ import WixDataProductRepository from "public/src/main/feature/product/infrastruc
 import Product from "public/src/main/feature/shoppingCart/model/Product.js"
 import ProductOption from "public/src/main/feature/shoppingCart/model/ProductOption.js"
 
-import List from "public/src/main/common/util/list/List.js"
+import List from "../../../../../common/util/collections/list/List.js"
 
 /**
  * @class

@@ -1,12 +1,12 @@
 const PATH = "public/src/main/feature/order/model/OrderItem.js";
 
-import AbstractEntity from "public/src/main/common/AbstractEntity.js"
+import AbstractModel from "public/src/main/common/AbstractModel.js"
 
 /**
  * @class
  * A class representing an OrderItem.
  */
-class OrderItem extends AbstractEntity
+class OrderItem extends AbstractModel
 {
 	private _price: number;
 	private _productId: string;

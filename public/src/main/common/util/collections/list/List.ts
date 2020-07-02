@@ -1,11 +1,12 @@
 const PATH = "public/src/main/common/util/list/List.js";
 
-import IComparable from "public/src/main/common/util/IComparable.js";
+import IComparable from "public/src/main/common/util/IComparable.js"
 
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
-import VariableValueError from "public/src/main/common/util/error/VariableValueError.js";
+import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
 
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import InvalidOperationError from "../../error/InvalidOperationError";
 
 /**
  * @class
@@ -13,7 +14,7 @@ import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
  */
 class List<T> implements IComparable<List<T>>
 {
-	private _elements: Array<T>;
+	protected _elements: Array<T>;
 	/**
 	 * Create a List.
 	 * @param {Array<T>} [elements=Array<T>] - An array of elements that the list will contain from the beginning.
@@ -92,7 +93,29 @@ class List<T> implements IComparable<List<T>>
 		}
 
 		return new List(ret);
-    }
+	}
+	
+	/**
+	 * Return a new list containing only items in the given range.
+	 * @param {number} startIndex The start index from which items will be returned.
+	 * @param {number} [endIndex=null] The end index until which the items will be returned.
+	 * @return {List<T>} The sublist.
+	 */
+	sublist(startIndex: number, endIndex: number=null): List<T>
+	{
+		let list = new List<T>();
+		
+		if(startIndex >= this.length)
+			throw new InvalidOperationError(PATH, "List.sublist()", "StartIndex is bigger than the length of this list.");
+		
+		if(!endIndex)
+			endIndex = this.length;
+		
+		for(let idx=startIndex; idx < endIndex; idx++)
+			list.add(this.get(idx));
+
+		return list;
+	}
 
 	/**
 	 * Check if another list equals this list.
@@ -170,10 +193,10 @@ class List<T> implements IComparable<List<T>>
 
 	/**
 	 * Check if list contains element.
-	 * @param {T} element - The element.
+	 * @param {any} element - The element.
 	 * @return {boolean} True if element is in the list, else false.
 	 */
-	has(element: T): boolean
+	has(element: any): boolean
 	{
 		if(this.indexOf(element) === -1)
 			return false;
@@ -182,10 +205,10 @@ class List<T> implements IComparable<List<T>>
 
 	/**
 	 * Get the index of the given element.
-	 * @param {T} element - The element.
+	 * @param {any} element - The element.
 	 * @return {number} The index of the element, else -1, if the element is not in the list. 
 	 */
-	indexOf(element: T): number
+	indexOf(element: any): number
 	{
 		for(let idx = 0; idx < this.length; idx++)
 		{

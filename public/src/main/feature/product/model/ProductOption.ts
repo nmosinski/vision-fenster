@@ -2,7 +2,7 @@ const PATH = "public/src/main/feature/product/model/ProductOption.js";
 
 import IComparable from "public/src/main/common/util/IComparable.js"
 import IClonable from "public/src/main/common/util/IClonable.js"
-import KVMap from "public/src/main/common/util/map/KVMap.js"
+import KVMap from "../../../common/util/collections/map/KVMap.js"
 import ProductOptionType from "public/src/main/feature/product/model/ProductOptionType.js"
 import ProductOptionVariant from "public/src/main/feature/product/model/ProductOptionVariant.js"
 

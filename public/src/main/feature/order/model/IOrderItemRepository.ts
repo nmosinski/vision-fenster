@@ -1,5 +1,5 @@
 import OrderItem from "public/src/main/feature/order/model/OrderItem.js"
-import List from "public/src/main/common/util/list/List.js"
+import List from "../../../common/util/collections/list/List.js"
 
 /**
 	 * @alias IOrderItemRepository

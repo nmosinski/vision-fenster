@@ -15,9 +15,9 @@ class AbstractEntity
 	protected _id: string;
 	/**
 	 * Create AbstractEntity.
-	 * @param {string} id - The id of this entity. 
+	 * @param {string} [id=null] - The id of this entity. 
 	 */
-	constructor(id: string)
+	constructor(id: string=null)
 	{
 		this.id = id;
 	}
@@ -37,13 +37,6 @@ class AbstractEntity
 	 */
 	set id(id: string)
 	{
-		if(!JsTypes.isUnspecified(this._id))
-			throw new InvalidOperationError(PATH, "AbstractEntity.set id()", "Id of an entity can not be redefined.");
-		if(!JsTypes.isString(id))
-			throw new VariableTypeError(PATH, "AbstractEntity.set id()", id, "string");
-		if(JsTypes.isEmpty(id))
-			throw new VariableValueError(PATH, "AbstractEntity.set id()", id, "a not empty string");
-
 		this._id = id;
 	}
 }

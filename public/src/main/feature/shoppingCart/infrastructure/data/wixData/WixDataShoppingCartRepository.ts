@@ -6,7 +6,7 @@ import ShoppingCart from "public/src/main/feature/shoppingCart/model/ShoppingCar
 import IShoppingCartRepository from "public/src/main/feature/shoppingCart/model/IShoppingCartRepository.js"
 import WixDataRepository from "public/src/main/common/wixData/WixDataRepository.js"
 import WixDataShoppingCartItemRepository from "public/src/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartItemRepository.js"
-import KVMap from "public/src/main/common/util/map/KVMap.js"
+import KVMap from "../../../../../common/util/collections/map/KVMap.js"
 
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
@@ -53,7 +53,7 @@ class WixDataShoppingCartRepository extends WixDataRepository implements IShoppi
 
 		let shoppingCartItemsList = await this._wixDataShoppingCartItemRepository.getShoppingCartItemsByShoppingCartId(shoppingCartId);
 
-		return new ShoppingCart(shoppingCartObject.id, shoppingCartObject.userId, shoppingCartItemsList);
+		return new ShoppingCart({ id: { id: shoppingCartObject.id, userId: shoppingCartObject.userId, items: shoppingCartItemsList } });
 	}
 
 	/**
@@ -71,7 +71,7 @@ class WixDataShoppingCartRepository extends WixDataRepository implements IShoppi
 
 		let shoppingCartItemsList = await this._wixDataShoppingCartItemRepository.getShoppingCartItemsByShoppingCartId(shoppingCartObject.id);
 
-		return new ShoppingCart(shoppingCartObject.id, shoppingCartObject.userId, shoppingCartItemsList);
+		return new ShoppingCart({ id: { id: shoppingCartObject.id, userId: shoppingCartObject.userId, items: shoppingCartItemsList } });
 	}
 
 	/**

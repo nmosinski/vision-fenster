@@ -5,7 +5,7 @@ import ProductOption from "public/src/main/feature/product/model/ProductOption.j
 import InvalidProductConfigurationError from "public/src/main/feature/product/model/InvalidProductConfigurationError.js"
 import Product from "public/src/main/feature/product/model/Product.js"
 
-import KVMap from "public/src/main/common/util/map/KVMap.js"
+import KVMap from "../../../common/util/collections/map/KVMap.js"
 import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
 
 

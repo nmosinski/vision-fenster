@@ -1,8 +1,8 @@
 const PATH = "public/src/main/feature/product/model/ProductComplexity.js";
 
-import AbstractEntity from "public/src/main/common/AbstractEntity.js"
+import AbstractModel from "public/src/main/common/AbstractModel.js"
 
-class ProductComplexity extends AbstractEntity
+class ProductComplexity extends AbstractModel
 {
 	private _title: string;
 

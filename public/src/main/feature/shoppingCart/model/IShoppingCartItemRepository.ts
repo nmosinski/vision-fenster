@@ -1,6 +1,6 @@
 import ShoppingCartItem from "public/src/main/feature/shoppingCart/model/ShoppingCartItem.js"
 
-import List from "public/src/main/common/util/list/List.js"
+import List from "../../../common/util/collections/list/List.js"
 
 /**
  * @interface

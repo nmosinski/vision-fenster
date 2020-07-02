@@ -1,6 +1,6 @@
 const PATH = "public/src/main/feature/product/model/ProductOptionVariant.js";
 
-import AbstractEntity from "public/src/main/common/AbstractEntity.js"
+import AbstractModel from "public/src/main/common/AbstractModel.js"
 import IComparable from "public/src/main/common/util/IComparable.js"
 import IClonable from "public/src/main/common/util/IClonable.js"
 
@@ -13,7 +13,7 @@ import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
  * @class
  * A class representing a variant of a product option.
  */
-class ProductOptionVariant extends AbstractEntity implements IComparable<ProductOptionVariant>, IClonable<ProductOptionVariant>
+class ProductOptionVariant extends AbstractModel implements IComparable<ProductOptionVariant>, IClonable<ProductOptionVariant>
 {
 	private _productOptionTypeId: string;
 	private _title: string;

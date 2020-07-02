@@ -46,7 +46,7 @@ class ShoppingCartApplicationService
 		
 		if(JsTypes.isUnspecified(shoppingCart) || JsTypes.isEmpty(shoppingCart))
 		{
-			shoppingCart = new ShoppingCart(this._shoppingCartRepository.nextIdentity(), this._authenticationService.getCurrentUsersId());	
+			shoppingCart = new ShoppingCart({ id: { id: this._shoppingCartRepository.nextIdentity(), userId: this._authenticationService.getCurrentUsersId() } });	
 			await this._shoppingCartRepository.saveShoppingCart(shoppingCart);
 		}
 		return shoppingCart.id;		

@@ -1,4 +1,4 @@
-const PATH = "public/src/main/common/wixData/WixDataRepository.js";
+const PATH = "public/src/main/common/wixData/WixDataModel.js";
 
 import KVMap from "../util/collections/map/KVMap.js"
 import List from "../util/collections/list/List.js"
@@ -10,99 +10,84 @@ import ItemNotFoundError from "public/src/main/common/wixData/ItemNotFoundError.
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
 import WixData from "public/src/main/common/wixData/WixData.js"
+import WixDataRepository from "./WixDataRepository";
 
 /**
  * @class
- * A class representing an WixDataRepository (collection).
+ * A class representing an WixDataModel (collection).
  */
-class WixDataRepository
+class WixDataModel
 {
-	private _options: object;
-	private _collectionName: string;
-	private _mapping: KVMap<string,string>;
-	private _authorisation: boolean;
-	private _hooks: boolean;
+	private _name: string;
+	private _associations: KVMap<string, KVMap<string, WixDataModel>>;
+	private _wixDataRepository: WixDataRepository;
 	/**
-	 * Create a WixDataRepository.
-	 * @param {string} collectionName - The name of the collection this repository is pointing to.
+	 * Create a WixDataModel.
+	 * @param {string} name - The name of the collection this repository is pointing to.
 	 * @param {KVMap<string,string>} [mapping=null] The mapping between the js object and the wix db item (object key -> item key). Empty if identical mapping.
 	 * @param {boolean} [authorisation=true] Defines if authorisation should be done.
 	 * @param {boolean} [hooks=true] Defines if hooks should be considered.
 	 */
-	constructor(collectionName: string, mapping: KVMap<string,string>=null, authorisation: boolean=true, hooks: boolean=true)
+	constructor(name: string)
 	{	
-		this._options = {};
+		this.name = name;
 
-		this.collectionName = collectionName;
-		this.mapping = mapping;
-		this.authorisation = authorisation;
-		this.hooks = hooks;
+		this.associations = new KVMap<string, KVMap<string,WixDataModel>>();
+		this.associations.add("child", new KVMap<string,WixDataModel>());
+		this.associations.add("children", new KVMap<string,WixDataModel>());
+		this.associations.add("parent", new KVMap<string,WixDataModel>());
+		this.associations.add("parents", new KVMap<string,WixDataModel>());
+
+		this.wixDataRepository = new WixDataRepository(this.name, false, false);
 	}
 
-	/**
-	 * Transform an object to a wix db item considering the given mapping.
-	 * @param {any} o The object to be transformed.
-	 * @return {object} The wix db item.
-	 */
-	_toItem(o: any): object
+
+	async getOne(id: string): Promise<any>
 	{
-		if(JsTypes.isUnspecified(this._mapping) || JsTypes.isUnspecified(o))
-			return o;
+		let thisModel = await this.wixDataRepository.get(id);
 
-		let i = {};
-		this._mapping.keys().foreach(key => i[this._mapping.get(key)] = o[key]);
-		return i;
+		this.associations.get("child").keys().foreach(async function (modelName: string){
+			thisModel[modelName] = await this.getChild(modelName);
+		});
+
+		this.associations.getMany("hasMany").foreach(async function (wixDataModel:WixDataModel){
+			thisModel[wixDataModel.name] = await wixDataModel.getMany(thisModel[wixDataModel.name]);
+		});
 	}
 
-	/**
-	 * Transform a wix db item to an object considering the given mapping.
-	 * @param {object} i The item to be transformed.
-	 * @return {object} The resulting object.
-	 */
-	_toObject(i: object): object
+	async getChild(name:string): Promise<any>
 	{
-		if(JsTypes.isUnspecified(this._mapping) || JsTypes.isUnspecified(i))
-			return i;
-
-		let o = {};
-		this._mapping.keys().foreach((key: string) => {o[key] = i[this._mapping.get(key)];});
-		return o;
+		return await this.associations.get("child").get(name).getOne(this.name);
 	}
 
-	/**
-	 * Retrieve an item with the given id.
-	 * @param {string} itemId The id of the item to be retrived.
-	 * @return {Promise<object | null>} Object representing the retrieved item or null if there was no item with the given id.
-	 */
-	async get(itemId: string): Promise<object | null>
+	/*
+	async getMany(query): Promise<List<any>>
 	{
-		if(!JsTypes.isString(itemId))
-			throw new VariableTypeError(PATH, "WixDataRepository.get()", itemId, "string");
-		if(JsTypes.isEmpty(itemId))
-			throw new VariableValueError(PATH, "WixDataRepository.get()", itemId, "The id of the item, not empty.");
-
-		let item = await WixData.get(this.collectionName, itemId, this._options);
-		
-		if(JsTypes.isUnspecified(item))
-			throw new ItemNotFoundError(PATH, "WixDataRepository.get()", itemId);
-
-		return this._toObject(item);
+		let models = await this.wixDataRepository.find(query);
+		return models;
 	}
+	*/
 
-	/**
-	 * Get a query that specifies an item selection.
-	 * @param {number} [itemLimit=50] The limit of the number of items to be retrieved.
-	 * @return {any} The query.
-	 */
-	query(itemLimit: number = 50): any
+	hasHasOneAssociations(): boolean
 	{
-		if(!JsTypes.isNumber(itemLimit))
-			throw new VariableTypeError(PATH, "WixDataRepository.query()", itemLimit, "number");
-		if(itemLimit < 1)
-			throw new VariableValueError(PATH, "WixDataRepository.query()", itemLimit, "Limit > 0");
-
-		return WixData.query(this.collectionName, itemLimit, this._options);
+		return !this.associations.get("hasOne").isEmpty();
 	}
+
+	hasHasManyAssociations(): boolean
+	{
+		return !this.associations.get("hasMany").isEmpty();
+	}
+
+	hasBelongsToOneAssociations(): boolean
+	{
+		return !this.associations.get("belongsToOne").isEmpty();
+	}
+
+	hasBelongsToManyAssociations(): boolean
+	{
+		return !this.associations.get("belongsToMany").isEmpty();
+	}
+
 
 	/**
 	 * Execute a query.
@@ -232,89 +217,35 @@ class WixDataRepository
 		await WixData.bulkRemove(this.collectionName, itemIds.toArray(), this._options);
 	}
 
-	/**
-	 * Set collectionName.
-	 * @param {string} collectionName The name of the collection.
-	 */
-	set collectionName(collectionName: string)
+	private set wixDataRepository(wixDataRepository)
 	{
-		if(!JsTypes.isString(collectionName))
-			throw new VariableTypeError(PATH, "WixDataRepository.set collectionName(...)", collectionName, "string");
-		if(JsTypes.isEmpty(collectionName))
-			throw new VariableValueError(PATH, "WixDataRepository.set collectionName(...)", collectionName, "The name of the collection, not empty.");
-
-		this._collectionName = collectionName;
+		this._wixDataRepository = wixDataRepository;
 	}
 
-	/**
-	 * Set mapping.
-	 * @param {KVMap<string,string>} mapping The mapping between an js object and an wix db item.
-	 */
-	set mapping(mapping: KVMap<string,string>)
+	private set name(name: string)
 	{
-		if(!JsTypes.isUnspecified(mapping))
-		{
-			if(!(mapping instanceof KVMap))
-				throw new VariableTypeError(PATH, "WixDataRepository.set mapping(...)", mapping, "KVMap<string,string>");
-			else
-				this._mapping = mapping;
-		}
-		else
-			this._mapping = mapping;
+		this._name = name;
 	}
 
-	/**
-	 * Set authorisation option.
-	 * @param {boolean} authorisation The authorisation option.
-	 */
-	set authorisation(authorisation: boolean)
+	private set associations(associations: KVMap<string, KVMap<string,WixDataModel>>)
 	{
-		if(!JsTypes.isBoolean(authorisation))
-			throw new VariableTypeError(PATH, "WixDataRepository.set authorisation(...)", authorisation, "boolean");
-		
-		this._options["suppressAuth"] = !authorisation;
-		this._authorisation = authorisation;
+		this._associations = associations;
 	}
 
-	/**
-	 * Set hooks option.
-	 * @param {boolean} hooks The hooks option.
-	 */
-	set hooks(hooks: boolean)
+	private get name(): string
 	{
-		if(!JsTypes.isBoolean(hooks))
-			throw new VariableTypeError(PATH, "WixDataRepository.set hooks(...)", hooks, "hooks");
-		
-		this._options["suppressHooks"] = !hooks;
-		this._hooks = hooks;
+		return this._name;
 	}
 
-	/**
-	 * Get collectionName.
-	 * @return {string} The name of the collection.
-	 */
-	get collectionName(): string
-	{	
-		return this._collectionName;
-	}
-
-	/**
-	 * Get authorisation property.
-	 * @return {boolean} The authorisation property.
-	 */
-	get authorisation(): boolean
-	{	
-		return this._authorisation;
-	}
-
-	/**
-	 * Get hooks.
-	 * @return {boolean} The hooks property.
-	 */
-	get hooks(): boolean
+	private get associations(): KVMap<string,KVMap<string,WixDataModel>>
 	{
-		return this._hooks;
+		return this._associations;
+	}
+
+	private get wixDataRepository()
+	{
+		return this._wixDataRepository;
 	}
 }
 
-export default WixDataRepository;
+export default WixDataModel;

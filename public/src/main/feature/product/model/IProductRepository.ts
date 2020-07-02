@@ -1,5 +1,5 @@
 import Product from "public/src/main/feature/product/model/Product.js"
-import List from "public/src/main/common/util/list/List.js"
+import List from "../../../common/util/collections/list/List.js"
 
 interface IProductRepository 
 {

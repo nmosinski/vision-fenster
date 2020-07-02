@@ -5,8 +5,8 @@ import {v4 as UUID} from "uuid"
 import ShoppingCartItem from "public/src/main/feature/shoppingCart/model/ShoppingCartItem.js"
 import IShoppingCartItemRepository from "public/src/main/feature/shoppingCart/model/IShoppingCartItemRepository.js"
 import WixDataRepository from "public/src/main/common/wixData/WixDataRepository.js"
-import KVMap from "public/src/main/common/util/map/KVMap.js"
-import List from "public/src/main/common/util/list/List.js"
+import KVMap from "../../../../../common/util/collections/map/KVMap.js"
+import List from "../../../../../common/util/collections/list/List.js"
 
 const COLLECTION_NAME = "shopping_cart_item"
 const MAPPING = {"id":"_id", "shoppingCartId":"shoppingCartId", "productId":"productId", "title":"title", "count":"count", "singlePrice":"singlePrice", "image":"image", "details":"details"};

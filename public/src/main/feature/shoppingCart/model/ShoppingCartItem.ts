@@ -3,14 +3,14 @@ const PATH = "public/src/main/feature/shoppingCart/model/ShoppingCartItem.js";
 import IComparable from "public/src/main/common/util/IComparable.js"
 import IClonable from "public/src/main/common/util/IClonable.js"
 
-import AbstractEntity from "public/src/main/common/AbstractEntity.js"
+import AbstractModel from "public/src/main/common/AbstractModel.js"
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 
 /**
  * @class
  * A class representing a shopping cart item.
  */
-class ShoppingCartItem extends AbstractEntity implements IClonable<ShoppingCartItem>, IComparable<ShoppingCartItem>
+class ShoppingCartItem extends AbstractModel implements IClonable<ShoppingCartItem>, IComparable<ShoppingCartItem>
 {
 	private _image: string;
 	private _singlePrice: number;
@@ -30,7 +30,7 @@ class ShoppingCartItem extends AbstractEntity implements IClonable<ShoppingCartI
 	 * @param {string} image The source to an image representing this item.
 	 * @param {details} [details=null] The details about this item.
 	 */
-	constructor(id: string, shoppingCartId: string, productId: string, title: string, count: number, singlePrice: number, image: string, details: string=null)
+	constructor(id?: string, shoppingCartId?: string, productId?: string, title?: string, count?: number, singlePrice?: number, image?: string, details?: string)
 	{
 		super(id);
 		this.shoppingCartId = shoppingCartId;
