@@ -17,7 +17,7 @@ class Root<T extends AbstractModel<T>> extends QueryElement<T>
         return [this.model];
     }
 
-    async save(model: AbstractModel<T>): Promise<void> 
+    async relationalSave(model: AbstractModel<T>): Promise<void> 
     {   
         AbstractModel.save(model);
     }

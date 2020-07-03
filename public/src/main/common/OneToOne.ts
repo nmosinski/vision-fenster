@@ -21,7 +21,7 @@ class OneToOne<T extends AbstractModel<T>> extends QueryElement<T>
         return wixQueryResult.items;
     }
 
-    async save(model: AbstractModel<T>): Promise<void> 
+    async relationalSave(model: AbstractModel<T>): Promise<void> 
     {
         /*
         let previousQueryResult = await this.previous.resolve();

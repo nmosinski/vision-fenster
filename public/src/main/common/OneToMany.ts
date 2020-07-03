@@ -20,10 +20,10 @@ class OneToMany<T extends AbstractModel<T>> extends QueryElement<T>
         return wixQueryResult.items;
     }
 
-    save(model: AbstractModel<T>): Promise<void> 
+    relationalSave(model: AbstractModel<T>): Promise<void> 
     {
         model.pk = this.rootQueryElement().model.pk;
-        this.previousQueryElementOfThisModel().save(model);
+        this.previousQueryElementOfThisModel().relationalSave(model);
     }
     update(model: AbstractModel<T>): Promise<void> 
     {

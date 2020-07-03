@@ -23,7 +23,7 @@ class ManyToOne<T extends AbstractModel<T>> extends QueryElement<T>
         return wixQueryResult.items;
     }
 
-    save(model: AbstractModel<T>): Promise<void> {
+    relationalSave(model: AbstractModel<T>): Promise<void> {
         throw new Error("Method not implemented.");
     }
     update(model: AbstractModel<T>): Promise<void> {

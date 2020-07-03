@@ -19,11 +19,11 @@ abstract class QueryElement<T extends AbstractModel<T>>
         this.queryResult = null;
     }
 
-    protected async abstract relationalFind(previousQueryResult: QueryResult<AbstractModel<any>>);
+    protected async abstract relationalFind<U extends AbstractModel<U>>(previousQueryResult: QueryResult<AbstractModel<U>>): Promise<List<T>>;
 
-    async abstract save(model: AbstractModel<T>): Promise<void>;
-    async abstract update(model: AbstractModel<T>): Promise<void>;
-    async abstract destroy(model: AbstractModel<T>): Promise<void>;
+    async abstract relationalSave<U extends AbstractModel<U>>(toSave: List<AbstractModel<T>>, previousQueryResult: QueryResult<U>): Promise<List<U>>;
+    async abstract relationalUpdate<U extends AbstractModel<U>>(toUpdate: List<AbstractModel<T>>, previousQueryResult: QueryResult<U>): Promise<List<U>>;
+    async abstract relationalDestroy<U extends AbstractModel<U>>(toDestroy: List<AbstractModel<T>>, previousQueryResult: QueryResult<U>): Promise<List<U>>;
 
     async find(): Promise<QueryResult<T>>
     {
@@ -40,6 +40,35 @@ abstract class QueryElement<T extends AbstractModel<T>>
         this.queryResult = this.queryItemsToQueryResult(queryItems);
 
         return this.queryResult;
+    }
+
+    async saveMany(toSave: List<T>): Promise<void>
+    {
+        /*
+        let previousQueryResult = await this.previous.find();
+        let toUpdate = await this.relationalSave(toSave, previousQueryResult);
+
+        await this.previous.updateMany(toUpdate);
+        await this.previousQueryElementOfThisModel().saveMany(toSave);
+        */
+    }
+
+    async updateMany(toUpdate: List<T>): Promise<void>
+    {
+        // update the given objects considering the relation to previous. Means, update the fks in this objects in necessary.
+        // Call root?
+
+
+        // Is pretended to be executed only if the list of items should be assigned to the previous query result.
+        // Each model should hold all of his relations. Update/ UpdateMany should always consider all relations, going on recursive.
+        // Update ids in toUpdate-Models. Update ids in models retrieved by this find-query if necessary. Call toUpdate for previous.
+        /*
+        let previousQueryResult = await this.previous.find();
+        let toUpdate = await this.relationalUpdate(toUpdate, previousQueryResult);
+
+        await this.previous.updateMany(toUpdate);
+        await this.previousQueryElementOfThisModel().saveMany(toSave);
+        */
     }
 
     queryItemsToQueryResult(items: List<object>): QueryResult<T>
@@ -62,7 +91,7 @@ abstract class QueryElement<T extends AbstractModel<T>>
         return null;
     }
 
-    rootQueryElement(): QueryElement<T>
+    rootQueryElement<U extends AbstractModel<U>>(): Root<U>
     {
         let previous = this.previous;
         while(previous)

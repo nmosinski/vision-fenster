@@ -201,7 +201,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      */
     static async find<U extends AbstractModel<U>>(queryElement: QueryElement<U>): Promise<QueryResult<U>>
     {
-        return await queryElement.resolve();
+        return await queryElement.find();
     }
 
     /**
@@ -210,7 +210,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      */
     async save(model: AbstractModel<T>=this): Promise<void>
     {
-        await this.currentQuery.save(model);
+        await this.currentQuery.relationalSave(model);
     }
 
     /**

@@ -32,10 +32,10 @@ class ManyToMany<T extends AbstractModel<T>> extends QueryElement<T>
         return wixQueryResult.items;
     }
 
-    async save(b: AbstractModel<T>): Promise<void> 
+    async relationalSave(b: AbstractModel<T>): Promise<void> 
     {
         this.updateRoleTable(b);
-        await this.previousQueryElementOfThisModel().save(b);
+        await this.previousQueryElementOfThisModel().relationalSave(b);
     }
 
     private async updateRoleTable(b :List<AbstractModel<T>>|AbstractModel<T>)

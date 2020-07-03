@@ -12,14 +12,14 @@ class OneToZeroOrOne<T extends AbstractModel<T>> extends QueryElement<T>
         super(model, previous);
     }
 
-    protected buildQuery(previousQueryResult: QueryResult<T>)
+    protected relationalFind(previousQueryResult: QueryResult<T>)
     {
         let query = QueryElement.queryOnTable(this.model.tableName);
         query = query.hasSome(this.previous.model.asFk(), previousQueryResult.toPks().toArray());
         return query;
     }
 
-    async save(model: AbstractModel<T>): Promise<void> 
+    async relationalSave(model: AbstractModel<T>): Promise<void> 
     {
         
     }

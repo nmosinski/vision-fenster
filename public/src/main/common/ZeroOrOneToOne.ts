@@ -12,7 +12,7 @@ class ZeroOrOneToOne<T extends AbstractModel<T>> extends QueryElement<T>
         super(model, previous);
     }
 
-    protected buildQuery(previousQueryResult: QueryResult<T>)
+    protected relationalFind(previousQueryResult: QueryResult<T>)
     {
         let query = QueryElement.queryOnTable(this.model.tableName);
         query = query.hasSome(this.previous.model.asFk(), previousQueryResult.toPks().toArray());
@@ -21,7 +21,7 @@ class ZeroOrOneToOne<T extends AbstractModel<T>> extends QueryElement<T>
 
     async create(model: AbstractModel<T>): Promise<void>
     {
-        let previousQueryResult = await this.previous.resolve();
+        let previousQueryResult = await this.previous.find();
         if(previousQueryResult.length > 1)
             return;
 
@@ -33,9 +33,9 @@ class ZeroOrOneToOne<T extends AbstractModel<T>> extends QueryElement<T>
 
     }
 
-    async save(model: AbstractModel<T>): Promise<void>
+    async relationalSave(model: AbstractModel<T>): Promise<void>
     {
-        this.previousQueryElementOfThisModel().save(model);
+        this.previousQueryElementOfThisModel().relationalSave(model);
     }
 
     async update(model: AbstractModel<T>): Promise<void> 
