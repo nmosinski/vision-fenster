@@ -1,50 +1,41 @@
-import Relation from "public/main/common/QueryElement.js"
+import Relation from "public/main/common/Relation.js"
 import AbstractModel from "public/main/common/AbstractModel.js"
-import wixData from "wix-data";
 import List from "./util/collections/list/List";
 import QueryResult from "./QueryResult";
-import Root from "./Root";
 
-class ZeroOrOneToOne<T extends AbstractModel<T>> extends Relation<T>
+class ZeroOrOneToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>
 {   
-    constructor(model: T, previous: Relation<AbstractModel<any>>=null)
+    constructor(relativeA: A, relativeB: B)
     {
-        super(model, previous);
+        super(relativeA, relativeB);
     }
 
-    protected relationalFind(previousQueryResult: QueryResult<T>)
-    {
-        let query = Relation.queryOfModel(this.memberB.tableName);
-        query = query.hasSome(this.previous.memberB.asFk(), previousQueryResult.toPks().toArray());
-        return query;
-    }
-
-    async create(model: AbstractModel<T>): Promise<void>
-    {
-        let previousQueryResult = await this.previous.find();
-        if(previousQueryResult.length > 1)
-            return;
-
-        // this b gets assigned to this a
-        model[previousQueryResult.first().asFk()] = previousQueryResult.first().pk;
-
-        // previous b looses his connection to this a
-        let previousB = AbstractModel.get();
-
-    }
-
-    async relationalSave(model: AbstractModel<T>): Promise<void>
-    {
-        this.previousQueryElementOfThisModel().relationalSave(model);
-    }
-
-    async update(model: AbstractModel<T>): Promise<void> 
-    {
+    async relationalGet(previousQueryResult: QueryResult<A>): Promise<B> {
         throw new Error("Method not implemented.");
     }
 
-    async destroy(model: AbstractModel<T>): Promise<void> 
-    {
+    async relationalSave(toSave: B, previousQueryResult: QueryResult<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    async relationalUpdate(toUpdate: B, previousQueryResult: QueryResult<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    async relationalDestroy(toDestroy: B, previousQueryResult: QueryResult<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    
+
+    async relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>>{
+        throw new Error("Method not implemented.");
+    }
+
+    async relationalSaveMultiple(toSave: List<B>, previousQueryResult: QueryResult<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    async relationalUpdateMultiple(toUpdate: List<B>, previousQueryResult: QueryResult<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    async relationalDestroyMultiple(toDestroy: List<B>, previousQueryResult: QueryResult<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
 }

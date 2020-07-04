@@ -2,9 +2,9 @@ import WixLocation from "wix-location"
 
 import Logger from "js-logger"
 
-import WixUsersFrontendAuthenticationService from "public/main/feature/shoppingCart/infrastructure/authenticationService/wixUsers/WixUsersFrontendAuthenticationService.js"
+import WixUsersFrontendAuthenticationService from "../../public/main/common/authenticationService/wixUsers/WixUsersFrontendAuthenticationService.js"
 
-import ShoppingCartApplicationService from "public/main/feature/shoppingCart/application/ShoppingCartApplicationService.js"
+import ShoppingCartApplicationService from "../../public/main/feature/shoppingCart/controllers/ShoppingCartApplicationService.js"
 import SProductRepository from "public/main/feature/shoppingCart/infrastructure/data/foreignDomains/ProductRepository.js"
 import ShoppingCartItemRepository from "public/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartItemRepository.js"
 import ShoppingCartRepository from "public/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartRepository.js"

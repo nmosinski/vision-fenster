@@ -13,17 +13,17 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends
         super(relativeA, relativeB);
     }
 
-    relationalGet(previousQueryResult: QueryResult<A>): Promise<B> 
+    async relationalGet(previousQueryResult: QueryResult<A>): Promise<B> 
     {
         throw new Error("Method not implemented.");
     }
-    relationalSave(toSave: B, previousQueryResult: QueryResult<A>): Promise<void> {
+    async relationalSave(toSave: B, previousQueryResult: QueryResult<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
-    relationalUpdate(toUpdate: B, previousQueryResult: QueryResult<A>): Promise<void> {
+    async relationalUpdate(toUpdate: B, previousQueryResult: QueryResult<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
-    relationalDestroy(toDestroy: B, previousQueryResult: QueryResult<A>): Promise<void> {
+    async relationalDestroy(toDestroy: B, previousQueryResult: QueryResult<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
 
@@ -41,13 +41,13 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends
         return abManyToOneBQueryResult;
     }
 
-    relationalSaveMultiple(toSave: List<B>, previousQueryResult: QueryResult<A>): Promise<void> {
+    async relationalSaveMultiple(toSave: List<B>, previousQueryResult: QueryResult<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
-    relationalUpdateMultiple(toUpdate: List<B>, previousQueryResult: QueryResult<A>): Promise<void> {
+    async relationalUpdateMultiple(toUpdate: List<B>, previousQueryResult: QueryResult<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
-    relationalDestroyMultiple(toDestroy: List<B>, previousQueryResult: QueryResult<A>): Promise<void> {
+    async relationalDestroyMultiple(toDestroy: List<B>, previousQueryResult: QueryResult<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
 }

@@ -1,13 +1,13 @@
-import WixUsers from "wix-users"
+import WixUsers from "../../public/main/common/authenticationService/wixUsers/wix-users"
 import wixWindow from "wix-window"
 import WixLocation from "wix-location"
 
 import ShoppingCartRepository from "public/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartRepository.js"
 import ShoppingCartItemRepository from "public/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartItemRepository.js"
 import ProductRepository from "public/main/feature/shoppingCart/infrastructure/data/foreignDomains/ProductRepository.js"
-import ShoppingCartApplicationService from "public/main/feature/shoppingCart/application/ShoppingCartApplicationService.js"
+import ShoppingCartApplicationService from "../../public/main/feature/shoppingCart/controllers/ShoppingCartApplicationService.js"
 
-import WixUsersFrontendAuthenticationService from "public/main/feature/shoppingCart/infrastructure/authenticationService/wixUsers/WixUsersFrontendAuthenticationService.js"
+import WixUsersFrontendAuthenticationService from "../../public/main/common/authenticationService/wixUsers/WixUsersFrontendAuthenticationService.js"
 
 var shoppingCartApplicationService;
 var shoppingCartRepository;
