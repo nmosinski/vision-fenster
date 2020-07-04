@@ -1,7 +1,7 @@
 import AbstractModel from "public/src/main/common/AbstractModel.js"
 import QueryResult from "./QueryResult";
-import Query from "./Query";
-
+import {Query} from "public/src/main/common/WixDatabase.js"
+import WixDatabase from "public/src/main/common/WixDatabase.js"
 
 abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
 {
@@ -23,12 +23,12 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
 
     queryOfRelativeA(): Query<A>
     {
-        return new Query(this.relativeA);
+        return WixDatabase.query(this.relativeA);
     }
 
     queryOfRelativeB(): Query<B>
     {
-        return new Query(this.relativeB);
+        return WixDatabase.query(this.relativeB);
     }
 
     get relativeA(): A

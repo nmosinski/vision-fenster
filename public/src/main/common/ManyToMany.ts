@@ -2,7 +2,6 @@ import Relation from "public/src/main/common/Relation.js"
 import AbstractModel from "public/src/main/common/AbstractModel.js"
 import QueryResult from "./QueryResult";
 import OneToMany from "./OneToMany";
-import Set from "public/src/main/common/util/collections/set/Set.js"
 import RoleModel from "./RoleModel";
 import ManyToOne from "./ManyToOne";
 

@@ -1,5 +1,6 @@
 const PATH = "public/src/main/common/AbstractModel.js";
 
+import WixDatabase from "public/src/main/common/WixDatabase.js"
 import IComparable from "public/src/main/common/util/IComparable.js"
 import AbstractEntity from "public/src/main/common/AbstractEntity.js"
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
@@ -11,13 +12,11 @@ import OneToMany from "./OneToMany";
 import ManyToMany from "./ManyToMany";
 import ManyToOne from "./ManyToOne";
 import QueryResult from "./QueryResult";
-import Query from "./Query";
 
 /**
  * @class
  * A class representing an abstract model.
  */
-
 abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity implements IComparable<AbstractModel<any>>
 {
     private _previousRelative: AbstractModel<any>;
