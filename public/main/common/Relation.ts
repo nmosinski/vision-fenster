@@ -1,7 +1,7 @@
-import AbstractModel from "public/src/main/common/AbstractModel.js"
+import AbstractModel from "public/main/common/AbstractModel.js"
 import QueryResult from "./QueryResult";
-import {Query} from "public/src/main/common/WixDatabase.js"
-import WixDatabase from "public/src/main/common/WixDatabase.js"
+import {Query} from "public/main/common/WixDatabase.js"
+import WixDatabase from "public/main/common/WixDatabase.js"
 import List from "./util/collections/list/List";
 
 abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>

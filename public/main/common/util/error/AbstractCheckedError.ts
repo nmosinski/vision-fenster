@@ -1,6 +1,6 @@
-const PATH = "public/src/main/common/util/error/AbstractCheckedError.js";
+const PATH = "public/main/common/util/error/AbstractCheckedError.js";
 
-import AbstractError from "public/src/main/common/util/error/AbstractError.js"
+import AbstractError from "public/main/common/util/error/AbstractError.js"
 
 /**
  * @class

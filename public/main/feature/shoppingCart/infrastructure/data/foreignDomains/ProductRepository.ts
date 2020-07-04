@@ -1,9 +1,9 @@
-const PATH = "public/src/main/feature/shoppingCart/infrastructure/data/foreignDomains/ProductRepository.js";
+const PATH = "public/main/feature/shoppingCart/infrastructure/data/foreignDomains/ProductRepository.js";
 
-import IProductRepository from "public/src/main/feature/shoppingCart/model/IProductRepository.js"
-import WixDataProductRepository from "public/src/main/feature/product/infrastructure/data/wixData/WixDataProductRepository.js"
-import Product from "public/src/main/feature/shoppingCart/model/Product.js"
-import ProductOption from "public/src/main/feature/shoppingCart/model/ProductOption.js"
+import IProductRepository from "public/main/feature/shoppingCart/model/IProductRepository.js"
+import WixDataProductRepository from "public/main/feature/product/infrastructure/data/wixData/WixDataProductRepository.js"
+import Product from "public/main/feature/shoppingCart/model/Product.js"
+import ProductOption from "public/main/feature/shoppingCart/model/ProductOption.js"
 
 import List from "../../../../../common/util/collections/list/List.js"
 

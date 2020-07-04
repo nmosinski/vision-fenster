@@ -1,0 +1,1465 @@
+{
+  "wix-data" : {
+    "fensterpreistabellenreferenz" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterprofilfarbobergruppenaufpreis" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterprofilfarbobergruppenfarben" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterprofilfarbobergruppe" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterprofilfarbe" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fenster" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensteroffnungsart" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensteroffnungsartobergruppe" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fenstertypspezifikation" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterlicht" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensteroffnungsartausfuhrung" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterbauteilpositionsausfuhrung" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterprofilmarke" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterbauteilposition" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterbauteil" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterzusatzbauteil" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterhauptbauteil" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fenstertyp" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterzusatzbauteilposition" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensteroffnungsartkategorie" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterlichtkategorie" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensteroffnungskategorie" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterprofilfarbaufpreisgruppe" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterprofilmodell" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterprofilaufpreisgruppenfarben" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterprofilmarkenfarben" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterprofilmodellreihenfarben" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterprofilfarbaufpreis" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterprofilfarbpreisgruppe" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterprofilmodellreihe" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterprofilfarbpreisgruppenfarben" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "profilfarbe" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "Material" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "Farbe" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterprofil" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fenstermaterial" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "fensterfarbe" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "complexProduct" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "complexProducts" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "Fenster" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "Konfigurationsprodukt" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "Produkt" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "CollectionReferences" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "Warenkorb" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "meta" : null
+    },
+    "!default" : {
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : false
+      },
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : false
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      }
+    },
+    "Meine_Produkte" : {
+      "anonymous" : {
+        "insert" : true,
+        "update" : false,
+        "remove" : false,
+        "read" : false
+      },
+      "siteMember" : {
+        "insert" : true,
+        "update" : false,
+        "remove" : false,
+        "read" : false
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : false
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      }
+    },
+    "Kunststofffenster" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      }
+    },
+    "Kunststofffenster_Material" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      }
+    },
+    "Kunststofffenster_Farbe" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      }
+    },
+    "Fenstertyp" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      }
+    },
+    "Licht" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      }
+    },
+    "Offnungsart" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      }
+    },
+    "Profil" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      }
+    },
+    "Testpreise" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      }
+    },
+    "TestDb" : {
+      "anonymous" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteMember" : {
+        "insert" : false,
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "dataOwner" : {
+        "update" : false,
+        "remove" : false,
+        "read" : true
+      },
+      "siteOwner" : {
+        "insert" : true,
+        "update" : true,
+        "remove" : true,
+        "read" : true
+      }
+    }
+  },
+  "__version" : 2,
+  "web-methods" : {
+    "*" : {
+      "*" : {
+        "siteOwner" : {
+          "invoke" : true
+        },
+        "siteMember" : {
+          "invoke" : true
+        },
+        "anonymous" : {
+          "invoke" : true
+        }
+      }
+    },
+    "wix/data-web.jsw" : {
+      "*" : {
+        "siteOwner" : {
+          "invoke" : true
+        },
+        "siteMember" : {
+          "invoke" : true
+        },
+        "anonymous" : {
+          "invoke" : true
+        }
+      }
+    },
+    "backend/configurator.jsw" : {
+      "updateProduct" : {
+        "siteOwner" : {
+          "invoke" : true
+        },
+        "siteMember" : {
+          "invoke" : true
+        },
+        "anonymous" : {
+          "invoke" : true
+        }
+      }
+    }
+  }
+}

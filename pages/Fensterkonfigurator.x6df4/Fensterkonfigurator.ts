@@ -2,12 +2,12 @@ import WixLocation from "wix-location"
 
 import Logger from "js-logger"
 
-import WixUsersFrontendAuthenticationService from "public/src/main/feature/shoppingCart/infrastructure/authenticationService/wixUsers/WixUsersFrontendAuthenticationService.js"
+import WixUsersFrontendAuthenticationService from "public/main/feature/shoppingCart/infrastructure/authenticationService/wixUsers/WixUsersFrontendAuthenticationService.js"
 
-import ShoppingCartApplicationService from "public/src/main/feature/shoppingCart/application/ShoppingCartApplicationService.js"
-import SProductRepository from "public/src/main/feature/shoppingCart/infrastructure/data/foreignDomains/ProductRepository.js"
-import ShoppingCartItemRepository from "public/src/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartItemRepository.js"
-import ShoppingCartRepository from "public/src/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartRepository.js"
+import ShoppingCartApplicationService from "public/main/feature/shoppingCart/application/ShoppingCartApplicationService.js"
+import SProductRepository from "public/main/feature/shoppingCart/infrastructure/data/foreignDomains/ProductRepository.js"
+import ShoppingCartItemRepository from "public/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartItemRepository.js"
+import ShoppingCartRepository from "public/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartRepository.js"
 
 import ProductApplicationService from 'public/src/main/feature/product/application/ProductApplicationService.js'
 import CreateUserProductCommand from 'public/src/main/feature/product/application/CreateUserProductCommand.js'
@@ -17,10 +17,10 @@ import ProductModelRepository from 'public/src/main/feature/product/infrastructu
 import ProductOptionTypeRepository from 'public/src/main/feature/product/infrastructure/data/wixData/WixDataProductOptionTypeRepository.js'
 import ProductOptionVariantRepository from 'public/src/main/feature/product/infrastructure/data/wixData/WixDataProductOptionVariantRepository.js'
 import WindowProductConfigurator from 'public/src/main/feature/product/infrastructure/configurator/WindowProductConfigurator.js'
-import Product from "public/src/main/feature/product/model/Product.js"
-import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
-import ProductOptionVariant from "public/src/main/feature/product/model/ProductOptionVariant.js"
-import ProductOption from "public/src/main/feature/product/model/ProductOption.js"
+import Product from "public/main/feature/product/model/Product.js"
+import ProductOptionChoice from "public/main/feature/product/model/ProductOptionChoice.js"
+import ProductOptionVariant from "public/main/feature/product/model/ProductOptionVariant.js"
+import ProductOption from "public/main/feature/product/model/ProductOption.js"
 import KVMap from "../public/src/main/common/util/collections/map/KVMap.js"
 
 const PRODUCTMODELID = "6b0df06c-cb22-4d60-9550-af1df7de9f3c";

@@ -1,5 +1,5 @@
-import Relation from "public/src/main/common/Relation.js"
-import AbstractModel from "public/src/main/common/AbstractModel.js"
+import Relation from "public/main/common/Relation.js"
+import AbstractModel from "public/main/common/AbstractModel.js"
 import QueryResult from "./QueryResult";
 import OneToMany from "./OneToMany";
 import RoleModel from "./RoleModel";

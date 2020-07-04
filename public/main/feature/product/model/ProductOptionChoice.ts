@@ -1,15 +1,15 @@
-const PATH = "public/src/main/feature/product/model/ProductOptionChoice.js";
+const PATH = "public/main/feature/product/model/ProductOptionChoice.js";
 
-import IComparable from "public/src/main/common/util/IComparable.js"
-import IClonable from "public/src/main/common/util/IClonable.js"
-import ProductOptionType from "public/src/main/feature/product/model/ProductOptionType.js"
-import ProductOptionVariant from "public/src/main/feature/product/model/ProductOptionVariant.js"
+import IComparable from "public/main/common/util/IComparable.js"
+import IClonable from "public/main/common/util/IClonable.js"
+import ProductOptionType from "public/main/feature/product/model/ProductOptionType.js"
+import ProductOptionVariant from "public/main/feature/product/model/ProductOptionVariant.js"
 
-import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
-import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
-import InvalidOperationError from "public/src/main/common/util/error/InvalidOperationError.js"
+import VariableTypeError from "public/main/common/util/error/VariableTypeError.js"
+import VariableValueError from "public/main/common/util/error/VariableValueError.js"
+import InvalidOperationError from "public/main/common/util/error/InvalidOperationError.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 /**
  * @class

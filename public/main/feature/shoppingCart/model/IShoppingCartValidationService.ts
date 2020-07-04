@@ -1,4 +1,4 @@
-import ShoppingCart from "public/src/main/feature/shoppingCart/model/ShoppingCart.js"
+import ShoppingCart from "public/main/feature/shoppingCart/model/ShoppingCart.js"
 
 /**
  * @interface

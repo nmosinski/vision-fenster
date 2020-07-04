@@ -1,14 +1,14 @@
-const PATH = "public/src/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartRepository.js";
+const PATH = "public/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartRepository.js";
 
 import {v4 as UUID} from "uuid"
 
-import ShoppingCart from "public/src/main/feature/shoppingCart/model/ShoppingCart.js"
-import IShoppingCartRepository from "public/src/main/feature/shoppingCart/model/IShoppingCartRepository.js"
-import WixDataRepository from "public/src/main/common/wixData/WixDataRepository.js"
-import WixDataShoppingCartItemRepository from "public/src/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartItemRepository.js"
+import ShoppingCart from "public/main/feature/shoppingCart/model/ShoppingCart.js"
+import IShoppingCartRepository from "public/main/feature/shoppingCart/model/IShoppingCartRepository.js"
+import WixDataRepository from "public/main/common/wixData/WixDataRepository.js"
+import WixDataShoppingCartItemRepository from "public/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartItemRepository.js"
 import KVMap from "../../../../../common/util/collections/map/KVMap.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 const COLLECTION_NAME = "shopping_cart"
 const MAPPING = {"id":"_id", "userId":"userId"};

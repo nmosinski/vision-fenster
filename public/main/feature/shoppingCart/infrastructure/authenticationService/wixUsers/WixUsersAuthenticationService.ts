@@ -1,8 +1,8 @@
-const PATH = "public/src/main/feature/shoppingCart/infrastructure/authenticationService/WixUsers/WixUsersAuthenticationService.js";
+const PATH = "public/main/feature/shoppingCart/infrastructure/authenticationService/WixUsers/WixUsersAuthenticationService.js";
 
-import IAuthenticationService from "public/src/main/feature/shoppingCart/model/IAuthenticationService.js"
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
-import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
+import IAuthenticationService from "public/main/feature/shoppingCart/model/IAuthenticationService.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
+import VariableTypeError from "public/main/common/util/error/VariableTypeError.js"
 
 /**
  * @class

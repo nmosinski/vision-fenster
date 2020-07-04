@@ -1,8 +1,8 @@
-const PATH = "public/src/main/common/wixData/ItemNotFoundError.js";
+const PATH = "public/main/common/wixData/ItemNotFoundError.js";
 
-import AbstractCheckedError from "public/src/main/common/util/error/AbstractCheckedError.js"
+import AbstractCheckedError from "public/main/common/util/error/AbstractCheckedError.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 /**
  * @class

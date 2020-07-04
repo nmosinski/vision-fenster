@@ -1,17 +1,17 @@
-const PATH = "public/src/main/feature/product/application/ProductApplicationService.js";
+const PATH = "public/main/feature/product/application/ProductApplicationService.js";
 
-import CreateUserProductCommand from "public/src/main/feature/product/application/CreateUserProductCommand.js";
-import UpdateProductCommand from "public/src/main/feature/product/application/UpdateProductCommand.js";
-import DeleteProductCommand from "public/src/main/feature/product/application/DeleteProductCommand.js";
-import Product from "public/src/main/feature/product/model/Product.js";
-import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js";
-import ProductOptionType from "public/src/main/feature/product/model/ProductOptionType.js";
-import IProductRepository from "public/src/main/feature/product/model/IProductRepository.js";
-import IProductModelRepository from "public/src/main/feature/product/model/IProductModelRepository.js";
-import IProductOptionTypeRepository from "public/src/main/feature/product/model/IProductOptionTypeRepository.js";
-import IProductOptionVariantRepository from "public/src/main/feature/product/model/IProductOptionVariantRepository.js";
+import CreateUserProductCommand from "public/main/feature/product/application/CreateUserProductCommand.js";
+import UpdateProductCommand from "public/main/feature/product/application/UpdateProductCommand.js";
+import DeleteProductCommand from "public/main/feature/product/application/DeleteProductCommand.js";
+import Product from "public/main/feature/product/model/Product.js";
+import ProductOptionChoice from "public/main/feature/product/model/ProductOptionChoice.js";
+import ProductOptionType from "public/main/feature/product/model/ProductOptionType.js";
+import IProductRepository from "public/main/feature/product/model/IProductRepository.js";
+import IProductModelRepository from "public/main/feature/product/model/IProductModelRepository.js";
+import IProductOptionTypeRepository from "public/main/feature/product/model/IProductOptionTypeRepository.js";
+import IProductOptionVariantRepository from "public/main/feature/product/model/IProductOptionVariantRepository.js";
 
-import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
+import VariableTypeError from "public/main/common/util/error/VariableTypeError.js"
 
 import List from "../../../common/util/collections/list/List.js"
 import KVMap from "../../../common/util/collections/map/KVMap.js"

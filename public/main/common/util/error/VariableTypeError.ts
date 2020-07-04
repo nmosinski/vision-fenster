@@ -1,6 +1,6 @@
-const PATH = "public/src/main/common/util/error/VariableTypeError.js";
+const PATH = "public/main/common/util/error/VariableTypeError.js";
 
-import AbstractVariableError from "public/src/main/common/util/error/AbstractVariableError.js"
+import AbstractVariableError from "public/main/common/util/error/AbstractVariableError.js"
 
 
 /**

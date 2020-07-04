@@ -1,6 +1,6 @@
-const PATH = "public/src/main/common/util/error/NotImplementedError.js";
+const PATH = "public/main/common/util/error/NotImplementedError.js";
 
-import AbstractUncheckedError from "public/src/main/common/util/error/AbstractUncheckedError.js"
+import AbstractUncheckedError from "public/main/common/util/error/AbstractUncheckedError.js"
 
 /**
  * @class

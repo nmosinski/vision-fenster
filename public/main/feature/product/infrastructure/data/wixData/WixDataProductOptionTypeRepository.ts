@@ -1,14 +1,14 @@
-const PATH = "public/src/main/feature/product/infrastructure/data/wixData/WixDataProductOptionTypeRepository.js";
+const PATH = "public/main/feature/product/infrastructure/data/wixData/WixDataProductOptionTypeRepository.js";
 
-import ProductOptionType from "public/src/main/feature/product/model/ProductOptionType.js"
-import IProductOptionTypeRepository from "public/src/main/feature/product/model/IProductOptionTypeRepository.js"
-import WixDataRepository from "public/src/main/common/wixData/WixDataRepository.js"
+import ProductOptionType from "public/main/feature/product/model/ProductOptionType.js"
+import IProductOptionTypeRepository from "public/main/feature/product/model/IProductOptionTypeRepository.js"
+import WixDataRepository from "public/main/common/wixData/WixDataRepository.js"
 import KVMap from "../../../../../common/util/collections/map/KVMap.js"
 import List from "../../../../../common/util/collections/list/List.js"
 
-import EntityNotFoundError from "public/src/main/feature/product/model/EntityNotFoundError.js"
+import EntityNotFoundError from "public/main/feature/product/model/EntityNotFoundError.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 const COLLECTION_NAME = "product_option_type"
 const MAPPING = {"id":"_id", "productModelId":"productModelId", "title": "title"};

@@ -1,8 +1,8 @@
-const PATH = "public/src/main/common/wixStorage/TableStructuredWixStorage.js";
+const PATH = "public/main/common/wixStorage/TableStructuredWixStorage.js";
 
-import AbstractWixStorage from "public/src/main/common/wixStorage/AbstractWixStorage.js"
-import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js";
-//import List from "public/src/main/common/util/list/List.js"
+import AbstractWixStorage from "public/main/common/wixStorage/AbstractWixStorage.js"
+import VariableTypeError from "public/main/common/util/error/VariableTypeError.js";
+//import List from "public/main/common/util/list/List.js"
 
 /*
 class MetaInfo

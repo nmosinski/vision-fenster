@@ -1,6 +1,6 @@
-const PATH = "public/src/main/feature/product/model/ProductComplexity.js";
+const PATH = "public/main/feature/product/model/ProductComplexity.js";
 
-import AbstractModel from "public/src/main/common/AbstractModel.js"
+import AbstractModel from "public/main/common/AbstractModel.js"
 
 class ProductComplexity extends AbstractModel
 {

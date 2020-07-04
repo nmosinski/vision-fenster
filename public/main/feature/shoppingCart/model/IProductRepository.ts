@@ -1,4 +1,4 @@
-import Product from "public/src/main/feature/shoppingCart/model/Product";
+import Product from "public/main/feature/shoppingCart/model/Product";
 
 interface IProductRepository
 {

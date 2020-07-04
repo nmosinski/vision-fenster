@@ -1,4 +1,4 @@
-const PATH = "public/src/main/common/util/jsTypes/JsTypes.js";
+const PATH = "public/main/common/util/jsTypes/JsTypes.js";
 
 /**
  * @class

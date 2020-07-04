@@ -1,7 +1,7 @@
-const PATH = "public/src/main/feature/order/application/OrderApplicationService.js";
+const PATH = "public/main/feature/order/application/OrderApplicationService.js";
 
-import IOrderItemRepository from "public/src/main/feature/order/model/IOrderItemRepository.js"
-import IOrderRepository from "public/src/main/feature/order/model/IOrderRepository.js"
+import IOrderItemRepository from "public/main/feature/order/model/IOrderItemRepository.js"
+import IOrderRepository from "public/main/feature/order/model/IOrderRepository.js"
 
 /**
  * @class

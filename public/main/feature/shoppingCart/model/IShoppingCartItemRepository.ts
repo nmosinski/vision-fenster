@@ -1,4 +1,4 @@
-import ShoppingCartItem from "public/src/main/feature/shoppingCart/model/ShoppingCartItem.js"
+import ShoppingCartItem from "public/main/feature/shoppingCart/model/ShoppingCartItem.js"
 
 import List from "../../../common/util/collections/list/List.js"
 

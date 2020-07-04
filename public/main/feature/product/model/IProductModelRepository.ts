@@ -1,4 +1,4 @@
-import ProductModel from "public/src/main/feature/product/model/ProductModel.js";
+import ProductModel from "public/main/feature/product/model/ProductModel.js";
 
 interface IProductModelRepository
 {

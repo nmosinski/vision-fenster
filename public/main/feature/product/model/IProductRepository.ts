@@ -1,4 +1,4 @@
-import Product from "public/src/main/feature/product/model/Product.js"
+import Product from "public/main/feature/product/model/Product.js"
 import List from "../../../common/util/collections/list/List.js"
 
 interface IProductRepository 

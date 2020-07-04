@@ -1,15 +1,15 @@
-const PATH = "public/src/main/feature/shoppingCart/model/ShoppingCart.js";
+const PATH = "public/main/feature/shoppingCart/model/ShoppingCart.js";
 
-import ShoppingCartItem from "public/src/main/feature/shoppingCart/model/ShoppingCartItem.js"
+import ShoppingCartItem from "public/main/feature/shoppingCart/model/ShoppingCartItem.js"
 
-import AbstractModel from "public/src/main/common/AbstractModel.js"
-import Associations from "public/src/main/common/Associations.js"
+import AbstractModel from "public/main/common/AbstractModel.js"
+import Associations from "public/main/common/Associations.js"
 
 import KVMap from "../../../common/util/collections/map/KVMap.js"
 import List from "../../../common/util/collections/list/List.js"
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
-import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
-import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
+import VariableTypeError from "public/main/common/util/error/VariableTypeError.js"
+import VariableValueError from "public/main/common/util/error/VariableValueError.js"
 
 /**
  * @class

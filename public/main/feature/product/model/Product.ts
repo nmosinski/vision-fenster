@@ -1,16 +1,16 @@
-const PATH = "public/src/main/feature/product/model/Product.js";
+const PATH = "public/main/feature/product/model/Product.js";
 
-import AbstractModel from "public/src/main/common/AbstractModel.js"
-import IComparable from "public/src/main/common/util/IComparable.js"
-import IClonable from "public/src/main/common/util/IClonable.js"
+import AbstractModel from "public/main/common/AbstractModel.js"
+import IComparable from "public/main/common/util/IComparable.js"
+import IClonable from "public/main/common/util/IClonable.js"
 import KVMap from "../../../common/util/collections/map/KVMap.js"
-import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
+import ProductOptionChoice from "public/main/feature/product/model/ProductOptionChoice.js"
 
-import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
-import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
-import InvalidOperationError from "public/src/main/common/util/error/InvalidOperationError.js"
+import VariableTypeError from "public/main/common/util/error/VariableTypeError.js"
+import VariableValueError from "public/main/common/util/error/VariableValueError.js"
+import InvalidOperationError from "public/main/common/util/error/InvalidOperationError.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 /**
  * @class

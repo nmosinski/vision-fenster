@@ -1,12 +1,12 @@
-const PATH = "public/src/main/feature/product/model/InvalidProductConfigurationError.js";
+const PATH = "public/main/feature/product/model/InvalidProductConfigurationError.js";
 
-import AbstractCheckedError from "public/src/main/common/util/error/AbstractCheckedError.js"
+import AbstractCheckedError from "public/main/common/util/error/AbstractCheckedError.js"
 
-import Product from "public/src/main/feature/product/model/Product.js"
+import Product from "public/main/feature/product/model/Product.js"
 
-import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
+import ProductOptionChoice from "public/main/feature/product/model/ProductOptionChoice.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 /**
  * @class

@@ -1,5 +1,5 @@
-import Relation from "public/src/main/common/Relation.js"
-import AbstractModel from "public/src/main/common/AbstractModel.js"
+import Relation from "public/main/common/Relation.js"
+import AbstractModel from "public/main/common/AbstractModel.js"
 import QueryResult from "./QueryResult";
 
 class OneToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>

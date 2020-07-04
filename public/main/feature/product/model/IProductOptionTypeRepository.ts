@@ -1,4 +1,4 @@
-import ProductOptionType from "public/src/main/feature/product/model/ProductOptionType.js"
+import ProductOptionType from "public/main/feature/product/model/ProductOptionType.js"
 import List from "../../../common/util/collections/list/List.js"
 
 interface IProductOptionTypeRepository

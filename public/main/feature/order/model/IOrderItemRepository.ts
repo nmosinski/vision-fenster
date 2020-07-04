@@ -1,4 +1,4 @@
-import OrderItem from "public/src/main/feature/order/model/OrderItem.js"
+import OrderItem from "public/main/feature/order/model/OrderItem.js"
 import List from "../../../common/util/collections/list/List.js"
 
 /**

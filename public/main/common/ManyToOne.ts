@@ -1,5 +1,5 @@
-import Relation from "public/src/main/common/Relation.js"
-import AbstractModel from "public/src/main/common/AbstractModel.js"
+import Relation from "public/main/common/Relation.js"
+import AbstractModel from "public/main/common/AbstractModel.js"
 import Set from "./util/collections/set/Set.js";
 import QueryResult from "./QueryResult";
 

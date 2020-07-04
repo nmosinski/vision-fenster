@@ -1,19 +1,19 @@
-const PATH = "public/src/main/feature/product/infrastructure/data/wixData/WixDataProductRepository.js";
+const PATH = "public/main/feature/product/infrastructure/data/wixData/WixDataProductRepository.js";
 
 import {v4 as UUID} from "uuid"
 
-import WixDataProductOptionTypeRepository from "public/src/main/feature/product/infrastructure/data/wixData/WixDataProductOptionTypeRepository.js"
-import WixDataProductOptionVariantRepository from "public/src/main/feature/product/infrastructure/data/wixData/WixDataProductOptionVariantRepository.js"
-import IProductRepository from "public/src/main/feature/product/model/IProductRepository.js"
-import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
-import Product from "public/src/main/feature/product/model/Product.js"
-import WixDataRepository from "public/src/main/common/wixData/WixDataRepository.js"
+import WixDataProductOptionTypeRepository from "public/main/feature/product/infrastructure/data/wixData/WixDataProductOptionTypeRepository.js"
+import WixDataProductOptionVariantRepository from "public/main/feature/product/infrastructure/data/wixData/WixDataProductOptionVariantRepository.js"
+import IProductRepository from "public/main/feature/product/model/IProductRepository.js"
+import ProductOptionChoice from "public/main/feature/product/model/ProductOptionChoice.js"
+import Product from "public/main/feature/product/model/Product.js"
+import WixDataRepository from "public/main/common/wixData/WixDataRepository.js"
 import KVMap from "../../../../../common/util/collections/map/KVMap.js"
 import List from "../../../../../common/util/collections/list/List.js"
 
-import EntityNotFoundError from "public/src/main/feature/product/model/EntityNotFoundError.js"
+import EntityNotFoundError from "public/main/feature/product/model/EntityNotFoundError.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 import ProductOptionType from "../../../model/ProductOptionType";
 import ProductOptionVariant from "../../../model/ProductOptionVariant";
 

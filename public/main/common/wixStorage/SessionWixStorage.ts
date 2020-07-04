@@ -1,6 +1,6 @@
-const PATH = "public/src/main/common/wixStorage/SessionWixStorage.js";
+const PATH = "public/main/common/wixStorage/SessionWixStorage.js";
 
-import AbstractWixStorage from "public/src/main/common/wixStorage/AbstractWixStorage.js"
+import AbstractWixStorage from "public/main/common/wixStorage/AbstractWixStorage.js"
 import {session} from "wix-storage"
 
 /**

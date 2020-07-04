@@ -1,6 +1,6 @@
-const PATH = "public/src/main/feature/product/application/DeleteProductCommand.js";
+const PATH = "public/main/feature/product/application/DeleteProductCommand.js";
 
-import Product from "public/src/main/feature/product/model/Product.js"
+import Product from "public/main/feature/product/model/Product.js"
 
 /**
  * @class

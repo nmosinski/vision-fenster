@@ -1,7 +1,7 @@
-const PATH = "public/src/main/feature/shoppingCart/infrastructure/authenticationService/wixUsers/WixUsersBackendAuthenticationService.js";
+const PATH = "public/main/feature/shoppingCart/infrastructure/authenticationService/wixUsers/WixUsersBackendAuthenticationService.js";
 
 import WixUsersBackend from "wix-users-backend"
-import WixUsersAuthenticationService from "public/src/main/feature/shoppingCart/infrastructure/authenticationService/wixUsers/WixUsersAuthenticationService.js";
+import WixUsersAuthenticationService from "public/main/feature/shoppingCart/infrastructure/authenticationService/wixUsers/WixUsersAuthenticationService.js";
 
 /**
  * @class

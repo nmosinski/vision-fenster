@@ -1,15 +1,15 @@
-const PATH = "public/src/main/common/wixData/WixDataRepository.js";
+const PATH = "public/main/common/wixData/WixDataRepository.js";
 
 import KVMap from "../util/collections/map/KVMap.js"
 import List from "../util/collections/list/List.js"
 
-import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
-import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
-import ItemNotFoundError from "public/src/main/common/wixData/ItemNotFoundError.js"
+import VariableTypeError from "public/main/common/util/error/VariableTypeError.js"
+import VariableValueError from "public/main/common/util/error/VariableValueError.js"
+import ItemNotFoundError from "public/main/common/wixData/ItemNotFoundError.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
-import WixData from "public/src/main/common/wixData/WixData.js"
+import WixData from "public/main/common/wixData/WixData.js"
 
 /**
  * @class

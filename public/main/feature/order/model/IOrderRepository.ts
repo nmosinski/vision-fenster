@@ -1,4 +1,4 @@
-import Order from "public/src/main/feature/order/model/Order.js"
+import Order from "public/main/feature/order/model/Order.js"
 
 /**
  * @alias IOrderRepository

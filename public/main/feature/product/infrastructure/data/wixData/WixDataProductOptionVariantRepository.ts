@@ -1,14 +1,14 @@
-const PATH = "public/src/main/feature/product/infrastructure/data/wixData/WixDataProductOptionVariantRepository.js";
+const PATH = "public/main/feature/product/infrastructure/data/wixData/WixDataProductOptionVariantRepository.js";
 
-import ProductOptionVariant from "public/src/main/feature/product/model/ProductOptionVariant.js"
-import IProductOptionVariantRepository from "public/src/main/feature/product/model/IProductOptionVariantRepository.js"
+import ProductOptionVariant from "public/main/feature/product/model/ProductOptionVariant.js"
+import IProductOptionVariantRepository from "public/main/feature/product/model/IProductOptionVariantRepository.js"
 import KVMap from "../../../../../common/util/collections/map/KVMap.js"
 import List from "../../../../../common/util/collections/list/List.js"
-import WixDataRepository from "public/src/main/common/wixData/WixDataRepository.js"
+import WixDataRepository from "public/main/common/wixData/WixDataRepository.js"
 
-import EntityNotFoundError from "public/src/main/feature/product/model/EntityNotFoundError.js"
+import EntityNotFoundError from "public/main/feature/product/model/EntityNotFoundError.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 const VARIANT_COLLECTION_NAME = "product_option_variant"
 const IMAGE_COLLECTION_NAME = "product_option_variant_image"

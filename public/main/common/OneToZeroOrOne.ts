@@ -1,5 +1,5 @@
-import Relation from "public/src/main/common/QueryElement.js"
-import AbstractModel from "public/src/main/common/AbstractModel.js"
+import Relation from "public/main/common/QueryElement.js"
+import AbstractModel from "public/main/common/AbstractModel.js"
 import wixData from "wix-data";
 import List from "./util/collections/list/List";
 import QueryResult from "./QueryResult";

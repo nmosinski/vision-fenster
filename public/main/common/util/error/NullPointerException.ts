@@ -1,8 +1,8 @@
-const PATH = "public/src/main/common/util/error/NullPointerException.js";
+const PATH = "public/main/common/util/error/NullPointerException.js";
 
-import AbstractUncheckedError from "public/src/main/common/util/error/AbstractUncheckedError.js"
+import AbstractUncheckedError from "public/main/common/util/error/AbstractUncheckedError.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 /**
  * @class

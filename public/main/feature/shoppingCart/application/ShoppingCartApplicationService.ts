@@ -1,14 +1,14 @@
-const PATH = "public/src/main/feature/shoppingCart/application/ShoppingCartApplicationService.js";
+const PATH = "public/main/feature/shoppingCart/application/ShoppingCartApplicationService.js";
 
-import IAuthenticationService from "public/src/main/feature/shoppingCart/model/IAuthenticationService.js"
+import IAuthenticationService from "public/main/feature/shoppingCart/model/IAuthenticationService.js"
 
-import ShoppingCartItem from "public/src/main/feature/shoppingCart/model/ShoppingCartItem.js"
-import ShoppingCart from "public/src/main/feature/shoppingCart/model/ShoppingCart.js"
+import ShoppingCartItem from "public/main/feature/shoppingCart/model/ShoppingCartItem.js"
+import ShoppingCart from "public/main/feature/shoppingCart/model/ShoppingCart.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
-import IShoppingCartItemRepository from "public/src/main/feature/shoppingCart/model/IShoppingCartItemRepository.js"
-import IShoppingCartRepository from "public/src/main/feature/shoppingCart/model/IShoppingCartRepository.js"
-import IProductRepository from "public/src/main/feature/shoppingCart/model/IProductRepository.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
+import IShoppingCartItemRepository from "public/main/feature/shoppingCart/model/IShoppingCartItemRepository.js"
+import IShoppingCartRepository from "public/main/feature/shoppingCart/model/IShoppingCartRepository.js"
+import IProductRepository from "public/main/feature/shoppingCart/model/IProductRepository.js"
 
 /**
  * @class

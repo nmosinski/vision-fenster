@@ -1,11 +1,11 @@
-const PATH = "public/src/main/feature/product/infrastructure/data/wixData/WixDataProductModelRepository.js";
+const PATH = "public/main/feature/product/infrastructure/data/wixData/WixDataProductModelRepository.js";
 
-import ProductModel from "public/src/main/feature/product/model/ProductModel.js"
-import IProductModelRepository from "public/src/main/feature/product/model/IProductModelRepository.js"
-import WixDataRepository from "public/src/main/common/wixData/WixDataRepository.js"
+import ProductModel from "public/main/feature/product/model/ProductModel.js"
+import IProductModelRepository from "public/main/feature/product/model/IProductModelRepository.js"
+import WixDataRepository from "public/main/common/wixData/WixDataRepository.js"
 import KVMap from "../../../../../common/util/collections/map/KVMap.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 const COLLECTION_NAME = "product_model";
 const MAPPING = {"id":"_id", "productTypeId":"productTypeId", "productCategoryId": "productCategoryId"};

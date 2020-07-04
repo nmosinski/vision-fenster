@@ -1,10 +1,10 @@
-const PATH = "public/src/main/common/wixData/WixData.js";
+const PATH = "public/main/common/wixData/WixData.js";
 
-import ForeignError from "public/src/main/common/util/error/ForeignError.js"
-import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
-import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
+import ForeignError from "public/main/common/util/error/ForeignError.js"
+import VariableTypeError from "public/main/common/util/error/VariableTypeError.js"
+import VariableValueError from "public/main/common/util/error/VariableValueError.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 import wixData from "wix-data"
 

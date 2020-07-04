@@ -1,12 +1,12 @@
-const PATH = "public/src/main/feature/shoppingCart/model/Product.js";
+const PATH = "public/main/feature/shoppingCart/model/Product.js";
 
-import AbstractModel from "public/src/main/common/AbstractModel.js"
+import AbstractModel from "public/main/common/AbstractModel.js"
 import List from "../../../common/util/collections/list/List.js"
-import ProductOption from "public/src/main/feature/shoppingCart/model/ProductOption.js"
-import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
-import VariableValueError from "public/src/main/common/util/error/VariableValueError.js"
+import ProductOption from "public/main/feature/shoppingCart/model/ProductOption.js"
+import VariableTypeError from "public/main/common/util/error/VariableTypeError.js"
+import VariableValueError from "public/main/common/util/error/VariableValueError.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 /**
  * @class

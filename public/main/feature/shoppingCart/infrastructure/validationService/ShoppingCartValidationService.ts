@@ -1,9 +1,9 @@
 /*
-const PATH = "public/src/main/feature/shoppingCart/infrastructure/validationService/ShoppingCartValidationService.js";
+const PATH = "public/main/feature/shoppingCart/infrastructure/validationService/ShoppingCartValidationService.js";
 
-import IShoppingCartValidationService from "public/src/main/feature/shoppingCart/model/IShoppingCartValidationService.js"
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
-import VariableTypeError from "public/src/main/common/util/error/VariableTypeError.js"
+import IShoppingCartValidationService from "public/main/feature/shoppingCart/model/IShoppingCartValidationService.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
+import VariableTypeError from "public/main/common/util/error/VariableTypeError.js"
 
 class ShoppingCartValidationService extends IShoppingCartValidationService()
 {

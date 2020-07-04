@@ -1,10 +1,10 @@
-const PATH = "public/src/main/feature/shoppingCart/model/ShoppingCartItem.js";
+const PATH = "public/main/feature/shoppingCart/model/ShoppingCartItem.js";
 
-import IComparable from "public/src/main/common/util/IComparable.js"
-import IClonable from "public/src/main/common/util/IClonable.js"
+import IComparable from "public/main/common/util/IComparable.js"
+import IClonable from "public/main/common/util/IClonable.js"
 
-import AbstractModel from "public/src/main/common/AbstractModel.js"
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import AbstractModel from "public/main/common/AbstractModel.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 /**
  * @class

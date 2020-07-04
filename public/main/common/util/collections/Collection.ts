@@ -1,4 +1,4 @@
-// const PATH = "public/src/main/common/util/list/List.js";
+// const PATH = "public/main/common/util/list/List.js";
 
 // import IComparable from "./public/src/main/common/util/IComparable.js";
 

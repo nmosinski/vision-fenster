@@ -1,11 +1,11 @@
-const PATH = "public/src/main/feature/product/application/ProductApplicationService.js";
+const PATH = "public/main/feature/product/application/ProductApplicationService.js";
 
-import Product from "public/src/main/feature/product/model/Product.js"
-import ProductOption from "public/src/main/feature/product/model/ProductOption.js"
-import IProductRepository from "public/src/main/feature/product/model/IProductRepository.js"
+import Product from "public/main/feature/product/model/Product.js"
+import ProductOption from "public/main/feature/product/model/ProductOption.js"
+import IProductRepository from "public/main/feature/product/model/IProductRepository.js"
 import KVMap from "../../../../common/util/collections/map/KVMap.js"
 
-import WindowProductConfigurator from "public/src/main/feature/product/infrastructure/configurator/WindowProductConfigurator.js"
+import WindowProductConfigurator from "public/main/feature/product/infrastructure/configurator/WindowProductConfigurator.js"
 
 class ProductApplicationService
 {

@@ -1,4 +1,4 @@
-const PATH = "public/src/main/common/util/map/KVMap.js";
+const PATH = "public/main/common/util/map/KVMap.js";
 
 import IComparable from "./public/src/main/common/util/IComparable.js";
 

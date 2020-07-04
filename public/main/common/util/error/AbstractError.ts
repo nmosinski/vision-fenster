@@ -1,6 +1,6 @@
-const PATH = "public/src/main/common/util/error/AbstractError.js";
+const PATH = "public/main/common/util/error/AbstractError.js";
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 /**
  * @class

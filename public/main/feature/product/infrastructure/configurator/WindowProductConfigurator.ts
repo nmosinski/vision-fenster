@@ -1,9 +1,9 @@
-const PATH = "public/src/main/feature/product/infrastructure/configurator/WindowProductConfigurator.js";
+const PATH = "public/main/feature/product/infrastructure/configurator/WindowProductConfigurator.js";
 
-import AbstractProductConfigurator from "public/src/main/feature/product/model/AbstractProductConfigurator.js"
-import ProductOptionChoice from "public/src/main/feature/product/model/ProductOptionChoice.js"
-import Product from "public/src/main/feature/product/model/Product.js"
-import ProductOption from "public/src/main/feature/product/model/ProductOption.js"
+import AbstractProductConfigurator from "public/main/feature/product/model/AbstractProductConfigurator.js"
+import ProductOptionChoice from "public/main/feature/product/model/ProductOptionChoice.js"
+import Product from "public/main/feature/product/model/Product.js"
+import ProductOption from "public/main/feature/product/model/ProductOption.js"
 import KVMap from "../../../../common/util/collections/map/KVMap.js"
 
 /**

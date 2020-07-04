@@ -1,10 +1,10 @@
-const PATH = "public/src/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartItemRepository.js";
+const PATH = "public/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartItemRepository.js";
 
 import {v4 as UUID} from "uuid"
 
-import ShoppingCartItem from "public/src/main/feature/shoppingCart/model/ShoppingCartItem.js"
-import IShoppingCartItemRepository from "public/src/main/feature/shoppingCart/model/IShoppingCartItemRepository.js"
-import WixDataRepository from "public/src/main/common/wixData/WixDataRepository.js"
+import ShoppingCartItem from "public/main/feature/shoppingCart/model/ShoppingCartItem.js"
+import IShoppingCartItemRepository from "public/main/feature/shoppingCart/model/IShoppingCartItemRepository.js"
+import WixDataRepository from "public/main/common/wixData/WixDataRepository.js"
 import KVMap from "../../../../../common/util/collections/map/KVMap.js"
 import List from "../../../../../common/util/collections/list/List.js"
 

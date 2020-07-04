@@ -1,4 +1,4 @@
-const PATH = "public/src/main/common/AbstractEntity.js";
+const PATH = "public/main/common/AbstractEntity.js";
 
 /**
  * @class

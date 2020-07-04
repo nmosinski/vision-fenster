@@ -1,9 +1,9 @@
 /*
-const PATH = "public/src/main/feature/product/model/IProductComplexityRepository.js";
+const PATH = "public/main/feature/product/model/IProductComplexityRepository.js";
 
-import NotImplementedError from "public/src/main/common/util/error/NotImplementedError.js"
+import NotImplementedError from "public/main/common/util/error/NotImplementedError.js"
 
-import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 const IProductComplexityRepository = (superclass=null) => 
 {

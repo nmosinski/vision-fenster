@@ -1,6 +1,6 @@
-const PATH = "public/src/main/feature/order/model/OrderItem.js";
+const PATH = "public/main/feature/order/model/OrderItem.js";
 
-import AbstractModel from "public/src/main/common/AbstractModel.js"
+import AbstractModel from "public/main/common/AbstractModel.js"
 
 /**
  * @class

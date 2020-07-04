@@ -1,4 +1,4 @@
-import ProductOption from "public/src/main/feature/product/model/ProductOption";
+import ProductOption from "public/main/feature/product/model/ProductOption";
 
 interface IProductOptionRepository
 {
