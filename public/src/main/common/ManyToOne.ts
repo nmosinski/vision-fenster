@@ -1,4 +1,4 @@
-import QueryElement from "public/src/main/common/QueryElement.js"
+import Relation from "public/src/main/common/Relation.js"
 import AbstractModel from "public/src/main/common/AbstractModel.js"
 import Set from "./util/collections/set/Set.js";
 import OneToOne from "./OneToOne";
@@ -6,47 +6,33 @@ import QueryResult from "./QueryResult";
 import List from "./util/collections/list/List.js";
 
 
-class ManyToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends QueryElement<A,B>
+class ManyToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>
 {
-    constructor(memberA: A, memberB: B, previous: QueryElement<AbstractModel<any>, A>=null)
+    constructor(relativeA: A, relativeB: B)
     {
-        super(memberA, memberB, previous);
+        super(relativeA, relativeB);
     }
 
-    async relationalDestroy(toDestroy: B): Promise<void>
+    async relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>> 
     {
-        // Delete all A's that point to B.
-        let as = await this.queryOfMemberA().eq(toDestroy.asFk(), toDestroy.pk).find();
-        await this.memberA.destroyMany(this.memberA.)...
-        
-    }
-
-    protected async relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>> 
-    {
-        let query = this.queryOfMemberB();
+        let query = this.queryOfRelativeB();
         let prevFks: Set<string> = new Set<string>();
-        previousQueryResult.all().foreach((entity) => {prevFks.add(entity[this.memberB.asFk()]);});
-        query = query.hasSome(this.memberB.asPk(), prevFks);
+        previousQueryResult.all().foreach((entity) => {prevFks.add(entity[this.relativeB.asFk()]);});
+        query = query.hasSome(this.relativeB.asPk(), prevFks);
         
-        return await query.find();
+        return await query.execute();
     }
 
-    /*
-    relationalSave(model: AbstractModel<T>): Promise<void> 
-    {
-        
-    }
-    update(model: AbstractModel<T>): Promise<void> 
-    {
-        // get previous
-        // set fks in previous
-        // update this -> update()
-        // update previous -> updateMany(previous)
-    }
-    destroy(model: AbstractModel<T>): Promise<void> {
+    relationalSave(toSave: B, previousQueryResult: QueryResult<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
-    */
+    relationalUpdate(toUpdate: B, previousQueryResult: QueryResult<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+
+    relationalDestroy(toDestroy: B, previousQueryResult: QueryResult<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
 }
 
 export default ManyToOne;

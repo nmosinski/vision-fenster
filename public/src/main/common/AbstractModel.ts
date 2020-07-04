@@ -1,52 +1,37 @@
 const PATH = "public/src/main/common/AbstractModel.js";
-import wixData from "wix-data"
-
 
 import IComparable from "public/src/main/common/util/IComparable.js"
 import AbstractEntity from "public/src/main/common/AbstractEntity.js"
 import JsTypes from "public/src/main/common/util/jsTypes/JsTypes.js"
 import KVMap from "./util/collections/map/KVMap";
-import NotImplementedError from "./util/error/NotImplementedError";
-import Associations from "./Associations";
 import List from "./util/collections/list/List";
 import OneToOne from "public/src/main/common/OneToOne.js"
-import Root from "./Root";
-import QueryElement from "./QueryElement";
-import ShoppingCart from "../feature/shoppingCart/model/ShoppingCart";
+import Relation from "./Relation.js";
 import OneToMany from "./OneToMany";
 import ManyToMany from "./ManyToMany";
 import ManyToOne from "./ManyToOne";
 import QueryResult from "./QueryResult";
-import RoleModel from "./RoleModel";
-
-/**
- * @todo PUT STATIC METHODS SOMEWHERE ELSE?
- * @todo Refactoring, where to put "to table name" etc.
- * @todo rename _tmpQuery
- * @todo asPk() maybe to getter get pkColumnName/pkName?
- * @todo Get, get many, get where ...
- */
+import Query from "./Query";
 
 /**
  * @class
  * A class representing an abstract model.
  */
 
- type P = AbstractModel<P>
 abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity implements IComparable<AbstractModel<any>>
 {
-    static tableName: string = "AbstractModel";
-    private _currentQuery: QueryElement<P,T>;
-    private _relations: KVMap<P, QueryElement<P, T>>; 
+    private _previousRelative: AbstractModel<any>;
+    private _relations: KVMap<AbstractModel<any>, Relation<AbstractModel<any>, T>>; 
 
     /**
      * Create an Abstract Model.
      * All classes that deriver from Abstract Model need to define their own static tableName attribute.
      * @param {string} id The id of this entity.
      */
-    constructor(id: string=null, a:string)
+    constructor(id: string=null)
     {
         super(id);
+        this.previousRelative = null;
         this.addRelations();
     }
 
@@ -71,15 +56,6 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
         return (this.pk === model.pk) && (JsTypes.belongToTheSameClass(this, model));
     }
 
-    /*
-    private saveCreate(data: object=null): T
-    {
-        let model = this.create(data);
-        model.currentQuery = new Root<T>(model);
-        return model;
-    }
-    */
-
     /**
      * Create an new model and fill it with data.
      * @param {object} data An object containing the data for fill the new model with the given information.
@@ -88,7 +64,6 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     create(data: object=null): T
     {
         let model = this.newInstance();
-        model.currentQuery = new Root<T>(model);
         model.fill(data);
         return model;
     }
@@ -115,7 +90,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
         let r = this.relations.get(relative);
         if(r)
         {
-            relative.currentQuery.previous = this.currentQuery;
+            relative.previousRelative = this;
             return relative;
         }
         
@@ -123,55 +98,39 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
-     * Perform all necessary operations in order to chain a new QueryElement to the actual query.
-     * @param {QueryElement<U>} queryElement The new query element.
-     * @returns {U} An instance of the model the new query refers to.
-     */
-    private chainQueryElement<U extends AbstractModel<U>>(queryElement: QueryElement<T, U>): U
-    {
-        queryElement.previous = this.currentQuery;
-        queryElement.memberB.currentQuery = queryElement;
-        return queryElement.memberB;
-    }
-
-    /**
-     * Query an associated object of 1 to 1 relationship.
+     * Add a relation of 1 to 1 relationship.
      * @param  {{new(): U}} Model The Model (class) this is associated to as 1 to 1 - this hasOne Model.
-     * @returns {Promise<U>} The associated Model.
      */
-    oneToOne<U extends AbstractModel<U>>(Model: {new(): U}): U
+    oneToOne<U extends AbstractModel<U>>(Model: {new(): U}): void
     {
-        return this.chainQueryElement(new OneToOne(this.newInstance(), new Model()));
+        this.relations.add(new Model(), new OneToOne(new Model(), this.newInstance()));
     }
 
     /**
-     * Query the associated objects of 1 to n relationship.
+     * Add a relation of 1 to n relationship.
      * @param  {{new(): U}} Model The Model (class) this is associated to as 1 to n - this has many Models.
-     * @returns {Promise<List<U>>} The associated Models.
      */
-    oneToMany<U extends AbstractModel<U>>(Model: {new(): U}): U
+    oneToMany<U extends AbstractModel<U>>(Model: {new(): U}): void
     {
-        return this.chainQueryElement(new OneToMany(this.newInstance(), new Model()));
+        this.relations.add(new Model(), new OneToMany(new Model(), this.newInstance()));
     }
     
     /**
-     * Query the associated object of n to 1 relationship.
+     * Add a relation of n to 1 relationship.
      * @param  {{new(): U}} Model The Model (class) this is associated to as n to 1 - this belongs to one Model.
-     * @returns {Promise<U>} The associated Model.
      */
-    manyToOne<U extends AbstractModel<U>>(Model: {new(): U}): U
+    manyToOne<U extends AbstractModel<U>>(Model: {new(): U}): void
     {
-        return this.chainQueryElement(new ManyToOne(this.newInstance(), new Model()));
+        this.relations.add(new Model(), new ManyToOne(new Model(), this.newInstance()));
     }
 
     /**
-     * Query the associated objects of n to n relationship.
+     * Add a relation of n to n relationship.
      * @param  {{new(): U}} Model The Model (class) this is associated to as n to n - this belongs to many Models.
-     * @returns {Promise<List<U>>} The associated Models.
      */
-    manyToMany<U extends AbstractModel<U>>(Model: {new(): U}): U
+    manyToMany<U extends AbstractModel<U>>(Model: {new(): U}): void
     {
-        return this.chainQueryElement(new ManyToMany(this.newInstance(), new Model()));
+        this.relations.add(new Model(), new ManyToMany(new Model(), this.newInstance()));
     }
 
     /**
@@ -187,6 +146,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
+     * @todo
      * Get an item of the model (this by default) of the given id.
      * @param {string} pk The primary key of the item to be retrieved.
      * @param {AbstractModel<T>} [model=this] The model to be retrieved.
@@ -199,6 +159,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
+     * @todo
      * Get an item of the given model by the given id.
      * @param {string} pk The primary key of the item to be retrieved.  
      * @param {U} model The model of the item to be retrieved. 
@@ -212,34 +173,43 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
 
     /**
      * Find all entities returned by a QueryElement (the current QueryElement (chain) by default).
-     * @param {QueryElement} [queryElement=this.currentQuery] The QueryElement to be resolved.
+     * @param {Relation} [queryElement=this.currentQuery] The QueryElement to be resolved.
      * @returns {Promise<QueryResult<T>>} The result of the executed querry. 
      */
     async find(): Promise<QueryResult<T>>
     {
-        return await AbstractModel.find(this.currentQuery);
+        if(this.previousRelative)
+        {
+            let previousQueryResult = await this.previousRelative.find();
+            return await this.relations.get(this.previousRelative).relationalFind(previousQueryResult);
+        }
+
+        return await AbstractModel.find(this.newInstance());
     }
 
     /**
      * Find all entities returned by the given QueryElement.
-     * @param {QueryElement} queryElement The QueryElement to be resolved.
+     * @param {Relation} queryElement The QueryElement to be resolved.
      * @returns {Promise<QueryResult<T>>} The result of the executed querry. 
      */
-    static async find<A extends AbstractModel<A>, B extends AbstractModel<B>>(queryElement: QueryElement<A,B>): Promise<QueryResult<B>>
+    static async find<U extends AbstractModel<U>>(model: U): Promise<QueryResult<U>>
     {
-        return await queryElement.find();
+        let query = new Query<U>(model);
+        return await query.execute();
     }
 
     /**
+     * @todo
      * Save the given model (this by default).
      * @param {AbstractModel<T>} [model=this] The model to be saved.
      */
     async save(model: AbstractModel<T>=this): Promise<void>
     {
-        await this.currentQuery.relationalSave(model);
+        await this.previousRelative.relationalSave(model);
     }
 
     /**
+     * @todo
      * Save a model.
      * @param {AbstractModel<T>} model The model to be saved.
      */
@@ -249,6 +219,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
+     * @todo
      * Update many models.
      * @param {List<AbstractModel<T>>} models The List containing the models to be saved. 
      */
@@ -258,6 +229,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
+     * @todo
      * Save many models.
      * @param {List<AbstractModel<U extends AbstractModel<U>>>} models The List containing the models to be saved. 
      */
@@ -269,6 +241,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
+     * @todo
      * Update the given model (this by default).
      * @param {AbstractModel<T>} [model=this] The model to be updated.
      */
@@ -281,6 +254,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
+     * @todo
      * Update a model.
      * @param {AbstractModel<U extends AbstractModel<U>>} model The model to be updated.
      */
@@ -290,6 +264,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
+     * @todo
      * Update many models.
      * @param {List<AbstractModel<T>>} models The List containing the models to be updated. 
      */
@@ -299,6 +274,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
+     * @todo
      * Update many models.
      * @param {List<AbstractModel<U extends AbstractModel<U>>>} models The List containing the models to be updated. 
      */
@@ -310,15 +286,16 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
+     * @todo
      * Destroy the given model (this by default).
      * @param {AbstractModel<T>} [model=this] The model to be destroyed.
      */
     async destroy(model: AbstractModel<T>=this): Promise<void>
     {
         // Destroy called over a chain of QueryResults. Destroy all results.
-        if(!this.currentQuery.previous)
+        if(!this.previousRelative.previous)
         {
-            let queryResults = await this.currentQuery.find();
+            let queryResults = await this.previousRelative.find();
             this.relations.foreach(async (relation)=>{await relation.destroyMany(queryResults.items);});
         }
         // Default destroy of the given model. 
@@ -328,6 +305,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
+     * @todo
      * Destroy a model.
      * @param {AbstractModel<U extends AbstractModel<U>>} model The model to be destroyed.
      */
@@ -337,6 +315,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
+     * @todo
      * Destroy many models.
      * @param {List<AbstractModel<T>>} models The List containing the models to be destroyed. 
      */
@@ -346,6 +325,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
+     * @todo
      * Destroy many models.
      * @param {List<AbstractModel<U extends AbstractModel<U>>>} models The List containing the models to be destroyed. 
      */
@@ -386,7 +366,8 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
-     * Get the tale name of this model. Resolves into the name of the model by default.
+     * @todo
+     * Get the table name of this model. Resolves into the name of the model/class by default.
      * @returns {string} The name of the table of this model.
      */
     get tableName(): string
@@ -403,16 +384,8 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
         return this.id;
     }
 
-    /*
-    private resetCurrentQuery()
-    {
-        //this.currentQuery = new Root<T>(this.create(this));
-        this.currentQuery = new Root<T>(this);
-    }
-    */
-
     /**
-     * Set the name of the primary key column name of this model.
+     * Set the primary key of this model.
      * @param {string} pk The new primary key.
      */
     set pk(pk: string)
@@ -421,29 +394,37 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
-     * Set CurrentQuery.
-     * @param {QueryElement<T>} query The new current QueryElement.
+     * Set previous relative.
+     * @param {AbstractModel<any>} relative The previous relative.
      */
-    private set currentQuery(query: QueryElement<P,T>)
+    private set previousRelative(relative: AbstractModel<any>)
     {
-        this._currentQuery = query;
+        this._previousRelative = relative;
     }
 
     /**
-     * Get CurrentQuery.
-     * @returns {QueryElement<T>} The current QueryElement.
+     * Get previous relative.
+     * @returns {AbstractModel<any>} The previous relative.
      */
-    private get currentQuery(): QueryElement<P,T>
+    private get previousRelative(): AbstractModel<any>
     {
-        return this._currentQuery;
+        return this._previousRelative;
     }
 
-    private set relations(relations: KVMap<P, QueryElement<P,T>>)
+    /**
+     * Set all relations of this model.
+     * @param {KVMap<AbstractModel<any>, Relation<AbstractModel<any>, T>>} relations The relations.
+     */
+    private set relations(relations: KVMap<AbstractModel<any>, Relation<AbstractModel<any>,T>>)
     {
         this._relations = relations;
     }
 
-    private get relations(): KVMap<P, QueryElement<P,T>>
+    /**
+     * Get all relations of this model.
+     * @returns {KVMap<AbstractModel<any>, Relation<AbstractModel<any>, T>>} The relations.
+     */
+    private get relations(): KVMap<AbstractModel<any>, Relation<AbstractModel<any>,T>>
     {
         return this._relations;
     }

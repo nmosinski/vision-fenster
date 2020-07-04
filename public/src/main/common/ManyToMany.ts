@@ -1,71 +1,40 @@
-import QueryElement from "public/src/main/common/QueryElement.js"
+import Relation from "public/src/main/common/Relation.js"
 import AbstractModel from "public/src/main/common/AbstractModel.js"
 import QueryResult from "./QueryResult";
 import OneToMany from "./OneToMany";
 import Set from "public/src/main/common/util/collections/set/Set.js"
 import RoleModel from "./RoleModel";
-import List from "./util/collections/list/List";
+import ManyToOne from "./ManyToOne";
 
-class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends QueryElement<A,B>
+class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>
 {
-    constructor(modelA: A, modelB: B, previous: QueryElement<AbstractModel<any>, A>=null)
+    constructor(relativeA: A, relativeB: B)
     {
-        super(modelA, modelB, previous);
+        super(relativeA, relativeB);
     }
 
-    protected async relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>>
+    async relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>>
     {
-        // Create a dummy QueryElement that will return previousQueryResult (a) when calling find().
-        let dummyQueryElement = new ManyToMany(this.memberB, null);
-        dummyQueryElement.queryResult = previousQueryResult;
+        // Split find in OneToMany<A,A_B> and ManyToOne<A_B,B>
+        let roleModel = new RoleModel(this.relativeA, this.relativeB);
+        let aOneToManyAbRelation = new OneToMany(this.relativeA, roleModel);
+        let aOneToManyAbQueryResult = await aOneToManyAbRelation.relationalFind(previousQueryResult);
 
-        // Create an intermediate QueryElement that simulates the relation between a and the role table a_b. Call it's find() method in order to get a_bs.
-        let intermediateQueryElement = new OneToMany<A, RoleModel>(this.previous.memberA, new RoleModel(this.previous.memberA, this.memberB), dummyQueryElement);
-        let intermediateQueryResult = await intermediateQueryElement.find();
-
-        let query = this.queryOfMemberB();
-        let prevFks: Set<string> = new Set<string>();
-        intermediateQueryResult.all().foreach((ab) => {prevFks.add(ab[this.memberB.asFk()]);});
-        query = query.hasSome(this.memberB.asPk(), prevFks);
+        let abManyToOneBRelation = new ManyToOne(roleModel, this.relativeB);
+        let abManyToOneBQueryResult = await abManyToOneBRelation.relationalFind(aOneToManyAbQueryResult);
         
-        return await query.find();
+        return abManyToOneBQueryResult;
     }
 
-    /*
-    async relationalSave(b: AbstractModel<T>): Promise<void> 
-    {
-        this.updateRoleTable(b);
-        await this.previousQueryElementOfThisModel().relationalSave(b);
+    relationalSave(toSave: B, previousQueryResult: QueryResult<A>): Promise<void> {
+        throw new Error("Method not implemented.");
     }
-
-    private async updateRoleTable(b :List<AbstractModel<T>>|AbstractModel<T>)
-    {
-        if(b instanceof AbstractModel)
-            b.
-        let bs = await this.find();
-
-        if(bs.items.has(b))
-            return;
-
-        let as = await this.previous.previous.find();
-
-        let toSave = new List<RoleModel>();
-        as.items.foreach((a)=>{toSave.add(new RoleModel(a, b));});
-        await this.previous.saveMany(toSave);
+    relationalUpdate(toUpdate: B, previousQueryResult: QueryResult<A>): Promise<void> {
+        throw new Error("Method not implemented.");
     }
-
-    async update(b: AbstractModel<T>): Promise<void> 
-    {
-        this.updateRoleTable(b);
-        await this.previousQueryElementOfThisModel().update(b);
+    relationalDestroy(toDestroy: B, previousQueryResult: QueryResult<A>): Promise<void> {
+        throw new Error("Method not implemented.");
     }
-
-    async destroy(model: AbstractModel<T>): Promise<void> 
-    {
-        let previousQueryResult = await this.previous.find();
-        await this.previous.destroyMany(previousQueryResult);
-    }
-    */
 }
 
 export default ManyToMany;

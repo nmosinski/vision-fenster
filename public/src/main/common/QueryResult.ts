@@ -1,5 +1,4 @@
 import List from "./util/collections/list/List";
-import QueryElement from "./QueryElement";
 import AbstractModel from "./AbstractModel";
 
 class QueryResult<T extends AbstractModel<T>>

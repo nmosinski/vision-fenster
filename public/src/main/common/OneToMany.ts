@@ -1,47 +1,34 @@
-import QueryElement from "public/src/main/common/QueryElement.js"
+import Relation from "public/src/main/common/Relation.js"
 import AbstractModel from "public/src/main/common/AbstractModel.js"
-import List from "./util/collections/list/List";
 import QueryResult from "./QueryResult";
 
 
-class OneToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends QueryElement<A,B>
+class OneToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>
 {
-    constructor(memberA: A, memberB: B, previous: QueryElement<AbstractModel<any>,A>=null)
+    constructor(relativeA: A, relativeB: B)
     {
-        super(memberA, memberB, previous);
+        super(relativeA, relativeB);
+    }
+
+    async relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>>
+    {
+        let query = this.queryOfRelativeB();
+        query = query.hasSome(this.relativeB.asFk(), previousQueryResult.toPks());
+        
+        return await query.execute();
+    }
+
+    relationalSave(toSave: B, previousQueryResult: QueryResult<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    relationalUpdate(toUpdate: B, previousQueryResult: QueryResult<A>): Promise<void> {
+        throw new Error("Method not implemented.");
     }
 
     async relationalDestroy(toDestroy: B): Promise<void>
     {
         // Nothing to do.
     }
-
-    protected async relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>>
-    {
-        let query = this.queryOfMemberB();
-        query = query.hasSome(this.previous.memberB.asFk(), previousQueryResult.toPks());
-        
-        return await query.find();
-    }
-
-    /*
-
-    relationalSave(model: AbstractModel<T>): Promise<void> 
-    {
-        model.pk = this.rootQueryElement().memberB.pk;
-        this.previousQueryElementOfThisModel().relationalSave(model);
-    }
-    update(model: AbstractModel<T>): Promise<void> 
-    {
-        model.pk = this.rootQueryElement().memberB.pk;
-        this.previousQueryElementOfThisModel().update(model);
-    }
-    destroy(model: AbstractModel<T>): Promise<void>
-    {
-        model.pk = this.rootQueryElement().memberB.pk;
-        this.previousQueryElementOfThisModel().destroy(model);
-    }
-    */
 }
 
 export default OneToMany;

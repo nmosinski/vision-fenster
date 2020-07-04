@@ -1,20 +1,20 @@
-import QueryElement from "public/src/main/common/QueryElement.js"
+import Relation from "public/src/main/common/QueryElement.js"
 import AbstractModel from "public/src/main/common/AbstractModel.js"
 import wixData from "wix-data";
 import List from "./util/collections/list/List";
 import QueryResult from "./QueryResult";
 import Root from "./Root";
 
-class ZeroOrOneToOne<T extends AbstractModel<T>> extends QueryElement<T>
+class ZeroOrOneToOne<T extends AbstractModel<T>> extends Relation<T>
 {   
-    constructor(model: T, previous: QueryElement<AbstractModel<any>>=null)
+    constructor(model: T, previous: Relation<AbstractModel<any>>=null)
     {
         super(model, previous);
     }
 
     protected relationalFind(previousQueryResult: QueryResult<T>)
     {
-        let query = QueryElement.queryOfModel(this.memberB.tableName);
+        let query = Relation.queryOfModel(this.memberB.tableName);
         query = query.hasSome(this.previous.memberB.asFk(), previousQueryResult.toPks().toArray());
         return query;
     }

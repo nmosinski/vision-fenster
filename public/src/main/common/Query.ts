@@ -33,7 +33,7 @@ class Query<T extends AbstractModel<T>>
         return this;
     }
 
-    async find(limit: number=1000): Promise<QueryResult<T>>
+    async execute(limit: number=1000): Promise<QueryResult<T>>
     {
         let wixQueryResult = await this.query.limit(limit).find();
         return this.wixQueryItemsToQueryResult(wixQueryResult);
