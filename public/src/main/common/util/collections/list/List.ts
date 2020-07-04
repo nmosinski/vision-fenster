@@ -12,7 +12,7 @@ import InvalidOperationError from "../../error/InvalidOperationError";
  * @class
  * Class representing a List.
  */
-class List<T> implements IComparable<List<T>>
+class List<T> implements IComparable
 {
 	protected _elements: Array<T>;
 	/**
@@ -122,7 +122,7 @@ class List<T> implements IComparable<List<T>>
 	 * @override
 	 * @inheritdoc
 	 */
-	equals(object: List<T>): boolean
+	equals(object: any): boolean
 	{
 		if(!(object instanceof List))
 			return false;

@@ -1,7 +1,7 @@
 import AbstractModel from "./AbstractModel";
 import IComparable from "./util/IComparable";
 
-class RoleModel extends AbstractModel<RoleModel> implements IComparable<RoleModel>
+class RoleModel extends AbstractModel<RoleModel> implements IComparable
 {
     private _model1: AbstractModel<any>;
     private _model2: AbstractModel<any>;
@@ -18,8 +18,10 @@ class RoleModel extends AbstractModel<RoleModel> implements IComparable<RoleMode
      * @override
      * @inheritdoc
      */
-    equals(roleModel: RoleModel): boolean
+    equals(roleModel: any): boolean
     {
+        if(!(roleModel instanceof RoleModel))
+            return false;
         if(this.hasReference(roleModel.model1) && this.hasReference(roleModel.model2))
             return true;
         return false;

@@ -17,7 +17,7 @@ import QueryResult from "./QueryResult";
  * @class
  * A class representing an abstract model.
  */
-abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity implements IComparable<AbstractModel<any>>
+abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity implements IComparable
 {
     private _previousRelative: AbstractModel<any>;
     private _relations: KVMap<AbstractModel<any>, Relation<AbstractModel<any>, T>>; 
@@ -50,8 +50,10 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      * @override
      * @inheritdoc
      */
-    equals(model: AbstractModel<any>): boolean
+    equals(model: any): boolean
     {
+        if(!(model instanceof AbstractModel))
+            return false;
         return (this.pk === model.pk) && (JsTypes.belongToTheSameClass(this, model));
     }
 
