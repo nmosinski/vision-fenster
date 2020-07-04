@@ -21,6 +21,7 @@ import QueryResult from "./QueryResult";
  * @class
  * A class representing an abstract model.
  */
+
 abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity implements IComparable
 {
     private _previousRelative: AbstractModel<any>;
@@ -141,7 +142,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     /**
      * Load the model with the data of the entity with the given id.
      * @param {string} id The id of the entity.
-     * @returns {this} This. 
+     * @returns {Promise<this>} This. 
      */
     async load(id: string): Promise<this>
     {
@@ -152,18 +153,25 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
 
     /**
      * Get an item of the model (this by default) of the given id.
+     * If called over a relative, return only an item if the given item is related to at least one of the items returned by the previous query.
      * @param {string} pk The primary key of the item to be retrieved.
-     * @param {AbstractModel<T>} [model=this] The model to be retrieved.
+     * @return {Promise<T>} The item.
      */
     async get(id: string): Promise<T>
     {
+        if(this.previousRelative)
+        {
+            let previousQueryResult = await this.previousRelative.find();
+            return await this.relations.get(this.previousRelative).relationalGet(previousQueryResult);
+        }
+
         return await AbstractModel.get(id, this.newInstance());
     }
 
     /**
      * Get an item of the given model by the given id.
      * @param {string} pk The primary key of the item to be retrieved.  
-     * @param {U} model The model of the item to be retrieved. 
+     * @param {Promise<U>} model The model of the item to be retrieved. 
      */
     static async get<U extends AbstractModel<U>>(id: string, model: U): Promise<U>
     {
@@ -172,6 +180,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
 
     /**
      * Find all entities returned by a QueryElement (the current QueryElement (chain) by default).
+     * If called over a relative, return only those entities that are related to the query result returned by the chained query.
      * @param {Relation} [queryElement=this.currentQuery] The QueryElement to be resolved.
      * @returns {Promise<QueryResult<T>>} The result of the executed querry. 
      */
@@ -189,155 +198,192 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     /**
      * Find all entities returned by the given QueryElement.
      * @param {Relation} queryElement The QueryElement to be resolved.
-     * @returns {Promise<QueryResult<T>>} The result of the executed querry. 
+     * @returns {Promise<QueryResult<<U extends AbstractModel<U>>>>} The result of the executed querry. 
      */
     static async find<U extends AbstractModel<U>>(model: U): Promise<QueryResult<U>>
     {
-        let query = WixDatabase.query(model);
-        return await query.execute();
+        return await WixDatabase.query(model).execute();
     }
 
     /**
-     * @todo
      * Save the given model (this by default).
-     * @param {AbstractModel<T>} [model=this] The model to be saved.
+     * If called over a relative, try to assign this model to the retrieved models by the chained query.
+     * This may not be possible depending on the relationship to the previous relative.
+     * @param {T} [model=null] The model to be saved.
      */
-    async save<U extends T>(model: U=null): Promise<void>
+    async save(model: T=this.create(this)): Promise<void>
     {
-        if(model)
-            model = this; 
-        this.relations.foreach((m, rel)=>{rel.relationalSave(model, null);});
-        await AbstractModel.save(model);
-        
-        await this.previousRelative.relationalSave(model);
+        // Called over relation.
+        if(this.previousRelative)
+        {
+            let previousQueryResult = await this.previousRelative.find();
+            await this.relations.get(this.previousRelative).relationalSave(model, previousQueryResult);
+        }
+
+        return await AbstractModel.save(model);
     }
 
     /**
-     * @todo
      * Save a model.
-     * @param {AbstractModel<T>} model The model to be saved.
+     * @param {T} model The model to be saved.
      */
-    static async save<U extends AbstractModel<U>>(model: AbstractModel<U>): Promise<void>
+    static async save<U extends AbstractModel<U>>(model: U): Promise<void>
     {
+        model.relations.foreach(async (m, rel)=>{await rel.relationalSave(model, null);});
         await WixDatabase.save(model);
     }
 
     /**
-     * @todo
-     * Update many models.
-     * @param {List<AbstractModel<T>>} models The List containing the models to be saved. 
-     */
-    async saveMany(models: List<AbstractModel<T>>): Promise<void>
-    {
-        return await AbstractModel.saveMany(models);
-    }
-
-    /**
-     * @todo
      * Save many models.
-     * @param {List<AbstractModel<U extends AbstractModel<U>>>} models The List containing the models to be saved. 
+     * If called over a relative, try to assign all of the given models to the items returned by the chained query.
+     * This may not be possible depending on the relationship of the models in this list to the previous relative.
+     * @param {List<T>} models The List containing the models to be saved. 
      */
-    static async saveMany<U extends AbstractModel<U>>(models: List<AbstractModel<U>>): Promise<void>
+    async saveMultiple(models: List<T>): Promise<void>
     {
         if(models.isEmpty())
             return;
-        await wixData.bulkSave(models.get(0).tableName, models.toArray());
-    }
-
-    /**
-     * @todo
-     * Update the given model (this by default).
-     * @param {AbstractModel<T>} [model=this] The model to be updated.
-     */
-    async update(model: AbstractModel<T>=this): Promise<void>
-    {
-        /*
-        await this.currentQuery.assign(model);
-        this.relations.foreach((rel)=>{rel.update(model);});
-        */
-    }
-
-    /**
-     * @todo
-     * Update a model.
-     * @param {AbstractModel<U extends AbstractModel<U>>} model The model to be updated.
-     */
-    static async update<U extends AbstractModel<U>>(model: AbstractModel<U>): Promise<void>
-    {
-        await wixData.update(this.tableName, model);
-    }
-
-    /**
-     * @todo
-     * Update many models.
-     * @param {List<AbstractModel<T>>} models The List containing the models to be updated. 
-     */
-    async updateMany(models: List<AbstractModel<T>>): Promise<void>
-    {
-        return await AbstractModel.updateMany(models);
-    }
-
-    /**
-     * @todo
-     * Update many models.
-     * @param {List<AbstractModel<U extends AbstractModel<U>>>} models The List containing the models to be updated. 
-     */
-    static async updateMany<U extends AbstractModel<U>>(models: List<AbstractModel<U>>): Promise<void>
-    {
-        if(models.isEmpty())
-            return;
-        await wixData.bulkUpdate(models.get(0).tableName, models.toArray());
-    }
-
-    /**
-     * @todo
-     * Destroy the given model (this by default).
-     * @param {AbstractModel<T>} [model=this] The model to be destroyed.
-     */
-    async destroy(model: AbstractModel<T>=this): Promise<void>
-    {
-        // Destroy called over a chain of QueryResults. Destroy all results.
-        if(!this.previousRelative.previous)
+        
+        // Called over relation.
+        if(this.previousRelative)
         {
-            let queryResults = await this.previousRelative.find();
-            this.relations.foreach(async (relation)=>{await relation.destroyMany(queryResults.items);});
+            let previousQueryResult = await this.previousRelative.find();
+            await this.relations.get(this.previousRelative).relationalSaveMultiple(models, previousQueryResult);
         }
-        // Default destroy of the given model. 
-        // Destroy function of each relation updates the affected references and destroys referenced objects if necessary.
-        else
-            this.relations.foreach(async (relation)=>{await relation.destroy(model);});
+        return await AbstractModel.saveMultiple(models);
     }
 
     /**
-     * @todo
-     * Destroy a model.
-     * @param {AbstractModel<U extends AbstractModel<U>>} model The model to be destroyed.
+     * Save many models.
+     * @param {List<<U extends AbstractModel<U>>>} models The List containing the models to be saved. 
      */
-    static async destroy<U extends AbstractModel<U>>(model: AbstractModel<U>): Promise<void>
-    {
-        await wixData.delete(model.tableName, model.id);
-    }
-
-    /**
-     * @todo
-     * Destroy many models.
-     * @param {List<AbstractModel<T>>} models The List containing the models to be destroyed. 
-     */
-    async destroyMany(models: List<AbstractModel<T>>): Promise<void>
-    {
-        return await AbstractModel.destroyMany(models);
-    }
-
-    /**
-     * @todo
-     * Destroy many models.
-     * @param {List<AbstractModel<U extends AbstractModel<U>>>} models The List containing the models to be destroyed. 
-     */
-    static async destroyMany<U extends AbstractModel<U>>(models: List<AbstractModel<U>>): Promise<void>
+    static async saveMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void>
     {
         if(models.isEmpty())
             return;
-        await wixData.bulkDelete(models.get(0).tableName, models.toArray());
+
+        models.get(0).relations.foreach(async (m, rel)=>{await rel.relationalSaveMultiple(models, null);});
+        await WixDatabase.saveMultiple(models);
+    }
+
+    /**
+     * Update the given model (this by default).
+     * If called over a relative, try to assign this model to the retrieved models by the chained query. 
+     * This may not be possible depending on the relationship to the previous relative.
+     * @param {T} [model=this] The model to be updated.
+     */
+    async update(model: T=this.create(this)): Promise<void>
+    {
+        // Called over relation.
+        if(this.previousRelative)
+        {
+            let previousQueryResult = await this.previousRelative.find();
+            await this.relations.get(this.previousRelative).relationalUpdate(model, previousQueryResult);
+        }
+
+        return await AbstractModel.update(model);
+    }
+
+    /**
+     * Update a model.
+     * @param {<U extends AbstractModel<U>>} model The model to be updated.
+     */
+    static async update<U extends AbstractModel<U>>(model: U): Promise<void>
+    {
+        model.relations.foreach(async (m, rel)=>{await rel.relationalUpdate(model, null);});
+        await WixDatabase.update(model);
+    }
+
+    /**
+     * Update many models.
+     * If called over a relative, try to assign all of the given models to the items returned by the chained query.
+     * This may not be possible depending on the relationship of the models in this list to the previous relative.
+     * @param {List<T>} models The List containing the models to be updated. 
+     */
+    async updateMultiple(models: List<T>): Promise<void>
+    {
+        if(models.isEmpty())
+            return;
+        
+        // Called over relation.
+        if(this.previousRelative)
+        {
+            let previousQueryResult = await this.previousRelative.find();
+            await this.relations.get(this.previousRelative).relationalUpdateMultiple(models, previousQueryResult);
+        }
+        return await AbstractModel.updateMultiple(models);
+    }
+
+    /**
+     * Update many models.
+     * @param {List<<U extends AbstractModel<U>>>} models The List containing the models to be updated. 
+     */
+    static async updateMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void>
+    {
+        if(models.isEmpty())
+            return;
+
+        models.get(0).relations.foreach(async (m, rel)=>{await rel.relationalUpdateMultiple(models, null);});
+        await WixDatabase.updateMultiple(models);
+    }
+
+    /**
+     * Destroy the given model (this by default).
+     * If called over a relative, destroy all models retrieved by the chained query.
+     * @param {T} [model=this] The model to be destroyed.
+     */
+    async destroy(model: T=this.create(this)): Promise<void>
+    {
+        // Called over relation.
+        if(this.previousRelative)
+        {
+            let previousQueryResult = await this.previousRelative.find();
+            await this.relations.get(this.previousRelative).relationalDestroy(model, previousQueryResult);
+        }
+
+        return await AbstractModel.destroy(model);
+    }
+
+    /**
+     * Destroy a model.
+     * @param {U} model The model to be destroyed.
+     */
+    static async destroy<U extends AbstractModel<U>>(model: U): Promise<void>
+    {
+        model.relations.foreach(async (m, rel)=>{await rel.relationalDestroy(model, null);});
+        await WixDatabase.remove(model);
+    }
+
+    /**
+     * Destroy many models.
+     * If called oveer a relative, destroy all models retrieved by the chained query.
+     * @param {List<T>} models The List containing the models to be destroyed. 
+     */
+    async destroyMultiple(models: List<T>): Promise<void>
+    {
+        if(models.isEmpty())
+            return;
+        
+        // Called over relation.
+        if(this.previousRelative)
+        {
+            let previousQueryResult = await this.previousRelative.find();
+            await this.relations.get(this.previousRelative).relationalDestroyMultiple(models, previousQueryResult);
+        }
+        return await AbstractModel.destroyMultiple(models);
+    }
+
+    /**
+     * Destroy many models.
+     * @param {List<<U extends AbstractModel<U>>>} models The List containing the models to be destroyed. 
+     */
+    static async destroyMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void>
+    {
+        if(models.isEmpty())
+            return;
+
+        models.get(0).relations.foreach(async (m, rel)=>{await rel.relationalDestroyMultiple(models, null);});
+        await WixDatabase.removeMultiple(models);
     }
 
     /**
@@ -436,5 +482,3 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
 }
 
 export default AbstractModel;
-
-	

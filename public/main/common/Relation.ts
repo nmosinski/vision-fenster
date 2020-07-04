@@ -2,6 +2,7 @@ import AbstractModel from "public/src/main/common/AbstractModel.js"
 import QueryResult from "./QueryResult";
 import {Query} from "public/src/main/common/WixDatabase.js"
 import WixDatabase from "public/src/main/common/WixDatabase.js"
+import List from "./util/collections/list/List";
 
 abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
 {
@@ -16,10 +17,15 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
         this.queryResult = null;
     }
 
-    async abstract relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>>;
+    async abstract relationalGet(previousQueryResult: QueryResult<A>): Promise<B>;
     async abstract relationalSave(toSave: B, previousQueryResult: QueryResult<A>): Promise<void>;
     async abstract relationalUpdate(toUpdate: B, previousQueryResult: QueryResult<A>): Promise<void>;
     async abstract relationalDestroy(toDestroy: B, previousQueryResult: QueryResult<A>): Promise<void>;
+
+    async abstract relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>>;
+    async abstract relationalSaveMultiple(toSave: List<B>, previousQueryResult: QueryResult<A>): Promise<void>;
+    async abstract relationalUpdateMultiple(toUpdate: List<B>, previousQueryResult: QueryResult<A>): Promise<void>;
+    async abstract relationalDestroyMultiple(toDestroy: List<B>, previousQueryResult: QueryResult<A>): Promise<void>;
 
     queryOfRelativeA(): Query<A>
     {
