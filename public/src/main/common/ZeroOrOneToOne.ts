@@ -14,8 +14,8 @@ class ZeroOrOneToOne<T extends AbstractModel<T>> extends QueryElement<T>
 
     protected relationalFind(previousQueryResult: QueryResult<T>)
     {
-        let query = QueryElement.queryOnTable(this.model.tableName);
-        query = query.hasSome(this.previous.model.asFk(), previousQueryResult.toPks().toArray());
+        let query = QueryElement.queryOfModel(this.memberB.tableName);
+        query = query.hasSome(this.previous.memberB.asFk(), previousQueryResult.toPks().toArray());
         return query;
     }
 

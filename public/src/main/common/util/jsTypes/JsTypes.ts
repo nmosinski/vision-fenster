@@ -108,7 +108,12 @@ class JsTypes
     static isObject(o: any): boolean
     {
     	return typeof(o) === "object" && !JsTypes.isUnspecified(o);
-    }
+	}
+	
+	static belongToTheSameClass(a: object, b: object)
+	{
+		return a.constructor === b.constructor;
+	}
 }
 
 export default JsTypes;

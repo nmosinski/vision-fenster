@@ -5,22 +5,22 @@ import List from "./util/collections/list/List";
 import QueryResult from "./QueryResult";
 import Root from "./Root";
 
-class OneToOne<T extends AbstractModel<T>> extends QueryElement<T>
+class OneToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends QueryElement<A,B>
 {   
-    constructor(model: T, previous: QueryElement<AbstractModel<any>>=null)
+    constructor(modelA: A, modelB: B, previous: QueryElement<AbstractModel<any>, A>=null)
     {
-        super(model, previous);
+        super(modelA, modelB, previous);
     }
 
-    protected async relationalFind(previousQueryResult: QueryResult<T>): Promise<Array<object>>
+    protected async relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>>
     {
-        let query = QueryElement.queryOnTable(this.model.tableName);
-        query = query.hasSome(this.previous.model.asFk(), previousQueryResult.toPks().toArray());
+        let query = this.queryOfMemberB();
+        query = query.hasSome(this.previous.memberB.asFk(), previousQueryResult.toPks());
         
-        let wixQueryResult = await query.find();
-        return wixQueryResult.items;
+        return await query.find();
     }
 
+    /*
     async relationalSave(model: AbstractModel<T>): Promise<void> 
     {
         /*
@@ -32,9 +32,11 @@ class OneToOne<T extends AbstractModel<T>> extends QueryElement<T>
         
 
         await AbstractModel.save(model);
-        */
+        
     }
+    */
 
+    /*
     async update(model: AbstractModel<T>): Promise<void> 
     {
         throw new Error("Method not implemented.");
@@ -44,6 +46,7 @@ class OneToOne<T extends AbstractModel<T>> extends QueryElement<T>
     {
         throw new Error("Method not implemented.");
     }
+    */
 }
 
 export default OneToOne;

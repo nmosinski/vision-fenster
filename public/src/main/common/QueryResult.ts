@@ -5,9 +5,12 @@ import AbstractModel from "./AbstractModel";
 class QueryResult<T extends AbstractModel<T>>
 {
     items: List<T>;
-    constructor()
+    constructor(list: List<T>=null)
     {
-        this.items = new List<T>();
+        if(list)
+            this.items = list;
+        else
+            this.items = new List<T>();
     }
 
     /**

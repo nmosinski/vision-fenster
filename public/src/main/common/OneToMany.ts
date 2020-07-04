@@ -4,37 +4,44 @@ import List from "./util/collections/list/List";
 import QueryResult from "./QueryResult";
 
 
-class OneToMany<T extends AbstractModel<T>> extends QueryElement<T>
+class OneToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends QueryElement<A,B>
 {
-    constructor(model: T, previous: QueryElement<AbstractModel<any>>=null)
+    constructor(memberA: A, memberB: B, previous: QueryElement<AbstractModel<any>,A>=null)
     {
-        super(model, previous);
+        super(memberA, memberB, previous);
     }
 
-    protected async relationalFind(previousQueryResult: QueryResult<T>): Promise<Array<object>>
+    async relationalDestroy(toDestroy: B): Promise<void>
     {
-        let query = QueryElement.queryOnTable(this.model.tableName);
-        query = query.hasSome(this.previous.model.asFk(), previousQueryResult.toPks().toArray());
-        
-        let wixQueryResult = await query.find();
-        return wixQueryResult.items;
+        // Nothing to do.
     }
+
+    protected async relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>>
+    {
+        let query = this.queryOfMemberB();
+        query = query.hasSome(this.previous.memberB.asFk(), previousQueryResult.toPks());
+        
+        return await query.find();
+    }
+
+    /*
 
     relationalSave(model: AbstractModel<T>): Promise<void> 
     {
-        model.pk = this.rootQueryElement().model.pk;
+        model.pk = this.rootQueryElement().memberB.pk;
         this.previousQueryElementOfThisModel().relationalSave(model);
     }
     update(model: AbstractModel<T>): Promise<void> 
     {
-        model.pk = this.rootQueryElement().model.pk;
+        model.pk = this.rootQueryElement().memberB.pk;
         this.previousQueryElementOfThisModel().update(model);
     }
     destroy(model: AbstractModel<T>): Promise<void>
     {
-        model.pk = this.rootQueryElement().model.pk;
+        model.pk = this.rootQueryElement().memberB.pk;
         this.previousQueryElementOfThisModel().destroy(model);
     }
+    */
 }
 
 export default OneToMany;
