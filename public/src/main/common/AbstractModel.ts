@@ -14,6 +14,10 @@ import ManyToOne from "./ManyToOne";
 import QueryResult from "./QueryResult";
 
 /**
+ * @todo Add undo operations for save etc. Important in case a save is not possible but uve updated already some references.
+ */
+
+/**
  * @class
  * A class representing an abstract model.
  */
@@ -147,29 +151,23 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
-     * @todo
      * Get an item of the model (this by default) of the given id.
      * @param {string} pk The primary key of the item to be retrieved.
      * @param {AbstractModel<T>} [model=this] The model to be retrieved.
      */
-    async get(id: string, model: AbstractModel<T>=this): Promise<T>
+    async get(id: string): Promise<T>
     {
-        let item = await wixData.get(model.tableName, id);
-        let ret = this.create(item);
-        return ret;
+        return await AbstractModel.get(id, this.newInstance());
     }
 
     /**
-     * @todo
      * Get an item of the given model by the given id.
      * @param {string} pk The primary key of the item to be retrieved.  
      * @param {U} model The model of the item to be retrieved. 
      */
-    static async get<U extends AbstractModel<U>>(id: string, model: AbstractModel<U>): Promise<U>
+    static async get<U extends AbstractModel<U>>(id: string, model: U): Promise<U>
     {
-        let item = await wixData.get(model.tableName, id);
-        let ret = model.create(item);
-        return ret;
+        return await WixDatabase.get(id, model);
     }
 
     /**
@@ -195,7 +193,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      */
     static async find<U extends AbstractModel<U>>(model: U): Promise<QueryResult<U>>
     {
-        let query = new Query<U>(model);
+        let query = WixDatabase.query(model);
         return await query.execute();
     }
 
@@ -204,8 +202,13 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      * Save the given model (this by default).
      * @param {AbstractModel<T>} [model=this] The model to be saved.
      */
-    async save(model: AbstractModel<T>=this): Promise<void>
+    async save<U extends T>(model: U=null): Promise<void>
     {
+        if(model)
+            model = this; 
+        this.relations.foreach((m, rel)=>{rel.relationalSave(model, null);});
+        await AbstractModel.save(model);
+        
         await this.previousRelative.relationalSave(model);
     }
 
@@ -216,7 +219,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      */
     static async save<U extends AbstractModel<U>>(model: AbstractModel<U>): Promise<void>
     {
-        await wixData.save(model.tableName, model);
+        await WixDatabase.save(model);
     }
 
     /**
