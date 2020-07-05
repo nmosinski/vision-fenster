@@ -1,5 +1,5 @@
-import List from "./util/collections/list/List";
-import AbstractModel from "./AbstractModel";
+import List from "public/main/common/util/collections/list/List";
+import AbstractModel from "public/main/common/AbstractModel";
 
 class QueryResult<T extends AbstractModel<T>>
 {

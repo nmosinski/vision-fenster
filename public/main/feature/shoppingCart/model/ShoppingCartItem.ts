@@ -1,16 +1,14 @@
 const PATH = "public/main/feature/shoppingCart/model/ShoppingCartItem.js";
 
-import IComparable from "public/main/common/util/IComparable.js"
-import IClonable from "public/main/common/util/IClonable.js"
-
 import AbstractModel from "public/main/common/AbstractModel.js"
 import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
+import ShoppingCart from "public/main/common/ShoppingCart";
 
 /**
  * @class
  * A class representing a shopping cart item.
  */
-class ShoppingCartItem extends AbstractModel implements IClonable<ShoppingCartItem>, IComparable<ShoppingCartItem>
+class ShoppingCartItem extends AbstractModel<ShoppingCartItem>
 {
 	private _image: string;
 	private _singlePrice: number;
@@ -42,6 +40,18 @@ class ShoppingCartItem extends AbstractModel implements IClonable<ShoppingCartIt
 		this.details = details;
 	}
 
+	addRelations(): void 
+	{
+		/**
+		 * @todo Circle constructor
+		 */
+	}
+
+	newInstance(): ShoppingCartItem 
+	{
+		return new ShoppingCartItem();
+	}
+
 	/**
 	 * @override
 	 * @inheritdoc
@@ -68,15 +78,6 @@ class ShoppingCartItem extends AbstractModel implements IClonable<ShoppingCartIt
 			return false;
 
 		return true;
-	}
-
-	/**
-	 * @inheritdoc
-	 * @override
-	 */
-	clone(): ShoppingCartItem
-	{
-		return new ShoppingCartItem(this.id, this.shoppingCartId, this.productId, this.title, this.count, this.singlePrice, this.image, this.details)
 	}
 
 	/**

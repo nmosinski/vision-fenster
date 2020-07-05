@@ -4,14 +4,14 @@ import WixDatabase from "public/main/common/WixDatabase.js"
 import IComparable from "public/main/common/util/IComparable.js"
 import AbstractEntity from "public/main/common/AbstractEntity.js"
 import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
-import KVMap from "./util/collections/map/KVMap";
-import List from "./util/collections/list/List";
+import KVMap from "public/main/common/util/collections/map/KVMap";
+import List from "public/main/common/util/collections/list/List";
 import OneToOne from "public/main/common/OneToOne.js"
-import Relation from "./Relation.js";
-import OneToMany from "./OneToMany";
-import ManyToMany from "./ManyToMany";
-import ManyToOne from "./ManyToOne";
-import QueryResult from "./QueryResult";
+import Relation from "public/main/common/Relation.js";
+import OneToMany from "public/main/common/OneToMany";
+import ManyToMany from "public/main/common/ManyToMany";
+import ManyToOne from "public/main/common/ManyToOne";
+import QueryResult from "public/main/common/QueryResult";
 
 /**
  * @todo Add undo operations for save etc. Important in case a save is not possible but uve updated already some references.

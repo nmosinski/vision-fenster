@@ -1,8 +1,8 @@
 import Relation from "public/main/common/Relation.js"
 import AbstractModel from "public/main/common/AbstractModel.js"
-import Set from "./util/collections/set/Set.js";
-import QueryResult from "./QueryResult";
-import List from "./util/collections/list/List.js";
+import Set from "public/main/common/util/collections/set/Set.js";
+import QueryResult from "public/main/common/QueryResult";
+import List from "public/main/common/util/collections/list/List.js";
 
 
 class ManyToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>

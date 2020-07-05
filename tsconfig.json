@@ -3,7 +3,7 @@
     {
       "target": "ES2017",
       "sourceMap": false,
-      "outDir": "./../wix-repository/src/"
+      "outDir": "public/main/common/../wix-repository/src/"
     }
 }
 

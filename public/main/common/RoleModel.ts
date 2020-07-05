@@ -1,5 +1,5 @@
-import AbstractModel from "./AbstractModel";
-import IComparable from "./util/IComparable";
+import AbstractModel from "public/main/common/AbstractModel";
+import IComparable from "public/main/common/util/IComparable";
 
 /**
  * @class
