@@ -2,15 +2,17 @@ import Relation from "public/main/common/Relation.js"
 import AbstractModel from "public/main/common/AbstractModel.js"
 import QueryResult from "public/main/common/QueryResult.js";
 import OneToMany from "public/main/common/OneToMany.js";
-import RoleModel from "public/main/common/RoleModel.js";
-//import ManyToOne from "public/main/common/ManyToOne.js";
-//import List from "public/main/common/util/collections/list/List.js";
+import List from "public/main/common/util/collections/list/List.js";
+import ManyToOne from "public/main/common/ManyToOne.js";
 
-class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>
+class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C extends AbstractModel<C>> extends Relation<A,B>
 {
-    constructor(relativeA: A, relativeB: B)
+    private _roleModel: C;
+
+    constructor(relativeA: A, relativeB: B, roleModel: C)
     {
         super(relativeA, relativeB);
+        this.roleModel = roleModel;
     }
 
     async relationalGet(previousQueryResult: QueryResult<A>): Promise<B> 
@@ -27,15 +29,16 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends
         throw new Error("Method not implemented.");
     }
 
-
+    /**
+     * @todo
+     */
     async relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>>
     {
         // Split find in OneToMany<A,A_B> and ManyToOne<A_B,B>
-        let roleModel = new RoleModel(this.relativeA, this.relativeB);
-        let aOneToManyAbRelation = new OneToMany(this.relativeA, roleModel);
+        let aOneToManyAbRelation = new OneToMany(this.relativeA, this.roleModel);
         let aOneToManyAbQueryResult = await aOneToManyAbRelation.relationalFind(previousQueryResult);
 
-        let abManyToOneBRelation = new ManyToOne(roleModel, this.relativeB);
+        let abManyToOneBRelation = new ManyToOne(this.roleModel, this.relativeB);
         let abManyToOneBQueryResult = await abManyToOneBRelation.relationalFind(aOneToManyAbQueryResult);
         
         return abManyToOneBQueryResult;
@@ -49,6 +52,16 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends
     }
     async relationalDestroyMultiple(toDestroy: List<B>, previousQueryResult: QueryResult<A>): Promise<void> {
         throw new Error("Method not implemented.");
+    }
+
+    set roleModel(roleModel: C)
+    {
+        this._roleModel = roleModel;
+    }
+
+    get roleModel()
+    {
+        return this._roleModel;
     }
 }
 

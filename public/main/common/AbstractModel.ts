@@ -10,10 +10,9 @@ import IComparable from "public/main/common/util/IComparable.js"
 import OneToOne from "public/main/common/OneToOne.js"
 import Relation from "public/main/common/Relation.js";
 import OneToMany from "public/main/common/OneToMany.js";
-//import ManyToMany from "public/main/common/ManyToMany.js";
-//import RoleModel from "./RoleModel";
-//import ManyToOne from "public/main/common/ManyToOne.js";
-//import QueryResult from "public/main/common/QueryResult.js";
+import ManyToMany from "public/main/common/ManyToMany.js";
+import ManyToOne from "public/main/common/ManyToOne.js";
+import QueryResult from "public/main/common/QueryResult.js";
 
 /**
  * @todo Add undo operations for save etc. Important in case a save is not possible but uve updated already some references.
@@ -138,15 +137,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      */
     manyToMany<U extends AbstractModel<U>>(Model: {new(): U}): void
     {
-        /*
-        // Split in OneToMany<A,A_B> and ManyToOne<A_B,B>
-        let roleModel = new RoleModel(new Model(), this.newInstance());
-        let aOneToManyAbRelation = new OneToMany(new Model(), roleModel);
-
-        let abManyToOneBRelation = new ManyToOne(roleModel, this.newInstance());
-        abManyToOneBRelation.
-        this.relations.add(new RoleModel(), abManyToOneBRelation);
-        */
+        let model = new Model();
+        let thisInstance = this.newInstance();
+        this.relations.add(new Model(), new ManyToMany(model, thisInstance, new RoleModel(model, thisInstance)));
     }
 
     /**
@@ -489,6 +482,122 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
         return this._relations;
     }
 
+}
+
+
+
+
+/**
+ * @class
+ * A class representing a dummy model for accessing the role table of two other models.
+ */
+class RoleModel extends AbstractModel<RoleModel> implements IComparable
+{
+    private _model1: AbstractModel<any>;
+    private _model2: AbstractModel<any>;
+    /**
+     * Create a dummy RoleModel for accessing the role table of the given two models.
+     * @param {AbstractModel<any>} model1 A model.
+     * @param {AbstractModel<any>} model2 Another model.
+     */
+    constructor(model1: AbstractModel<any>, model2: AbstractModel<any>)
+    {
+        super();
+        this.model1 = model1;
+        this.model2 = model2;
+        this[model1.asFk()] = model1.pk;
+        this[model2.asFk()] = model2.pk;
+    }
+
+    /**
+     * @override
+     * @inheritdoc
+     */
+    equals(roleModel: any): boolean
+    {
+        if(!(roleModel instanceof RoleModel))
+            return false;
+        if(this.hasReference(roleModel.model1) && this.hasReference(roleModel.model2))
+            return true;
+        return false;
+    }
+
+    /**
+     * Check if this role model refers to the given model.
+     * @param {AbstractModel<any>} model The model this RoleModel is maybe referring to.
+     * @return {boolean} True if this model refers to the given model, else false. 
+     */
+    hasReference(model: AbstractModel<any>): boolean
+    {
+        if(this.model1.constructor === model.constructor && this.model1.pk === model.pk)
+            return true;
+        if(this.model2.constructor === model.constructor && this.model2.pk === model.pk)
+            return true;
+        return false;
+    }
+
+    /**
+     * @override
+     * @inheritdoc
+     */
+    newInstance(): RoleModel 
+    {
+        return new RoleModel(null, null);
+    }
+
+    /**
+     * @overrride
+     * @inheritdoc
+     */
+    addRelations(): void 
+    {
+        // Nothing to add.
+    }
+
+    /**
+     * @override
+     * @inheritdoc
+     */
+    get tableName(): string
+    {
+        return AbstractModel.roleTableNameOf(this.model1.tableName, this.model2.tableName);
+    }
+
+    /**
+     * Get the first model this RoleTable refers to.
+     * @returns {AbstractModel<any>} The first model this RoleModel refers to.
+     */
+    get model1(): AbstractModel<any>
+    {
+        return this._model1;
+    }
+
+    /**
+     * Get the second model this RoleTable refers to.
+     * @returns {AbstractModel<any>} The second model this RoleModel refers to.
+     */
+    get model2(): AbstractModel<any>
+    {
+        return this._model2;
+    }
+
+    /**
+     * Set the first model this RoleTable refers to.
+     * @param {AbstractModel<any>} model The first model this RoleModel refers to.
+     */
+    set model1(model: AbstractModel<any>)
+    {
+        this._model1 = model;
+    }
+
+    /**
+     * Set the second model this RoleTable refers to.
+     * @param {AbstractModel<any>} model The second model this RoleModel refers to.
+     */
+    set model2(model: AbstractModel<any>)
+    {
+        this._model2 = model;
+    }
 }
 
 export default AbstractModel;
