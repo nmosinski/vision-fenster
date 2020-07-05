@@ -1,7 +1,7 @@
 import Relation from "public/main/common/Relation.js"
 import AbstractModel from "public/main/common/AbstractModel.js"
-import List from "public/main/common/util/collections/list/List";
-import QueryResult from "public/main/common/QueryResult";
+import List from "public/main/common/util/collections/list/List.js";
+import QueryResult from "public/main/common/QueryResult.js";
 
 class ZeroOrOneToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>
 {   

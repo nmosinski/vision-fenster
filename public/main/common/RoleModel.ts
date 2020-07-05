@@ -1,5 +1,5 @@
-import AbstractModel from "public/main/common/AbstractModel";
-import IComparable from "public/main/common/util/IComparable";
+import AbstractModel from "public/main/common/AbstractModel.js";
+//import IComparable from "public/main/common/util/IComparable.js";
 
 /**
  * @class

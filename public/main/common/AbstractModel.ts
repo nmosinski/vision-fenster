@@ -1,17 +1,19 @@
 const PATH = "public/main/common/AbstractModel.js";
 
-import WixDatabase from "public/main/common/WixDatabase.js"
-import IComparable from "public/main/common/util/IComparable.js"
 import AbstractEntity from "public/main/common/AbstractEntity.js"
 import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
-import KVMap from "public/main/common/util/collections/map/KVMap";
-import List from "public/main/common/util/collections/list/List";
+import KVMap from "public/main/common/util/collections/map/KVMap.js";
+import List from "public/main/common/util/collections/list/List.js";
+
+import WixDatabase from "public/main/common/WixDatabase.js"
+import IComparable from "public/main/common/util/IComparable.js"
 import OneToOne from "public/main/common/OneToOne.js"
 import Relation from "public/main/common/Relation.js";
-import OneToMany from "public/main/common/OneToMany";
-import ManyToMany from "public/main/common/ManyToMany";
-import ManyToOne from "public/main/common/ManyToOne";
-import QueryResult from "public/main/common/QueryResult";
+import OneToMany from "public/main/common/OneToMany.js";
+//import ManyToMany from "public/main/common/ManyToMany.js";
+//import RoleModel from "./RoleModel";
+//import ManyToOne from "public/main/common/ManyToOne.js";
+//import QueryResult from "public/main/common/QueryResult.js";
 
 /**
  * @todo Add undo operations for save etc. Important in case a save is not possible but uve updated already some references.
@@ -36,7 +38,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     {
         super(id);
         this.previousRelative = null;
-        this.addRelations();
+        //this.addRelations();
     }
 
     /**
@@ -136,7 +138,15 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      */
     manyToMany<U extends AbstractModel<U>>(Model: {new(): U}): void
     {
-        this.relations.add(new Model(), new ManyToMany(new Model(), this.newInstance()));
+        /*
+        // Split in OneToMany<A,A_B> and ManyToOne<A_B,B>
+        let roleModel = new RoleModel(new Model(), this.newInstance());
+        let aOneToManyAbRelation = new OneToMany(new Model(), roleModel);
+
+        let abManyToOneBRelation = new ManyToOne(roleModel, this.newInstance());
+        abManyToOneBRelation.
+        this.relations.add(new RoleModel(), abManyToOneBRelation);
+        */
     }
 
     /**

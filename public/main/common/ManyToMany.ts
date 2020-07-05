@@ -1,10 +1,10 @@
 import Relation from "public/main/common/Relation.js"
 import AbstractModel from "public/main/common/AbstractModel.js"
-import QueryResult from "public/main/common/QueryResult";
-import OneToMany from "public/main/common/OneToMany";
-import RoleModel from "public/main/common/RoleModel";
-import ManyToOne from "public/main/common/ManyToOne";
-import List from "public/main/common/util/collections/list/List";
+import QueryResult from "public/main/common/QueryResult.js";
+import OneToMany from "public/main/common/OneToMany.js";
+import RoleModel from "public/main/common/RoleModel.js";
+//import ManyToOne from "public/main/common/ManyToOne.js";
+//import List from "public/main/common/util/collections/list/List.js";
 
 class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>
 {

@@ -2,7 +2,7 @@ const PATH = "public/main/feature/shoppingCart/model/ShoppingCartItem.js";
 
 import AbstractModel from "public/main/common/AbstractModel.js"
 import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
-import ShoppingCart from "public/main/common/ShoppingCart";
+import ShoppingCart from "public/main/common/ShoppingCart.js";
 
 /**
  * @class

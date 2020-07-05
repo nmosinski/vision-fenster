@@ -1,5 +1,5 @@
-import List from "public/main/common/util/collections/list/List";
-import AbstractModel from "public/main/common/AbstractModel";
+import List from "public/main/common/util/collections/list/List.js";
+import AbstractModel from "public/main/common/AbstractModel.js";
 
 class QueryResult<T extends AbstractModel<T>>
 {
