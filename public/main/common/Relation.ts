@@ -17,15 +17,82 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
         this.queryResult = null;
     }
 
-    async abstract relationalGet(previousQueryResult: QueryResult<A>): Promise<B>;
-    async abstract relationalSave(toSave: B, previousQueryResult: QueryResult<A>): Promise<void>;
-    async abstract relationalUpdate(toUpdate: B, previousQueryResult: QueryResult<A>): Promise<void>;
-    async abstract relationalDestroy(toDestroy: B, previousQueryResult: QueryResult<A>): Promise<void>;
+    abstract inverse(): Relation<B,A>;
 
-    async abstract relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>>;
-    async abstract relationalSaveMultiple(toSave: List<B>, previousQueryResult: QueryResult<A>): Promise<void>;
-    async abstract relationalUpdateMultiple(toUpdate: List<B>, previousQueryResult: QueryResult<A>): Promise<void>;
-    async abstract relationalDestroyMultiple(toDestroy: List<B>, previousQueryResult: QueryResult<A>): Promise<void>;
+    /**
+     * Assign a B to relatives of type A. 
+     * @param {B} toBeAssigned The B that will be assigned to A.
+     * @param {List<A>} relatives The relatives the B will be assigned to.
+     * @returns {B} The B.
+     */
+    abstract assign(toBeAssigned: B, relatives: List<A>): B;
+    
+    /**
+     * Assign multiple Bs to relatives of type A. 
+     * @param {List<B>} toBeAssigned The Bs that will be assigned to A.
+     * @param {List<A>} relatives The relatives the B will be assigned to.
+     * @returns {List<B>} The Bs.
+     */
+    abstract assignMultiple(toBeAssigned: List<B>, relatives: List<A>): List<B>;
+
+
+
+    /**
+     * Get a B only if it belongs to at least one of the given relatives of type A.
+     * @param {string} id The id of the B to be retrieved.
+     * @param {List<A>}  [relatives] The previous query result containing the A's. If not given, the method will consider all existing A's.
+     * @returns {Promise<B>} B of the given id. 
+     */
+    async abstract relationalGet(id: string, relatives?: List<A>): Promise<B>;
+    
+    /**
+     * Perform all necessary operations on all given relatives of type A that need to be done when saving the given B.
+     * @param {B} toSave The B to be saved. 
+     * @param {List<A>} [relatives] The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
+     */
+    async abstract relationalSave(toSave: B, relatives?: List<A>): Promise<void>;
+   
+    /**
+     * Perform all necessary operations on all given relatives of type A that need to be done when updating the given B.
+     * @param {B} toUpdate The B to be updated. 
+     * @param {List<A>} relatives The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
+     */
+    async abstract relationalUpdate(toUpdate: B, relatives?: List<A>): Promise<void>;
+   
+    /**
+     * Perform all necessary operations on all given relatives of type A that need to be done when destroying the given B.
+     * @param {B} toDestroy The B to be destroyed. 
+     * @param {List<A>} relatives The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
+     */
+    async abstract relationalDestroy(toDestroy: B, relatives?: List<A>): Promise<void>;
+
+    /**
+     * Get all Bs that belong to at least one of the given relatives of type A.
+     * @param {List<A>}  [relatives] The relatives. If not given, the method will consider all existing A's.
+     * @returns {Promise<List<B>>} Bs that belong to the given relatives.
+     */
+    async abstract relationalFind(relatives?: List<A>): Promise<QueryResult<B>>;
+    
+    /**
+     * Perform all necessary operations on all given relatives of type A that need to be done when saving the given B's.
+     * @param {List<B>} toSave The Bs to be destroyed. 
+     * @param {List<A>} relatives The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
+     */
+    async abstract relationalSaveMultiple(toSave: List<B>, relatives?: List<A>): Promise<void>;
+    
+    /**
+     * Perform all necessary operations on all given relatives of type A that need to be done when updating the given B's.
+     * @param {List<B>} toUpdate The Bs to be destroyed. 
+     * @param {List<A>} relatives The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
+     */
+    async abstract relationalUpdateMultiple(toUpdate: List<B>, relatives?: List<A>): Promise<void>;
+    
+    /**
+     * Perform all necessary operations on all given relatives of type A that need to be done when destroying the given B's.
+     * @param {List<B>} toDestroy The Bs to be destroyed. 
+     * @param {List<A>} relatives The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
+     */
+    async abstract relationalDestroyMultiple(toDestroy: List<B>, relatives?: List<A>): Promise<void>;
 
     queryOfRelativeA(): Query<A>
     {

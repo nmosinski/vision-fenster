@@ -10,32 +10,39 @@ class ZeroOrOneToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> ext
         super(relativeA, relativeB);
     }
 
-    async relationalGet(previousQueryResult: QueryResult<A>): Promise<B> {
-        throw new Error("Method not implemented.");
+    inverse(): ZeroOrOneToOne<B,A>
+    {
+        return new ZeroOrOneToOne(this.relativeB, this.relativeA);
     }
 
-    async relationalSave(toSave: B, previousQueryResult: QueryResult<A>): Promise<void> {
+    assign(toBeAssigned: B, relatives: List<A>): B {
         throw new Error("Method not implemented.");
     }
-    async relationalUpdate(toUpdate: B, previousQueryResult: QueryResult<A>): Promise<void> {
+    assignMultiple(toBeAssigned: List<B>, relatives: List<A>): List<B> {
         throw new Error("Method not implemented.");
     }
-    async relationalDestroy(toDestroy: B, previousQueryResult: QueryResult<A>): Promise<void> {
+    async relationalGet(id: string, relatives?: List<A>): Promise<B> {
         throw new Error("Method not implemented.");
     }
-    
-
-    async relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>>{
+    async relationalSave(toSave: B, relatives?: List<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
-
-    async relationalSaveMultiple(toSave: List<B>, previousQueryResult: QueryResult<A>): Promise<void> {
+    async relationalUpdate(toUpdate: B, relatives?: List<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
-    async relationalUpdateMultiple(toUpdate: List<B>, previousQueryResult: QueryResult<A>): Promise<void> {
+    async relationalDestroy(toDestroy: B, relatives?: List<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
-    async relationalDestroyMultiple(toDestroy: List<B>, previousQueryResult: QueryResult<A>): Promise<void> {
+    async relationalFind(relatives?: QueryResult<A>): Promise<QueryResult<B>> {
+        throw new Error("Method not implemented.");
+    }
+    async relationalSaveMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    async relationalUpdateMultiple(toUpdate: List<B>, relatives?: List<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    async relationalDestroyMultiple(toDestroy: List<B>, relatives?: List<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
 }

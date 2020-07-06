@@ -228,10 +228,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      */
     async get(id: string): Promise<T>
     {
+        // Called over previous.
         if(this.previousRelative)
         {
             let previousQueryResult = await this.previousRelative.find();
-            return await this.relations.get(this.previousRelative.Constructor).relationalGet(previousQueryResult);
+            return await this.relations.get(this.previousRelative.Constructor).relationalGet(id, previousQueryResult);
         }
 
         return await AbstractModel.get(id, this.Constructor);
@@ -253,10 +254,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      * @todo Save last query / dynamic property in the root.
      * Find all entities returned by a QueryElement (the current QueryElement (chain) by default).
      * If called over a relative, return only those entities that are related to the query result returned by the chained query.
-     * @returns {Promise<QueryResult<T>>} The result of the executed querry. 
+     * @returns {Promise<QueryResult<T>>} The result of the executed query. 
      */
     async find(): Promise<QueryResult<T>>
     {
+        // Called over previous.
         if(this.previousRelative)
         {
             let previousQueryResult = await this.previousRelative.find();
@@ -282,14 +284,23 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      * This may not be possible depending on the relationship to the previous relative.
      * @param {T} [model=this] The model to be saved.
      */
-    async save(model: T=<T><unknown>this): Promise<void>
+    async save(model?: T): Promise<void>
     {
-        // Called over relation.
+        // Called over previous.
         if(this.previousRelative)
         {
+            // Nothing to do in the meaning of "assign nothing to the results of the previous query result."
+            if(!model)
+                return;
+
+            // Assign the given model to the previous query result.
             let previousQueryResult = await this.previousRelative.find();
-            await this.relations.get(this.previousRelative.Constructor).relationalSave(model, previousQueryResult);
+            model = this.relations.get(this.previousRelative.Constructor).assign(model, previousQueryResult);
         }
+
+        // Save this.
+        if(!model)
+            model = <T><unknown> this;
 
         return await AbstractModel.save(model);
     }
@@ -300,7 +311,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      */
     static async save<U extends AbstractModel<U>>(model: U): Promise<void>
     {
-        model.relations.foreach(async (m, rel)=>{await rel.relationalSave(model, null);});
+        // Call save for each relation.
+        model.relations.values().foreach(async(relation)=>{
+            await relation.relationalSave(model);
+        });
+
         await WixDatabase.save(model);
     }
 
@@ -315,12 +330,14 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
         if(models.isEmpty())
             return;
         
-        // Called over relation.
+        // Called over previous.
         if(this.previousRelative)
         {
+            // Assign the given models to the previous query result.
             let previousQueryResult = await this.previousRelative.find();
-            await this.relations.get(this.previousRelative.Constructor).relationalSaveMultiple(models, previousQueryResult);
+            models = this.relations.get(this.previousRelative.Constructor).assignMultiple(models, previousQueryResult);
         }
+
         return await AbstractModel.saveMultiple(models);
     }
 
@@ -333,7 +350,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
         if(models.isEmpty())
             return;
 
-        models.get(0).relations.foreach(async (m, rel)=>{await rel.relationalSaveMultiple(models, null);});
+        // Call save for each relation.
+        models.get(0).relations.values().foreach(async(relation)=>{
+            await relation.relationalSaveMultiple(models);
+        });
+
         await WixDatabase.saveMultiple(models);
     }
 
@@ -341,16 +362,25 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      * Update the given model (this by default).
      * If called over a relative, try to assign this model to the retrieved models by the chained query. 
      * This may not be possible depending on the relationship to the previous relative.
-     * @param {T} [model=this] The model to be updated.
+     * @param {T} [model] The model to be updated.
      */
-    async update(model: T=<T><unknown>this): Promise<void>
+    async update(model?: T): Promise<void>
     {
-        // Called over relation.
+        // Called over previous.
         if(this.previousRelative)
         {
+            // Nothing to do in the meaning of "assign nothing to the results of the previous query result."
+            if(!model)
+                return;
+
+            // Assign the given model to the previous query result.
             let previousQueryResult = await this.previousRelative.find();
-            await this.relations.get(this.previousRelative.Constructor).relationalUpdate(model, previousQueryResult);
+            model = this.relations.get(this.previousRelative.Constructor).assign(model, previousQueryResult);
         }
+
+        // Update this.
+        if(!model)
+            model = <T><unknown> this;
 
         return await AbstractModel.update(model);
     }
@@ -361,7 +391,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      */
     static async update<U extends AbstractModel<U>>(model: U): Promise<void>
     {
-        model.relations.foreach(async (m, rel)=>{await rel.relationalUpdate(model, null);});
+        // Call update for each relation.
+        model.relations.values().foreach(async(relation)=>{
+            await relation.relationalUpdate(model);
+        });
+
         await WixDatabase.update(model);
     }
 
@@ -376,12 +410,14 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
         if(models.isEmpty())
             return;
         
-        // Called over relation.
+        // Called over previous.
         if(this.previousRelative)
         {
+            // Assign the given models to the previous query result.
             let previousQueryResult = await this.previousRelative.find();
-            await this.relations.get(this.previousRelative.Constructor).relationalUpdateMultiple(models, previousQueryResult);
+            models = this.relations.get(this.previousRelative.Constructor).assignMultiple(models, previousQueryResult);
         }
+
         return await AbstractModel.updateMultiple(models);
     }
 
@@ -394,23 +430,45 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
         if(models.isEmpty())
             return;
 
-        models.get(0).relations.foreach(async (m, rel)=>{await rel.relationalUpdateMultiple(models, null);});
+        // Call update for each relation.
+        models.get(0).relations.values().foreach(async(relation)=>{
+            await relation.relationalUpdateMultiple(models);
+        });
+
         await WixDatabase.updateMultiple(models);
     }
 
     /**
      * Destroy the given model (this by default).
-     * If called over a relative, destroy all models retrieved by the chained query.
-     * @param {T} [model=this] The model to be destroyed.
+     * If called over a relative, destroy all models of T that belong to the models retrieved by the previous.
+     * @param {T} [model] The model to be destroyed.
      */
-    async destroy(model: T=<T><unknown>this): Promise<void>
+    async destroy(model?: T): Promise<void>
     {
         // Called over relation.
         if(this.previousRelative)
         {
-            let previousQueryResult = await this.previousRelative.find();
-            await this.relations.get(this.previousRelative.Constructor).relationalDestroy(model, previousQueryResult);
+            // Destroy all models that belong to the models retrieved by find of the previous relative.
+            if(!model)
+            {
+                let previousQueryResult = await this.previousRelative.find();
+                let toDestroy = await this.relations.get(this.previousRelative.Constructor).relationalFind(previousQueryResult);
+                
+                // Continue with a single destroy if there is just one model to destroy. Else destroy multiple.
+                if(toDestroy.length === 1)
+                    model = toDestroy.first();
+                else
+                    return await AbstractModel.destroyMultiple(toDestroy);
+            }
+            else
+            {
+                // Nothing specific to do. Destroy the given model in the next step.
+            }
         }
+
+        // Destroy this.
+        if(!model)
+            model = <T><unknown> this;
 
         return await AbstractModel.destroy(model);
     }
@@ -421,26 +479,42 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      */
     static async destroy<U extends AbstractModel<U>>(model: U): Promise<void>
     {
-        model.relations.foreach(async (m, rel)=>{await rel.relationalDestroy(model, null);});
+        // Call destroy for each relation.
+        model.relations.values().foreach(async(relation)=>{
+            await relation.relationalDestroy(model);
+        });
+
         await WixDatabase.remove(model);
     }
 
     /**
      * Destroy many models.
-     * If called oveer a relative, destroy all models retrieved by the chained query.
-     * @param {List<T>} models The List containing the models to be destroyed. 
+     * If called over a relative, destroy all models of T that belong to the models retrieved by the previous.
+     * @param {List<T>} [models] The List containing the models to be destroyed. 
      */
-    async destroyMultiple(models: List<T>): Promise<void>
-    {
-        if(models.isEmpty())
-            return;
-        
+    async destroyMultiple(models?: List<T>): Promise<void>
+    {   
         // Called over relation.
         if(this.previousRelative)
         {
-            let previousQueryResult = await this.previousRelative.find();
-            await this.relations.get(this.previousRelative.Constructor).relationalDestroyMultiple(models, previousQueryResult);
+            // Destroy all models that belong to the models retrieved by find of the previous relative.
+            if(!models)
+            {
+                let previousQueryResult = await this.previousRelative.find();
+                let toDestroy = await this.relations.get(this.previousRelative.Constructor).relationalFind(previousQueryResult);
+                
+                // Continue with a single destroy if there is just one model to destroy. Else destroy multiple.
+                if(toDestroy.length === 1)
+                    return await AbstractModel.destroy(toDestroy.first());
+                else
+                    models = toDestroy;
+            }
+            else
+            {
+                // Nothing specific to do. Destroy the given models in the next step.
+            }
         }
+
         return await AbstractModel.destroyMultiple(models);
     }
 
@@ -453,7 +527,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
         if(models.isEmpty())
             return;
 
-        models.get(0).relations.foreach(async (m, rel)=>{await rel.relationalDestroyMultiple(models, null);});
+        // Call destroy for each relation.
+        models.get(0).relations.values().foreach(async(relation)=>{
+            await relation.relationalDestroyMultiple(models);
+        });
+
         await WixDatabase.removeMultiple(models);
     }
 

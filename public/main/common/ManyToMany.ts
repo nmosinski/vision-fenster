@@ -15,43 +15,39 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C exten
         this.roleModel = roleModel;
     }
 
-    async relationalGet(previousQueryResult: QueryResult<A>): Promise<B> 
+    inverse(): ManyToMany<B,A, C>
     {
-        throw new Error("Method not implemented.");
-    }
-    async relationalSave(toSave: B, previousQueryResult: QueryResult<A>): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    async relationalUpdate(toUpdate: B, previousQueryResult: QueryResult<A>): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-    async relationalDestroy(toDestroy: B, previousQueryResult: QueryResult<A>): Promise<void> {
-        throw new Error("Method not implemented.");
+        return new ManyToMany(this.relativeB, this.relativeA, this.roleModel);
     }
 
-    /**
-     * @todo
-     */
-    async relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>>
-    {
-        throw new Error("Method not implemented.");
-        // Split find in OneToMany<A,A_B> and ManyToOne<A_B,B>
-        let aOneToManyAbRelation = new OneToMany(this.relativeA, this.roleModel);
-        let aOneToManyAbQueryResult = await aOneToManyAbRelation.relationalFind(previousQueryResult);
-
-        let abManyToOneBRelation = new ManyToOne(this.roleModel, this.relativeB);
-        let abManyToOneBQueryResult = await abManyToOneBRelation.relationalFind(aOneToManyAbQueryResult);
-        
-        return abManyToOneBQueryResult;
-    }
-
-    async relationalSaveMultiple(toSave: List<B>, previousQueryResult: QueryResult<A>): Promise<void> {
+    assign(toBeAssigned: B, relatives: List<A>): B {
         throw new Error("Method not implemented.");
     }
-    async relationalUpdateMultiple(toUpdate: List<B>, previousQueryResult: QueryResult<A>): Promise<void> {
+    assignMultiple(toBeAssigned: List<B>, relatives: List<A>): List<B> {
         throw new Error("Method not implemented.");
     }
-    async relationalDestroyMultiple(toDestroy: List<B>, previousQueryResult: QueryResult<A>): Promise<void> {
+    async relationalGet(id: string, relatives?: List<A>): Promise<B> {
+        throw new Error("Method not implemented.");
+    }
+    async relationalSave(toSave: B, relatives?: List<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    async relationalUpdate(toUpdate: B, relatives?: List<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    async relationalDestroy(toDestroy: B, relatives?: List<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    async relationalFind(relatives?: QueryResult<A>): Promise<QueryResult<B>> {
+        throw new Error("Method not implemented.");
+    }
+    async relationalSaveMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    async relationalUpdateMultiple(toUpdate: List<B>, relatives?: List<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    async relationalDestroyMultiple(toDestroy: List<B>, relatives?: List<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
 

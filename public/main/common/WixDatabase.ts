@@ -3,6 +3,7 @@ import wixData from "wix-data";
 import AbstractModel from "public/main/common/AbstractModel.js";
 import QueryResult from "public/main/common/QueryResult.js";
 import List from "public/main/common/util/collections/list/List.js";
+import AbstractEntity from "./AbstractEntity";
 
 
 class WixDatabase<T extends AbstractModel<T>>
@@ -195,6 +196,7 @@ class WixDatabase<T extends AbstractModel<T>>
 export class Query<T extends AbstractModel<T>>
 {
     private _model: new()=>T;
+    //private _subquery: Query<AbstractModel<any>>;
     private _query: any;
 
     /**
@@ -206,6 +208,15 @@ export class Query<T extends AbstractModel<T>>
         this.Model = Model;
         this.query = wixData.query(new Model().tableName);
     }
+
+    /*
+    join<U extends AbstractModel<U>>(Model: new()=>U)
+    {
+        let newQuery = new Query(Model);
+        newQuery.subquery = this;
+        return newQuery;
+    }
+    */
 
     /**
      * Set a filter for the query. Match only those items, that have the given value in the property of the given property name.
@@ -238,6 +249,11 @@ export class Query<T extends AbstractModel<T>>
      */
     async execute(limit: number=1000): Promise<QueryResult<T>>
     {
+        /*
+        let previousQueryResult: QueryResult<AbstractModel<any>>;
+        if(this.subquery)
+            previousQueryResult = await this.subquery.execute();
+        */
         let wixQueryResult = await this.query.limit(limit).find();
         return wixQueryItemsToQueryResult(wixQueryResult, this.Model);
     }
@@ -260,6 +276,13 @@ export class Query<T extends AbstractModel<T>>
         this._query = query;
     }
 
+    /*
+    private set subquery(subquery: Query<AbstractModel<any>>)
+    {
+        this._subquery = subquery;
+    }
+    */
+
     /**
      * Get the model representing the model of the items returned by this query.
      * @returns {new()=>T} The model.
@@ -277,6 +300,13 @@ export class Query<T extends AbstractModel<T>>
     {
         this._model = model;
     }
+
+    /*
+    private get subquery(): Query<AbstractModel<any>>
+    {
+        return this._subquery;
+    }
+    */
 }
 
 /**
