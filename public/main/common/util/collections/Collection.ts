@@ -1,11 +1,11 @@
 // const PATH = "public/main/common/util/list/List.js";
 
-// import IComparable from "public/main/common/public/src/main/common/util/IComparable.js";
+// import IComparable from "public/main/common/public/main/common/util/IComparable.js";
 
-// import VariableTypeError from "public/main/common/public/src/main/common/util/error/VariableTypeError.js"
-// import VariableValueError from "public/main/common/public/src/main/common/util/error/VariableValueError.js";
+// import VariableTypeError from "public/main/common/public/main/common/util/error/VariableTypeError.js"
+// import VariableValueError from "public/main/common/public/main/common/util/error/VariableValueError.js";
 
-// import JsTypes from "public/main/common/public/src/main/common/util/jsTypes/JsTypes.js"
+// import JsTypes from "public/main/common/public/main/common/util/jsTypes/JsTypes.js"
 
 // /**
 //  * @class

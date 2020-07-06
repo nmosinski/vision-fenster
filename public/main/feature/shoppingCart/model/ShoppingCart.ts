@@ -3,15 +3,15 @@ const PATH = "public/main/feature/shoppingCart/model/ShoppingCart.js";
 import ShoppingCartItem from "public/main/feature/shoppingCart/model/ShoppingCartItem.js"
 
 import AbstractModel from "public/main/common/AbstractModel.js"
+
 /**
  * @class
  * Class representing a shopping cart.
  */
 class ShoppingCart extends AbstractModel<ShoppingCart>
 {
+	protected Constructor: new () => ShoppingCart = ShoppingCart;
 	private _userId: string;
-
-	
 
 	/**
 	 * Create ShoppingCart.
@@ -26,11 +26,7 @@ class ShoppingCart extends AbstractModel<ShoppingCart>
 
 	addRelations(): void 
 	{
-		this.manyToOne(ShoppingCartItem);
-	}
-	newInstance(): ShoppingCart 
-	{
-		return new ShoppingCart();
+		this.oneToMany(ShoppingCartItem);
 	}
 
 	/**

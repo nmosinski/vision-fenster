@@ -5,7 +5,7 @@ import QueryResult from "public/main/common/QueryResult.js";
 
 class OneToZeroOrOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>
 {   
-    constructor(relativeA: A, relativeB: B)
+    constructor(relativeA: new()=>A, relativeB: new()=>B)
     {
         super(relativeA, relativeB);
     }

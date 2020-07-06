@@ -7,9 +7,9 @@ import ManyToOne from "public/main/common/ManyToOne.js";
 
 class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C extends AbstractModel<C>> extends Relation<A,B>
 {
-    private _roleModel: C;
+    private _roleModel: new()=>C;
 
-    constructor(relativeA: A, relativeB: B, roleModel: C)
+    constructor(relativeA: new()=>A, relativeB: new()=>B, roleModel: new()=>C)
     {
         super(relativeA, relativeB);
         this.roleModel = roleModel;
@@ -34,6 +34,7 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C exten
      */
     async relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>>
     {
+        throw new Error("Method not implemented.");
         // Split find in OneToMany<A,A_B> and ManyToOne<A_B,B>
         let aOneToManyAbRelation = new OneToMany(this.relativeA, this.roleModel);
         let aOneToManyAbQueryResult = await aOneToManyAbRelation.relationalFind(previousQueryResult);
@@ -54,12 +55,12 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C exten
         throw new Error("Method not implemented.");
     }
 
-    set roleModel(roleModel: C)
+    set roleModel(roleModel: new()=>C)
     {
         this._roleModel = roleModel;
     }
 
-    get roleModel()
+    get roleModel(): new()=>C
     {
         return this._roleModel;
     }

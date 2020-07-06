@@ -5,7 +5,7 @@ import List from "public/main/common/util/collections/list/List.js";
 
 class OneToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>
 {
-    constructor(relativeA: A, relativeB: B)
+    constructor(relativeA: new()=>A, relativeB: new()=>B)
     {
         super(relativeA, relativeB);
     }
@@ -28,7 +28,7 @@ class OneToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends R
     async relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>>
     {
         let query = this.queryOfRelativeB();
-        query = query.hasSome(this.relativeA.asFk(), previousQueryResult.toPks());
+        query = query.hasSome(new this.relativeA().asFk(), previousQueryResult.toPks());
         
         return await query.execute();
     }

@@ -7,7 +7,7 @@ import List from "public/main/common/util/collections/list/List.js";
 
 class ManyToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>
 {
-    constructor(relativeA: A, relativeB: B)
+    constructor(relativeA: new()=>A, relativeB: new()=>B)
     {
         super(relativeA, relativeB);
     }
@@ -16,8 +16,13 @@ class ManyToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends 
         throw new Error("Method not implemented.");
     }
 
-    async relationalSave(toSave: B, previousQueryResult: QueryResult<A>): Promise<void> {
-        throw new Error("Method not implemented.");
+    async relationalSave(toSave: B, previousQueryResult: QueryResult<A>): Promise<void> 
+    {
+        if(previousQueryResult)
+        {
+            throw new Error("Method not implemented.");
+        }
+        
     }
     async relationalUpdate(toUpdate: B, previousQueryResult: QueryResult<A>): Promise<void> {
         throw new Error("Method not implemented.");
@@ -29,10 +34,11 @@ class ManyToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends 
 
     async relationalFind(previousQueryResult: QueryResult<A>): Promise<QueryResult<B>> 
     {
+        let relativeB = new this.relativeB();
         let query = this.queryOfRelativeB();
         let prevFks: Set<string> = new Set<string>();
-        previousQueryResult.all().foreach((entity) => {prevFks.add(entity[this.relativeB.asFk()]);});
-        query = query.hasSome(this.relativeB.asPk(), prevFks);
+        previousQueryResult.foreach((entity) => {prevFks.add(entity[relativeB.asFk()]);});
+        query = query.hasSome(relativeB.asPk(), prevFks);
         
         return await query.execute();
     }

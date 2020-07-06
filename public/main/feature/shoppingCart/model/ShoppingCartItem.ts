@@ -2,7 +2,7 @@ const PATH = "public/main/feature/shoppingCart/model/ShoppingCartItem.js";
 
 import AbstractModel from "public/main/common/AbstractModel.js"
 import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
-import ShoppingCart from "public/main/common/ShoppingCart.js";
+import ShoppingCart from "public/main/feature/shoppingCart/model/ShoppingCart.js";
 
 /**
  * @class
@@ -10,6 +10,7 @@ import ShoppingCart from "public/main/common/ShoppingCart.js";
  */
 class ShoppingCartItem extends AbstractModel<ShoppingCartItem>
 {
+	protected Constructor: new () => ShoppingCartItem = ShoppingCartItem;
 	private _image: string;
 	private _singlePrice: number;
 	private _details: string;
@@ -42,9 +43,7 @@ class ShoppingCartItem extends AbstractModel<ShoppingCartItem>
 
 	addRelations(): void 
 	{
-		/**
-		 * @todo Circle constructor
-		 */
+		this.manyToOne(ShoppingCart);
 	}
 
 	newInstance(): ShoppingCartItem 
