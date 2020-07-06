@@ -26,9 +26,12 @@ class ManyToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends 
     async relationalGet(id: string, relatives?: List<A>): Promise<B> {
         throw new Error("Method not implemented.");
     }
-    async relationalStore(toStore: B, relatives?: List<A>): Promise<void> {
-        throw new Error("Method not implemented.");
+
+    async relationalStore(toStore: B, relatives?: List<A>): Promise<void>
+    {
+        // Nothing to do.
     }
+
     async relationalSave(toSave: B, relatives?: List<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }

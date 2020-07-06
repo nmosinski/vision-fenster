@@ -83,7 +83,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      * Validate all properties.
      * @returns {bolean} True if valid, else false.
      */
-    validate(): boolean
+    valid(): boolean
     {
         let valid = true;
         this._properties.foreach((propertyName, property)=>{
@@ -210,14 +210,16 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
-     * Load the model with the data of the entity with the given id.
-     * @param {string} id The id of the entity.
+     * Load the model with the data of the entity with the given id. If no id is passed, the actual id will be taken.
+     * @param {string} [id] The id of the entity. 
      * @returns {Promise<this>} This. 
      */
-    async load(id: string): Promise<this>
+    async load(id?: string): Promise<this>
     {
         let model = await this.get(id);
-        return this.fill(model);
+        if(model)
+            return this.fill(model);
+        return null;
     }
 
     /**
