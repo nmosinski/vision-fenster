@@ -77,6 +77,24 @@ class WixDatabase<T extends AbstractModel<T>>
     }
 
     /**
+     * Store an item.
+     * @param {T} toStore The item to be stored. 
+     */
+    async store(toStore: T): Promise<void>
+    {
+        return await WixDatabase.store(toStore);
+    }
+
+    /**
+     * Store an item.
+     * @param {U} toStore The item to be stored. 
+     */
+    static async store<U extends AbstractModel<U>>(toStore: U): Promise<void>
+    {
+        await wixData.insert(toStore.tableName, toStore.strip());
+    }
+
+    /**
      * Save an item.
      * @param {T} toSave The item to be saved. 
      */
@@ -92,6 +110,26 @@ class WixDatabase<T extends AbstractModel<T>>
     static async save<U extends AbstractModel<U>>(toSave: U): Promise<void>
     {
         await wixData.save(toSave.tableName, toSave.strip());
+    }
+
+    /**
+     * Store multiple items.
+     * @param {T} toSave The items to be stored. 
+     */
+    async storeMultiple(toStore: List<T>): Promise<void>
+    {
+        return await WixDatabase.storeMultiple(toStore);
+    }
+
+    /**
+     * Store multiple items.
+     * @param {U} toStore The items to be stored. 
+     */
+    static async storeMultiple<U extends AbstractModel<U>>(toStore: List<U>): Promise<void>
+    {
+        if(toStore.isEmpty())
+            return;
+        wixData.bulkInsert(toStore.get(0).tableName, stripMany(toStore));
     }
 
     /**

@@ -26,6 +26,9 @@ class ManyToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends 
     async relationalGet(id: string, relatives?: List<A>): Promise<B> {
         throw new Error("Method not implemented.");
     }
+    async relationalStore(toStore: B, relatives?: List<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
     async relationalSave(toSave: B, relatives?: List<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
@@ -40,7 +43,7 @@ class ManyToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends 
     {
         if(!relatives)
             relatives = await this.queryOfRelativeA().execute();
-            
+
         let relativeB = new this.relativeB();
         let query = this.queryOfRelativeB();
         let prevFks: Set<string> = new Set<string>();
@@ -50,6 +53,9 @@ class ManyToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends 
         return await query.execute();
     }
 
+    async relationalStoreMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
     async relationalSaveMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }

@@ -24,6 +24,9 @@ class OneToZeroOrOne<A extends AbstractModel<A>, B extends AbstractModel<B>> ext
     async relationalGet(id: string, relatives?: List<A>): Promise<B> {
         throw new Error("Method not implemented.");
     }
+    async relationalStore(toStore: B, relatives?: List<A>): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
     async relationalSave(toSave: B, relatives?: List<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
@@ -34,6 +37,9 @@ class OneToZeroOrOne<A extends AbstractModel<A>, B extends AbstractModel<B>> ext
         throw new Error("Method not implemented.");
     }
     async relationalFind(relatives?: QueryResult<A>): Promise<QueryResult<B>> {
+        throw new Error("Method not implemented.");
+    }
+    async relationalStoreMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
     async relationalSaveMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {

@@ -279,6 +279,86 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
+     * Store the given model (this by default).
+     * If called over a relative, try to assign this model to the retrieved models by the chained query.
+     * This may not be possible depending on the relationship to the previous relative.
+     * @param {T} [model=this] The model to be stored.
+     */
+    async store(model?: T): Promise<void>
+    {
+        // Called over previous.
+        if(this.previousRelative)
+        {
+            // Nothing to do in the meaning of "assign nothing to the results of the previous query result."
+            if(!model)
+                return;
+
+            // Assign the given model to the previous query result.
+            let previousQueryResult = await this.previousRelative.find();
+            model = this.relations.get(this.previousRelative.Constructor).assign(model, previousQueryResult);
+        }
+
+        // Store this.
+        if(!model)
+            model = <T><unknown> this;
+
+        return await AbstractModel.store(model);
+    }
+
+    /**
+     * Store a model.
+     * @param {T} model The model to be stored.
+     */
+    static async store<U extends AbstractModel<U>>(model: U): Promise<void>
+    {
+        // Call store for each relation.
+        model.relations.values().foreach(async(relation)=>{
+            await relation.relationalStore(model);
+        });
+
+        await WixDatabase.store(model);
+    }
+
+    /**
+     * Store many models.
+     * If called over a relative, try to assign all of the given models to the items returned by the chained query.
+     * This may not be possible depending on the relationship of the models in this list to the previous relative.
+     * @param {List<T>} models The List containing the models to be stored. 
+     */
+    async storeMultiple(models: List<T>): Promise<void>
+    {
+        if(models.isEmpty())
+            return;
+        
+        // Called over previous.
+        if(this.previousRelative)
+        {
+            // Assign the given models to the previous query result.
+            let previousQueryResult = await this.previousRelative.find();
+            models = this.relations.get(this.previousRelative.Constructor).assignMultiple(models, previousQueryResult);
+        }
+
+        return await AbstractModel.storeMultiple(models);
+    }
+
+    /**
+     * Store many models.
+     * @param {List<<U extends AbstractModel<U>>>} models The List containing the models to be stored. 
+     */
+    static async storeMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void>
+    {
+        if(models.isEmpty())
+            return;
+
+        // Call save for each relation.
+        models.get(0).relations.values().foreach(async(relation)=>{
+            await relation.relationalStoreMultiple(models);
+        });
+
+        await WixDatabase.storeMultiple(models);
+    }
+
+    /**
      * Save the given model (this by default).
      * If called over a relative, try to assign this model to the retrieved models by the chained query.
      * This may not be possible depending on the relationship to the previous relative.
