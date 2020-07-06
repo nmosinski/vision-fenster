@@ -204,6 +204,16 @@ class List<T> implements IComparable
 	}
 
 	/**
+	 * Check if list does not contain element.
+	 * @param {any} element - The element.
+	 * @return {boolean} True if element is not in the list, else false.
+	 */
+	hasNot(element: any): boolean
+	{
+		return !this.has(element);
+	}
+
+	/**
 	 * Get the index of the given element.
 	 * @param {any} element - The element.
 	 * @return {number} The index of the element, else -1, if the element is not in the list. 
@@ -214,7 +224,8 @@ class List<T> implements IComparable
 		{
 			try
 			{
-				if(this.get(idx).equals(element))
+				//@ts-ignore
+				if(this.some(idx).equals(element))
 					return idx;
 			}
 			catch(err)
@@ -236,6 +247,7 @@ class List<T> implements IComparable
 		this.foreach((el: T) => {
 			try
 			{
+				//@ts-ignore
 				l.add(el.clone());
 			}
 			catch(err)

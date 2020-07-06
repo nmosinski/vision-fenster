@@ -1,16 +1,16 @@
 import AbstractModel from "public/main/common/AbstractModel.js"
-import QueryResult from "./QueryResult";
+import QueryResult from "public/main/common/QueryResult.js";
 import {Query} from "public/main/common/WixDatabase.js"
 import WixDatabase from "public/main/common/WixDatabase.js"
-import List from "./util/collections/list/List";
+import List from "public/main/common/util/collections/list/List.js";
 
 abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
 {
-    _relativeA: A;
-    _relativeB: B;
+    _relativeA: new()=>A;
+    _relativeB: new()=>B;
     _queryResult: QueryResult<B>;
     
-    constructor(relativeA: A, relativeB: B)
+    constructor(relativeA: new()=>A, relativeB: new()=>B)
     {
         this.relativeA = relativeA;
         this.relativeB = relativeB;
@@ -37,12 +37,12 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
         return WixDatabase.query(this.relativeB);
     }
 
-    get relativeA(): A
+    get relativeA(): new()=>A
     {
         return this._relativeA;
     }
 
-    get relativeB(): B
+    get relativeB(): new()=>B
     {
         return this._relativeB;
     }
@@ -52,12 +52,12 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
         return this._queryResult;
     }
 
-    set relativeA(relative: A)
+    set relativeA(relative: new()=>A)
     {
         this._relativeA = relative;
     }
 
-    set relativeB(relative: B)
+    set relativeB(relative: new()=>B)
     {
         this._relativeB = relative;
     }

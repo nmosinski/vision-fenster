@@ -1,15 +1,11 @@
-import List from "./util/collections/list/List";
-import AbstractModel from "./AbstractModel";
+import List from "public/main/common/util/collections/list/List.js";
+import AbstractModel from "public/main/common/AbstractModel.js";
 
-class QueryResult<T extends AbstractModel<T>>
+class QueryResult<T extends AbstractModel<T>> extends List<T>
 {
-    items: List<T>;
     constructor(list: List<T>=null)
     {
-        if(list)
-            this.items = list;
-        else
-            this.items = new List<T>();
+        super((list)?list.toArray():null);
     }
 
     /**
@@ -19,7 +15,7 @@ class QueryResult<T extends AbstractModel<T>>
     toPks(): List<string>
     {
         let pks = new List<string>();
-        this.items.foreach((item)=>{pks.add(item.pk);});
+        this.foreach((item)=>{pks.add(item.pk);});
         return pks;
     }
 
@@ -29,7 +25,7 @@ class QueryResult<T extends AbstractModel<T>>
      */
     add(t: T)
     {
-        this.items.add(t);
+        this.add(t);
     }
 
     /**
@@ -38,7 +34,7 @@ class QueryResult<T extends AbstractModel<T>>
      */
     addAll(list: List<T>)
     {
-        list.foreach((item)=>{this.items.add(item);});
+        list.foreach((item)=>{this.add(item);});
     }
 
     /**
@@ -46,11 +42,11 @@ class QueryResult<T extends AbstractModel<T>>
      * @param {number} [count=null] The maximum count of items to be returned from the QueryResult.
      * @returns {List<T>} A list containing items from the QueryResult. 
      */
-    get(count: number=null): List<T>
+    some(count: number=null): List<T>
     {
         if(!count)
-            count = this.items.length;
-        return this.items.sublist(0, count);
+            count = this.length;
+        return this.sublist(0, count);
     }
 
     /**
@@ -59,30 +55,7 @@ class QueryResult<T extends AbstractModel<T>>
      */
     first(): T
     {
-        return this.items.get(0);
-    }
-
-    /**
-     * Get all items of the QueryResult.
-     * @returns {List<T>} A List containing all items of the QueryResult.
-     */
-    all(): List<T>
-    {
-        return this.items;
-    }
-
-    /**
-     * Check if the QueryResult is empty.
-     * @returns {boolean} True if is empty, else false.
-     */
-    isEmpty(): boolean
-    {
-        return this.items.isEmpty();
-    }
-
-    get length()
-    {
-        return this.items.length;
+        return this.get(0);
     }
 }
 

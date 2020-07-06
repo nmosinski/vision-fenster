@@ -1,17 +1,17 @@
+//@ts-ignore
 import wixData from "wix-data";
-import AbstractModel from "./AbstractModel";
-import QueryResult from "./QueryResult";
-import List from "./util/collections/list/List";
-import WixData from "./wixData/WixData";
+import AbstractModel from "public/main/common/AbstractModel.js";
+import QueryResult from "public/main/common/QueryResult.js";
+import List from "public/main/common/util/collections/list/List.js";
 
 
 class WixDatabase<T extends AbstractModel<T>>
 {
-    private _model: T;
+    private _Model: new()=>T;
     
-    constructor(model: T)
+    constructor(Model: new()=>T)
     {
-        this.model = model;
+        this.Model = Model;
     }
 
     /**
@@ -19,19 +19,19 @@ class WixDatabase<T extends AbstractModel<T>>
      * @param {string} id The id of the item to be returned.
      * @returns {T} The item of the given id.
      */
-    async get(id: string, model: T): Promise<T>
+    async get(id: string): Promise<T>
     {
-        return await WixDatabase.get(id, this.model);
+        return await WixDatabase.get(id, this.Model);
     }
 
     /**
      * Get an item of the given id.
      * @param {string} id The id of the item to be returned.
-     * @returns {U} The item of the given id.
+     * @returns {new()=>U} The item of the given id.
      */
-    static async get<U extends AbstractModel<U>>(id: string, model: U): Promise<U>
+    static async get<U extends AbstractModel<U>>(id: string, model: new()=>U): Promise<U>
     {
-        return wixQueryItemToModel(await wixData.get(model.tableName, id), model);
+        return wixQueryItemToModel(await wixData.get(new model().tableName, id), model);
     }
 
     /**
@@ -40,16 +40,17 @@ class WixDatabase<T extends AbstractModel<T>>
      */
     query(): Query<T>
     {
-        return WixDatabase.query(this.model);
+        return WixDatabase.query(this.Model);
     }
 
     /**
      * Get a query.
+     * @param {new()=>U} Model The constructor of the model this query will be for.
      * @return {Query<U>} The query.
      */
-    static query<U extends AbstractModel<U>>(model: U): Query<U>
+    static query<U extends AbstractModel<U>>(Model: new()=>U): Query<U>
     {
-        return new Query(model);
+        return new Query(Model);
     }
 
     /**
@@ -67,7 +68,7 @@ class WixDatabase<T extends AbstractModel<T>>
      */
     static async save<U extends AbstractModel<U>>(toSave: U): Promise<void>
     {
-        await wixData.save(toSave.tableName, toSave);
+        await wixData.save(toSave.tableName, strip(toSave));
     }
 
     /**
@@ -87,7 +88,7 @@ class WixDatabase<T extends AbstractModel<T>>
     {
         if(toSave.isEmpty())
             return;
-        wixData.bulkSave(toSave.get(0).tableName, toSave.toArray());
+        wixData.bulkSave(toSave.get(0).tableName, stripMany(toSave));
     }
 
     /**
@@ -105,7 +106,7 @@ class WixDatabase<T extends AbstractModel<T>>
      */
     static async update<U extends AbstractModel<U>>(toUpdate: U): Promise<void>
     {
-        await wixData.update(toUpdate.tableName, toUpdate);
+        await wixData.update(toUpdate.tableName, strip(toUpdate));
     }
 
     /**
@@ -125,7 +126,7 @@ class WixDatabase<T extends AbstractModel<T>>
     {
         if(toUpdate.isEmpty())
             return;
-        wixData.bulkUpdate(toUpdate.get(0).tableName, toUpdate.toArray());
+        wixData.bulkUpdate(toUpdate.get(0).tableName, stripMany(toUpdate));
     }
 
     /**
@@ -148,7 +149,7 @@ class WixDatabase<T extends AbstractModel<T>>
 
     /**
      * Remove multiple items.
-     * @param {T} toRemove The items to be removed. 
+     * @param {List<T>} toRemove The items to be removed. 
      */
     async removeMultiple(toRemove: List<T>): Promise<void>
     {
@@ -157,31 +158,33 @@ class WixDatabase<T extends AbstractModel<T>>
 
     /**
      * Remove multiple items.
-     * @param {U} toRemove The items to be removed. 
+     * @param {List<U>} toRemove The items to be removed. 
      */
     static async removeMultiple<U extends AbstractModel<U>>(toRemove: List<U>): Promise<void>
     {
         if(toRemove.isEmpty())
             return;
-        wixData.bulkRemove(toRemove.get(0).tableName, toRemove.toArray());
+        let ids: Array<string> = [];
+        toRemove.foreach((model)=>{ids.push(model.id)});
+        wixData.bulkRemove(toRemove.get(0).tableName, ids);
     }
 
     /**
      * Set model.
-     * @param {T} model The model to be set.
+     * @param {new()=>T} model The model to be set.
      */
-    set model(model: T)
+    set Model(model: new()=>T)
     {
-        this._model = model;
+        this._Model = model;
     }
 
     /**
      * Get model.
-     * @returns {T} The model.
+     * @returns {new()=>T} The model.
      */
-    get model(): T
+    get Model(): new()=>T
     {
-        return this._model;
+        return this._Model;
     }
 }
 
@@ -191,17 +194,17 @@ class WixDatabase<T extends AbstractModel<T>>
  */
 export class Query<T extends AbstractModel<T>>
 {
-    private _model: T;
+    private _model: new()=>T;
     private _query: any;
 
     /**
      * Create a Query.
-     * @param {T} model The model this query is for. 
+     * @param {new()=>T} Model The model this query is for. 
      */
-    constructor(model: T)
+    constructor(Model: new()=>T)
     {
-        this.model = model;
-        this.query = wixData.query(model.tableName);
+        this.Model = Model;
+        this.query = wixData.query(new Model().tableName);
     }
 
     /**
@@ -236,14 +239,14 @@ export class Query<T extends AbstractModel<T>>
     async execute(limit: number=1000): Promise<QueryResult<T>>
     {
         let wixQueryResult = await this.query.limit(limit).find();
-        return wixQueryItemsToQueryResult(wixQueryResult, this.model);
+        return wixQueryItemsToQueryResult(wixQueryResult, this.Model);
     }
 
     /**
      * Get the wix-data query object.
      * @returns {any} The wuery.
      */
-    private get query()
+    private get query(): any
     {
         return this._query;
     }
@@ -252,25 +255,25 @@ export class Query<T extends AbstractModel<T>>
      * Set the wix-data query object.
      * @param {any} query The wuery.
      */
-    private set query(query)
+    private set query(query: any)
     {
         this._query = query;
     }
 
     /**
      * Get the model representing the model of the items returned by this query.
-     * @returns {T} The model.
+     * @returns {new()=>T} The model.
      */
-    private get model()
+    private get Model(): new()=>T
     {
         return this._model;
     }
 
     /**
      * Set the model representing the model of the items returned by this query.
-     * @param {T} model The model.
+     * @param {new()=>T} model The model.
      */
-    private set model(model: T)
+    private set Model(model: new()=>T)
     {
         this._model = model;
     }
@@ -279,25 +282,53 @@ export class Query<T extends AbstractModel<T>>
 /**
  * Transform items returned by wix-data into a valid QueryResult.
  * @param {Array<object>} items The items to be transformed.
- * @param {U} model The model of the items to be returned.
+ * @param {new()=>U} Model The model of the items to be returned.
  * @returns {QueryResult<U>} The QueryResult. 
  */
-function wixQueryItemToModel<U extends AbstractModel<U>>(item: object, model: U): U
+function wixQueryItemToModel<U extends AbstractModel<U>>(item: object, Model: new()=>U): U
 {
-    return model.create(item);
+    let m = new Model();
+    return m.fill(item);
 }
 
 /**
  * Transform items returned by wix-data into a valid QueryResult.
  * @param {Array<object>} items The items to be transformed.
- * @param {U} model The model of the items to be returned.
+ * @param {new()=>U} model The model of the items to be returned.
  * @returns {QueryResult<U>} The QueryResult. 
  */
-function wixQueryItemsToQueryResult<U extends AbstractModel<U>>(items: Array<object>, model: U): QueryResult<U>
+function wixQueryItemsToQueryResult<U extends AbstractModel<U>>(items: Array<object>, Model: new()=>U): QueryResult<U>
 {
     let result = new QueryResult<U>();
-    items.forEach((item) => { result.add(wixQueryItemToModel(item, model)); });
+    items.forEach((item) => { result.add(wixQueryItemToModel(item, Model)); });
     return result;
+}
+
+/**
+ * Return an object holding all properties defined for the given model.
+ * @param {AbstractModel<any>} model The model to be translated.
+ * @returns {object} The object holding the properties defined for the given model.
+ */
+function strip<U extends AbstractModel<U>>(model: AbstractModel<U>): object
+{
+    let item = {};
+    model.properties.foreach((propertyName)=>{
+        item[propertyName] = model[propertyName];
+        item["_id"] = model.id;
+    });
+    return item;
+}
+
+/**
+ * Call strip for each item in the list.
+ * @param list The list containing the models.
+ * @returns {Array<object>} The objects.
+ */
+function stripMany(list)
+{
+    let stripped = [];
+    list.foreach((model)=>{stripped.push(model.strip());});
+    return stripped;
 }
 
 export default WixDatabase;

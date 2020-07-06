@@ -1,4 +1,7 @@
 const PATH = "public/main/common/AbstractEntity.js";
+//@ts-ignore
+import { v4 as UUID } from 'uuid';
+import JsTypes from './util/jsTypes/JsTypes';
 
 /**
  * @class
@@ -9,7 +12,7 @@ class AbstractEntity
 	protected _id: string;
 	/**
 	 * Create AbstractEntity.
-	 * @param {string} [id=null] - The id of this entity. 
+	 * @param {string} [id=null] - The id of this entity. Will be generated randomly if not given.
 	 */
 	constructor(id: string=null)
 	{
@@ -31,7 +34,10 @@ class AbstractEntity
 	 */
 	set id(id: string)
 	{
-		this._id = id;
+		if(JsTypes.isUnspecified(id))
+			this._id = UUID();
+		else
+			this._id = id;
 	}
 }
 
