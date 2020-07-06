@@ -1,3 +1,4 @@
+/*
 import WixLocation from "wix-location"
 
 import Logger from "js-logger"
@@ -21,7 +22,7 @@ import Product from "public/main/feature/product/model/Product.js"
 import ProductOptionChoice from "public/main/feature/product/model/ProductOptionChoice.js"
 import ProductOptionVariant from "public/main/feature/product/model/ProductOptionVariant.js"
 import ProductOption from "public/main/feature/product/model/ProductOption.js"
-import KVMap from "../public/src/main/common/util/collections/map/KVMap.js"
+import KVMap from "../public/main/common/util/collections/map/KVMap.js"
 
 const PRODUCTMODELID = "6b0df06c-cb22-4d60-9550-af1df7de9f3c";
 let productRepository;
@@ -137,3 +138,4 @@ export async function onButtonSaveProductClick(event)
 	WixLocation.to("/warenkorb");
 	
 }
+*/

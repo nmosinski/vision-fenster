@@ -1,3 +1,4 @@
+/*
 import WixUsers from "../../public/main/common/authenticationService/wixUsers/wix-users"
 import wixWindow from "wix-window"
 import WixLocation from "wix-location"
@@ -90,7 +91,7 @@ export async function buttonToCheckoutOnClick(event)
 
 
 
-
+*/
 
 
 
