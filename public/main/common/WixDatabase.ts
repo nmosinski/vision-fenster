@@ -4,6 +4,7 @@ import AbstractModel from "public/main/common/AbstractModel.js";
 import QueryResult from "public/main/common/QueryResult.js";
 import List from "public/main/common/util/collections/list/List.js";
 import AbstractEntity from "./AbstractEntity";
+import JsTypes from "./util/jsTypes/JsTypes";
 
 
 class WixDatabase<T extends AbstractModel<T>>
@@ -30,9 +31,30 @@ class WixDatabase<T extends AbstractModel<T>>
      * @param {string} id The id of the item to be returned.
      * @returns {new()=>U} The item of the given id.
      */
-    static async get<U extends AbstractModel<U>>(id: string, model: new()=>U): Promise<U>
+    static async get<U extends AbstractModel<U>>(id: string, Model: new()=>U): Promise<U>
     {
-        return new model().fill(await wixData.get(new model().tableName, id));
+        return new Model().fill(await wixData.get(new Model().tableName, id));
+    }
+
+    /**
+     * Check if an item exists with the given id.
+     * @param {string} id The id of the item.
+     * @returns {boolean} true if the item exists, else false.
+     */
+    async has(id: string): Promise<boolean>
+    {
+        return WixDatabase.has(id, this.Model);
+    }
+
+    /**
+     * Check if an item of the given model exists with the given id.
+     * @param {string} id The id of the item.
+     * @param {new()=>AbstractModel<any>} Model The model.
+     * @returns {boolean} true if the item exists, else false.
+     */
+    static async has<U extends AbstractModel<U>>(id: string, Model: new()=>U): Promise<boolean>
+    {
+        return !JsTypes.isUnspecified(await WixDatabase.get(id, Model));
     }
 
     /**

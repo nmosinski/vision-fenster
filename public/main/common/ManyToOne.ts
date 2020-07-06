@@ -40,6 +40,7 @@ class ManyToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends 
     {
         if(!relatives)
             relatives = await this.queryOfRelativeA().execute();
+            
         let relativeB = new this.relativeB();
         let query = this.queryOfRelativeB();
         let prevFks: Set<string> = new Set<string>();
