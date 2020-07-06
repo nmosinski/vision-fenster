@@ -32,7 +32,7 @@ class WixDatabase<T extends AbstractModel<T>>
      */
     static async get<U extends AbstractModel<U>>(id: string, model: new()=>U): Promise<U>
     {
-        return wixQueryItemToModel(await wixData.get(new model().tableName, id), model);
+        return new model().fill(await wixData.get(new model().tableName, id));
     }
 
     /**
@@ -69,7 +69,7 @@ class WixDatabase<T extends AbstractModel<T>>
      */
     static async save<U extends AbstractModel<U>>(toSave: U): Promise<void>
     {
-        await wixData.save(toSave.tableName, strip(toSave));
+        await wixData.save(toSave.tableName, toSave.strip());
     }
 
     /**
@@ -107,7 +107,7 @@ class WixDatabase<T extends AbstractModel<T>>
      */
     static async update<U extends AbstractModel<U>>(toUpdate: U): Promise<void>
     {
-        await wixData.update(toUpdate.tableName, strip(toUpdate));
+        await wixData.update(toUpdate.tableName, toUpdate.strip());
     }
 
     /**
@@ -312,49 +312,23 @@ export class Query<T extends AbstractModel<T>>
 /**
  * Transform items returned by wix-data into a valid QueryResult.
  * @param {Array<object>} items The items to be transformed.
- * @param {new()=>U} Model The model of the items to be returned.
- * @returns {QueryResult<U>} The QueryResult. 
- */
-function wixQueryItemToModel<U extends AbstractModel<U>>(item: object, Model: new()=>U): U
-{
-    let m = new Model();
-    return m.fill(item);
-}
-
-/**
- * Transform items returned by wix-data into a valid QueryResult.
- * @param {Array<object>} items The items to be transformed.
  * @param {new()=>U} model The model of the items to be returned.
  * @returns {QueryResult<U>} The QueryResult. 
  */
 function wixQueryItemsToQueryResult<U extends AbstractModel<U>>(items: Array<object>, Model: new()=>U): QueryResult<U>
 {
     let result = new QueryResult<U>();
-    items.forEach((item) => { result.add(wixQueryItemToModel(item, Model)); });
+    items.forEach((item) => { result.add(new Model().fill(item)); });
     return result;
 }
 
-/**
- * Return an object holding all properties defined for the given model.
- * @param {AbstractModel<any>} model The model to be translated.
- * @returns {object} The object holding the properties defined for the given model.
- */
-function strip<U extends AbstractModel<U>>(model: AbstractModel<U>): object
-{
-    let item = {};
-    model.properties.foreach((propertyName)=>{
-        item[propertyName] = model[propertyName];
-        item["_id"] = model.id;
-    });
-    return item;
-}
 
 /**
  * Call strip for each item in the list.
- * @param list The list containing the models.
+ * @param {List<AbstractModel<any>>}list The list containing the models.
  * @returns {Array<object>} The objects.
  */
-function stripMany(list)
+function stripMany(list: List<AbstractModel<any>>): Array<object>
 {
     let stripped = [];
     list.foreach((model)=>{stripped.push(model.strip());});
