@@ -17,9 +17,9 @@ class WixDatabase<T extends AbstractModel<T>>
     }
 
     /**
-     * Get an item of the given id.
-     * @param {string} id The id of the item to be returned.
-     * @returns {T} The item of the given id.
+     * Get an item of the given pk.
+     * @param {string} pk The pk of the item to be returned.
+     * @returns {T} The item of the given pk.
      */
     async get(id: string): Promise<T>
     {
@@ -27,13 +27,13 @@ class WixDatabase<T extends AbstractModel<T>>
     }
 
     /**
-     * Get an item of the given id.
-     * @param {string} id The id of the item to be returned.
-     * @returns {new()=>U} The item of the given id.
+     * Get an item of the given pk.
+     * @param {string} pk The pk of the item to be returned.
+     * @returns {new()=>U} The item of the given pk.
      */
-    static async get<U extends AbstractModel<U>>(id: string, Model: new()=>U): Promise<U>
+    static async get<U extends AbstractModel<U>>(pk: string, Model: new()=>U): Promise<U>
     {
-        return new Model().fill(await wixData.get(new Model().tableName, id));
+        return new Model().fill(await wixData.get(new Model().tableName, pk));
     }
 
     /**
@@ -91,7 +91,7 @@ class WixDatabase<T extends AbstractModel<T>>
      */
     static async store<U extends AbstractModel<U>>(toStore: U): Promise<void>
     {
-        await wixData.insert(toStore.tableName, toStore.strip());
+        await wixData.insert(toStore.tableName, strip(toStore));
     }
 
     /**
@@ -109,7 +109,7 @@ class WixDatabase<T extends AbstractModel<T>>
      */
     static async save<U extends AbstractModel<U>>(toSave: U): Promise<void>
     {
-        await wixData.save(toSave.tableName, toSave.strip());
+        await wixData.save(toSave.tableName, strip(toSave));
     }
 
     /**
@@ -167,7 +167,7 @@ class WixDatabase<T extends AbstractModel<T>>
      */
     static async update<U extends AbstractModel<U>>(toUpdate: U): Promise<void>
     {
-        await wixData.update(toUpdate.tableName, toUpdate.strip());
+        await wixData.update(toUpdate.tableName, strip(toUpdate));
     }
 
     /**
@@ -226,7 +226,7 @@ class WixDatabase<T extends AbstractModel<T>>
         if(toRemove.isEmpty())
             return;
         let ids: Array<string> = [];
-        toRemove.foreach((model)=>{ids.push(model.id)});
+        toRemove.foreach((model)=>{ids.push(model.pk)});
         wixData.bulkRemove(toRemove.get(0).tableName, ids);
     }
 
@@ -246,6 +246,11 @@ class WixDatabase<T extends AbstractModel<T>>
     get Model(): new()=>T
     {
         return this._Model;
+    }
+
+    get pkColumnName()
+    {
+        return "_id";
     }
 }
 
@@ -369,6 +374,13 @@ export class Query<T extends AbstractModel<T>>
     */
 }
 
+function wixQueryItemToModel<U extends AbstractModel<U>>(item: any, Model: new()=>U): U 
+{
+    let model = new Model().fill(item);
+    model.pk = item["_id"];
+    return model;
+}
+
 /**
  * Transform items returned by wix-data into a valid QueryResult.
  * @param {Array<object>} items The items to be transformed.
@@ -378,10 +390,16 @@ export class Query<T extends AbstractModel<T>>
 function wixQueryItemsToQueryResult<U extends AbstractModel<U>>(items: Array<object>, Model: new()=>U): QueryResult<U>
 {
     let result = new QueryResult<U>();
-    items.forEach((item) => { result.add(new Model().fill(item)); });
+    items.forEach((item) => { result.add(wixQueryItemToModel(item, Model)); });
     return result;
 }
 
+function strip(model: AbstractModel<any>): object
+{
+    let item = model.strip();
+    item["_id"] = model.pk;
+    return item;
+}
 
 /**
  * Call strip for each item in the list.
@@ -391,7 +409,7 @@ function wixQueryItemsToQueryResult<U extends AbstractModel<U>>(items: Array<obj
 function stripMany(list: List<AbstractModel<any>>): Array<object>
 {
     let stripped = [];
-    list.foreach((model)=>{stripped.push(model.strip());});
+    list.foreach((model)=>{stripped.push(strip(model));});
     return stripped;
 }
 
