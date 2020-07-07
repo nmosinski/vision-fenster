@@ -61,6 +61,27 @@ class List<T> implements IComparable
 	}
 
 	/**
+	 * Check if two elements are equal.
+	 * @param e1 The element to be compared to e2.
+	 * @param e2 The element to be compared to e1.
+	 * @returns {boolean} True if elements are equal, else false.
+	 */
+	protected elementsEqual(e1: any, e2: any): boolean
+	{
+		try
+		{
+			//@ts-ignore
+			if(e1.equals(e2))
+				return true;
+		}
+		catch
+		{
+			if(e1 === e2)
+				return true;
+		}
+	}
+
+	/**
 	 * Iterate through all elements of this list and calls the passed function.
 	 * @param {Function} f - The function to be called by each element of this list.
 	 */
@@ -161,6 +182,15 @@ class List<T> implements IComparable
 	}
 
 	/**
+	 * Add multiple elements.
+	 * @param {Array<T>} elements - The elements to be added.
+	 */
+	addMultiple(element: Array<T>): void
+	{
+		element.forEach((el)=>{this.add(el);});
+	}
+
+	/**
 	 * Get the element at the given index.
 	 * @param {number} elementIdx - The index.
 	 * @return {T} The element.
@@ -222,17 +252,8 @@ class List<T> implements IComparable
 	{
 		for(let idx = 0; idx < this.length; idx++)
 		{
-			try
-			{
-				//@ts-ignore
-				if(this.some(idx).equals(element))
-					return idx;
-			}
-			catch(err)
-			{
-				if(this.get(idx) === element)
-					return idx;
-			}
+			if(this.elementsEqual(this.get(idx), element))
+				return idx;
 		}
 		return -1;
 	}

@@ -2,7 +2,7 @@ const PATH = "public/main/common/util/map/KVMap.js";
 
 import IComparable from "public/main/common/util/IComparable.js";
 
-import List from "../list/List.js";
+import List from "public/main/common/util/collections/list/List.js";
 
 import VariableTypeError from "public/main/common/util/error/VariableTypeError.js"
 
@@ -48,15 +48,8 @@ class KVMap<K,V> implements IComparable
 			let key = object.keys().get(idx);
 			if(!this.hasKey(key))
 				return false;
-			try
-			{
-				if(!(object.get(key).equals(this.get(key))))
-					return false;
-			}catch(err)
-			{
-				if(!(object.get(key) === this.get(key)))
-					return false;
-			}
+			if(!this.elementsEqual(object.get(key), this.get(key)))
+				return false;
 		}
 
 		
@@ -65,19 +58,51 @@ class KVMap<K,V> implements IComparable
 	}
 
 		/**
-	 * Iterate through all elements of this list and calls the passed function.
-	 * @param {Function} f - The function to be called by each element of this list.
+	 * Iterate through all elements of this map and calls the passed function.
+	 * @param {Function} f - The function to be called by each element of this map.
 	 */
     foreach(f: (k: K, v:V) => void): void
     {
     	if(!JsTypes.isFunction(f))
-    		throw new VariableTypeError(PATH, "List.foreach(f)", f, "function");
+    		throw new VariableTypeError(PATH, "KVMap.foreach(f)", f, "function");
 
 			for(let [key, value] of this._elements.entries()) 
 			{
 				f(key, value);
 			}
     }
+
+	/**
+	 * Return a new KVMap containing only those items that are in this KVMap and the one passed as argument.
+	 * @param {KVMap<K,V>} map - The other map.
+	 * @return {KVMap<K,V>} A new KVMap containing items that are in both maps.
+	 */
+	AND(map: KVMap<K,V>): KVMap<K,V>
+	{
+		if(!(map instanceof KVMap))
+			throw new VariableTypeError(PATH, "KVMap.AND()", map, "KVMap<K,V>");
+		
+		return this.filter((k:K, v:V)=>{return this.elementsEqual(map.getKeyOf(v), k) && this.elementsEqual(map.get(k), this.get(k));});
+	}
+
+	/**
+	 * Return a new map containing all items that are in this map or the one passed as argument.
+	 * @param {KVMap<K,V>} map - The other map.
+	 * @return {KVMap<K,V>} A new KVMap containing all items from both maps.
+	 */
+	OR(map: KVMap<K,V>): KVMap<K,V>
+	{
+		if(!(map instanceof KVMap))
+			throw new VariableTypeError(PATH, "KVMap.AND()", map, "KVMap<K,V>");
+		
+		let m = new KVMap<K,V>(this.toMap());
+
+		map.foreach((k:K, v:V) => {
+			if(! (this.elementsEqual(map.getKeyOf(v), k) && this.elementsEqual(map.get(k), this.get(k))) )
+				m.add(k,v);
+		});
+		return m;
+	}
 
     /**
      * Filters all elements of this map by the given expression and returns a new map with the elements that match.
@@ -87,7 +112,7 @@ class KVMap<K,V> implements IComparable
     filter(f: (k:K, v:V) => boolean): KVMap<K,V>
     {
     	if(!JsTypes.isFunction(f))
-    		throw new VariableTypeError(PATH, "List.foreach(f)", f, "function");
+    		throw new VariableTypeError(PATH, "KVMap.foreach(f)", f, "function");
 
     	let ret = new KVMap<K,V>();
 
@@ -97,7 +122,22 @@ class KVMap<K,V> implements IComparable
 		});
 
 		return ret;
-    }
+	}
+
+	/**
+	 * Get the key of a value.
+	 * @param {V} value The value of which the key will be returned.
+	 * @returns {K} The key or null if not found.
+	 */
+	getKeyOf(value: V): K
+	{
+		this.foreach((k,v)=>{
+			if(this.elementsEqual(v,value))
+				return k;
+		});
+		return null;
+	}
+	
 	/**
 	 * Transform this map to an object containing the keys and values.
 	 * @return {Map<K,V>} This map as an object.
@@ -116,22 +156,12 @@ class KVMap<K,V> implements IComparable
 	 */
 	get(key: K): V
 	{
-		let ret = null;
 		this.foreach((k:K, v:V) => {
-			try
-			{
-				//@ts-ignore
-				if(k.equals(key))
-					ret = v;
-			}
-			catch(err)
-			{
-				if(k === key)
-					ret = v;
-			}
+			if(this.elementsEqual(k, key))
+				return v;
 		});
 
-		return ret;
+		return null;
 	}
 
 	/**
@@ -152,17 +182,8 @@ class KVMap<K,V> implements IComparable
 	{
 		let m = new Map<K,V>();
 		this.foreach((k:K,v:V)=>{
-			try
-			{
-				//@ts-ignore
-				if(!k.equals(key))
-					m.set(k,v);
-			}
-			catch(err)
-			{
-				if(k !== key)
-					m.set(k,v);
-			}
+			if(!this.elementsEqual(k, key))
+				m.set(k,v);
 		});
 
 		this._elements = m;
@@ -178,22 +199,32 @@ class KVMap<K,V> implements IComparable
 		let values = this.values();
 		for(let idx = 0; idx < values.length; idx++)
 		{
-			try
-			{
-				//@ts-ignore
-				if(values.some(idx).equals(value))
-				{
-					return true;
-				}
-			}
-			catch
-			{
-				if(values.get(idx) === value)
-					return true;
-			}
+			if(this.elementsEqual(values.get(idx), value))
+				return true;
 		}
 
 		return false;
+	}
+
+	/**
+	 * Check if two elements are equal.
+	 * @param e1 The element to be compared to e2.
+	 * @param e2 The element to be compared to e1.
+	 * @returns {boolean} True if elements are equal, else false.
+	 */
+	protected elementsEqual(e1: any, e2: any): boolean
+	{
+		try
+		{
+			//@ts-ignore
+			if(e1.equals(e2))
+				return true;
+		}
+		catch
+		{
+			if(e1 === e2)
+				return true;
+		}
 	}
 
 	/**
