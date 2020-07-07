@@ -252,10 +252,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
-     * @todo Remove previous after query.
-     * @todo Save last query / dynamic property in the root.
      * Find all entities returned by a QueryElement (the current QueryElement (chain) by default).
      * If called over a relative, return only those entities that are related to the query result returned by the chained query.
+     * The results of the subqueries returned on the way will be cascaded and saved, accessable as a property.
      * @returns {Promise<QueryResult<T>>} The result of the executed query. 
      */
     async find(): Promise<QueryResult<T>>
@@ -264,7 +263,16 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
         if(this.previousRelative)
         {
             let previousQueryResult = await this.previousRelative.find();
-            return await this.relations.get(this.previousRelative.Constructor).relationalFind(previousQueryResult);
+            let relation = this.relations.get(this.previousRelative.Constructor);
+            let thisQueryResult = await relation.relationalFind(previousQueryResult);
+
+            // Make results of subqueries accessible as properties.
+            if(relation instanceof ManyToOne || relation instanceof ManyToMany)
+                this.previousRelative[this.asMultiplePropertyName()] = thisQueryResult;
+            else
+                this.previousRelative[this.asSinglePropertyName()] = thisQueryResult.first();
+            
+            return thisQueryResult;
         }
 
         return await AbstractModel.find(this.Constructor);
@@ -618,6 +626,15 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
+     * Get the primary key column name of this model.
+     * @returns {string} The primary key column name.
+     */
+    public asPk(): string
+    {
+        return "_id";
+    }
+
+    /**
      * Get the foreign key column name of this model.
      * @returns {string} The foreign key column name.
      */
@@ -627,12 +644,21 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
     }
 
     /**
-     * Get the primary key column name of this model.
-     * @returns {string} The primary key column name.
+     * Get the default name of this Model as a single property.
+     * @returns {string} The name of this Model as a single property.
      */
-    public asPk(): string
+    public asSinglePropertyName(): string
     {
-        return "_id";
+        return this.tableName.charAt(0) + this.tableName.slice(1);
+    }
+
+    /**
+     * Get the default name of this Model as a multiple property.
+     * @returns {string} The name of this Model as a multiple property.
+     */
+    public asMultiplePropertyName(): string
+    {
+        return this.asSinglePropertyName + "s";
     }
 
     /**
