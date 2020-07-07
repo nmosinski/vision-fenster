@@ -1,6 +1,7 @@
 const PATH = "public/main/common/AbstractModel.js";
 
-import AbstractEntity from "public/main/common/AbstractEntity.js"
+//@ts-ignore
+import { v4 as UUID } from 'uuid';
 import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 import KVMap from "public/main/common/util/collections/map/KVMap.js";
 import List from "public/main/common/util/collections/list/List.js";
@@ -19,6 +20,7 @@ import QueryResult from "public/main/common/QueryResult.js";
 import InvalidOperationError from "./util/error/InvalidOperationError";
 
 /**
+ * @todo Rename _id to pk or pk to _id.
  * @todo Add undo operations for save etc. Important in case a save is not possible but uve updated already some references.
  */
 
@@ -27,30 +29,29 @@ import InvalidOperationError from "./util/error/InvalidOperationError";
  * A class representing an abstract model.
  */
 
-abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity implements IComparable
+abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
 {
     private _previousRelative: AbstractModel<any>;
     private _relations: KVMap<new()=>AbstractModel<any>, Relation<AbstractModel<any>,T>>;
     protected abstract Constructor: new()=>T;
     protected _properties: Properties;
+    private _id: string;
 
     /**
      * Create an Abstract Model.
-     * All classes that deriver from Abstract Model need to define their own static tableName attribute.
-     * @param {string} id The id of this entity.
      */
-    constructor(id: string|any=null)
+    constructor(data?: object)
     {
-        super((JsTypes.isString(id))?id:null);
-        
-        if(JsTypes.isObject(id))
-            this.fill(id);
-
         this.previousRelative = null;
         this.relations = new KVMap<new()=>AbstractModel<any>, Relation<AbstractModel<any>,T>>();
-        this.addRelations();
+        this.properties = new Properties();
 
-        this._properties = new Properties();
+        this.properties.
+        string("pk");
+        
+        this.addProperties();
+        this.addRelations();
+        this.fill(data);
     }
 
     /**
@@ -62,11 +63,48 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
         return new this.Constructor();       
     }
 
+    /**
+     * Add properties.
+     */
+    abstract addProperties(): void
+
 
     /**
      * Save all relations of this model.
      */
     abstract addRelations(): void;
+
+    /**
+     * Get a valid dummy of the given model.
+     * @param {U extends AbstractModel<U>} Model The model of which a dummy will be created.
+     * @returns {T} A dummy initialized with valid data.
+     */
+    static dummy<U extends AbstractModel<U>>(Model: new()=>U, customChanges: KVMap<string, any>=null): U
+    {
+        let t = new Model();
+        let item = {};
+
+        t.properties.foreach((propertyName, property)=>{item[propertyName] = property.dummy();});
+        t = t.fill(item);
+
+        if(customChanges)
+            customChanges.foreach((propertyname, value)=>{t[propertyname] = value;});
+        return t;
+    }
+
+    /**
+     * Get multiple instances of a dummy of this model.
+     * @param {U extends AbstractModel<U>} Model The model of which duummies will be created.
+     * @param {number} count The amount of dummies to be created.
+     * @returns {List<T>} A list containing the given amount of dummies initialized with valid data.
+     */
+    static dummies<U extends AbstractModel<U>>(Model: new()=>U, count: number, customChanges: KVMap<string, any>=null): List<U>
+    {
+        let l = new List<U>();
+        for(let idx = 0; idx < count; idx++)
+            l.add(AbstractModel.dummy(Model, customChanges));
+        return l;
+    }
 
     /**
      * @override
@@ -114,7 +152,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
         let item = {};
         model._properties.foreach((propertyName)=>{
             item[propertyName] = model[propertyName];
-            item["_id"] = model.id;
+            item[model.asPk()] = model.pk;
         });
         return item;
     }
@@ -126,8 +164,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      */
     fill(item: object): this
     {
-        for(let [key,value] of Object.entries(item))
-            this[key] = value;
+        if(item)
+            for(let [key,value] of Object.entries(item))
+                this[key] = value;
         return this;
     }
 
@@ -688,7 +727,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      */
     get pk(): string
     {
-        return this.id;
+        return this._id;
     }
 
     get properties(): Properties
@@ -702,12 +741,17 @@ abstract class AbstractModel<T extends AbstractModel<T>> extends AbstractEntity 
      */
     set pk(pk: string)
     {
-        this.id = pk;
+        this._id = pk;
     }
 
+    /**
+     * Set properties.
+     */
     set properties(properties: Properties)
     {
-        this._properties = properties;
+        if(!this._properties)
+            this._properties = new Properties();
+        properties.foreach((propertyName, property)=>{this._properties.add(propertyName, property);});
     }
 
     /**
@@ -758,70 +802,43 @@ export class Properties extends KVMap<string,Property>
 
     string(name: string, ...attributes: Array<string>): this
     {
-        let property = new Property("string", attributes);
+        let property = new StringProperty(new Set(attributes));
         this.add(name, property);
         return this;
     }
 
     number(name: string, ...attributes: Array<string>): this
     {
-        let property = new Property("number", attributes);
+        let property = new NumberProperty(new Set(attributes));
         this.add(name, property);
         return this;
     }
 }
 
 
-export class Property
+export abstract class Property
 {
-    validAttributes = new Set<string>([
-        "nullable",
-        "emptiable",
-    ]);
+    protected validAttributes: Set<string>;
+    protected _attributes: Set<string>;
 
-    validTypes = new Set<string>([
-        "string",
-        "number",
-        "unspecified"
-    ]);
-
-    private _value: any;
-    private _type: string;
-    private _attributes: Set<string>;
-
-    constructor(type: string, attributesArray: Array<string>)
+    constructor(attributes: Set<string>=new Set<string>())
     {
-        this.type = type;
-        this.attributes = new Set<string>(attributesArray);
+        this.validAttributes = new Set<string>([
+            "nullable"
+        ]);
+        
+        this.attributes = attributes;
     }
 
-    valid(toCheck: any)
+    valid(toCheck: any): boolean
     {
         if(JsTypes.isUnspecified(toCheck))
-        {
             if(!this.attributes.has("nullable"))
                 return false;
-            return true;
-        }
-
-        if(typeof(toCheck) !== this.type)
-            return false;
-
-        if(JsTypes.isEmpty(toCheck) && this.attributes.hasNot("emptiable"))
-            return false;
-
         return true;
     }
 
-    set type(type: string)
-    {
-        this._type = type;
-    }
-
-    get type(): string
-    {
-        return this._type;
-    }
+    abstract dummy(): any
 
     set attributes(attributes: Set<string>)
     {
@@ -838,6 +855,84 @@ export class Property
     get attributes(): Set<string>
     {
         return this._attributes;
+    }
+}
+
+export class StringProperty extends Property
+{
+    constructor(attributes: Set<string>)
+    {
+        super(attributes);
+        
+        this.validAttributes.addMultiple([
+            "emtiable"
+        ]);
+    }
+    
+    valid(toCheck: any): boolean
+    {
+        if(!super.valid(toCheck))
+            return false;
+
+        if(typeof(toCheck) !== "string")
+            return false;
+
+        if(JsTypes.isEmpty(toCheck) && this.attributes.hasNot("emptiable"))
+            return false;
+
+        return true;
+    }
+
+    dummy(): string
+    {
+        return UUID();
+    }
+}
+
+export class NumberProperty extends Property
+{
+    constructor(attributes: Set<string>)
+    {
+        super(attributes);
+        this.validAttributes.addMultiple([
+            "negative",
+            "positive",
+            "notZero"
+        ]);
+    }
+
+    valid(toCheck: any): boolean
+    {
+        if(!super.valid(toCheck))
+            return false;
+
+        if(typeof(toCheck) !== "number")
+            return false;
+
+        if(this.attributes.has("negative") && toCheck > 0)
+            return false;
+
+        if(this.attributes.has("positive") && toCheck < 0)
+            return false;
+
+        if(this.attributes.has("notZero") && toCheck === 0)
+            return false;
+        
+        return true;
+    }
+
+    dummy() 
+    {
+        let n = Math.random() * 100;
+        
+        if(this.attributes.has("negative"))
+            n = -n;
+
+        if(this.attributes.has("notZero"))
+            if(n === 0)
+                n += 1;
+
+        return n;
     }
 }
 
@@ -864,6 +959,15 @@ export class RoleModel extends AbstractModel<RoleModel> implements IComparable
         this.model2 = model2;
         this[model1.asFk()] = model1.pk;
         this[model2.asFk()] = model2.pk;
+
+        this.properties.
+        string(this.model1.asFk()).
+        string(this.model2.asFk());
+    }
+
+    addProperties(): void 
+    {
+        
     }
 
     /**
