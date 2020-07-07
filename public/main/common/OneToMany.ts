@@ -39,13 +39,13 @@ class OneToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends 
         // Check if the A that B belongs to is contained in the given relatives.
         if(relatives)
             relatives.foreach((a)=>{
-                if(a.id === toStore[a.asFk()])
+                if(a.pk === toStore[a.asFk()])
                     return;
             });
 
         // Try to find the relative in the storage.
         let a = new this.relativeA();
-        a.id = toStore[a.asFk()];
+        a.pk = toStore[a.asFk()];
         a = await a.load(toStore[a.asFk()]);
         if(a)
             return;
