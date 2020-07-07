@@ -320,7 +320,7 @@ export class Query<T extends AbstractModel<T>>
             previousQueryResult = await this.subquery.execute();
         */
         let wixQueryResult = await this.query.limit(limit).find();
-        return wixQueryItemsToQueryResult(wixQueryResult, this.Model);
+        return wixQueryItemsToQueryResult(wixQueryResult.items, this.Model);
     }
 
     /**

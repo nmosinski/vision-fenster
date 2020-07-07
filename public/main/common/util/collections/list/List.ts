@@ -170,6 +170,36 @@ class List<T> implements IComparable
     		ret.push(this._elements[idx]);
 
     	return ret;
+	}
+	
+	/**
+     * Get a number of items.
+     * @param {number} [count=null] The maximum count of items to be returned.
+     * @returns {List<T>} A list containing items. 
+     */
+    some(count: number=null): List<T>
+    {
+        if(!count)
+            count = this.length;
+        return this.sublist(0, count);
+    }
+
+    /**
+     * Get the first item.
+     * @returns {T} The item.
+     */
+    first(): T
+    {
+        return this.get(0);
+    }
+
+    /**
+     * Get the last item.
+     * @returns {T} The item.
+     */
+    last(): T
+    {
+        return this.get(this.length-1);
     }
 
 	/**
