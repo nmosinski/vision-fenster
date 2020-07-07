@@ -8,13 +8,11 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
 {
     _relativeA: new()=>A;
     _relativeB: new()=>B;
-    _queryResult: QueryResult<B>;
     
     constructor(relativeA: new()=>A, relativeB: new()=>B)
     {
         this.relativeA = relativeA;
         this.relativeB = relativeB;
-        this.queryResult = null;
     }
 
     abstract inverse(): Relation<B,A>;
@@ -128,11 +126,6 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
         return this._relativeB;
     }
 
-    get queryResult(): QueryResult<B>
-    {
-        return this._queryResult;
-    }
-
     set relativeA(relative: new()=>A)
     {
         this._relativeA = relative;
@@ -141,12 +134,6 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
     set relativeB(relative: new()=>B)
     {
         this._relativeB = relative;
-    }
-
-
-    set queryResult(queryResult: QueryResult<B>)
-    {
-        this._queryResult = queryResult;
     }
 }
 
