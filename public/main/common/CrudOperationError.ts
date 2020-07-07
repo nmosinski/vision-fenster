@@ -14,9 +14,9 @@ abstract class CrudOperationError extends AbstractCheckedError
      * @param {string} path The path to the file where the problem occurred.
      * @param {string} location A more specific location hint in the file where the problem occurred.
      */
-    constructor(path: string, location: string)
+    constructor(description: string, path: string, location: string)
     {
-        super("CRUD-Operation error.", path, location);
+        super(description, path, location);
     }
 }
 

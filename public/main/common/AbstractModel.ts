@@ -18,6 +18,10 @@ import ManyToMany from "public/main/common/ManyToMany.js";
 import ManyToOne from "public/main/common/ManyToOne.js";
 import QueryResult from "public/main/common/QueryResult.js";
 import InvalidOperationError from "./util/error/InvalidOperationError";
+import StoreError from 'public/main/common/StoreError';
+import SaveError from 'public/main/common/SaveError';
+import UpdateError from 'public/main/common/UpdateError';
+import DestroyError from 'public/main/common/DestroyError';
 
 /**
  * @todo Rename _id to pk or pk to _id.
@@ -360,6 +364,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      */
     static async store<U extends AbstractModel<U>>(model: U): Promise<void>
     {
+        if(!model.valid())
+            throw new StoreError(PATH, "AbstractModel.store()", model);
+
         // Call store for each relation.
         model.relations.values().foreach(async(relation)=>{
             await relation.relationalStore(model);
@@ -398,6 +405,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     {
         if(models.isEmpty())
             return;
+
+        models.foreach((model)=>{
+            if(!model.valid())
+                throw new StoreError(PATH, "AbstractModel.storeMultiple()", model);
+        });
 
         // Call save for each relation.
         models.get(0).relations.values().foreach(async(relation)=>{
@@ -440,6 +452,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      */
     static async save<U extends AbstractModel<U>>(model: U): Promise<void>
     {
+        if(!model.valid())
+            throw new SaveError(PATH, "AbstractModel.save()", model);
+
         // Call save for each relation.
         model.relations.values().foreach(async(relation)=>{
             await relation.relationalSave(model);
@@ -478,6 +493,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     {
         if(models.isEmpty())
             return;
+
+        models.foreach((model)=>{
+            if(!model.valid())
+                throw new SaveError(PATH, "AbstractModel.saveMultiple()", model);
+        });
 
         // Call save for each relation.
         models.get(0).relations.values().foreach(async(relation)=>{
@@ -519,7 +539,10 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {<U extends AbstractModel<U>>} model The model to be updated.
      */
     static async update<U extends AbstractModel<U>>(model: U): Promise<void>
-    {
+    {   
+        if(!model.valid())
+            throw new UpdateError(PATH, "AbstractModel.update()", model);
+
         // Call update for each relation.
         model.relations.values().foreach(async(relation)=>{
             await relation.relationalUpdate(model);
@@ -558,6 +581,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     {
         if(models.isEmpty())
             return;
+
+        models.foreach((model)=>{
+            if(!model.valid())
+                throw new UpdateError(PATH, "AbstractModel.updateMultiple()", model);
+        });
 
         // Call update for each relation.
         models.get(0).relations.values().foreach(async(relation)=>{
@@ -608,6 +636,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      */
     static async destroy<U extends AbstractModel<U>>(model: U): Promise<void>
     {
+        if(!model.valid())
+            throw new DestroyError(PATH, "AbstractModel.destroy()", model);
+
         // Call destroy for each relation.
         model.relations.values().foreach(async(relation)=>{
             await relation.relationalDestroy(model);
@@ -655,6 +686,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     {
         if(models.isEmpty())
             return;
+
+        models.foreach((model)=>{
+            if(!model.valid())
+                throw new DestroyError(PATH, "AbstractModel.destroyMultiple()", model);
+        });
 
         // Call destroy for each relation.
         models.get(0).relations.values().foreach(async(relation)=>{
