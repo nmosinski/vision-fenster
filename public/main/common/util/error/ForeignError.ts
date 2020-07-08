@@ -1,6 +1,7 @@
+import AbstractUncheckedError from "./AbstractUncheckedError";
+
 const PATH = "public/main/common/util/error/ForeignError.js";
 
-import AbstractUncheckedError from "public/main/common/util/error/AbstractUncheckedError.js"
 
 /**
  * @class

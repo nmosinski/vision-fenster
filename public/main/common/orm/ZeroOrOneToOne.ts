@@ -1,5 +1,6 @@
-import BHoldsNoReferenceToA from "public/main/common/orm/BHoldsNoReferenceToA.js"
-import AbstractModel from "public/main/common/orm/AbstractModel.js"
+import AbstractModel from "./AbstractModel";
+import BHoldsNoReferenceToA from "./BHoldsNoReferenceToA";
+
 
 class ZeroOrOneToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends BHoldsNoReferenceToA<A,B>
 {   

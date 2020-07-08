@@ -1,5 +1,5 @@
-import CrudOperationError from "public/main/common/orm/CrudOperationError.js" 
-import AbstractModel from "public/main/common/AbstractModel";
+import CrudOperationError from "./CrudOperationError";
+import AbstractModel from "./AbstractModel";
 
 /**
  * @class

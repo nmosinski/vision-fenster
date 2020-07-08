@@ -1,8 +1,10 @@
+import AbstractModel from "../../../common/orm/AbstractModel";
+import ShoppingCart from "./ShoppingCart";
+import JsTypes from "../../../common/util/jsTypes/JsTypes";
+
 const PATH = "public/main/feature/shoppingCart/model/ShoppingCartItem.js";
 
-import AbstractModel from "public/main/common/AbstractModel.js"
-import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
-import ShoppingCart from "public/main/feature/shoppingCart/model/ShoppingCart.js";
+
 
 /**
  * @class
@@ -29,16 +31,21 @@ class ShoppingCartItem extends AbstractModel<ShoppingCartItem>
 	 * @param {string} image The source to an image representing this item.
 	 * @param {details} [details=null] The details about this item.
 	 */
-	constructor(id?: string, shoppingCartId?: string, productId?: string, title?: string, count?: number, singlePrice?: number, image?: string, details?: string)
+	constructor(data?: {pk?: string, shoppingCartId?: string, productId?: string, title?: string, count?: number, singlePrice?: number, image?: string, details?: string} )
 	{
-		super(id);
-		this.shoppingCartId = shoppingCartId;
-		this.productId = productId;
-		this.title = title;
-		this.count = count;
-		this.singlePrice = singlePrice;
-		this.image = image;
-		this.details = details;
+		super();
+		this.fill(data);
+	}
+
+	addProperties(): void 
+	{
+		this.properties.
+		string("shoppingCartId").
+		string("productId").
+		string("title").
+		number("count").
+		number("singlePrice").
+		string("image", "nullable");
 	}
 
 	addRelations(): void 
@@ -59,7 +66,7 @@ class ShoppingCartItem extends AbstractModel<ShoppingCartItem>
 	{
 		if(!(o instanceof ShoppingCartItem))
 			return false;
-		if(this.id !== o.id)
+		if(this.pk !== o.pk)
 			return false;
 		if(this.shoppingCartId !== o.shoppingCartId)
 			return false;

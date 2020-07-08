@@ -2,25 +2,25 @@ const PATH = "public/main/common/orm/AbstractModel.js";
 
 //@ts-ignore
 import { v4 as UUID } from 'uuid';
-import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
-import KVMap from "public/main/common/util/collections/map/KVMap.js";
-import List from "public/main/common/util/collections/list/List.js";
-import Set from "public/main/common/util/collections/set/Set.js";
+import Set from "../util/collections/set/Set.js";
+import IComparable from '../util/IComparable';
+import KVMap from '../util/collections/map/KVMap';
+import Relation from './Relation';
+import List from '../util/collections/list/List';
+import JsTypes from '../util/jsTypes/JsTypes';
+import OneToZeroOrOne from './OneToZeroOrOne';
+import ZeroOrOneToOne from './ZeroOrOneToOne';
+import ManyToOne from './ManyToOne';
+import OneToMany from './OneToMany';
+import WixDatabase from './WixDatabase';
+import QueryResult from './QueryResult';
+import ManyToMany from './ManyToMany';
+import StoreError from './StoreError';
+import SaveError from './SaveError';
+import UpdateError from './UpdateError';
+import DestroyError from './DestroyError';
+import InvalidOperationError from '../util/error/InvalidOperationError';
 
-import WixDatabase from "public/main/common/orm/WixDatabase.js"
-import IComparable from "public/main/common/util/IComparable.js"
-import OneToZeroOrOne from "public/main/common/orm/ZeroOrOneToOne.js"
-import ZeroOrOneToOne from "public/main/common/orm/OneToZeroOrOne.js"
-import Relation from "public/main/common/orm/Relation.js";
-import OneToMany from "public/main/common/orm/OneToMany.js";
-import ManyToMany from "public/main/common/orm/ManyToMany.js";
-import ManyToOne from "public/main/common/orm/ManyToOne.js";
-import QueryResult from "public/main/common/orm/QueryResult.js";
-import InvalidOperationError from "./util/error/InvalidOperationError";
-import StoreError from 'public/main/common/StoreError';
-import SaveError from 'public/main/common/SaveError';
-import UpdateError from 'public/main/common/UpdateError';
-import DestroyError from 'public/main/common/DestroyError';
 
 /**
  * @todo Rename _id to pk or pk to _id.
@@ -749,6 +749,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     static roleTableNameOf(modelName1: string, modelName2: string): string
     {
         return "Role" + (modelName1.charAt(0)<modelName2.charAt(0))?modelName1 + modelName2: modelName2 + modelName1; 
+    }
+
+    static tableName<U extends AbstractModel<U>>(Model: new()=>U): string
+    {
+        return (new Model()).tableName;
     }
 
     /**

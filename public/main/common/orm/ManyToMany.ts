@@ -1,9 +1,8 @@
-import BHoldsNoReferenceToA from "public/main/common/orm/BHoldsNoReferenceToA.js"
-import AbstractModel from "public/main/common/orm/AbstractModel.js"
-import QueryResult from "public/main/common/orm/QueryResult.js";
-import OneToMany from "public/main/common/orm/OneToMany.js";
-import List from "public/main/common/util/collections/list/List.js";
-import ManyToOne from "public/main/common/orm/ManyToOne.js";
+import AbstractModel from "./AbstractModel";
+import BHoldsNoReferenceToA from "./BHoldsNoReferenceToA";
+import List from "../util/collections/list/List";
+import QueryResult from "./QueryResult";
+
 
 class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C extends AbstractModel<C>> extends BHoldsNoReferenceToA<A,B>
 {

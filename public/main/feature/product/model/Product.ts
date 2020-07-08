@@ -1,4 +1,5 @@
-import AbstractModel from "public/main/common/AbstractModel.js"
+import AbstractModel from "../../../common/orm/AbstractModel";
+
 
 class Product extends AbstractModel<Product>
 {
@@ -7,6 +8,10 @@ class Product extends AbstractModel<Product>
     constructor()
     {
         super();
+    }
+
+    addProperties(): void {
+        throw new Error("Method not implemented.");
     }
 
     addRelations(): void 

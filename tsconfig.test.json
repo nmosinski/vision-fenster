@@ -1,0 +1,9 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+      "module": "CommonJs",
+      "types": ["jest"],
+      "outDir": "./../wix-repository/src/test/"
+    },
+    "include": ["./test"]
+}

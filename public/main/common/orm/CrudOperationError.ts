@@ -1,4 +1,4 @@
-import AbstractCheckedError from "public/main/common/util/error/AbstractCheckedError.js" 
+import AbstractCheckedError from "../util/error/AbstractCheckedError";
 
 /**
  * @class

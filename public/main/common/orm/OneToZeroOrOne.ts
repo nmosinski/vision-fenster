@@ -1,5 +1,5 @@
-import BHoldsReferenceToA from "public/main/common/orm/BHoldsReferenceToA.js"
-import AbstractModel from "public/main/common/orm/AbstractModel.js"
+import AbstractModel from "./AbstractModel";
+import BHoldsReferenceToA from "./BHoldsReferenceToA";
 
 class OneToZeroOrOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends BHoldsReferenceToA<A,B>
 {   

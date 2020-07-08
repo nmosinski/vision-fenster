@@ -1,11 +1,11 @@
+import AbstractModel from "./AbstractModel";
+import Relation from "./Relation";
+import List from "../util/collections/list/List";
+import Set from "../util/collections/set/Set";
+import QueryResult from "./QueryResult";
+
 const PATH = "public/main/common/orm/BHoldsNoReferenceToA.js";
 
-import Relation from "public/main/common/orm/Relation.js";
-import AbstractModel from "public/main/common/orm/AbstractModel.js";
-import List from "public/main/common/util/collections/list/List.js";
-import Set from "public/main/common/util/collections/set/Set.js";
-import QueryResult from "public/main/common/orm/QueryResult.js";
-import NotImplementedError from "public/main/common/util/error/NotImplementedError";
 
 abstract class BHoldsNoReferenceToA<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>
 {

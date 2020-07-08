@@ -1,11 +1,10 @@
+import AbstractModel from "./AbstractModel";
+import Relation from "./Relation";
+import List from "../util/collections/list/List";
+import QueryResult from "./QueryResult";
+
 const PATH = "public/main/common/orm/BHoldsReferenceToA.js";
 
-import Relation from "public/main/common/orm/Relation.js";
-import AbstractModel from "public/main/common/orm/AbstractModel.js";
-import List from "public/main/common/util/collections/list/List.js";
-import StoreError from "public/main/common/orm/StoreError.js";
-import QueryResult from "public/main/common/orm/QueryResult.js";
-import NotImplementedError from "public/main/common/util/error/NotImplementedError";
 
 /**
  * @todo

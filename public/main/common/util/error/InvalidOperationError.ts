@@ -1,6 +1,6 @@
-const PATH = "public/main/common/util/error/InvalidOperationError.js";
+import AbstractUncheckedError from "./AbstractUncheckedError";
 
-import AbstractUncheckedError from "public/main/common/util/error/AbstractUncheckedError.js"
+const PATH = "public/main/common/util/error/InvalidOperationError.js";
 
 
 /**

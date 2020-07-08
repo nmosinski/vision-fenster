@@ -1,8 +1,9 @@
+import AbstractModel, { Properties } from "../../../common/orm/AbstractModel";
+import ShoppingCartItem from "./ShoppingCartItem";
+
 const PATH = "public/main/feature/shoppingCart/model/ShoppingCart.js";
 
-import ShoppingCartItem from "public/main/feature/shoppingCart/model/ShoppingCartItem.js"
 
-import AbstractModel from "public/main/common/AbstractModel.js"
 
 /**
  * @class
@@ -10,18 +11,24 @@ import AbstractModel from "public/main/common/AbstractModel.js"
  */
 class ShoppingCart extends AbstractModel<ShoppingCart>
 {
+	protected _properties: Properties;
 	protected Constructor: new () => ShoppingCart = ShoppingCart;
 	private _userId: string;
+	
 
 	/**
 	 * Create ShoppingCart.
 	 * @param {string} [id=null] - The id of ShoppingCart.
 	 * @param {string} [userId=null] - The id of the user this cart belongs to.
 	 */
-	constructor(id?: string, userId?: string)
+	constructor(data?:{pk?: string, userId?: string})
 	{
-		super(id);
-		this.userId = userId;
+		super(data);
+	}
+
+	addProperties(): void 
+	{
+
 	}
 
 	addRelations(): void 

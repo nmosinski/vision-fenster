@@ -1,6 +1,7 @@
+import JsTypes from "../jsTypes/JsTypes";
+
 const PATH = "public/main/common/util/error/AbstractError.js";
 
-import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 /**
  * @class

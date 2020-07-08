@@ -1,12 +1,10 @@
-const PATH = "public/main/common/util/list/List.js";
-
-import IComparable from "public/main/common/util/IComparable.js"
-
-import VariableTypeError from "public/main/common/util/error/VariableTypeError.js"
-import VariableValueError from "public/main/common/util/error/VariableValueError.js"
-
-import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
+import IComparable from "../../IComparable";
+import JsTypes from "../../jsTypes/JsTypes";
+import VariableTypeError from "../../error/VariableTypeError";
 import InvalidOperationError from "../../error/InvalidOperationError";
+import VariableValueError from "../../error/VariableValueError";
+
+const PATH = "public/main/common/util/list/List.js";
 
 /**
  * @class

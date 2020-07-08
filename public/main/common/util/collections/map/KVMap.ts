@@ -1,12 +1,11 @@
+import IComparable from "../../IComparable";
+import JsTypes from "../../jsTypes/JsTypes";
+import VariableTypeError from "../../error/VariableTypeError";
+import List from "../list/List";
+
 const PATH = "public/main/common/util/map/KVMap.js";
 
-import IComparable from "public/main/common/util/IComparable.js";
 
-import List from "public/main/common/util/collections/list/List.js";
-
-import VariableTypeError from "public/main/common/util/error/VariableTypeError.js"
-
-import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 /**
  * @class

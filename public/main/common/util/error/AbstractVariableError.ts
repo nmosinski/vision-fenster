@@ -1,8 +1,8 @@
+import AbstractUncheckedError from "./AbstractUncheckedError";
+import JsTypes from "../jsTypes/JsTypes";
+
 const PATH = "public/main/common/util/error/AbstractVariableError.js";
 
-import AbstractUncheckedError from "public/main/common/util/error/AbstractUncheckedError.js"
-
-import JsTypes from "public/main/common/util/jsTypes/JsTypes.js"
 
 /**
  * @class

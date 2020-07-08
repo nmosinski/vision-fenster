@@ -1,9 +1,10 @@
 //@ts-ignore
 import wixData from "wix-data";
-import AbstractModel from "public/main/common/orm/AbstractModel.js";
-import QueryResult from "public/main/common/orm/QueryResult.js";
-import List from "public/main/common/util/collections/list/List.js";
-import JsTypes from "public/main/common/util/jsTypes/JsTypes.js";
+import AbstractModel from "./AbstractModel";
+import JsTypes from "../util/jsTypes/JsTypes";
+import List from "../util/collections/list/List";
+import QueryResult from "./QueryResult";
+
 
 
 class WixDatabase<T extends AbstractModel<T>>
@@ -227,6 +228,23 @@ class WixDatabase<T extends AbstractModel<T>>
         let ids: Array<string> = [];
         toRemove.foreach((model)=>{ids.push(model.pk)});
         wixData.bulkRemove(toRemove.get(0).tableName, ids);
+    }
+
+    /**
+     * Remove all items from the collection of the model this database has been initiated with.
+     */
+    async removeAll(): Promise<void>
+    {
+        return await WixDatabase.removeAll(this.Model);
+    }
+
+    /**
+     * Remove all items from the collection of the given model.
+     * @param {U extends AbstractModel<u>} Model The model of which the items in its collection will be removed.
+     */
+    static async removeAll<U extends AbstractModel<U>>(Model: new()=>U): Promise<void>
+    {
+        return await wixData.truncate((new Model()).tableName);
     }
 
     /**
