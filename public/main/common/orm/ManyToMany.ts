@@ -1,28 +1,32 @@
-/*
-import Relation from "public/main/common/Relation.js"
-import AbstractModel from "public/main/common/AbstractModel.js"
-import QueryResult from "public/main/common/QueryResult.js";
+import BHoldsNoReferenceToA from "public/main/common/orm/BHoldsNoReferenceToA.js"
+import AbstractModel from "public/main/common/orm/AbstractModel.js"
+import QueryResult from "public/main/common/orm/QueryResult.js";
+import OneToMany from "public/main/common/orm/OneToMany.js";
 import List from "public/main/common/util/collections/list/List.js";
+import ManyToOne from "public/main/common/orm/ManyToOne.js";
 
-class OneToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>
+class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C extends AbstractModel<C>> extends BHoldsNoReferenceToA<A,B>
 {
-    constructor(relativeA: new()=>A, relativeB: new()=>B)
+    private _roleModel: new()=>C;
+
+    constructor(relativeA: new()=>A, relativeB: new()=>B, roleModel: new()=>C)
     {
         super(relativeA, relativeB);
+        this.roleModel = roleModel;
     }
 
-    inverse(): OneToOne<B,A>
+    inverse(): ManyToMany<B,A, C>
     {
-        return new OneToOne(this.relativeB, this.relativeA);
+        return new ManyToMany(this.relativeB, this.relativeA, this.roleModel);
     }
 
-    assign(toBeAssigned: B, relatives: List<A>): B {
+    assign(toBeAssigned: B, relative: A): B {
         throw new Error("Method not implemented.");
     }
-    assignMultiple(toBeAssigned: List<B>, relatives: List<A>): List<B> {
+    assignMultiple(toBeAssigned: List<B>, relative: A): List<B> {
         throw new Error("Method not implemented.");
     }
-    async relationalGet(id: string, relatives?: List<A>): Promise<B> {
+    async relationalGet(relative: A): Promise<B> {
         throw new Error("Method not implemented.");
     }
     async relationalStore(toStore: B, relatives?: List<A>): Promise<void> {
@@ -37,20 +41,9 @@ class OneToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends R
     async relationalDestroy(toDestroy: B, relatives?: List<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
-
-    async relationalFind(relatives?: List<A>): Promise<QueryResult<B>> 
-    {
-        if(!relatives)
-            relatives = await this.queryOfRelativeA().execute();
-        else
-            relatives = new QueryResult<A>(relatives);
-
-        let query = this.queryOfRelativeB();
-        query = query.hasSome(new this.relativeA().asFk(), (<QueryResult<A>>relatives).toPks());
-        
-        return await query.execute();
+    async relationalFind(relatives?: QueryResult<A>): Promise<QueryResult<B>> {
+        throw new Error("Method not implemented.");
     }
-
     async relationalStoreMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
@@ -63,7 +56,16 @@ class OneToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends R
     async relationalDestroyMultiple(toDestroy: List<B>, relatives?: List<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
+
+    set roleModel(roleModel: new()=>C)
+    {
+        this._roleModel = roleModel;
+    }
+
+    get roleModel(): new()=>C
+    {
+        return this._roleModel;
+    }
 }
 
-export default OneToOne;
-*/
+export default ManyToMany;

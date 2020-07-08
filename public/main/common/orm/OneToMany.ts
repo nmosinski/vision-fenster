@@ -1,7 +1,7 @@
-const PATH = "public/main/common/OneToMany.js";
+const PATH = "public/main/common/orm/OneToMany.js";
 
-import BHoldsReferenceToA from "public/main/common/BHoldsReferenceToA.js"
-import AbstractModel from "public/main/common/AbstractModel.js"
+import BHoldsReferenceToA from "public/main/common/orm/BHoldsReferenceToA.js"
+import AbstractModel from "public/main/common/orm/AbstractModel.js"
 
 class OneToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends BHoldsReferenceToA<A,B>
 {

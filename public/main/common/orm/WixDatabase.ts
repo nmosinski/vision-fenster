@@ -1,10 +1,9 @@
 //@ts-ignore
 import wixData from "wix-data";
-import AbstractModel from "public/main/common/AbstractModel.js";
-import QueryResult from "public/main/common/QueryResult.js";
+import AbstractModel from "public/main/common/orm/AbstractModel.js";
+import QueryResult from "public/main/common/orm/QueryResult.js";
 import List from "public/main/common/util/collections/list/List.js";
-import AbstractEntity from "./AbstractEntity";
-import JsTypes from "./util/jsTypes/JsTypes";
+import JsTypes from "public/main/common/util/jsTypes/JsTypes.js";
 
 
 class WixDatabase<T extends AbstractModel<T>>

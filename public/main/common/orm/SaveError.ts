@@ -1,23 +1,23 @@
-import CrudOperationError from "public/main/common/CrudOperationError.js" 
-import AbstractModel from "public/main/common/AbstractModel";
+import CrudOperationError from "public/main/common/orm/CrudOperationError.js" 
+import AbstractModel from "public/main/common/orm/AbstractModel.js";
 
 /**
  * @class
- * A class representing an error that occurrs during an update operation.
+ * A class representing an error that occurrs during a save operation.
  */
-class UpdateError extends CrudOperationError
+class SaveError extends CrudOperationError
 {
     private _model: AbstractModel<any>;
 
     /**
-     * Create an UpdateError.
+     * Create a SaveError.
      * @param {string} path The path to the file where the problem occurred.
      * @param {string} location A more specific location hint in the file where the problem occurred.
-     * @param {string} model The model that couldn't be updated.
+     * @param {string} model The model that couldn't be saved.
      */
     constructor(path: string, location: string, model: AbstractModel<any>)
     {
-        super("An error occurred when trying to update a model.", path, location);
+        super("An error occurred when trying to save a model.", path, location);
         this.model = model;
     }
 
@@ -44,4 +44,4 @@ class UpdateError extends CrudOperationError
     }
 }
 
-export default UpdateError;
+export default SaveError;

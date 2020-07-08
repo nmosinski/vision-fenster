@@ -1,4 +1,4 @@
-const PATH = "public/main/common/AbstractModel.js";
+const PATH = "public/main/common/orm/AbstractModel.js";
 
 //@ts-ignore
 import { v4 as UUID } from 'uuid';
@@ -7,15 +7,15 @@ import KVMap from "public/main/common/util/collections/map/KVMap.js";
 import List from "public/main/common/util/collections/list/List.js";
 import Set from "public/main/common/util/collections/set/Set.js";
 
-import WixDatabase from "public/main/common/WixDatabase.js"
+import WixDatabase from "public/main/common/orm/WixDatabase.js"
 import IComparable from "public/main/common/util/IComparable.js"
-import OneToZeroOrOne from "public/main/common/ZeroOrOneToOne.js"
-import ZeroOrOneToOne from "public/main/common/OneToZeroOrOne.js"
-import Relation from "public/main/common/Relation.js";
-import OneToMany from "public/main/common/OneToMany.js";
-import ManyToMany from "public/main/common/ManyToMany.js";
-import ManyToOne from "public/main/common/ManyToOne.js";
-import QueryResult from "public/main/common/QueryResult.js";
+import OneToZeroOrOne from "public/main/common/orm/ZeroOrOneToOne.js"
+import ZeroOrOneToOne from "public/main/common/orm/OneToZeroOrOne.js"
+import Relation from "public/main/common/orm/Relation.js";
+import OneToMany from "public/main/common/orm/OneToMany.js";
+import ManyToMany from "public/main/common/orm/ManyToMany.js";
+import ManyToOne from "public/main/common/orm/ManyToOne.js";
+import QueryResult from "public/main/common/orm/QueryResult.js";
 import InvalidOperationError from "./util/error/InvalidOperationError";
 import StoreError from 'public/main/common/StoreError';
 import SaveError from 'public/main/common/SaveError';
@@ -199,6 +199,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     {
         // This logic inverse.
         this.relations.add(Model, new OneToZeroOrOne(Model, this.Constructor));
+        this.properties.string(AbstractModel.asFk(Model));
     }
 
     /**
@@ -229,6 +230,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     {
         // This logic, inverse.
         this.relations.add(Model, new OneToMany(Model, this.Constructor));
+        this.properties.string(AbstractModel.asFk(Model));
     }
 
     /**
@@ -708,6 +710,16 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     public asFk(): string
     {
         return this.tableName.charAt(0).toLowerCase() + this.tableName.slice(1) + "Id";
+    }
+
+    /**
+     * Get the foreign key column name of the given model.
+     * @param {U extends AbstractModel<U>} Model The model the foreign key column name will be returned of.
+     * @returns {string} The foreign key column name. 
+     */
+    static asFk<U extends AbstractModel<U>>(Model: new()=>U): string
+    {
+        return (new Model()).asFk();
     }
 
     /**

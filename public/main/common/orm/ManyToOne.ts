@@ -1,5 +1,5 @@
-import BHoldsNoReferenceToA from "public/main/common/BHoldsNoReferenceToA.js"
-import AbstractModel from "public/main/common/AbstractModel.js"
+import BHoldsNoReferenceToA from "public/main/common/orm/BHoldsNoReferenceToA.js"
+import AbstractModel from "public/main/common/orm/AbstractModel.js"
 
 class ManyToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends BHoldsNoReferenceToA<A,B>
 {

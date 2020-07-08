@@ -1,23 +1,23 @@
-import CrudOperationError from "public/main/common/CrudOperationError.js" 
+import CrudOperationError from "public/main/common/orm/CrudOperationError.js" 
 import AbstractModel from "public/main/common/AbstractModel";
 
 /**
  * @class
- * A class representing an error that occurrs during a destroy operation.
+ * A class representing an error that occurrs during a store operation.
  */
-class DestroyError extends CrudOperationError
+class StoreError extends CrudOperationError
 {
     private _model: AbstractModel<any>;
 
     /**
-     * Create a DestroyError.
+     * Create a StoreError.
      * @param {string} path The path to the file where the problem occurred.
      * @param {string} location A more specific location hint in the file where the problem occurred.
-     * @param {string} model The model that couldn't be destroyed.
+     * @param {string} model The model that couldn't be stored.
      */
     constructor(path: string, location: string, model: AbstractModel<any>)
     {
-        super("An error occurred when trying to destroy a model.", path, location);
+        super("An error occurred when trying to store a model.", path, location);
         this.model = model;
     }
 
@@ -44,4 +44,4 @@ class DestroyError extends CrudOperationError
     }
 }
 
-export default DestroyError;
+export default StoreError;
