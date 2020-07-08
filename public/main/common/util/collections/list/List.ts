@@ -115,6 +115,20 @@ class List<T> implements IComparable
 
 		return new List(ret);
 	}
+
+	/**
+	 * Splits a property from the elements of the list and returns a new list containing the given property of each element in the list.
+	 * @param propertyName The name of the property to be splitted.
+	 * @returns {List<U>} A new list containig the given property of each element in the list.
+	 */
+	splitProperty<U>(propertyName): List<U>
+	{
+		let us = new List<U>();
+
+		this.foreach((t)=>{us.add(t[propertyName]);});
+
+		return us;
+	}
 	
 	/**
 	 * Return a new list containing only items in the given range.
