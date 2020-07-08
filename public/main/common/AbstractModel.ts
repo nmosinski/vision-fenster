@@ -11,7 +11,6 @@ import WixDatabase from "public/main/common/WixDatabase.js"
 import IComparable from "public/main/common/util/IComparable.js"
 import OneToZeroOrOne from "public/main/common/ZeroOrOneToOne.js"
 import ZeroOrOneToOne from "public/main/common/OneToZeroOrOne.js"
-import OneToOne from "public/main/common/OneToOne.js"
 import Relation from "public/main/common/Relation.js";
 import OneToMany from "public/main/common/OneToMany.js";
 import ManyToMany from "public/main/common/ManyToMany.js";
@@ -213,15 +212,6 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     }
 
     /**
-     * Add a relation of 1 to 1 relationship.
-     * @param  {{new(): U}} Model The Model (class) this is associated to as 1 to 1 - this hasOne Model.
-     */
-    oneToOne<U extends AbstractModel<U>>(Model: {new(): U}): void
-    {
-        this.relations.add(Model, new OneToOne(Model, this.Constructor));
-    }
-
-    /**
      * Add a relation of 1 to n relationship.
      * @param  {{new(): U}} Model The Model (class) this is associated to as 1 to n - this has many Models.
      */
@@ -267,19 +257,21 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
 
     /**
      * Get an item of the model (this by default) of the given id.
-     * If called over a relative, return only an item if the given item is related to at least one of the items returned by the previous query.
+     * If called over a relative, return the item that is related to the first element returned by the previous query.
      * @param {string} pk The primary key of the item to be retrieved.
      * @return {Promise<T>} The item.
      */
-    async get(id: string): Promise<T>
+    async get(id?: string): Promise<T>
     {
         // Called over previous.
         if(this.previousRelative)
         {
             let previousQueryResult = await this.previousRelative.find();
-            return await this.relations.get(this.previousRelative.Constructor).relationalGet(id, previousQueryResult);
+            return await this.relations.get(this.previousRelative.Constructor).relationalGet(previousQueryResult.first());
         }
 
+        if(!id)
+            id = this.pk;
         return await AbstractModel.get(id, this.Constructor);
     }
 
@@ -333,7 +325,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
 
     /**
      * Store the given model (this by default).
-     * If called over a relative, try to assign this model to the retrieved models by the chained query.
+     * If called over a relative, try to assign this model to the first retrieved model by the chained query.
      * This may not be possible depending on the relationship to the previous relative.
      * @param {T} [model=this] The model to be stored.
      */
@@ -348,7 +340,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
 
             // Assign the given model to the previous query result.
             let previousQueryResult = await this.previousRelative.find();
-            model = this.relations.get(this.previousRelative.Constructor).assign(model, previousQueryResult);
+            model = this.relations.get(this.previousRelative.Constructor).assign(model, previousQueryResult.first());
         }
 
         // Store this.
@@ -377,7 +369,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
 
     /**
      * Store many models.
-     * If called over a relative, try to assign all of the given models to the items returned by the chained query.
+     * If called over a relative, try to assign this model to the first retrieved model by the chained query.
      * This may not be possible depending on the relationship of the models in this list to the previous relative.
      * @param {List<T>} models The List containing the models to be stored. 
      */
@@ -391,7 +383,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         {
             // Assign the given models to the previous query result.
             let previousQueryResult = await this.previousRelative.find();
-            models = this.relations.get(this.previousRelative.Constructor).assignMultiple(models, previousQueryResult);
+            models = this.relations.get(this.previousRelative.Constructor).assignMultiple(models, previousQueryResult.first());
         }
 
         return await AbstractModel.storeMultiple(models);
@@ -421,7 +413,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
 
     /**
      * Save the given model (this by default).
-     * If called over a relative, try to assign this model to the retrieved models by the chained query.
+     * If called over a relative, try to assign this model to the first retrieved model by the chained query.
      * This may not be possible depending on the relationship to the previous relative.
      * @param {T} [model=this] The model to be saved.
      */
@@ -436,7 +428,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
 
             // Assign the given model to the previous query result.
             let previousQueryResult = await this.previousRelative.find();
-            model = this.relations.get(this.previousRelative.Constructor).assign(model, previousQueryResult);
+            model = this.relations.get(this.previousRelative.Constructor).assign(model, previousQueryResult.first());
         }
 
         // Save this.
@@ -465,7 +457,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
 
     /**
      * Save many models.
-     * If called over a relative, try to assign all of the given models to the items returned by the chained query.
+     * If called over a relative, try to assign this model to the first retrieved model by the chained query.
      * This may not be possible depending on the relationship of the models in this list to the previous relative.
      * @param {List<T>} models The List containing the models to be saved. 
      */
@@ -479,7 +471,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         {
             // Assign the given models to the previous query result.
             let previousQueryResult = await this.previousRelative.find();
-            models = this.relations.get(this.previousRelative.Constructor).assignMultiple(models, previousQueryResult);
+            models = this.relations.get(this.previousRelative.Constructor).assignMultiple(models, previousQueryResult.first());
         }
 
         return await AbstractModel.saveMultiple(models);
@@ -509,7 +501,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
 
     /**
      * Update the given model (this by default).
-     * If called over a relative, try to assign this model to the retrieved models by the chained query. 
+     * If called over a relative, try to assign this model to the first retrieved model by the chained query.
      * This may not be possible depending on the relationship to the previous relative.
      * @param {T} [model] The model to be updated.
      */
@@ -524,7 +516,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
 
             // Assign the given model to the previous query result.
             let previousQueryResult = await this.previousRelative.find();
-            model = this.relations.get(this.previousRelative.Constructor).assign(model, previousQueryResult);
+            model = this.relations.get(this.previousRelative.Constructor).assign(model, previousQueryResult.first());
         }
 
         // Update this.
@@ -553,7 +545,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
 
     /**
      * Update many models.
-     * If called over a relative, try to assign all of the given models to the items returned by the chained query.
+     * If called over a relative, try to assign this model to the first retrieved model by the chained query.
      * This may not be possible depending on the relationship of the models in this list to the previous relative.
      * @param {List<T>} models The List containing the models to be updated. 
      */
@@ -567,7 +559,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         {
             // Assign the given models to the previous query result.
             let previousQueryResult = await this.previousRelative.find();
-            models = this.relations.get(this.previousRelative.Constructor).assignMultiple(models, previousQueryResult);
+            models = this.relations.get(this.previousRelative.Constructor).assignMultiple(models, previousQueryResult.first());
         }
 
         return await AbstractModel.updateMultiple(models);

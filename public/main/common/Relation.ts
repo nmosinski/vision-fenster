@@ -18,30 +18,27 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
     abstract inverse(): Relation<B,A>;
 
     /**
-     * Assign a B to relatives of type A. 
+     * Assign a B to a relative of type A. 
      * @param {B} toBeAssigned The B that will be assigned to A.
-     * @param {List<A>} relatives The relatives the B will be assigned to.
+     * @param {A} relative The relative the B will be assigned to.
      * @returns {B} The B.
      */
-    abstract assign(toBeAssigned: B, relatives: List<A>): B;
+    abstract assign(toBeAssigned: B, relative: A): B;
     
     /**
-     * Assign multiple Bs to relatives of type A. 
+     * Assign multiple Bs to a relative of type A. 
      * @param {List<B>} toBeAssigned The Bs that will be assigned to A.
-     * @param {List<A>} relatives The relatives the B will be assigned to.
+     * @param {A} relative The relative the B will be assigned to.
      * @returns {List<B>} The Bs.
      */
-    abstract assignMultiple(toBeAssigned: List<B>, relatives: List<A>): List<B>;
-
-
+    abstract assignMultiple(toBeAssigned: List<B>, relative: A): List<B>;
 
     /**
-     * Get a B only if it belongs to at least one of the given relatives of type A.
-     * @param {string} id The id of the B to be retrieved.
-     * @param {List<A>}  [relatives] The previous query result containing the A's. If not given, the method will consider all existing A's.
+     * Get a B that belongs to the given relative of type A.
+     * @param {List<A>}  [relative] The relative.
      * @returns {Promise<B>} B of the given id. 
      */
-    async abstract relationalGet(id: string, relatives?: List<A>): Promise<B>;
+    async abstract relationalGet(relative: A): Promise<B>;
     
     /**
      * Perform all necessary operations on all given relatives of type A that need to be done when storing the given B.

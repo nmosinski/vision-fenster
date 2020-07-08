@@ -1,11 +1,11 @@
-import Relation from "public/main/common/Relation.js"
+import BHoldsNoReferenceToA from "public/main/common/BHoldsNoReferenceToA.js"
 import AbstractModel from "public/main/common/AbstractModel.js"
 import QueryResult from "public/main/common/QueryResult.js";
 import OneToMany from "public/main/common/OneToMany.js";
 import List from "public/main/common/util/collections/list/List.js";
 import ManyToOne from "public/main/common/ManyToOne.js";
 
-class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C extends AbstractModel<C>> extends Relation<A,B>
+class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C extends AbstractModel<C>> extends BHoldsNoReferenceToA<A,B>
 {
     private _roleModel: new()=>C;
 

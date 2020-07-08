@@ -1,3 +1,4 @@
+/*
 import Relation from "public/main/common/Relation.js"
 import AbstractModel from "public/main/common/AbstractModel.js"
 import QueryResult from "public/main/common/QueryResult.js";
@@ -65,3 +66,4 @@ class OneToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends R
 }
 
 export default OneToOne;
+*/
