@@ -13,7 +13,7 @@ abstract class BHoldsReferenceToA<A extends AbstractModel<A>, B extends Abstract
 {
     assign(toBeAssigned: B, relative: A): B 
     {
-        toBeAssigned[relative.asFk()] = relative.pk;
+        toBeAssigned[relative.asFk()] = relative.id;
         return toBeAssigned;
     }
 
@@ -25,7 +25,7 @@ abstract class BHoldsReferenceToA<A extends AbstractModel<A>, B extends Abstract
 
     async relationalGet(relative: A): Promise<B> 
     {
-        return (await this.queryOfRelativeB().eq(relative.asFk(), relative.pk).execute(1)).first();
+        return (await this.queryOfRelativeB().eq(relative.asFk(), relative.id).execute(1)).first();
     }
 
     async relationalStore(toStore: B, relatives?: List<A>): Promise<void> 
@@ -36,13 +36,13 @@ abstract class BHoldsReferenceToA<A extends AbstractModel<A>, B extends Abstract
         // Check if the A that B belongs to is contained in the given relatives.
         if(relatives)
             relatives.foreach((a)=>{
-                if(a.pk === toStore[a.asFk()])
+                if(a.id === toStore[a.asFk()])
                     return;
             });
 
         // Try to find the relative in the storage.
         let a = new this.relativeA();
-        a.pk = toStore[a.asFk()];
+        a.id = toStore[a.asFk()];
         a = await a.load(toStore[a.asFk()]);
         if(a)
             return;
@@ -76,7 +76,7 @@ abstract class BHoldsReferenceToA<A extends AbstractModel<A>, B extends Abstract
             return new QueryResult<B>();
 
         let query = this.queryOfRelativeB();
-        query = query.hasSome(new this.relativeA().asFk(), relatives.splitProperty<string>("pk"));
+        query = query.hasSome(new this.relativeA().asFk(), relatives.splitProperty<string>("id"));
         
         return await query.execute();
     }
@@ -93,7 +93,7 @@ abstract class BHoldsReferenceToA<A extends AbstractModel<A>, B extends Abstract
                 let found = false;
 
                 relatives.foreach((a)=>{
-                    if(a.pk === toStore[a.asFk()])
+                    if(a.id === toStore[a.asFk()])
                         found = true;
                 });
                 if(!found)
@@ -111,7 +111,7 @@ abstract class BHoldsReferenceToA<A extends AbstractModel<A>, B extends Abstract
         // Try to find the missing relatives in the storage.
         let aQuery = this.queryOfRelativeA().hasSome("");
         let a = new this.relativeA();
-        a.pk = toStore[a.asFk()];
+        a.id = toStore[a.asFk()];
         a = await a.load(toStore[a.asFk()]);
         if(a)
             return;

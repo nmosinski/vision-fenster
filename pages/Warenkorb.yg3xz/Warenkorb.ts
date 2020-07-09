@@ -68,7 +68,6 @@ function onItemReadyFunctionForRepeater($item, shoppingCartItem, index)
         });
         $item("#buttonShoppingCartItemRemove").onClick((event)=>{
             shoppingCart.removeItem(shoppingCartItem.id);
-            console.log(shoppingCart);
             onShoppingCartChange();
         });
         $item("#buttonShoppingCartItemEdit").onClick(async function(event){

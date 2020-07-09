@@ -1,6 +1,7 @@
-import AbstractModel from "../../../../../../public/main/common/orm/AbstractModel";
+
 import TestShoppingCartItem from "./TestShoppingCartItem";
 import TestUser from "./TestUser";
+import AbstractModel from "../../../../../../main/common/orm/AbstractModel";
 
 
 class TestShoppingCart extends AbstractModel<TestShoppingCart>

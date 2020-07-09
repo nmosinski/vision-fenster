@@ -28,12 +28,14 @@ class WixDatabase<T extends AbstractModel<T>>
 
     /**
      * Get an item of the given pk.
-     * @param {string} pk The pk of the item to be returned.
+     * @param {string} id The pk of the item to be returned.
      * @returns {new()=>U} The item of the given pk.
      */
-    static async get<U extends AbstractModel<U>>(pk: string, Model: new()=>U): Promise<U>
+    static async get<U extends AbstractModel<U>>(id: string, Model: new()=>U): Promise<U>
     {
-        return new Model().fill(await wixData.get(new Model().tableName, pk));
+        let item = await wixData.get(new Model().tableName, id);
+        console.log(item);
+        return itemToModel(item, Model);
     }
 
     /**
@@ -91,7 +93,7 @@ class WixDatabase<T extends AbstractModel<T>>
      */
     static async store<U extends AbstractModel<U>>(toStore: U): Promise<void>
     {
-        await wixData.insert(toStore.tableName, strip(toStore));
+        await wixData.insert(toStore.tableName, modelToItem(toStore));
     }
 
     /**
@@ -109,7 +111,7 @@ class WixDatabase<T extends AbstractModel<T>>
      */
     static async save<U extends AbstractModel<U>>(toSave: U): Promise<void>
     {
-        await wixData.save(toSave.tableName, strip(toSave));
+        await wixData.save(toSave.tableName, modelToItem(toSave));
     }
 
     /**
@@ -129,7 +131,7 @@ class WixDatabase<T extends AbstractModel<T>>
     {
         if(toStore.isEmpty())
             return;
-        wixData.bulkInsert(toStore.get(0).tableName, stripMany(toStore));
+        wixData.bulkInsert(toStore.get(0).tableName, modelsToItems(toStore));
     }
 
     /**
@@ -149,7 +151,7 @@ class WixDatabase<T extends AbstractModel<T>>
     {
         if(toSave.isEmpty())
             return;
-        wixData.bulkSave(toSave.get(0).tableName, stripMany(toSave));
+        wixData.bulkSave(toSave.get(0).tableName, modelsToItems(toSave));
     }
 
     /**
@@ -167,7 +169,7 @@ class WixDatabase<T extends AbstractModel<T>>
      */
     static async update<U extends AbstractModel<U>>(toUpdate: U): Promise<void>
     {
-        await wixData.update(toUpdate.tableName, strip(toUpdate));
+        await wixData.update(toUpdate.tableName, modelToItem(toUpdate));
     }
 
     /**
@@ -187,7 +189,7 @@ class WixDatabase<T extends AbstractModel<T>>
     {
         if(toUpdate.isEmpty())
             return;
-        wixData.bulkUpdate(toUpdate.get(0).tableName, stripMany(toUpdate));
+        wixData.bulkUpdate(toUpdate.get(0).tableName, modelsToItems(toUpdate));
     }
 
     /**
@@ -205,7 +207,7 @@ class WixDatabase<T extends AbstractModel<T>>
      */
     static async remove<U extends AbstractModel<U>>(toRemove: U): Promise<void>
     {
-        await wixData.remove(toRemove.tableName, toRemove.pk);
+        await wixData.remove(toRemove.tableName, toRemove[itemToModelPropertyMapping("_id")]);
     }
 
     /**
@@ -226,7 +228,7 @@ class WixDatabase<T extends AbstractModel<T>>
         if(toRemove.isEmpty())
             return;
         let ids: Array<string> = [];
-        toRemove.foreach((model)=>{ids.push(model.pk)});
+        toRemove.foreach((model)=>{ids.push(model[itemToModelPropertyMapping("_id")])});
         wixData.bulkRemove(toRemove.get(0).tableName, ids);
     }
 
@@ -263,11 +265,6 @@ class WixDatabase<T extends AbstractModel<T>>
     get Model(): new()=>T
     {
         return this._Model;
-    }
-
-    get pkColumnName()
-    {
-        return "_id";
     }
 }
 
@@ -308,7 +305,7 @@ export class Query<T extends AbstractModel<T>>
      */
     eq(propertyName: string, proeprtyValue: any): this
     {
-        this.query = this.query.eq(propertyName, proeprtyValue);
+        this.query = this.query.eq(modelToItemPropertyMapping(propertyName), proeprtyValue);
         return this;
     }
 
@@ -320,7 +317,7 @@ export class Query<T extends AbstractModel<T>>
      */
     hasSome(propertyName: string, propertyValues: List<any>): this
     {
-        this.query = this.query.hasSome(propertyName, propertyValues.toArray());
+        this.query = this.query.hasSome(modelToItemPropertyMapping(propertyName), propertyValues.toArray());
         return this;
     }
 
@@ -337,7 +334,7 @@ export class Query<T extends AbstractModel<T>>
             previousQueryResult = await this.subquery.execute();
         */
         let wixQueryResult = await this.query.limit(limit).find();
-        return wixQueryItemsToQueryResult(wixQueryResult.items, this.Model);
+        return itemsToQueryResult(wixQueryResult.items, this.Model);
     }
 
     /**
@@ -391,10 +388,29 @@ export class Query<T extends AbstractModel<T>>
     */
 }
 
-function wixQueryItemToModel<U extends AbstractModel<U>>(item: any, Model: new()=>U): U 
+function itemToModelPropertyMapping(itemPropertyName: string): string
 {
+    if(itemPropertyName === "_id")
+        return "id";
+    return itemPropertyName;
+}
+
+function modelToItemPropertyMapping(modelPropertyName: string): string
+{
+    if(modelPropertyName === "id")
+        return "_id";
+    return modelPropertyName;
+}
+
+function itemToModel<U extends AbstractModel<U>>(item: any, Model: new()=>U): U 
+{
+    if(!item)
+        return null;
+
+    for(let key in item)
+        item[itemToModelPropertyMapping(key)] = item[key];
+
     let model = new Model().fill(item);
-    model.pk = item["_id"];
     return model;
 }
 
@@ -404,17 +420,21 @@ function wixQueryItemToModel<U extends AbstractModel<U>>(item: any, Model: new()
  * @param {new()=>U} model The model of the items to be returned.
  * @returns {QueryResult<U>} The QueryResult. 
  */
-function wixQueryItemsToQueryResult<U extends AbstractModel<U>>(items: Array<object>, Model: new()=>U): QueryResult<U>
+function itemsToQueryResult<U extends AbstractModel<U>>(items: Array<object>, Model: new()=>U): QueryResult<U>
 {
     let result = new QueryResult<U>();
-    items.forEach((item) => { result.add(wixQueryItemToModel(item, Model)); });
+    items.forEach((item) => { result.add(itemToModel(item, Model)); });
     return result;
 }
 
-function strip(model: AbstractModel<any>): object
+function modelToItem(model: AbstractModel<any>): object
 {
-    let item = model.strip();
-    item["_id"] = model.pk;
+    let stripped = model.strip();
+    let item = {};
+
+    for(let key in stripped)
+        item[modelToItemPropertyMapping(key)] = stripped[key];
+    
     return item;
 }
 
@@ -423,11 +443,11 @@ function strip(model: AbstractModel<any>): object
  * @param {List<AbstractModel<any>>}list The list containing the models.
  * @returns {Array<object>} The objects.
  */
-function stripMany(list: List<AbstractModel<any>>): Array<object>
+function modelsToItems(list: List<AbstractModel<any>>): Array<object>
 {
-    let stripped = [];
-    list.foreach((model)=>{stripped.push(strip(model));});
-    return stripped;
+    let items = [];
+    list.foreach((model)=>{items.push(modelToItem(model));});
+    return items;
 }
 
 export default WixDatabase;

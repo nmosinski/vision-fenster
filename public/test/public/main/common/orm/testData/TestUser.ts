@@ -1,5 +1,5 @@
-import AbstractModel from "../../../../../../public/main/common/orm/AbstractModel";
 import TestShoppingCart from "./TestShoppingCart";
+import AbstractModel from "../../../../../../main/common/orm/AbstractModel";
 
 class TestUser extends AbstractModel<TestUser>
 {

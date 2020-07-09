@@ -15,7 +15,7 @@ class QueryResult<T extends AbstractModel<T>> extends List<T>
     toPks(): List<string>
     {
         let pks = new List<string>();
-        this.foreach((item)=>{pks.add(item.pk);});
+        this.foreach((item)=>{pks.add(item.id);});
         return pks;
     }
 }

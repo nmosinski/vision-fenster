@@ -1,7 +1,7 @@
-import WixDatabase from "./../../../../../public/main/common/orm/WixDatabase.js"
 import TestShoppingCart from "./testData/TestShoppingCart.js";
 import TestShoppingCartItem from "./testData/TestShoppingCartItem.js";
 import TestUser from "./testData/TestUser.js";
+import WixDatabase from "../../../../../main/common/orm/WixDatabase.js";
 
 let shoppingCarts = TestShoppingCart.dummies(TestShoppingCart, 3);
 let shoppingCartItems = TestShoppingCartItem.dummies(TestShoppingCart, 5);

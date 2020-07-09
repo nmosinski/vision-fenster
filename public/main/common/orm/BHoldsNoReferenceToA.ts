@@ -43,10 +43,10 @@ abstract class BHoldsNoReferenceToA<A extends AbstractModel<A>, B extends Abstra
         let asToDestroy: List<A>;
         
         if(!relatives)
-            asToDestroy = await this.queryOfRelativeA().eq(toDestroy.asFk(), toDestroy.pk).execute();
+            asToDestroy = await this.queryOfRelativeA().eq(toDestroy.asFk(), toDestroy.id).execute();
         else
         {
-            asToDestroy = relatives.filter((a)=> { return a[toDestroy.asFk()] === toDestroy.pk; });
+            asToDestroy = relatives.filter((a)=> { return a[toDestroy.asFk()] === toDestroy.id; });
         }
 
         await AbstractModel.destroyMultiple(asToDestroy);
@@ -61,7 +61,7 @@ abstract class BHoldsNoReferenceToA<A extends AbstractModel<A>, B extends Abstra
         let bQuery = this.queryOfRelativeB();
         let toFindIds: Set<string> = new Set<string>(relatives.splitProperty<string>(aRelativeB.asFk()).toArray());
 
-        bQuery = bQuery.hasSome(aRelativeB.asPk(), toFindIds);
+        bQuery = bQuery.hasSome("_id", toFindIds);
         
         return await bQuery.execute();
     }
@@ -84,7 +84,7 @@ abstract class BHoldsNoReferenceToA<A extends AbstractModel<A>, B extends Abstra
         let bInstance = new this.relativeB();
 
         if(!relatives)
-            asToDestroy = await this.queryOfRelativeA().hasSome(bInstance.asFk(), toDestroy.splitProperty<string>("pk")).execute();
+            asToDestroy = await this.queryOfRelativeA().hasSome(bInstance.asFk(), toDestroy.splitProperty<string>("id")).execute();
         else
             asToDestroy = relatives.filter((a)=> { return toDestroy.toArray().includes(a[bInstance.asFk()]); });
 

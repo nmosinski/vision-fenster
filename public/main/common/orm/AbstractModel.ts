@@ -21,9 +21,7 @@ import UpdateError from './UpdateError';
 import DestroyError from './DestroyError';
 import InvalidOperationError from '../util/error/InvalidOperationError';
 
-
 /**
- * @todo Rename _id to pk or pk to _id.
  * @todo Add undo operations for save etc. Important in case a save is not possible but uve updated already some references.
  */
 
@@ -50,7 +48,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         this.properties = new Properties();
 
         this.properties.
-        string("pk");
+        string("id");
         
         this.addProperties();
         this.addRelations();
@@ -117,7 +115,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     {
         if(!(model instanceof AbstractModel))
             return false;
-        return (this.pk === model.pk) && (JsTypes.belongToTheSameClass(this, model));
+        return (this.id === model.id) && (JsTypes.belongToTheSameClass(this, model));
     }
 
     /**
@@ -153,9 +151,8 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     static strip<U extends AbstractModel<U>>(model: AbstractModel<U>): object
     {
         let item = {};
-        model._properties.foreach((propertyName)=>{
+        model.properties.foreach((propertyName)=>{
             item[propertyName] = model[propertyName];
-            item[model.asPk()] = model.pk;
         });
         return item;
     }
@@ -273,7 +270,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         }
 
         if(!id)
-            id = this.pk;
+            id = this.id;
         return await AbstractModel.get(id, this.Constructor);
     }
 
@@ -700,7 +697,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      */
     public asPk(): string
     {
-        return "_id";
+        return "id";
     }
 
     /**
@@ -770,7 +767,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Get the primary key of this model.
      * @returns {string} The primary key of this model.
      */
-    get pk(): string
+    get id(): string
     {
         return this._id;
     }
@@ -782,11 +779,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
 
     /**
      * Set the primary key of this model.
-     * @param {string} pk The new primary key.
+     * @param {string} id The new primary key.
      */
-    set pk(pk: string)
+    set id(id: string)
     {
-        this._id = pk;
+        this._id = id;
     }
 
     /**
@@ -1002,8 +999,8 @@ export class RoleModel extends AbstractModel<RoleModel> implements IComparable
         super();
         this.model1 = model1;
         this.model2 = model2;
-        this[model1.asFk()] = model1.pk;
-        this[model2.asFk()] = model2.pk;
+        this[model1.asFk()] = model1.id;
+        this[model2.asFk()] = model2.id;
 
         this.properties.
         string(this.model1.asFk()).
@@ -1035,9 +1032,9 @@ export class RoleModel extends AbstractModel<RoleModel> implements IComparable
      */
     hasReference(model: AbstractModel<any>): boolean
     {
-        if(this.model1.constructor === model.constructor && this.model1.pk === model.pk)
+        if(this.model1.constructor === model.constructor && this.model1.id === model.id)
             return true;
-        if(this.model2.constructor === model.constructor && this.model2.pk === model.pk)
+        if(this.model2.constructor === model.constructor && this.model2.id === model.id)
             return true;
         return false;
     }

@@ -66,7 +66,7 @@ class ShoppingCartItem extends AbstractModel<ShoppingCartItem>
 	{
 		if(!(o instanceof ShoppingCartItem))
 			return false;
-		if(this.pk !== o.pk)
+		if(this.id !== o.id)
 			return false;
 		if(this.shoppingCartId !== o.shoppingCartId)
 			return false;

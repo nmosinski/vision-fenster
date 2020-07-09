@@ -48,7 +48,6 @@ $w.onReady(async function ()
 	else
 		product = new Product("123", PRODUCTMODELID, 20, "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg");
 	
-	console.log(product);
 	let productOptionTypes = await productOptionTypeRepository.getProductOptionTypesByProductModelId(PRODUCTMODELID);
 	let tmpProductOptionTypesArr = productOptionTypes.toArray();
 	for(let idx in tmpProductOptionTypesArr)
