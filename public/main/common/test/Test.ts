@@ -104,6 +104,7 @@ class Test
     private _passed: boolean;
     private _result: any;
     private _evaluated: boolean;
+    private _error: any;
     
     /**
      * Class for printing test reports properly.
@@ -120,6 +121,7 @@ class Test
         this.description = description;
         this.evaluated = false;
         this.passed = false;
+        this.error = null;
     }
 
     print()
@@ -127,12 +129,24 @@ class Test
         if(this.passed)
             console.log("%c" + this.location + " , " + this.description + ": PASSED", "background: #FFF; color: #60ee07");
         else
-            console.log("%c" + this.location + " , " + this.description + ": FAILED\n" + "Expected " + this.expected.toString() + " but resulted in " + this.result + "\n", "background: #FFF; color: #ff0000");
+            console.log("%c" + this.location + " , " + this.description + ": FAILED\n" + "Expected " + this.expected.toString() + " but resulted in " + this.result + "\n", "background: #FFF; color: #ff8c00");
+        if(this.error)
+        {
+            console.log("%c" + "The following error has been thrown when executing the upper test:", "background: #FFF; color: #ff0000");
+            console.log("%c" + this.error, "background: #FFF; color: #ff0000");
+            console.log(this.error);
+        }
     }
 
     async run()
     {
-        this.result = await this.implementation();
+        try
+        {
+            this.result = await this.implementation();
+        }catch(err)
+        {
+            this.error = err;
+        }
         this.passed = this.expected.eval(this.result);
         this.evaluated = true;
     }
@@ -262,31 +276,79 @@ class Test
     {
         return this._result;
     }
+
+    /**
+     * Set the error if occurred during the test execution.
+     * @param {any} error The error.
+     */
+    set error(error)
+    {
+        this._error = error;
+    }
+
+    /**
+     * Get the error if occurred during the test execution.
+     * @returns {any} The error.
+     */
+    get error()
+    {
+        return this._error;
+    }
 }
 
 class Tests extends List<Test>
 {
     private _beforeEach: Function;
     private _afterEach: Function;
+    private _afterAll: Function;
+    private _beforeAll: Function;
     /**
+     * @param {Function} [beforeAll] The function to be run before all tests.
+     * @param {Function} [afterAll] The function to be run after all tests.
      * @param {Function} [beforeEach] The function to be run before each test.
      * @param {Function} [afterEach] The function to be run after each test.
      */
-    constructor(beforeEach: Function=null, afterEach: Function=null)
+    constructor(beforeAll: Function=null, afterAll: Function=null, beforeEach: Function=null, afterEach: Function=null)
     {
         super();
+        this.beforeAll = beforeAll;
+        this.afterAll = afterAll;
         this.beforeEach = beforeEach;
         this.afterEach = afterEach;
     }
 
     async runAll(): Promise<void>
     {
-        this.foreach(async (test)=>{
+        await this.beforeAll();
+        await this.foreachAsync(async (test)=>{
             await this.beforeEach();
             await test.run();
             test.print();
             await this.afterEach();
         });
+        await this.afterAll();
+    }
+
+    /**
+     * @param {Function} beforeAll
+     */
+    set beforeAll(beforeAll: Function)
+    {
+        if(typeof(beforeAll) === "function")
+            this._beforeAll = beforeAll;
+        else
+            this._beforeAll = ()=>{};
+    }
+
+    /**
+     * @param {Function} afterAll
+     */
+    set afterAll(afterAll: Function)
+    {
+        if(typeof(afterAll) === "function")
+            this._afterAll = afterAll;
+        else
+            this._afterAll = ()=>{};
     }
 
     /**
@@ -309,6 +371,22 @@ class Tests extends List<Test>
             this._afterEach = afterEach;
         else
             this._afterEach = ()=>{};
+    }
+
+    /**
+     * @returns {Function}
+     */
+    get beforeAll(): Function
+    {
+        return this._beforeAll;
+    }
+
+    /**
+     * @returns {Function}
+     */
+    get afterAll(): Function
+    {
+        return this._afterAll;
     }
 
     /**

@@ -1,8 +1,6 @@
-import {runAllTestss} from "./public/main/common/orm/AbstractModel.test"
+import {runAllTests as abstractModelTest} from "./public/main/common/orm/AbstractModel.test"
 
 export async function runAllTests()
 {
-    console.log("start in runAllTests in TestRunner");
-    //await runAbstractModelTests();
-    await runAllTestss();
+    await abstractModelTest();
 }

@@ -56,7 +56,7 @@ abstract class BHoldsNoReferenceToA<A extends AbstractModel<A>, B extends Abstra
     {
         if(relatives.isEmpty())
             return new QueryResult<B>();
-
+        
         let aRelativeB = new this.relativeB();
         let bQuery = this.queryOfRelativeB();
         let toFindIds: Set<string> = new Set<string>(relatives.splitProperty<string>(aRelativeB.asFk()).toArray());

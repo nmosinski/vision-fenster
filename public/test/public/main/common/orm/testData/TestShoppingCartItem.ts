@@ -5,9 +5,15 @@ import AbstractModel from "../../../../../../main/common/orm/AbstractModel";
 
 class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
 {
-    protected Constructor: new () => TestShoppingCartItem = TestShoppingCartItem;
     private _count: any;
     
+    protected Constructor: new () => TestShoppingCartItem;
+    
+    init(): void 
+    {
+        this.Constructor = TestShoppingCartItem;
+    }
+
     addProperties(): void 
     {
         this.properties.

@@ -12,7 +12,7 @@ const PATH = "public/main/feature/shoppingCart/model/ShoppingCart.js";
 class ShoppingCart extends AbstractModel<ShoppingCart>
 {
 	protected _properties: Properties;
-	protected Constructor: new () => ShoppingCart = ShoppingCart;
+	protected Constructor: new () => ShoppingCart;
 	private _userId: string;
 	
 
@@ -24,6 +24,11 @@ class ShoppingCart extends AbstractModel<ShoppingCart>
 	constructor(data?:{pk?: string, userId?: string})
 	{
 		super(data);
+	}
+
+	init(): void 
+	{
+		this.Constructor = ShoppingCart;
 	}
 
 	addProperties(): void 

@@ -2,15 +2,14 @@ import TestShoppingCart from "./testData/TestShoppingCart";
 import TestShoppingCartItem from "./testData/TestShoppingCartItem";
 import TestUser from "./testData/TestUser";
 import WixDatabase from "../../../../../main/common/orm/WixDatabase";
-import { Tests, Test, truthly, unspecified, Value} from "../../../../../main/common/test/Test";
+import { Tests, Test, truthly, unspecified, value} from "../../../../../main/common/test/Test";
 import AbstractModel from "../../../../../main/common/orm/AbstractModel";
-import ShoppingCart from "../../../../../main/feature/shoppingCart/model/ShoppingCart";
-
+import List from "../../../../../main/common/util/collections/list/List";
 const PATH = "test/public/main/common/orm/AbstractModel.test.js"
 
-var testShoppingCarts;
-var testShoppingCartItems;
-var testUsers;
+var testShoppingCarts: List<TestShoppingCart>;
+var testShoppingCartItems: List<TestShoppingCartItem>;
+var testUsers: List<TestUser>;
 
 function initTestData()
 {
@@ -19,14 +18,23 @@ function initTestData()
     testUsers = TestUser.dummies(TestUser, 2);
 }
 
-export async function runAllTestss()
+export async function runAllTests()
 {
     initTestData();
  
-    let tests = new Tests(beforeEach, afterEach);
-
-    tests.add(new Test(PATH, "simple get", new Value(testShoppingCarts.first().id), simpleGetImplementation));
-
+    let tests = new Tests(afterEach, null, beforeEach, afterEach);
+    
+    tests.add(new Test(PATH, "simple get", value(testShoppingCarts.first().id), simpleGet));
+    tests.add(new Test(PATH, "simple find", truthly(), simpleFind));
+    tests.add(new Test(PATH, "simple store", truthly(), simpleStore));
+    tests.add(new Test(PATH, "simple store multiple", truthly(), simpleStoreMultiple));
+    tests.add(new Test(PATH, "simple update", value(3), simpleUpdate));
+    tests.add(new Test(PATH, "simple update multiple", truthly(), simpleUpdateMultiple));
+    tests.add(new Test(PATH, "simple save", truthly(), simpleSave));
+    tests.add(new Test(PATH, "simple save multiple", truthly(), simpleSaveMultiple));
+    tests.add(new Test(PATH, "simple destroy", unspecified(), simpleDestroy));
+    tests.add(new Test(PATH, "simple destroy multiple", truthly(), simpleDestroyMultiple));
+    
     await tests.runAll();
 }
 
@@ -39,14 +47,12 @@ async function beforeEach()
 
 async function afterEach()
 {
-    /*
     await WixDatabase.removeAll(TestUser);
     await WixDatabase.removeAll(TestShoppingCart);
     await WixDatabase.removeAll(TestShoppingCartItem);
-    */
 }
 
-async function simpleGetImplementation()
+async function simpleGet()
 {
     let result = await AbstractModel.get(testShoppingCarts.first().id, TestShoppingCart);
     if(result)
@@ -55,78 +61,76 @@ async function simpleGetImplementation()
         return result;
 }
 
+async function simpleFind()
+{
+    let result = await AbstractModel.find(TestShoppingCartItem);
+    return result.equals(testShoppingCartItems);
+}
 
-
-/*
-test("simple get", ()=>{
-    AbstractModel.get(testShoppingCarts.first().id, TestShoppingCart).then((result)=>{
-        expect(result.id).toBe(testShoppingCarts.first().id);
-    });
-});
-
-test("simple find", ()=>{
-    AbstractModel.find(TestShoppingCartItem).then((result)=>{
-        expect(result.equals(testShoppingCartItems)).toBeTruthy();
-    });
-});
-
-test("simple store", ()=>{
+async function simpleStore()
+{
     let shoppingCart = TestShoppingCart.dummy(TestShoppingCart);
-    shoppingCart.store().then(()=>{
-        TestShoppingCart.get(shoppingCart.id, TestShoppingCart).then((result)=>{
-            expect(result).toBeTruthy();
-        });
-    });
-});
+    await shoppingCart.store();
+    let result = await TestShoppingCart.get(shoppingCart.id, TestShoppingCart);
+    return result;
+}
 
-test("simple storeMultiple", ()=>{
-    WixDatabase.removeAll(TestShoppingCartItem).then(()=>{    
-        TestShoppingCartItem.storeMultiple(testShoppingCartItems).then(()=>{
-            TestShoppingCartItem.find(TestShoppingCartItem).then((result)=>{
-                expect(result.equals(testShoppingCartItems)).toBeTruthy();
-            });
-        });
-    });
-});
+async function simpleStoreMultiple()
+{
+    await WixDatabase.removeAll(TestShoppingCartItem);  
+    await TestShoppingCartItem.storeMultiple(testShoppingCartItems);
+    let result = await TestShoppingCartItem.find(TestShoppingCartItem);
+    return result.equals(testShoppingCartItems);
+}
 
-test("simple update", ()=>{
-    TestShoppingCartItem.get(testShoppingCartItems.first().id, TestShoppingCartItem).then((shoppingCartItem)=>{
-        shoppingCartItem.count = 3;
-        shoppingCartItem.update().then(()=>{
-            TestShoppingCartItem.get(shoppingCartItem.id, TestShoppingCartItem).then((result)=>{
-                expect(result.count).toBe(shoppingCartItem.count);
-            });
-        });
-    });
-});
+async function simpleUpdate()
+{
+    let item = await TestShoppingCartItem.get(testShoppingCartItems.first().id, TestShoppingCartItem);
+    item.count = 3;
+    await item.update();
+    let updatedItem = await TestShoppingCartItem.get(item.id, TestShoppingCartItem);   
+    return updatedItem.count;
+}
 
-test("simple updateMultiple", ()=>{
-    TestShoppingCartItem.find(TestShoppingCartItem).then((shoppingCartItems)=>{
-        shoppingCartItems.foreach((shoppingCartItem)=>{shoppingCartItem.count = 3;});
-
-        TestShoppingCartItem.updateMultiple(shoppingCartItems).then(()=>{
-            TestShoppingCartItem.find(TestShoppingCartItem).then((result)=>{
-                result.foreach((item)=>{
-                    expect(item.count).toBe(3);
-                });
-            });
-        });
+async function simpleUpdateMultiple()
+{
+    let items = await TestShoppingCartItem.find(TestShoppingCartItem);
+    items.foreach((item)=>{item.count = 3;});
+    await TestShoppingCartItem.updateMultiple(items);
+    let updatedItems = await TestShoppingCartItem.find(TestShoppingCartItem);
+    updatedItems.foreach((item)=>{
+        if(item.count !== 3)
+            return false;
     });
-});
+    return true;
+}
 
-test("simple destroy", ()=>{
-    TestUser.destroy(testUsers.first()).then(()=>{
-        TestUser.get(testUsers.first().id, TestUser).then((result)=>{
-            expect(result).toBeNull();
-        });
-    });
-});
+async function simpleSave()
+{
+    await WixDatabase.removeAll(TestShoppingCartItem);  
+    await TestShoppingCartItem.saveMultiple(testShoppingCartItems);
+    let result = await TestShoppingCartItem.find(TestShoppingCartItem);
+    return result.equals(testShoppingCartItems);
+}
 
-test("simple destroyMultiple", ()=>{
-    TestUser.destroyMultiple(testUsers).then(()=>{
-        TestUser.find(TestUser).then((users)=>{
-            expect(users.isEmpty).toBeTruthy();
-        });
-    });
-});
-*/
+async function simpleSaveMultiple()
+{
+    await WixDatabase.removeAll(TestShoppingCartItem);  
+    await TestShoppingCartItem.saveMultiple(testShoppingCartItems);
+    let result = await TestShoppingCartItem.find(TestShoppingCartItem);
+    return result.equals(testShoppingCartItems);
+}
+
+async function simpleDestroy()
+{
+    await TestUser.destroy(testUsers.first());
+    let result = await TestUser.get(testUsers.first().id, TestUser);
+    return result;
+}
+
+async function simpleDestroyMultiple()
+{
+    await TestUser.destroyMultiple(testUsers);
+    let result = await TestUser.find(TestUser);
+    return result.isEmpty();
+}

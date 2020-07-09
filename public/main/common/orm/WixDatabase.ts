@@ -34,7 +34,6 @@ class WixDatabase<T extends AbstractModel<T>>
     static async get<U extends AbstractModel<U>>(id: string, Model: new()=>U): Promise<U>
     {
         let item = await wixData.get(new Model().tableName, id);
-        console.log(item);
         return itemToModel(item, Model);
     }
 
@@ -45,7 +44,7 @@ class WixDatabase<T extends AbstractModel<T>>
      */
     async has(id: string): Promise<boolean>
     {
-        return WixDatabase.has(id, this.Model);
+        return await WixDatabase.has(id, this.Model);
     }
 
     /**
@@ -131,7 +130,8 @@ class WixDatabase<T extends AbstractModel<T>>
     {
         if(toStore.isEmpty())
             return;
-        wixData.bulkInsert(toStore.get(0).tableName, modelsToItems(toStore));
+
+        await wixData.bulkInsert(toStore.get(0).tableName, modelsToItems(toStore));
     }
 
     /**
@@ -151,7 +151,7 @@ class WixDatabase<T extends AbstractModel<T>>
     {
         if(toSave.isEmpty())
             return;
-        wixData.bulkSave(toSave.get(0).tableName, modelsToItems(toSave));
+        await wixData.bulkSave(toSave.get(0).tableName, modelsToItems(toSave));
     }
 
     /**
@@ -189,7 +189,7 @@ class WixDatabase<T extends AbstractModel<T>>
     {
         if(toUpdate.isEmpty())
             return;
-        wixData.bulkUpdate(toUpdate.get(0).tableName, modelsToItems(toUpdate));
+        await wixData.bulkUpdate(toUpdate.get(0).tableName, modelsToItems(toUpdate));
     }
 
     /**
@@ -227,9 +227,8 @@ class WixDatabase<T extends AbstractModel<T>>
     {
         if(toRemove.isEmpty())
             return;
-        let ids: Array<string> = [];
-        toRemove.foreach((model)=>{ids.push(model[itemToModelPropertyMapping("_id")])});
-        wixData.bulkRemove(toRemove.get(0).tableName, ids);
+        let ids: Array<string> = <Array<string>>toRemove.splitProperty(itemToModelPropertyMapping("_id")).toArray();
+        await wixData.bulkRemove(toRemove.get(0).tableName, ids);
     }
 
     /**

@@ -6,8 +6,13 @@ import AbstractModel from "../../../../../../main/common/orm/AbstractModel";
 
 class TestShoppingCart extends AbstractModel<TestShoppingCart>
 {
-    protected Constructor: new () => TestShoppingCart = TestShoppingCart;
+    protected Constructor: new () => TestShoppingCart;
     
+    init(): void 
+    {
+        this.Constructor = TestShoppingCart;
+    }
+
     addProperties(): void 
     {
 
@@ -16,7 +21,7 @@ class TestShoppingCart extends AbstractModel<TestShoppingCart>
     addRelations(): void 
     {
         this.oneToMany(TestShoppingCartItem);
-        this.zeroOroneToOne(TestUser);
+        this.zeroOrOneToOne(TestUser);
     }
 
 }

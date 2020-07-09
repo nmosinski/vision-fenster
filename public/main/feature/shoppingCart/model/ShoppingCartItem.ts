@@ -12,7 +12,7 @@ const PATH = "public/main/feature/shoppingCart/model/ShoppingCartItem.js";
  */
 class ShoppingCartItem extends AbstractModel<ShoppingCartItem>
 {
-	protected Constructor: new () => ShoppingCartItem = ShoppingCartItem;
+	protected Constructor: new () => ShoppingCartItem;
 	private _image: string;
 	private _singlePrice: number;
 	private _details: string;
@@ -33,8 +33,12 @@ class ShoppingCartItem extends AbstractModel<ShoppingCartItem>
 	 */
 	constructor(data?: {pk?: string, shoppingCartId?: string, productId?: string, title?: string, count?: number, singlePrice?: number, image?: string, details?: string} )
 	{
-		super();
-		this.fill(data);
+		super(data);
+	}
+
+	init(): void 
+	{
+		this.Constructor = ShoppingCartItem;
 	}
 
 	addProperties(): void 

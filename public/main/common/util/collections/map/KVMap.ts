@@ -69,6 +69,21 @@ class KVMap<K,V> implements IComparable
 			{
 				f(key, value);
 			}
+	}
+	
+	/**
+	 * Iterate through all elements of this map and calls the passed async function.
+	 * @param {Function} f - The function to be called by each element of this map.
+	 */
+    async foreachAsync(f: (k: K, v:V) => void): Promise<void>
+    {
+    	if(!JsTypes.isFunction(f))
+    		throw new VariableTypeError(PATH, "KVMap.foreachAsync(f)", f, "function");
+
+			for(let [key, value] of this._elements.entries()) 
+			{
+				await f(key, value);
+			}
     }
 
 	/**
@@ -111,7 +126,7 @@ class KVMap<K,V> implements IComparable
     filter(f: (k:K, v:V) => boolean): KVMap<K,V>
     {
     	if(!JsTypes.isFunction(f))
-    		throw new VariableTypeError(PATH, "KVMap.foreach(f)", f, "function");
+    		throw new VariableTypeError(PATH, "KVMap.filter(f)", f, "function");
 
     	let ret = new KVMap<K,V>();
 

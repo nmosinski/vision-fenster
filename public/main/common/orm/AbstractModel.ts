@@ -50,10 +50,13 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         this.properties.
         string("id");
         
+        this.init();
         this.addProperties();
         this.addRelations();
         this.fill(data);
     }
+
+    abstract init(): void;
 
     /**
      * Get a new instance of this.
@@ -192,9 +195,10 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Add a relation of 0..1 to 1 relationship.
      * @param  {{new(): U}} Model The Model (class) this is associated to as 0..1 to 1 - this has one Model.
      */
-    zeroOroneToOne<U extends AbstractModel<U>>(Model: {new(): U}): void
+    zeroOrOneToOne<U extends AbstractModel<U>>(Model: {new(): U}): void
     {
         // This logic inverse.
+
         this.relations.add(Model, new OneToZeroOrOne(Model, this.Constructor));
         this.properties.string(AbstractModel.asFk(Model));
     }
@@ -206,6 +210,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     oneToZeroOrOne<U extends AbstractModel<U>>(Model: {new(): U}): void
     {
         // This logic inverse.
+
         this.relations.add(Model, new ZeroOrOneToOne(Model, this.Constructor));
     }
 
@@ -216,6 +221,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     oneToMany<U extends AbstractModel<U>>(Model: {new(): U}): void
     {
         // This logic, inverse.
+
         this.relations.add(Model, new ManyToOne(Model, this.Constructor));
     }
     
@@ -359,7 +365,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
             throw new StoreError(PATH, "AbstractModel.store()", model);
 
         // Call store for each relation.
-        model.relations.values().foreach(async(relation)=>{
+        model.relations.values().foreachAsync(async(relation)=>{
             await relation.relationalStore(model);
         });
 
@@ -403,7 +409,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         });
 
         // Call save for each relation.
-        models.get(0).relations.values().foreach(async(relation)=>{
+        models.get(0).relations.values().foreachAsync(async (relation)=>{
             await relation.relationalStoreMultiple(models);
         });
 
@@ -447,7 +453,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
             throw new SaveError(PATH, "AbstractModel.save()", model);
 
         // Call save for each relation.
-        model.relations.values().foreach(async(relation)=>{
+        model.relations.values().foreachAsync(async (relation)=>{
             await relation.relationalSave(model);
         });
 
@@ -491,7 +497,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         });
 
         // Call save for each relation.
-        models.get(0).relations.values().foreach(async(relation)=>{
+        models.get(0).relations.values().foreachAsync(async (relation)=>{
             await relation.relationalSaveMultiple(models);
         });
 
@@ -535,7 +541,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
             throw new UpdateError(PATH, "AbstractModel.update()", model);
 
         // Call update for each relation.
-        model.relations.values().foreach(async(relation)=>{
+        model.relations.values().foreachAsync(async (relation)=>{
             await relation.relationalUpdate(model);
         });
 
@@ -579,7 +585,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         });
 
         // Call update for each relation.
-        models.get(0).relations.values().foreach(async(relation)=>{
+        models.get(0).relations.values().foreachAsync(async (relation)=>{
             await relation.relationalUpdateMultiple(models);
         });
 
@@ -631,7 +637,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
             throw new DestroyError(PATH, "AbstractModel.destroy()", model);
 
         // Call destroy for each relation.
-        model.relations.values().foreach(async(relation)=>{
+        model.relations.values().foreachAsync(async (relation)=>{
             await relation.relationalDestroy(model);
         });
 
@@ -684,7 +690,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         });
 
         // Call destroy for each relation.
-        models.get(0).relations.values().foreach(async(relation)=>{
+        models.get(0).relations.values().foreachAsync(async (relation)=>{
             await relation.relationalDestroyMultiple(models);
         });
 
@@ -1005,6 +1011,11 @@ export class RoleModel extends AbstractModel<RoleModel> implements IComparable
         this.properties.
         string(this.model1.asFk()).
         string(this.model2.asFk());
+    }
+
+    init(): void 
+    {
+
     }
 
     addProperties(): void 

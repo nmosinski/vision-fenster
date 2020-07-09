@@ -80,6 +80,19 @@ class List<T> implements IComparable
 	}
 
 	/**
+	 * Iterate through all elements of this list and calls the passed async function.
+	 * @param {Function} f - The function to be called by each element of this list.
+	 */
+    async foreachAsync(f: (el: T) => void): Promise<void>
+    {
+    	if(!JsTypes.isFunction(f))
+    		throw new VariableTypeError(PATH, "List.foreachAsync(f)", f, "function");
+
+        for(let idx = 0; idx < this.length; idx++)
+            await f(this.get(idx));
+	}
+
+	/**
 	 * Iterate through all elements of this list and calls the passed function.
 	 * @param {Function} f - The function to be called by each element of this list.
 	 */
@@ -90,7 +103,7 @@ class List<T> implements IComparable
 
         for(let idx = 0; idx < this.length; idx++)
             f(this.get(idx));
-    }
+	}
 
     /**
      * Filters all elements of this list by the given expression and returns a new list with the elements that match.
@@ -100,7 +113,7 @@ class List<T> implements IComparable
     filter(f: (el: T) => boolean): List<T>
     {
     	if(!JsTypes.isFunction(f))
-    		throw new VariableTypeError(PATH, "List.foreach(f)", f, "function");
+    		throw new VariableTypeError(PATH, "List.filter(f)", f, "function");
 
     	let ret = [];
 
