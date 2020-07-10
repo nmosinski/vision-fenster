@@ -4,10 +4,10 @@ import List from "../util/collections/list/List";
 import Set from "../util/collections/set/Set";
 import QueryResult from "./QueryResult";
 
-const PATH = "public/main/common/orm/BHoldsNoReferenceToA.js";
+const PATH = "public/main/common/orm/AHoldsReferenceToB.js";
 
 
-abstract class BHoldsNoReferenceToA<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>
+abstract class AHoldsReferenceToB<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>
 {
     assign(toBeAssigned: B, relative: A): B 
     {
@@ -25,7 +25,7 @@ abstract class BHoldsNoReferenceToA<A extends AbstractModel<A>, B extends Abstra
         return (await this.relationalFind(new List([relative]))).first();
     }
 
-    async relationalStore(toStore: B, relatives?: List<A>): Promise<void> 
+    async relationalCreate(toCreate: B, relatives?: List<A>): Promise<void> 
     {
         // Nothing to do.
     }
@@ -66,7 +66,7 @@ abstract class BHoldsNoReferenceToA<A extends AbstractModel<A>, B extends Abstra
         return await bQuery.execute();
     }
 
-    async relationalStoreMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> 
+    async relationalCreateMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> 
     {
         // Nothing to do.
     }
@@ -93,4 +93,4 @@ abstract class BHoldsNoReferenceToA<A extends AbstractModel<A>, B extends Abstra
     
 }
 
-export default BHoldsNoReferenceToA;
+export default AHoldsReferenceToB;

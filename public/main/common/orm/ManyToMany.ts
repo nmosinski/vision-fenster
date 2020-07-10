@@ -1,10 +1,10 @@
 import AbstractModel from "./AbstractModel";
-import BHoldsNoReferenceToA from "./BHoldsNoReferenceToA";
+import AHoldsReferenceToB from "./AHoldsReferenceToB";
 import List from "../util/collections/list/List";
 import QueryResult from "./QueryResult";
 
 
-class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C extends AbstractModel<C>> extends BHoldsNoReferenceToA<A,B>
+class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C extends AbstractModel<C>> extends AHoldsReferenceToB<A,B>
 {
     private _roleModel: new()=>C;
 
@@ -28,7 +28,7 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C exten
     async relationalGet(relative: A): Promise<B> {
         throw new Error("Method not implemented.");
     }
-    async relationalStore(toStore: B, relatives?: List<A>): Promise<void> {
+    async relationalCreate(toCreate: B, relatives?: List<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
     async relationalSave(toSave: B, relatives?: List<A>): Promise<void> {
@@ -43,7 +43,7 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C exten
     async relationalFind(relatives?: QueryResult<A>): Promise<QueryResult<B>> {
         throw new Error("Method not implemented.");
     }
-    async relationalStoreMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {
+    async relationalCreateMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {
         throw new Error("Method not implemented.");
     }
     async relationalSaveMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {

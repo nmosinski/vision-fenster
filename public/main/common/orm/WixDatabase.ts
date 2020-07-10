@@ -78,21 +78,21 @@ class WixDatabase<T extends AbstractModel<T>>
     }
 
     /**
-     * Store an item.
-     * @param {T} toStore The item to be stored. 
+     * Create an item.
+     * @param {T} toCreate The item to be created. 
      */
-    async store(toStore: T): Promise<void>
+    async create(toCreate: T): Promise<void>
     {
-        return await WixDatabase.store(toStore);
+        return await WixDatabase.create(toCreate);
     }
 
     /**
-     * Store an item.
-     * @param {U} toStore The item to be stored. 
+     * Create an item.
+     * @param {U} toCreate The item to be created. 
      */
-    static async store<U extends AbstractModel<U>>(toStore: U): Promise<void>
+    static async create<U extends AbstractModel<U>>(toCreate: U): Promise<void>
     {
-        await wixData.insert(toStore.tableName, modelToItem(toStore));
+        await wixData.insert(toCreate.tableName, modelToItem(toCreate));
     }
 
     /**
@@ -114,24 +114,24 @@ class WixDatabase<T extends AbstractModel<T>>
     }
 
     /**
-     * Store multiple items.
-     * @param {T} toSave The items to be stored. 
+     * Create multiple items.
+     * @param {T} toSave The items to be created. 
      */
-    async storeMultiple(toStore: List<T>): Promise<void>
+    async createMultiple(toCreate: List<T>): Promise<void>
     {
-        return await WixDatabase.storeMultiple(toStore);
+        return await WixDatabase.createMultiple(toCreate);
     }
 
     /**
-     * Store multiple items.
-     * @param {U} toStore The items to be stored. 
+     * Create multiple items.
+     * @param {U} toCreate The items to be created. 
      */
-    static async storeMultiple<U extends AbstractModel<U>>(toStore: List<U>): Promise<void>
+    static async createMultiple<U extends AbstractModel<U>>(toCreate: List<U>): Promise<void>
     {
-        if(toStore.isEmpty())
+        if(toCreate.isEmpty())
             return;
 
-        await wixData.bulkInsert(toStore.get(0).tableName, modelsToItems(toStore));
+        await wixData.bulkInsert(toCreate.get(0).tableName, modelsToItems(toCreate));
     }
 
     /**

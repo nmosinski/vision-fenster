@@ -1,8 +1,8 @@
 import AbstractModel from "./AbstractModel";
-import BHoldsNoReferenceToA from "./BHoldsNoReferenceToA";
+import AHoldsReferenceToB from "./AHoldsReferenceToB";
 
 
-class ZeroOrOneToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends BHoldsNoReferenceToA<A,B>
+class ZeroOrOneToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends AHoldsReferenceToB<A,B>
 {   
     constructor(relativeA: new()=>A, relativeB: new()=>B)
     {

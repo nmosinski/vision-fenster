@@ -24,26 +24,20 @@ export async function runAllTests()
  
     let tests = new Tests(afterEach, null, beforeEach, afterEach);
     
-    tests.add(new Test(PATH, "simple get", value(testShoppingCarts.first().id), simpleGet));
-    tests.add(new Test(PATH, "simple find", truthly(), simpleFind));
-    tests.add(new Test(PATH, "simple store", truthly(), simpleStore));
-    tests.add(new Test(PATH, "simple store multiple", truthly(), simpleStoreMultiple));
-    tests.add(new Test(PATH, "simple update", value(3), simpleUpdate));
-    tests.add(new Test(PATH, "simple update multiple", truthly(), simpleUpdateMultiple));
-    tests.add(new Test(PATH, "simple save", truthly(), simpleSave));
-    tests.add(new Test(PATH, "simple save multiple", truthly(), simpleSaveMultiple));
-    tests.add(new Test(PATH, "simple destroy", unspecified(), simpleDestroy));
-    tests.add(new Test(PATH, "simple destroy multiple", truthly(), simpleDestroyMultiple));
-    
+    tests.add(new Test(PATH, "relational assign", value(testShoppingCarts.first().id), relationalAssign));
+    tests.add(new Test(PATH, "relational assignMultiple", truthly(), relationalAssignMultiple));
+    tests.add(new Test(PATH, "relational get", value(testShoppingCarts.first().id), relationalGet));
+    tests.add(new Test(PATH, "relational find", truthly(), relationalFind));
+
     await tests.runAll();
 }
 
 
 async function beforeEach()
 {
-    await WixDatabase.storeMultiple(testShoppingCarts);
-    await WixDatabase.storeMultiple(testShoppingCartItems);
-    await WixDatabase.storeMultiple(testUsers);
+    await WixDatabase.createMultiple(testShoppingCarts);
+    await WixDatabase.createMultiple(testShoppingCartItems);
+    await WixDatabase.createMultiple(testUsers);
 }
 
 async function afterEach()
@@ -68,18 +62,18 @@ async function simpleFind()
     return result.equals(testShoppingCartItems);
 }
 
-async function simpleStore()
+async function simpleCreate()
 {
     let shoppingCart = TestShoppingCart.dummy(TestShoppingCart);
-    await shoppingCart.store();
+    await shoppingCart.create();
     let result = await TestShoppingCart.get(shoppingCart.id, TestShoppingCart);
     return result;
 }
 
-async function simpleStoreMultiple()
+async function simpleCreateMultiple()
 {
     await WixDatabase.removeAll(TestShoppingCartItem);  
-    await TestShoppingCartItem.storeMultiple(testShoppingCartItems);
+    await TestShoppingCartItem.createMultiple(testShoppingCartItems);
     let result = await TestShoppingCartItem.find(TestShoppingCartItem);
     return result.equals(testShoppingCartItems);
 }

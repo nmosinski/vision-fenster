@@ -4,21 +4,21 @@ import AbstractModel from "./AbstractModel";
 
 /**
  * @class
- * A class representing an error that occurrs during a store operation.
+ * A class representing an error that occurrs during a create operation.
  */
-class StoreError extends CrudOperationError
+class CreateError extends CrudOperationError
 {
     private _model: AbstractModel<any>;
 
     /**
-     * Create a StoreError.
+     * Create a CreateError.
      * @param {string} path The path to the file where the problem occurred.
      * @param {string} location A more specific location hint in the file where the problem occurred.
-     * @param {string} model The model that couldn't be stored.
+     * @param {string} model The model that couldn't be created.
      */
     constructor(path: string, location: string, model: AbstractModel<any>)
     {
-        super("An error occurred when trying to store a model.", path, location);
+        super("An error occurred when trying to create a model.", path, location);
         this.model = model;
     }
 
@@ -45,4 +45,4 @@ class StoreError extends CrudOperationError
     }
 }
 
-export default StoreError;
+export default CreateError;

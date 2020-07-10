@@ -26,23 +26,45 @@ export async function runAllTests()
     
     tests.add(new Test(PATH, "simple get", value(testShoppingCarts.first().id), simpleGet));
     tests.add(new Test(PATH, "simple find", truthly(), simpleFind));
-    tests.add(new Test(PATH, "simple store", truthly(), simpleStore));
-    tests.add(new Test(PATH, "simple store multiple", truthly(), simpleStoreMultiple));
+    tests.add(new Test(PATH, "simple create", truthly(), simpleCreate));
+    tests.add(new Test(PATH, "simple create multiple", truthly(), simpleCreateMultiple));
     tests.add(new Test(PATH, "simple update", value(3), simpleUpdate));
     tests.add(new Test(PATH, "simple update multiple", truthly(), simpleUpdateMultiple));
     tests.add(new Test(PATH, "simple save", truthly(), simpleSave));
     tests.add(new Test(PATH, "simple save multiple", truthly(), simpleSaveMultiple));
     tests.add(new Test(PATH, "simple destroy", unspecified(), simpleDestroy));
     tests.add(new Test(PATH, "simple destroy multiple", truthly(), simpleDestroyMultiple));
+
+    tests.add(new Test(PATH, "one generation get", value(testShoppingCarts.first().id), oneGenerationGet));
+    tests.add(new Test(PATH, "one generation find", truthly(), oneGenerationFind));
+    tests.add(new Test(PATH, "one generation create", truthly(), oneGenerationCreate));
+    tests.add(new Test(PATH, "one generation create multiple", truthly(), oneGenerationCreateMultiple));
+    tests.add(new Test(PATH, "one generation update", value(3), oneGenerationUpdate));
+    tests.add(new Test(PATH, "one generation update multiple", truthly(), oneGenerationUpdateMultiple));
+    tests.add(new Test(PATH, "one generation save", truthly(), oneGenerationSave));
+    tests.add(new Test(PATH, "one generation save multiple", truthly(), oneGenerationSaveMultiple));
+    tests.add(new Test(PATH, "one generation destroy", unspecified(), oneGenerationDestroy));
+    tests.add(new Test(PATH, "one generation destroy multiple", truthly(), oneGenerationDestroyMultiple));
+
+    tests.add(new Test(PATH, "two generations get", value(testShoppingCarts.first().id), twoGenerationsGet));
+    tests.add(new Test(PATH, "two generations find", truthly(), twoGenerationsFind));
+    tests.add(new Test(PATH, "two generations create", truthly(), twoGenerationsCreate));
+    tests.add(new Test(PATH, "two generations create multiple", truthly(), twoGenerationsCreateMultiple));
+    tests.add(new Test(PATH, "two generations update", value(3), twoGenerationsUpdate));
+    tests.add(new Test(PATH, "two generations update multiple", truthly(), twoGenerationsUpdateMultiple));
+    tests.add(new Test(PATH, "two generations save", truthly(), twoGenerationsSave));
+    tests.add(new Test(PATH, "two generations save multiple", truthly(), twoGenerationsSaveMultiple));
+    tests.add(new Test(PATH, "two generations destroy", unspecified(), twoGenerationsDestroy));
+    tests.add(new Test(PATH, "two generations destroy multiple", truthly(), twoGenerationsDestroyMultiple));
     
     await tests.runAll();
 }
 
 async function beforeEach()
 {
-    await WixDatabase.storeMultiple(testShoppingCarts);
-    await WixDatabase.storeMultiple(testShoppingCartItems);
-    await WixDatabase.storeMultiple(testUsers);
+    await WixDatabase.createMultiple(testShoppingCarts);
+    await WixDatabase.createMultiple(testShoppingCartItems);
+    await WixDatabase.createMultiple(testUsers);
 }
 
 async function afterEach()
@@ -67,18 +89,18 @@ async function simpleFind()
     return result.equals(testShoppingCartItems);
 }
 
-async function simpleStore()
+async function simpleCreate()
 {
     let shoppingCart = TestShoppingCart.dummy(TestShoppingCart);
-    await shoppingCart.store();
+    await shoppingCart.create();
     let result = await TestShoppingCart.get(shoppingCart.id, TestShoppingCart);
     return result;
 }
 
-async function simpleStoreMultiple()
+async function simpleCreateMultiple()
 {
     await WixDatabase.removeAll(TestShoppingCartItem);  
-    await TestShoppingCartItem.storeMultiple(testShoppingCartItems);
+    await TestShoppingCartItem.createMultiple(testShoppingCartItems);
     let result = await TestShoppingCartItem.find(TestShoppingCartItem);
     return result.equals(testShoppingCartItems);
 }

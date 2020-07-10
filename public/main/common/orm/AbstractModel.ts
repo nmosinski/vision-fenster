@@ -15,7 +15,7 @@ import OneToMany from './OneToMany';
 import WixDatabase from './WixDatabase';
 import QueryResult from './QueryResult';
 import ManyToMany from './ManyToMany';
-import StoreError from './StoreError';
+import CreateError from './CreateError';
 import SaveError from './SaveError';
 import UpdateError from './UpdateError';
 import DestroyError from './DestroyError';
@@ -329,12 +329,12 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     }
 
     /**
-     * Store the given model (this by default).
+     * Create the given model (this by default).
      * If called over a relative, try to assign this model to the first retrieved model by the chained query.
      * This may not be possible depending on the relationship to the previous relative.
-     * @param {T} [model=this] The model to be stored.
+     * @param {T} [model=this] The model to be created.
      */
-    async store(model?: T): Promise<void>
+    async create(model?: T): Promise<void>
     {
         // Called over previous.
         if(this.previousRelative)
@@ -348,37 +348,37 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
             model = this.relations.get(this.previousRelative.Constructor).assign(model, previousQueryResult.first());
         }
 
-        // Store this.
+        // Create this.
         if(!model)
             model = <T><unknown> this;
 
-        return await AbstractModel.store(model);
+        return await AbstractModel.create(model);
     }
 
     /**
-     * Store a model.
-     * @param {T} model The model to be stored.
+     * Create a model.
+     * @param {T} model The model to be created.
      */
-    static async store<U extends AbstractModel<U>>(model: U): Promise<void>
+    static async create<U extends AbstractModel<U>>(model: U): Promise<void>
     {
         if(!model.valid())
-            throw new StoreError(PATH, "AbstractModel.store()", model);
+            throw new CreateError(PATH, "AbstractModel.create()", model);
 
-        // Call store for each relation.
+        // Call create for each relation.
         model.relations.values().foreachAsync(async(relation)=>{
-            await relation.relationalStore(model);
+            await relation.relationalCreate(model);
         });
 
-        await WixDatabase.store(model);
+        await WixDatabase.create(model);
     }
 
     /**
-     * Store many models.
+     * Create many models.
      * If called over a relative, try to assign this model to the first retrieved model by the chained query.
      * This may not be possible depending on the relationship of the models in this list to the previous relative.
-     * @param {List<T>} models The List containing the models to be stored. 
+     * @param {List<T>} models The List containing the models to be created. 
      */
-    async storeMultiple(models: List<T>): Promise<void>
+    async createMultiple(models: List<T>): Promise<void>
     {
         if(models.isEmpty())
             return;
@@ -391,29 +391,29 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
             models = this.relations.get(this.previousRelative.Constructor).assignMultiple(models, previousQueryResult.first());
         }
 
-        return await AbstractModel.storeMultiple(models);
+        return await AbstractModel.createMultiple(models);
     }
 
     /**
-     * Store many models.
-     * @param {List<<U extends AbstractModel<U>>>} models The List containing the models to be stored. 
+     * Create many models.
+     * @param {List<<U extends AbstractModel<U>>>} models The List containing the models to be created. 
      */
-    static async storeMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void>
+    static async createMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void>
     {
         if(models.isEmpty())
             return;
 
         models.foreach((model)=>{
             if(!model.valid())
-                throw new StoreError(PATH, "AbstractModel.storeMultiple()", model);
+                throw new CreateError(PATH, "AbstractModel.createMultiple()", model);
         });
 
         // Call save for each relation.
         models.get(0).relations.values().foreachAsync(async (relation)=>{
-            await relation.relationalStoreMultiple(models);
+            await relation.relationalCreateMultiple(models);
         });
 
-        await WixDatabase.storeMultiple(models);
+        await WixDatabase.createMultiple(models);
     }
 
     /**

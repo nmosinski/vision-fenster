@@ -42,10 +42,10 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
     
     /**
      * Perform all necessary operations on all given relatives of type A that need to be done when storing the given B.
-     * @param {B} toStore The B to be stored. 
+     * @param {B} toCreate The B to be created. 
      * @param {List<A>} [relatives] The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
      */
-    async abstract relationalStore(toStore: B, relatives?: List<A>): Promise<void>;
+    async abstract relationalCreate(toCreate: B, relatives?: List<A>): Promise<void>;
 
     /**
      * Perform all necessary operations on all given relatives of type A that need to be done when saving the given B.
@@ -77,14 +77,14 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
     
     /**
      * Perform all necessary operations on all given relatives of type A that need to be done when storing the given B's.
-     * @param {List<B>} toSave The Bs to be stored. 
+     * @param {List<B>} toSave The Bs to be created. 
      * @param {List<A>} relatives The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
      */
-    async abstract relationalStoreMultiple(toSave: List<B>, relatives?: List<A>): Promise<void>;
+    async abstract relationalCreateMultiple(toSave: List<B>, relatives?: List<A>): Promise<void>;
 
     /**
      * Perform all necessary operations on all given relatives of type A that need to be done when saving the given B's.
-     * @param {List<B>} toSave The Bs to be stored. 
+     * @param {List<B>} toSave The Bs to be created. 
      * @param {List<A>} relatives The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
      */
     async abstract relationalSaveMultiple(toSave: List<B>, relatives?: List<A>): Promise<void>;

@@ -3,13 +3,13 @@ import Relation from "./Relation";
 import List from "../util/collections/list/List";
 import QueryResult from "./QueryResult";
 
-const PATH = "public/main/common/orm/BHoldsReferenceToA.js";
+const PATH = "public/main/common/orm/AHoldsNoReferenceToB.js";
 
 
 /**
  * @todo
  */
-abstract class BHoldsReferenceToA<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>
+abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A,B>
 {
     assign(toBeAssigned: B, relative: A): B 
     {
@@ -28,7 +28,7 @@ abstract class BHoldsReferenceToA<A extends AbstractModel<A>, B extends Abstract
         return (await this.queryOfRelativeB().eq(relative.asFk(), relative.id).execute(1)).first();
     }
 
-    async relationalStore(toStore: B, relatives?: List<A>): Promise<void> 
+    async relationalCreate(toCreate: B, relatives?: List<A>): Promise<void> 
     {
         // Nothing to do. Associate and create shold be a separate function.
 
@@ -36,34 +36,34 @@ abstract class BHoldsReferenceToA<A extends AbstractModel<A>, B extends Abstract
         // Check if the A that B belongs to is contained in the given relatives.
         if(relatives)
             relatives.foreach((a)=>{
-                if(a.id === toStore[a.asFk()])
+                if(a.id === toCreate[a.asFk()])
                     return;
             });
 
         // Try to find the relative in the storage.
         let a = new this.relativeA();
-        a.id = toStore[a.asFk()];
-        a = await a.load(toStore[a.asFk()]);
+        a.id = toCreate[a.asFk()];
+        a = await a.load(toCreate[a.asFk()]);
         if(a)
             return;
         
         // Try to create a default A for B.
         if(a.valid())
-            await a.store();
+            await a.create();
         
         // B can't be saved due to the missing relative.
-        throw new StoreError(PATH, "OneToMany.relationalStore()", toStore);
+        throw new CreateError(PATH, "OneToMany.relationalCreate()", toCreate);
         */
     }
 
     async relationalSave(toSave: B, relatives?: List<A>): Promise<void> 
     {
-        await this.relationalStore(toSave, relatives);
+        await this.relationalCreate(toSave, relatives);
     }
 
     async relationalUpdate(toUpdate: B, relatives?: List<A>): Promise<void> 
     {
-        await this.relationalStore(toUpdate, relatives);
+        await this.relationalCreate(toUpdate, relatives);
     }
     async relationalDestroy(toDestroy: B, relatives?: List<A>): Promise<void> 
     {
@@ -81,7 +81,7 @@ abstract class BHoldsReferenceToA<A extends AbstractModel<A>, B extends Abstract
         return await query.execute();
     }
 
-    async relationalStoreMultiple(toStore: List<B>, relatives?: List<A>): Promise<void> 
+    async relationalCreateMultiple(toCreate: List<B>, relatives?: List<A>): Promise<void> 
     {
         /*
         // Check if the A that B belongs to is contained in the given relatives.
@@ -89,11 +89,11 @@ abstract class BHoldsReferenceToA<A extends AbstractModel<A>, B extends Abstract
 
         if(relatives)
         {            
-            toStore.foreach((b)=>{
+            toCreate.foreach((b)=>{
                 let found = false;
 
                 relatives.foreach((a)=>{
-                    if(a.id === toStore[a.asFk()])
+                    if(a.id === toCreate[a.asFk()])
                         found = true;
                 });
                 if(!found)
@@ -111,17 +111,17 @@ abstract class BHoldsReferenceToA<A extends AbstractModel<A>, B extends Abstract
         // Try to find the missing relatives in the storage.
         let aQuery = this.queryOfRelativeA().hasSome("");
         let a = new this.relativeA();
-        a.id = toStore[a.asFk()];
-        a = await a.load(toStore[a.asFk()]);
+        a.id = toCreate[a.asFk()];
+        a = await a.load(toCreate[a.asFk()]);
         if(a)
             return;
         
         // Try to create a default A for B.
         if(a.valid())
-            await a.store();
+            await a.create();
         
         // B can't be saved due to the missing relative.
-        throw new StoreError(PATH, "OneToMany.relationalStore()", toStore);
+        throw new CreateError(PATH, "OneToMany.relationalCreate()", toCreate);
         */
     }
 
@@ -137,4 +137,4 @@ abstract class BHoldsReferenceToA<A extends AbstractModel<A>, B extends Abstract
     }
 }
 
-export default BHoldsReferenceToA;
+export default AHoldsNoReferenceToB;
