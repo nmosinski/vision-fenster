@@ -184,6 +184,23 @@ class List<T> implements IComparable
 	}
 
 	/**
+	 * Check if this list is a sublist of the given one.
+	 * @param {List<any>} list The list to be checked on.
+	 * @returns {boolean} True if this list is a sublist of the given one, else false.
+	 */
+	isSublistOf(list: List<any>): boolean
+	{
+		let ret = true;
+
+		this.foreach((el)=>{
+			if(!list.has(el))
+				ret = false;
+		});
+
+		return ret;
+	}
+
+	/**
 	 * Get all elements of this list as array.
 	 * @return {Array<T>} The elements.
 	 */
