@@ -5,8 +5,6 @@ import WixDatabase from "../../../../../main/common/orm/WixDatabase";
 import { Tests, Test, truthly, unspecified, value} from "../../../../../main/common/test/Test";
 import AbstractModel from "../../../../../main/common/orm/AbstractModel";
 import List from "../../../../../main/common/util/collections/list/List";
-import KVMap from "../../../../../main/common/util/collections/map/KVMap";
-import ShoppingCartItem from "../../../../../main/feature/shoppingCart/model/ShoppingCartItem";
 const PATH = "test/public/main/common/orm/AbstractModel.test.js"
 
 var testShoppingCarts: List<TestShoppingCart>;
