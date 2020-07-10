@@ -145,11 +145,12 @@ class KVMap<K,V> implements IComparable
 	 */
 	getKeyOf(value: V): K
 	{
+		let key = null;
 		this.foreach((k,v)=>{
 			if(this.elementsEqual(v,value))
-				return k;
+				key = k;
 		});
-		return null;
+		return key;
 	}
 	
 	/**
@@ -170,12 +171,13 @@ class KVMap<K,V> implements IComparable
 	 */
 	get(key: K): V
 	{
+		let ret = null;
 		this.foreach((k:K, v:V) => {
 			if(this.elementsEqual(k, key))
-				return v;
+				ret = v;
 		});
 
-		return null;
+		return ret;
 	}
 
 	/**
@@ -239,6 +241,7 @@ class KVMap<K,V> implements IComparable
 			if(e1 === e2)
 				return true;
 		}
+		return false;
 	}
 
 	/**

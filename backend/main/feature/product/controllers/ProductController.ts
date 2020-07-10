@@ -9,7 +9,7 @@ class ProductController
      */
     create(request: object): string
     {
-        
+        return null;
     }
 
     /**

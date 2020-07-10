@@ -127,7 +127,7 @@ class Test
     print()
     {
         if(this.passed)
-            console.log("%c" + this.location + " , " + this.description + ": PASSED", "background: #FFF; color: #60ee07");
+            console.log("%c" + this.location + " , " + this.description + ": PASSED", "background: #FFF; color: #1fad1f");
         else
             console.log("%c" + this.location + " , " + this.description + ": FAILED\n" + "Expected " + this.expected.toString() + " but resulted in " + this.result + "\n", "background: #FFF; color: #ff8c00");
         if(this.error)

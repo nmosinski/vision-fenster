@@ -24,6 +24,16 @@ class TestShoppingCart extends AbstractModel<TestShoppingCart>
         this.zeroOrOneToOne(TestUser);
     }
 
+    testUser()
+    {
+        return this.relative(TestUser);
+    }
+
+    testShoppingCartItems()
+    {
+        return this.relative(TestShoppingCartItem);
+    }
+
 }
 
 export default TestShoppingCart;

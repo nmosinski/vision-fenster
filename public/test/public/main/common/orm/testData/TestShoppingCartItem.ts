@@ -26,6 +26,11 @@ class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
         this.manyToOne(TestShoppingCart);
     }
 
+    testShoppingCart()
+    {
+        return this.relative(TestShoppingCart);
+    }
+
     set count(count)
     {
         this._count = count;

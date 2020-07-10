@@ -155,9 +155,9 @@ class List<T> implements IComparable
 			throw new InvalidOperationError(PATH, "List.sublist()", "StartIndex is bigger than the length of this list.");
 		
 		if(!endIndex)
-			endIndex = this.length;
+			endIndex = this.length-1;
 		
-		for(let idx=startIndex; idx < endIndex; idx++)
+		for(let idx=startIndex; idx <= endIndex; idx++)
 			list.add(this.get(idx));
 
 		return list;
@@ -215,7 +215,9 @@ class List<T> implements IComparable
      */
     first(): T
     {
-        return this.get(0);
+		if(this.length < 1)
+			return null;
+		return this.get(0);
     }
 
     /**

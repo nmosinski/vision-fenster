@@ -21,6 +21,11 @@ class TestUser extends AbstractModel<TestUser>
         this.oneToZeroOrOne(TestShoppingCart);
     }
 
+    testShoppingCart()
+    {
+        return this.relative(TestShoppingCart);
+    }
+
 }
 
 export default TestUser;

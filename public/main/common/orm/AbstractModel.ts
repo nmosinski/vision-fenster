@@ -20,6 +20,7 @@ import SaveError from './SaveError';
 import UpdateError from './UpdateError';
 import DestroyError from './DestroyError';
 import InvalidOperationError from '../util/error/InvalidOperationError';
+import AHoldsReferenceToB from './AHoldsReferenceToB.js';
 
 /**
  * @todo Add undo operations for save etc. Important in case a save is not possible but uve updated already some references.
@@ -248,6 +249,46 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     }
 
     /**
+     * Assign the given model (this by default) to the given relative.
+     * @param {T extends AbstractModel<T>} model The model to be assigned.
+     * @param {U extends AbstractModel<U>} relative The relative the given model will be assigned to. 
+     */
+    assign<U extends AbstractModel<U>>(relative: U): void
+    {
+        AbstractModel.assign(<T><unknown>this, relative);
+    }
+
+    /**
+     * Assign the given model (this by default) to the given relative.
+     * @param {T extends AbstractModel<T>} model The model to be assigned.
+     * @param {U extends AbstractModel<U>} relative The relative the given model will be assigned to. 
+     */
+    static assign<P extends AbstractModel<P>, U extends AbstractModel<U>>(model: P, relative: U): void
+    {
+        model.relations.get(relative.Constructor).assign(model, relative);
+    }
+
+    /**
+     * Assign multiple models to the given relative.
+     * @param {List<T extends AbstractModel<T>>} models The models to be assigned.
+     * @param {U extends AbstractModel<U>} relative The relative the given model will be assigned to. 
+     */
+    assignMultiple<U extends AbstractModel<U>>(models: List<T>, relative: U): void
+    {
+        AbstractModel.assignMultiple(models, relative);
+    }
+
+    /**
+     * Assign multiple models to the given relative.
+     * @param {List<P extends AbstractModel<P>>} models The models to be assigned.
+     * @param {U extends AbstractModel<U>} relative The relative the given model will be assigned to. 
+     */
+    static assignMultiple<P extends AbstractModel<P>, U extends AbstractModel<U>>(models: List<P>, relative: U): void
+    {
+        models.foreach((model)=>{AbstractModel.assign(model, relative);});
+    }
+
+    /**
      * Load the model with the data of the entity with the given id. If no id is passed, the actual id will be taken.
      * @param {string} [id] The id of the entity. 
      * @returns {Promise<this>} This. 
@@ -262,7 +303,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
 
     /**
      * Get an item of the model (this by default) of the given id.
-     * If called over a relative, return the item that is related to the first element returned by the previous query.
+     * If called over a relative, return the item that is related to any (the first) element returned by the previous query.
      * @param {string} pk The primary key of the item to be retrieved.
      * @return {Promise<T>} The item.
      */
@@ -272,7 +313,10 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         if(this.previousRelative)
         {
             let previousQueryResult = await this.previousRelative.find();
-            return await this.relations.get(this.previousRelative.Constructor).relationalGet(previousQueryResult.first());
+            let relation = this.relations.get(this.previousRelative.Constructor);
+            let thisQueryResult = relation.relationalGet(previousQueryResult.first());
+
+            return thisQueryResult;
         }
 
         if(!id)
@@ -294,7 +338,6 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     /**
      * Find all entities returned by a QueryElement (the current QueryElement (chain) by default).
      * If called over a relative, return only those entities that are related to the query result returned by the chained query.
-     * The results of the subqueries returned on the way will be cascaded and saved, accessable as a property.
      * @returns {Promise<QueryResult<T>>} The result of the executed query. 
      */
     async find(): Promise<QueryResult<T>>
@@ -305,12 +348,6 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
             let previousQueryResult = await this.previousRelative.find();
             let relation = this.relations.get(this.previousRelative.Constructor);
             let thisQueryResult = await relation.relationalFind(previousQueryResult);
-
-            // Make results of subqueries accessible as properties.
-            if(relation instanceof ManyToOne || relation instanceof ManyToMany)
-                this.previousRelative[this.asMultiplePropertyName()] = thisQueryResult;
-            else
-                this.previousRelative[this.asSinglePropertyName()] = thisQueryResult.first();
             
             return thisQueryResult;
         }
@@ -731,7 +768,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      */
     public asSinglePropertyName(): string
     {
-        return this.tableName.charAt(0) + this.tableName.slice(1);
+        return this.tableName.charAt(0).toLowerCase + this.tableName.slice(1);
     }
 
     /**
@@ -869,13 +906,13 @@ export abstract class Property
     protected validAttributes: Set<string>;
     protected _attributes: Set<string>;
 
-    constructor(attributes: Set<string>=new Set<string>())
+    constructor()
     {
         this.validAttributes = new Set<string>([
             "nullable"
         ]);
         
-        this.attributes = attributes;
+        this.attributes = new Set<string>();
     }
 
     valid(toCheck: any): boolean
@@ -893,10 +930,10 @@ export abstract class Property
         this._attributes = new Set<string>();
 
         attributes.foreach((attribute)=>{
-            if(!this.validAttributes.has(attribute))
-                throw new InvalidOperationError(PATH, "Property.set attributes()", "The attribute " + attribute + " doesn't exist.");
+            if(this.validAttributes.has(attribute))
+                this._attributes.add(attribute);    
             else
-                this._attributes.add(attribute);
+                throw new InvalidOperationError(PATH, "Property.set attributes()", "The attribute " + attribute + " doesn't exist.");            
         });
     }
 
@@ -910,11 +947,13 @@ export class StringProperty extends Property
 {
     constructor(attributes: Set<string>)
     {
-        super(attributes);
+        super();
         
         this.validAttributes.addMultiple([
             "emtiable"
         ]);
+
+        this.attributes = attributes;
     }
     
     valid(toCheck: any): boolean
@@ -941,12 +980,14 @@ export class NumberProperty extends Property
 {
     constructor(attributes: Set<string>)
     {
-        super(attributes);
+        super();
         this.validAttributes.addMultiple([
             "negative",
             "positive",
             "notZero"
         ]);
+
+        this.attributes = attributes;
     }
 
     valid(toCheck: any): boolean

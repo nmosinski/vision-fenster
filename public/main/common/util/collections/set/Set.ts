@@ -19,7 +19,7 @@ class Set<T> extends List<T>
 	 */
 	add(element: T): void
 	{
-        if(this.has(element))
+        if(!this.has(element))
             super.add(element);
 	}
 }
