@@ -320,12 +320,15 @@ class Tests extends List<Test>
     async runAll(): Promise<void>
     {
         await this.beforeAll();
-        await this.foreachAsync(async (test)=>{
+        for(let idx = 0; idx < this.length; idx++)
+        {
+            let test = this.get(idx);
             await this.beforeEach();
             await test.run();
             test.print();
             await this.afterEach();
-        });
+        }
+
         await this.afterAll();
     }
 

@@ -292,7 +292,7 @@ class List<T> implements IComparable
 		if(elementIdx < 0 || elementIdx >= this.length)
 			throw new VariableValueError(PATH, "List.get(elementIdx)", elementIdx, "-1<x<" + this.length);
 		
-  		delete this._elements[elementIdx];
+  		this._elements.splice(elementIdx,1);
 	}
 
 	/**

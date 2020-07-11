@@ -245,8 +245,40 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      */
     manyToMany<U extends AbstractModel<U>>(Model: {new(): U}): void
     {
-        //@ts-ignore
-        this.relations.add(Model, new ManyToMany(Model, this.Constructor, RoleModel));
+        let thisTableName = this.tableName;
+        let thisAsFk = this.asFk();
+
+        let roleModelClass = class RoleModel extends AbstractModel<RoleModel>{
+            
+            protected Constructor: new () => RoleModel;
+            
+            init(): void 
+            {
+                this.Constructor = RoleModel;
+            }
+
+            addProperties(): void 
+            {
+                this.properties.
+                string(AbstractModel.asFk(Model)).
+                string(thisAsFk);
+            }
+
+            addRelations(): void 
+            {
+
+            }
+
+            /**
+             * @override
+             */
+            get tableName()
+            {
+                return AbstractModel.roleTableNameOf(thisTableName, AbstractModel.tableName(Model));
+            }
+        }
+
+        this.relations.add(Model, new ManyToMany(Model, this.Constructor, roleModelClass));
     }
 
     /**
@@ -346,7 +378,14 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         // Called over previous.
         if(this.previousRelative)
         {
-            let previousQueryResult = await this.previousRelative.find();
+            let previousQueryResult;
+            if(this.previousRelative.previousRelative)
+                previousQueryResult = await this.previousRelative.find();
+            else
+            {
+                previousQueryResult = new QueryResult<AbstractModel<any>>();
+                previousQueryResult.add(this.previousRelative);
+            }
             let relation = this.relations.get(this.previousRelative.Constructor);
             let thisQueryResult = await relation.relationalFind(previousQueryResult);
             
@@ -403,9 +442,13 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
             throw new CreateError(PATH, "AbstractModel.create()", model);
 
         // Call create for each relation.
-        model.relations.values().foreachAsync(async(relation)=>{
-            await relation.relationalCreate(model);
-        });
+        let relations = model.relations.values();
+        for(let idx = 0; idx < relations.length; idx++)
+            await relations.get(idx).relationalCreate(model);
+  
+        //model.relations.values().foreachAsync(async(relation)=>{
+        //    await relation.relationalCreate(model);
+        //});
 
         await WixDatabase.create(model);
     }
@@ -446,10 +489,14 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
                 throw new CreateError(PATH, "AbstractModel.createMultiple()", model);
         });
 
+        let relations = models.get(0).relations.values();
+        for(let idx = 0; idx < relations.length; idx++)
+            await relations.get(idx).relationalCreateMultiple(models);
+
         // Call save for each relation.
-        models.get(0).relations.values().foreachAsync(async (relation)=>{
-            await relation.relationalCreateMultiple(models);
-        });
+       // models.get(0).relations.values().foreachAsync(async (relation)=>{
+        //    await relation.relationalCreateMultiple(models);
+        //});
 
         await WixDatabase.createMultiple(models);
     }
@@ -490,10 +537,14 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         if(!model.valid())
             throw new SaveError(PATH, "AbstractModel.save()", model);
 
+        let relations = model.relations.values();
+        for(let idx = 0; idx < relations.length; idx++)
+            await relations.get(idx).relationalSave(model);        
+
         // Call save for each relation.
-        model.relations.values().foreachAsync(async (relation)=>{
-            await relation.relationalSave(model);
-        });
+        //model.relations.values().foreachAsync(async (relation)=>{
+        //    await relation.relationalSave(model);
+        //});
 
         await WixDatabase.save(model);
     }
@@ -534,10 +585,14 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
                 throw new SaveError(PATH, "AbstractModel.saveMultiple()", model);
         });
 
+        let relations = models.get(0).relations.values();
+        for(let idx = 0; idx < relations.length; idx++)
+            await relations.get(idx).relationalSaveMultiple(models);
+
         // Call save for each relation.
-        models.get(0).relations.values().foreachAsync(async (relation)=>{
-            await relation.relationalSaveMultiple(models);
-        });
+        //models.get(0).relations.values().foreachAsync(async (relation)=>{
+        //    await relation.relationalSaveMultiple(models);
+        //});
 
         await WixDatabase.saveMultiple(models);
     }
@@ -578,10 +633,14 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         if(!model.valid())
             throw new UpdateError(PATH, "AbstractModel.update()", model);
 
+        let relations = model.relations.values();
+        for(let idx = 0; idx < relations.length; idx++)
+            await relations.get(idx).relationalUpdate(model);
+
         // Call update for each relation.
-        model.relations.values().foreachAsync(async (relation)=>{
-            await relation.relationalUpdate(model);
-        });
+//        model.relations.values().foreachAsync(async (relation)=>{
+  //          await relation.relationalUpdate(model);
+    //    });
 
         await WixDatabase.update(model);
     }
@@ -622,10 +681,14 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
                 throw new UpdateError(PATH, "AbstractModel.updateMultiple()", model);
         });
 
+        let relations = models.get(0).relations.values();
+        for(let idx = 0; idx < relations.length; idx++)
+            await relations.get(idx).relationalUpdateMultiple(models);
+
         // Call update for each relation.
-        models.get(0).relations.values().foreachAsync(async (relation)=>{
-            await relation.relationalUpdateMultiple(models);
-        });
+       // models.get(0).relations.values().foreachAsync(async (relation)=>{
+        //    await relation.relationalUpdateMultiple(models);
+        //});
 
         await WixDatabase.updateMultiple(models);
     }
@@ -674,10 +737,14 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         if(!model.valid())
             throw new DestroyError(PATH, "AbstractModel.destroy()", model);
 
+        let relations = model.relations.values();
+        for(let idx = 0; idx < relations.length; idx++)
+            await relations.get(idx).relationalDestroy(model);
+
         // Call destroy for each relation.
-        model.relations.values().foreachAsync(async (relation)=>{
-            await relation.relationalDestroy(model);
-        });
+//        model.relations.values().foreachAsync(async (relation)=>{
+  //          await relation.relationalDestroy(model);
+    //    });
 
         await WixDatabase.remove(model);
     }
@@ -722,15 +789,21 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         if(models.isEmpty())
             return;
 
+        ////console.log("To destroy in destroyMultiple in AbstractModel");
+        ////console.log(models);
         models.foreach((model)=>{
             if(!model.valid())
                 throw new DestroyError(PATH, "AbstractModel.destroyMultiple()", model);
         });
 
+        ////console.log("Passed to last step in destroyMultiple in AbstractMdoel");
         // Call destroy for each relation.
-        models.get(0).relations.values().foreachAsync(async (relation)=>{
-            await relation.relationalDestroyMultiple(models);
-        });
+        let relations = models.get(0).relations.values();
+        for(let idx = 0; idx < relations.length; idx++)
+            await relations.get(idx).relationalDestroyMultiple(models);
+//        models.get(0).relations.values().foreachAsync(async (relation)=>{
+  //          await relation.relationalDestroyMultiple(models);
+    //    });
 
         await WixDatabase.removeMultiple(models);
     }
@@ -789,7 +862,8 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      */
     static roleTableNameOf(modelName1: string, modelName2: string): string
     {
-        return "Role" + (modelName1.charAt(0)<modelName2.charAt(0))?modelName1 + modelName2: modelName2 + modelName1; 
+        let ending = (modelName1.toLowerCase()<modelName2.toLowerCase())?modelName1 + modelName2: modelName2 + modelName1; 
+        return "Role" + ending;
     }
 
     static tableName<U extends AbstractModel<U>>(Model: new()=>U): string
@@ -798,7 +872,6 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     }
 
     /**
-     * @todo
      * Get the table name of this model. Resolves into the name of the model/class by default.
      * @returns {string} The name of the table of this model.
      */
@@ -1023,127 +1096,6 @@ export class NumberProperty extends Property
                 n += 1;
 
         return n;
-    }
-}
-
-
-/**
- * @class
- * A class representing a dummy model for accessing the role table of two other models.
- */
-export class RoleModel extends AbstractModel<RoleModel> implements IComparable
-{
-    private _model1: AbstractModel<any>;
-    private _model2: AbstractModel<any>;
-    //@ts-ignore
-    protected Constructor: new () => RoleModel = RoleModel;
-    /**
-     * Create a dummy RoleModel for accessing the role table of the given two models.
-     * @param {AbstractModel<any>} model1 A model.
-     * @param {AbstractModel<any>} model2 Another model.
-     */
-    constructor(model1: AbstractModel<any>, model2: AbstractModel<any>)
-    {
-        super();
-        this.model1 = model1;
-        this.model2 = model2;
-        this[model1.asFk()] = model1.id;
-        this[model2.asFk()] = model2.id;
-
-        this.properties.
-        string(this.model1.asFk()).
-        string(this.model2.asFk());
-    }
-
-    init(): void 
-    {
-
-    }
-
-    addProperties(): void 
-    {
-        
-    }
-
-    /**
-     * @override
-     * @inheritdoc
-     */
-    equals(roleModel: any): boolean
-    {
-        if(!(roleModel instanceof RoleModel))
-            return false;
-        if(this.hasReference(roleModel.model1) && this.hasReference(roleModel.model2))
-            return true;
-        return false;
-    }
-
-    /**
-     * Check if this role model refers to the given model.
-     * @param {AbstractModel<any>} model The model this RoleModel is maybe referring to.
-     * @return {boolean} True if this model refers to the given model, else false. 
-     */
-    hasReference(model: AbstractModel<any>): boolean
-    {
-        if(this.model1.constructor === model.constructor && this.model1.id === model.id)
-            return true;
-        if(this.model2.constructor === model.constructor && this.model2.id === model.id)
-            return true;
-        return false;
-    }
-
-    /**
-     * @overrride
-     * @inheritdoc
-     */
-    addRelations(): void 
-    {
-        // Nothing to add.
-    }
-
-    /**
-     * @override
-     * @inheritdoc
-     */
-    get tableName(): string
-    {
-        return AbstractModel.roleTableNameOf(this.model1.tableName, this.model2.tableName);
-    }
-
-    /**
-     * Get the first model this RoleTable refers to.
-     * @returns {AbstractModel<any>} The first model this RoleModel refers to.
-     */
-    get model1(): AbstractModel<any>
-    {
-        return this._model1;
-    }
-
-    /**
-     * Get the second model this RoleTable refers to.
-     * @returns {AbstractModel<any>} The second model this RoleModel refers to.
-     */
-    get model2(): AbstractModel<any>
-    {
-        return this._model2;
-    }
-
-    /**
-     * Set the first model this RoleTable refers to.
-     * @param {AbstractModel<any>} model The first model this RoleModel refers to.
-     */
-    set model1(model: AbstractModel<any>)
-    {
-        this._model1 = model;
-    }
-
-    /**
-     * Set the second model this RoleTable refers to.
-     * @param {AbstractModel<any>} model The second model this RoleModel refers to.
-     */
-    set model2(model: AbstractModel<any>)
-    {
-        this._model2 = model;
     }
 }
 

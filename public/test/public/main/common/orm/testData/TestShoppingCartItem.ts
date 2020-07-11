@@ -1,6 +1,7 @@
 
 import TestShoppingCart from "./TestShoppingCart";
 import AbstractModel from "../../../../../../main/common/orm/AbstractModel";
+import TestTag from "./TestTag";
 
 
 class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
@@ -24,11 +25,17 @@ class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
     addRelations(): void 
     {
         this.manyToOne(TestShoppingCart);
+        this.manyToMany(TestTag);
     }
 
     testShoppingCart()
     {
         return this.relative(TestShoppingCart);
+    }
+
+    testTags()
+    {
+        return this.relative(TestTag);
     }
 
     set count(count)

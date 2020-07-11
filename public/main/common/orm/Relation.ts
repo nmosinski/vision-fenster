@@ -103,6 +103,11 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
      */
     async abstract relationalDestroyMultiple(toDestroy: List<B>, relatives?: List<A>): Promise<void>;
 
+    customQuery<U extends AbstractModel<U>>(Model: new()=>U): Query<U>
+    {
+        return WixDatabase.query(Model);
+    }
+
     queryOfRelativeA(): Query<A>
     {
         return WixDatabase.query(this.relativeA);

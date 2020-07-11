@@ -228,6 +228,8 @@ class WixDatabase<T extends AbstractModel<T>>
         if(toRemove.isEmpty())
             return;
         let ids: Array<string> = <Array<string>>toRemove.splitProperty(itemToModelPropertyMapping("_id")).toArray();
+        ////console.log("to delete ids in removeMultipleWixDatabase");
+        ////console.log(ids);
         await wixData.bulkRemove(toRemove.get(0).tableName, ids);
     }
 

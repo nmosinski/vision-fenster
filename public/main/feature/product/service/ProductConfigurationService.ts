@@ -1,43 +1,322 @@
 import List from "../../../common/util/collections/list/List";
 import KVMap from "../../../common/util/collections/map/KVMap";
 
-
 class Product
 {
-    options: KVMap<string, ProductOption>;
+    private _options: KVMap<string, ProductOption>;
 
-    getOptionByName(name: string)
+    constructor(options?: List<ProductOption>)
     {
-        return this.options.get(name);
+        this.options = options;
+    }
+
+    setOption(option: ProductOption): void
+    {
+        this._options.add(option.type, option);
+    }
+
+    hasOption(type: string): boolean
+    {
+        if(this.getOption(type))
+            return true;
+        return false;
+    }
+
+    getOption(type: string)
+    {
+        return this._options.get(type);
+    }
+
+    removeOption(type: string): void
+    {
+        this._options.remove(type);
+    }
+
+    set options(options: List<ProductOption>)
+    {
+        this._options = new KVMap<string, ProductOption>();
+        if(options)
+            options.foreach((option) => {this.setOption(option);});
+    }
+
+    get options(): List<ProductOption>
+    {
+        return this._options.values();
+    }
+}
+
+class ProductOption
+{
+    
+    private _type: string;
+    private _value: string;
+    private _tags: List<string>;
+    private _image: string;
+
+    constructor(type: string, value: string, tags?: List<string>, image?: string)
+    {
+        this.type = type;
+        this.value = value;
+        this.tags = tags;
+        this.image = image;
+    }
+
+    hasTag(tag: string): boolean
+    {
+        return this.tags.has(tag);
+    }
+
+    set type(type: string)
+    {
+        this._type = type;
+    }
+
+    set value(value: string)
+    {
+        this._value = value;
+    }
+
+    set tags(tags: List<string>)
+    {
+        if(tags)
+            this._tags = tags;
+        else
+            this._tags = new List<string>();
+    }
+
+    set image(image: string)
+    {
+        if(image)
+            this._image = image;
+        else
+            this._image = "";
+    }
+
+    get type(): string
+    {
+        return this._type;
+    }
+
+    get value(): string
+    {
+        return this._value;
+    }
+
+    get tags(): List<string>
+    {
+        return this._tags;
+    }
+
+    get image(): string
+    {
+        return this._image;
     }
 }
 
 
+
+
 class ProductConfigurationService
 {
-    product: Product;
-    productDefinition: ProductDefinition;
+    private _productDefinition: ProductDefinition;
 
-    productSatisfiesOption(option: ProductOption)
+    constructor(productDefinition: ProductDefinition)
     {
-        let optionDefinition: ProductOptionDefinition;
+        this.productDefinition = productDefinition;
+    }
+
+    /**
+     * Set a product option.
+     * @param productOption The product option to be set.
+     * @returns {boolean} True if the option has been set or false, if the option couldn't be set due to complications with higher ranked options.
+     */
+    setProductOption(productOption: ProductOption, product: Product): boolean
+    {
+        if(this.productSatisfiesOption(productOption, product))
+            product.setOption(productOption);
+        else
+            return false;
+        return true;
+    }
+
+    /**
+     * Filter the passed options for those that are valid. If a type parameter is passed, filter only for those options of the given type.
+     * @param {string} [type=null] The type to be filtered for.
+     * @returns {List<ProductOption>} A list containing all valid options considering the request.
+     */
+    filterValidOptions(allProductOptions: List<ProductOption>, product: Product, productOptionType: string=null): List<ProductOption>
+    {
+        let relevantProductOptions = allProductOptions;
+        let filteredProductOptions = new List<ProductOption>();
+
+        if(productOptionType)
+            relevantProductOptions = allProductOptions.filter((option)=>{return option.type === productOptionType;});
+        
+        for(let idx = 0; idx < relevantProductOptions.length; idx++)
+        {
+            let opt = relevantProductOptions.get(idx);
+
+            if(this.productSatisfiesOption(opt, product))
+                filteredProductOptions.add(opt);
+        }
+            
+        return filteredProductOptions;
+    }
+
+    /**
+     * Find a valid configuration for a product.
+     * @param {string} optionType The starting option type.
+     * @param {KVMap<string, List<ProductOption>>} optionCandidates All possible product options. 
+     * @param {Product} product The product to be configurated.
+     */
+    findValidConfiguration(optionType: string, optionCandidates: KVMap<string, List<ProductOption>>, product: Product): boolean
+    {
+        // Save old option for backup
+        let oldOption: ProductOption = product.getOption(optionType);
+        let nextOptionType: string = null;
+
+        // find next optionType for the next deepth
+        if(optionCandidates.keys().indexOf(optionType) < optionCandidates.keys().length-1)
+            nextOptionType = optionCandidates.keys().get(optionCandidates.keys().indexOf(optionType) + 1);
+
+        // Iterate through option candidates of the given option type
+        for(let idx = 0; idx < optionCandidates.get(optionType).length; idx ++)
+        {
+            // Pick next
+            let option = optionCandidates.get(optionType).get(idx);
+            
+            if(this.productSatisfiesOption(option, product))
+            {
+                // Set the product option
+                this.setProductOption(option, product);
+                
+                // If there is a next option type, try to find a valid option withthe given actual configuration
+                // Else, it's the last child in the tree. Return true
+                if(nextOptionType)
+                {
+                    if(this.findValidConfiguration(nextOptionType, optionCandidates, product))
+                        return true;
+                }
+                else
+                    return true;
+            }
+        }
+
+        // Reset the product setting the old option if a valid configuration couldn't be found
+        product.setOption(oldOption);
+        return false;
+    }
+
+    /**
+     * Fills the missing product options that are required with the ones passed to the function. 
+     * ProductOptions marked as default will be preferred.
+     * If fillNotRequired is set to true, the options that are not required will also be filled.
+     * @param {List<ProductOption>} allProductOptions The product options.
+     * @param {bolean} [fillNotRequired=false] The option that defines if the products not required options will be filled as well.
+     * @returns {boolean} True if the product could be filled with all required product options, else false.
+     */
+    fillMissingProductOptionsWithDefault(allProductOptions: List<ProductOption>, product: Product, fillNotRequired: boolean=false): boolean
+    {
+        let ret = true;
+        
+        let relevantOptionDefinitions = (fillNotRequired)?this.productDefinition.productOptionDefinitions:this.productDefinition.getRequiredProductOptionDefinitions();
+        let unfilledOptionDefinitions = relevantOptionDefinitions.filter((option)=>{return !product.hasOption(option.type);});
+        let productOptionCandidates: KVMap<string, List<ProductOption>> = new KVMap<string, List<ProductOption>>();
+
+        // Init productOptionCandidates list
+        for(let idx = 0; idx < unfilledOptionDefinitions.length; idx++)
+        {
+            let productOptionDefinition = unfilledOptionDefinitions.get(idx);
+            productOptionCandidates.add(productOptionDefinition.type, this.filterValidOptions(allProductOptions, product));
+        }
+
+        // Sort the candidates, default first
+        for(let idx = 0; idx < productOptionCandidates.keys().length; idx++)
+        {
+            let sortedList = new List<ProductOption>();
+            productOptionCandidates.get(productOptionCandidates.keys().get(idx)).foreach((option)=>{
+                if(option.hasTag("default"))
+                    sortedList.add(option);
+            });
+
+            productOptionCandidates.get(productOptionCandidates.keys().get(idx)).foreach((option)=>{
+                if(!option.hasTag("default"))
+                    sortedList.add(option);
+            });
+
+            productOptionCandidates.add(productOptionCandidates.keys().get(idx), sortedList);
+        }
+
+        // Find a valid combination
+        return this.findValidConfiguration(productOptionCandidates.keys().first(), productOptionCandidates, product);
+    }
+
+    /**
+     * Set a product option. If complications appear with lower ranked product options, reject the operation.
+     * @param {ProductOption} productOption The product option to be set.
+     * @returns {boolean} True if no complications appeared, else false.
+     */
+    setOptionOrRejectOnComplications(productOption: ProductOption, product: Product): boolean
+    {
+        let oldOption = product.getOption(productOption.type);
+
+        if(!this.setProductOption)
+            return false;
+
+        if(this.nextUnsatisfiedOption(product))
+            product.setOption(oldOption);
+    }
+
+    /**
+     * Set a product option. If complications appear with lower ranked product options, remove them.
+     * @param {ProductOption} productOption The product option to be set.
+     * @returns {boolean} True if no complications appeared, else false.
+     */
+    setOptionAndRemoveOtherOptionsOnComplications(productOption: ProductOption, product: Product): boolean
+    {
+        if(!this.setProductOption)
+            return false;
+        
+        let toRemove = this.nextUnsatisfiedOption(product);
+        while(toRemove)
+        {
+            product.removeOption(toRemove.type);
+            toRemove = this.nextUnsatisfiedOption(product);
+        }
+        
+        return true;
+    }
+
+    setOptionsAndDefaultOnComplications(productOption: ProductOption, product: Product, productOptions: List<ProductOption>, fillNotRequired: boolean=false)
+    {
+        this.setOptionAndRemoveOtherOptionsOnComplications(productOption, product);
+        this.fillMissingProductOptionsWithDefault(productOptions, product, fillNotRequired);
+    }
+
+    productIsValid(product: Product): boolean
+    {
+        if(this.nextUnsatisfiedOption(product))
+            return false;
+        return true;
+    }
+
+    productSatisfiesOption(productOption: ProductOption, product: Product)
+    {
+        let productOptionDefinition: ProductOptionDefinition;
         let relevantCombinations: List<Combination>;
+        let foundValidCombination = false;
 
         // find the definition that belongs to this option (by type/name)
-        this.productDefinition.productOptionDefinitions.foreach((definition)=>{
-            if(optionDefinition.name === option.type)
-                optionDefinition = definition;
-        });
+        this.productDefinition.getProductOptionDefinition(productOption.type);
 
-        if(!optionDefinition)
+        if(!productOptionDefinition)
             throw Error("Unknown option");
 
         // filter for the combinations that match the tags of the given option. Only those are relevant
-        relevantCombinations = optionDefinition.combinations.filter((combination)=>{
-            return combination.tags.isSublistOf(option.tags);
+        relevantCombinations = productOptionDefinition.combinations.filter((combination)=>{
+            return combination.tags.isSublistOf(productOption.tags);
         });
 
-        let foundValidCombination = false;
         // iterate through the relevant combinations
         relevantCombinations.foreach((combination)=>{
             // If a combination has no requirements, it's a save match
@@ -46,15 +325,19 @@ class ProductConfigurationService
                 foundValidCombination = true;
             else
             {
-                let requirementsFulfilled = false;
+                let requirementsFulfilled = true;
                 // Iterate through all requirements for this combination
                 combination.requirements.foreach((requirement)=>{
-                    // Pich the option from the product this requirements refers to
-                    let option = this.product.getOptionByName(requirement.productOptionType);
-                    // Give the product the chance to fulfill the requirement only if he has the option this requirement refers to
-                    if(option)
-                        if(requirement.tags.isSublistOf(option.tags))
-                            requirementsFulfilled = true;
+                    // Pick the product option from the product this requirement refers to
+                    let productOption = product.getOption(requirement.productOptionType);
+                    
+                    // If the product odesn'thave the necessary option, the requirements for this combination can not be fulfilled
+                    if(!productOption)
+                        requirementsFulfilled = false;
+                    // Else, check if the productOption contains the necessary tags in order to satisfy the requirement for the new product option
+                    else
+                        if(!requirement.tags.isSublistOf(productOption.tags))
+                            requirementsFulfilled = false;
                 });
                 // If requirements fulfilled, found a valid combination
                 if(requirementsFulfilled)
@@ -63,6 +346,25 @@ class ProductConfigurationService
         });
 
         return foundValidCombination;
+    }
+
+    private nextUnsatisfiedOption(product: Product): ProductOption | null
+    {
+        for(let idx = 0; idx < product.options.length; idx++)
+            if(!this.productSatisfiesOption(product.options.get(idx), product))
+                return product.options.get(idx);
+
+        return null;
+    }
+    
+    set productDefinition(productDefinition: ProductDefinition)
+    {
+        this._productDefinition = productDefinition;
+    }
+
+    get productDefinition(): ProductDefinition
+    {
+        return this._productDefinition;
     }
 }
 
@@ -77,17 +379,22 @@ class ProductDefinition
         this.productOptionDefinitions = productOptionDefinitions;
     }
 
-    addProductOptionDefinition(productOptionDefinition: ProductOptionDefinition)
+    setProductOptionDefinition(productOptionDefinition: ProductOptionDefinition): void
     {
         this._productOptionDefinitions.add(productOptionDefinition.type, productOptionDefinition);
     }
 
-    getProductOptionDefinition(type: string)
+    getProductOptionDefinition(type: string): ProductOptionDefinition
     {
         return this._productOptionDefinitions.get(type);
     }
 
-    removeProductOptionDefinition(type: string)
+    getRequiredProductOptionDefinitions(): List<ProductOptionDefinition>
+    {
+        return this.productOptionDefinitions.filter((def)=>{return def.required;});
+    }
+
+    removeProductOptionDefinition(type: string): void
     {
         this._productOptionDefinitions.remove(type);
     }
@@ -100,7 +407,7 @@ class ProductDefinition
     set productOptionDefinitions(productOptionDefinitions: List<ProductOptionDefinition>)
     {
         this._productOptionDefinitions = new KVMap<string, ProductOptionDefinition>();
-        productOptionDefinitions.foreach((definition)=>{this.addProductOptionDefinition(definition)});
+        productOptionDefinitions.foreach((definition)=>{this.setProductOptionDefinition(definition)});
     }
 
     get model(): string
@@ -114,42 +421,27 @@ class ProductDefinition
     }
 }
 
-class ProductOption
-{
-    tags: List<string>;
-    image: string;
-    value: string;
-    type: string;
-
-    constructor(type: string, value: string, tags: List<string>, image?: string)
-    {
-
-    }
-}
-
 class ProductOptionDefinition
 {
     private _type: string;
+    private _required: boolean;
     private _combinations: List<Combination>;
-    constructor(type: string, combinations: List<Combination>=new List<Combination>())
+    
+    constructor(type: string, required: boolean, combinations?: List<Combination>)
     {
         this.type = type;
+        this.required = required;
         this.combinations = combinations;
     }
 
-    addCombination(combination: Combination)
+    addCombination(combination: Combination): void
     {
         this._combinations.add(combination);
     }
 
-    removeCombination(combination: Combination)
+    removeCombination(combination: Combination): void
     {
         this.combinations.remove(this.combinations.indexOf(combination));
-    }
-
-    set combinations(combinations: List<Combination>)
-    {
-        this._combinations = combinations;
     }
 
     set type(type: string)
@@ -157,9 +449,32 @@ class ProductOptionDefinition
         this._type = type;
     }
 
+    set required(required: boolean)
+    {
+        this._required = required;
+    }
+
+    set combinations(combinations: List<Combination>)
+    {
+        if(combinations)
+            this._combinations = combinations;
+        else
+            this._combinations = new List<Combination>();
+    }
+
     get type(): string
     {
         return this._type;
+    }
+
+    get required(): boolean
+    {
+        return this._required;
+    }
+
+    get combinations(): List<Combination>
+    {
+        return this._combinations;
     }
 }
 
@@ -168,49 +483,53 @@ class Combination
     private _tags: List<string>;
     private _requirements: KVMap<string, CombinationRequirement>;
 
-    constructor(tags: List<string>=new List<string>(), requirements: List<CombinationRequirement>=new List<CombinationRequirement>())
+    constructor(tags?: List<string>, requirements?: List<CombinationRequirement>)
     {
         this.tags = tags;
         this.requirements = requirements;
     }
 
-    addTag(tag: string)
+    addTag(tag: string): void
     {
         this.tags.add(tag);
     }
 
-    removeTag(tag: string)
+    removeTag(tag: string): void
     {
         this.tags.remove(this.tags.indexOf(tag));
     }
 
-    addRequirement(requirement: CombinationRequirement)
+    setRequirement(requirement: CombinationRequirement): void
     {
         this._requirements.add(requirement.productOptionType, requirement);
     }
 
-    getRequirement(productOptionType: string)
+    getRequirement(productOptionType: string): CombinationRequirement
     {
         return this._requirements.get(productOptionType);
     }
 
-    removeRequirement(productOptionType: string)
+    removeRequirement(productOptionType: string): void
     {
         this._requirements.remove(productOptionType);
     }
 
     set tags(tags: List<string>)
     {
-        this._tags = tags;
+        if(tags)
+            this._tags = tags;
+        else
+            this._tags = new List<string>();
     }
     
     set requirements(requirements: List<CombinationRequirement>)
     {
         this._requirements = new KVMap<string, CombinationRequirement>();
-        requirements.foreach((requirement)=>{this.addRequirement(requirement);});
+        if(requirements)
+            requirements.foreach((requirement)=>{this.setRequirement(requirement);});
     }
 
-    get tags()
+    get tags(): List<string>
     {
         return this._tags;
     }
@@ -226,18 +545,18 @@ class CombinationRequirement
     private _productOptionType: string;
     private _tags: List<string>;
 
-    constructor(productOptionType: string, tags: List<string>=new List<string>())
+    constructor(productOptionType: string, tags?: List<string>)
     {
         this.productOptionType = productOptionType;
         this.tags = tags;
     }
 
-    addTag(tag: string)
+    addTag(tag: string): void
     {
         this.tags.add(tag);
     }
 
-    removeTag(tag: string)
+    removeTag(tag: string): void
     {
         this.tags.remove(this.tags.indexOf(tag));
     }
@@ -249,56 +568,59 @@ class CombinationRequirement
 
     set tags(tags: List<string>)
     {
-        this._tags = tags;
+        if(tags)
+            this._tags = tags;
+        else
+            this._tags = new List<string>();
     }
 
-    get productOptionType()
+    get productOptionType(): string
     {
         return this._productOptionType;
     }
 
-    get tags()
+    get tags(): List<string>
     {
         return this._tags;
     }
 }
 
-function parseDefinitions(object: Object): List<ProductDefinition>
+function parseProductDefinitions(productDefObj: Object): List<ProductDefinition>
 {
     let productDefinitions = new List<ProductDefinition>();
-    for(var key in productDefinitions)
+    for(var key1 in productDefObj)
     {   
-        let productDef = productDefinitions[key];
+        let productDef = productDefObj[key1];
         let productDefinition = new ProductDefinition(productDef.model);
         
-        for(var key in productDef.options)
+        for(var key2 in productDef.productOptionDefinitions)
         {
-            let productOptDef = productDef.options[key];
-            let productOptionDefinition = new ProductOptionDefinition(productOptDef.type);
+            let productOptDef = productDef.productOptionDefinitions[key2];
+            let productOptionDefinition = new ProductOptionDefinition(productOptDef.type, productOptDef.required);
 
-            for(var key in productOptDef.combinations)
+            for(var key3 in productOptDef.combinations)
             {
-                let comb = productOptDef.combinations[key];
+                let comb = productOptDef.combinations[key3];
                 let combination = new Combination();
 
-                for(var tag in comb.tags)
-                    combination.addTag(tag);
+                for(var key4 in comb.tags)
+                    combination.addTag(comb.tags[key4]);
                 
-                for(var key in comb.requirements)
+                for(var key5 in comb.requirements)
                 {
-                    let combReq = comb.requirements[key];
-                    let combinationRequirement = new CombinationRequirement(combReq.type);
+                    let combReq = comb.requirements[key5];
+                    let combinationRequirement = new CombinationRequirement(combReq.productOptionType);
 
-                    for(var tag in combReq.tags)
-                        combinationRequirement.addTag(tag);
+                    for(var key6 in combReq.tags)
+                        combinationRequirement.addTag(combReq.tags[key6]);
                     
-                    combination.addRequirement(combinationRequirement);
+                    combination.setRequirement(combinationRequirement);
                 }
 
                 productOptionDefinition.addCombination(combination);
             }
 
-            productDefinition.addProductOptionDefinition(productOptionDefinition);
+            productDefinition.setProductOptionDefinition(productOptionDefinition);
         }
 
         productDefinitions.add(productDefinition);
@@ -317,6 +639,7 @@ const productDefinitionObject =
             0: 
             {
                 "type": "material",
+                "required": true,
                 "combinations": 
                 {
                     0: 
@@ -334,6 +657,7 @@ const productDefinitionObject =
             1: 
             {
                 "type": "profil",
+                "required": true,
                 "combinations": 
                 {
                     0: 
@@ -366,6 +690,7 @@ const productDefinitionObject =
             2:
             {
                 "type": "farbe",
+                "required": true,
                 "combinations":
                 {
                     0:
@@ -397,6 +722,7 @@ const productDefinitionObject =
             3:
             {
                 "type": "fenstertyp",
+                "required": true,
                 "combinations":
                 {
                     0:
@@ -419,6 +745,7 @@ const productDefinitionObject =
             4:
             {
                 "type": "fensterlicht",
+                "required": true,
                 "combinations":
                 {
                     0:
@@ -534,6 +861,7 @@ const productDefinitionObject =
             5:
             {
                 "type": "öffnungsart",
+                "required": true,
                 "combinations":
                 {
                     0:
