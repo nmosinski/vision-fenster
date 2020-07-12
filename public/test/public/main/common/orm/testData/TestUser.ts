@@ -21,7 +21,7 @@ class TestUser extends AbstractModel<TestUser>
         this.oneToZeroOrOne(TestShoppingCart);
     }
 
-    testShoppingCart()
+    testShoppingCartQ()
     {
         return this.relative(TestShoppingCart);
     }

@@ -28,12 +28,12 @@ class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
         this.manyToMany(TestTag);
     }
 
-    testShoppingCart()
+    testShoppingCartQ()
     {
         return this.relative(TestShoppingCart);
     }
 
-    testTags()
+    testTagsQ()
     {
         return this.relative(TestTag);
     }

@@ -22,7 +22,7 @@ class TestTag extends AbstractModel<TestTag>
         this.manyToMany(TestShoppingCartItem);
     }
 
-    testShoppingCartItems()
+    testShoppingCartItemsQ()
     {
         return this.relative(TestShoppingCartItem);
     }

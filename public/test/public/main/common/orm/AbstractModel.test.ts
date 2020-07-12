@@ -33,6 +33,7 @@ export async function runAllTests()
     tests.add(new Test(PATH, "one generation find", truthly(), oneGenerationFind));
     tests.add(new Test(PATH, "one generation create", truthly(), oneGenerationCreate));
     tests.add(new Test(PATH, "one generation create multiple", truthly(), oneGenerationCreateMultiple));
+
     tests.add(new Test(PATH, "one generation update", truthly(), oneGenerationUpdate));
     tests.add(new Test(PATH, "one generation update multiple", truthly(), oneGenerationUpdateMultiple));
     tests.add(new Test(PATH, "one generation save", truthly(), oneGenerationSave));
@@ -42,6 +43,7 @@ export async function runAllTests()
 
     tests.add(new Test(PATH, "two generations get", truthly(), twoGenerationsGet));
     tests.add(new Test(PATH, "two generations find", truthly(), twoGenerationsFind));
+    
     /*
     tests.add(new Test(PATH, "two generations create", truthly(), twoGenerationsCreate));
     tests.add(new Test(PATH, "two generations create multiple", truthly(), twoGenerationsCreateMultiple));
@@ -52,6 +54,8 @@ export async function runAllTests()
     tests.add(new Test(PATH, "two generations destroy", unspecified(), twoGenerationsDestroy));
     tests.add(new Test(PATH, "two generations destroy multiple", truthly(), twoGenerationsDestroyMultiple));
     */   
+
+    tests.add(new Test(PATH, "two generations find result as property", truthly(), twoGenerationsFindResultAsProperty));
 
     await tests.runAll();
 }
@@ -187,7 +191,7 @@ async function simpleDestroyMultiple()
 
 async function oneGenerationGet()
 {
-    let result = await testShoppingCarts.first().testShoppingCartItems().get();
+    let result = await testShoppingCarts.first().testShoppingCartItemsQ().get();
     
     if(result)
         return result.id === testShoppingCartItems.first().id;
@@ -197,7 +201,7 @@ async function oneGenerationGet()
 
 async function oneGenerationFind()
 {
-    let result = await testShoppingCarts.first().testShoppingCartItems().find();
+    let result = await testShoppingCarts.first().testShoppingCartItemsQ().find();
 
     if(result)
     {
@@ -216,9 +220,9 @@ async function oneGenerationFind()
 async function oneGenerationCreate()
 {
     let item = TestShoppingCartItem.dummy(TestShoppingCartItem);
-    await testShoppingCarts.last().testShoppingCartItems().create(item);
+    await testShoppingCarts.last().testShoppingCartItemsQ().create(item);
     
-    let result = await testShoppingCarts.last().testShoppingCartItems().find();
+    let result = await testShoppingCarts.last().testShoppingCartItemsQ().find();
 
     if(!result.has(item))
         return false;
@@ -229,9 +233,9 @@ async function oneGenerationCreateMultiple()
 {
     let ret = true;
     let items = TestShoppingCartItem.dummies(TestShoppingCartItem, 3);
-    await testShoppingCarts.last().testShoppingCartItems().createMultiple(items);
+    await testShoppingCarts.last().testShoppingCartItemsQ().createMultiple(items);
     
-    let result = await testShoppingCarts.last().testShoppingCartItems().find();
+    let result = await testShoppingCarts.last().testShoppingCartItemsQ().find();
 
     items.foreach((item)=>{
         if(!result.has(item))
@@ -244,9 +248,9 @@ async function oneGenerationCreateMultiple()
 async function oneGenerationUpdate()
 {
     let item = TestShoppingCartItem.dummy(TestShoppingCartItem);
-    await testShoppingCarts.last().testShoppingCartItems().create(item);
+    await testShoppingCarts.last().testShoppingCartItemsQ().create(item);
     
-    let result = await testShoppingCarts.last().testShoppingCartItems().find();
+    let result = await testShoppingCarts.last().testShoppingCartItemsQ().find();
 
     if(!result.has(item))
         return false;
@@ -257,9 +261,9 @@ async function oneGenerationUpdateMultiple()
 {
     let ret = true;
     let items = TestShoppingCartItem.dummies(TestShoppingCartItem, 3);
-    await testShoppingCarts.last().testShoppingCartItems().createMultiple(items);
+    await testShoppingCarts.last().testShoppingCartItemsQ().createMultiple(items);
     
-    let result = await testShoppingCarts.last().testShoppingCartItems().find();
+    let result = await testShoppingCarts.last().testShoppingCartItemsQ().find();
 
     items.foreach((item)=>{
         if(!result.has(item))
@@ -272,9 +276,9 @@ async function oneGenerationUpdateMultiple()
 async function oneGenerationSave()
 {
     let item = TestShoppingCartItem.dummy(TestShoppingCartItem);
-    await testShoppingCarts.last().testShoppingCartItems().create(item);
+    await testShoppingCarts.last().testShoppingCartItemsQ().create(item);
     
-    let result = await testShoppingCarts.last().testShoppingCartItems().find();
+    let result = await testShoppingCarts.last().testShoppingCartItemsQ().find();
 
     if(!result.has(item))
         return false;
@@ -285,9 +289,9 @@ async function oneGenerationSaveMultiple()
 {
     let ret = true;
     let items = TestShoppingCartItem.dummies(TestShoppingCartItem, 3);
-    await testShoppingCarts.last().testShoppingCartItems().createMultiple(items);
+    await testShoppingCarts.last().testShoppingCartItemsQ().createMultiple(items);
     
-    let result = await testShoppingCarts.last().testShoppingCartItems().find();
+    let result = await testShoppingCarts.last().testShoppingCartItemsQ().find();
 
     items.foreach((item)=>{
         if(!result.has(item))
@@ -299,16 +303,16 @@ async function oneGenerationSaveMultiple()
 
 async function oneGenerationDestroy()
 {
-    await testShoppingCarts.first().testShoppingCartItems().destroy();
-    let items = await testShoppingCarts.first().testShoppingCartItems().find();
+    await testShoppingCarts.first().testShoppingCartItemsQ().destroy();
+    let items = await testShoppingCarts.first().testShoppingCartItemsQ().find();
 
     return items.length === 0;
 }
 
 async function oneGenerationDestroyMultiple()
 {
-    await testShoppingCarts.first().testShoppingCartItems().destroyMultiple();
-    let items = await testShoppingCarts.first().testShoppingCartItems().find();
+    await testShoppingCarts.first().testShoppingCartItemsQ().destroyMultiple();
+    let items = await testShoppingCarts.first().testShoppingCartItemsQ().find();
 
     return items.length === 0;
 }
@@ -316,7 +320,7 @@ async function oneGenerationDestroyMultiple()
 
 async function twoGenerationsGet()
 {
-    let result = await testUsers.first().testShoppingCart().testShoppingCartItems().get();
+    let result = await testUsers.first().testShoppingCartQ().testShoppingCartItemsQ().get();
     
     if(result)
         return result.id === testShoppingCartItems.first().id;
@@ -326,7 +330,7 @@ async function twoGenerationsGet()
 
 async function twoGenerationsFind()
 {
-    let result = await testUsers.first().testShoppingCart().testShoppingCartItems().find();
+    let result = await testUsers.first().testShoppingCartQ().testShoppingCartItemsQ().find();
     
     if(result)
     {
@@ -340,4 +344,21 @@ async function twoGenerationsFind()
     else
         return result;
     return true;
+}
+
+
+async function twoGenerationsFindResultAsProperty()
+{
+    let result = await testUsers.first().testShoppingCartQ().testShoppingCartItemsQ().find();
+
+    if(result )
+    {
+        if(! (testUsers.first().testShoppingCart.id === testShoppingCarts.first().id))
+            return false;
+        if(!(testUsers.first().testShoppingCart.testShoppingCartItems.first().id === testShoppingCartItems.first().id))
+            return false;
+        return true;
+    }
+    else
+        return result;
 }

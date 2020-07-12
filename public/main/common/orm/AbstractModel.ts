@@ -22,6 +22,7 @@ import UpdateError from './UpdateError';
 import DestroyError from './DestroyError';
 import InvalidOperationError from '../util/error/InvalidOperationError';
 import AHoldsReferenceToB from './AHoldsReferenceToB.js';
+import AHoldsNoReferenceToB from './AHoldsNoReferenceToB.js';
 
 /**
  * @todo Add undo operations for save etc. Important in case a save is not possible but uve updated already some references.
@@ -34,18 +35,19 @@ import AHoldsReferenceToB from './AHoldsReferenceToB.js';
 
 abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
 {
-    private _previousRelative: AbstractModel<any>;
+    private _parent: AbstractModel<any>;
     private _relations: KVMap<new()=>AbstractModel<any>, Relation<AbstractModel<any>,T>>;
     protected abstract Constructor: new()=>T;
     protected _properties: Properties;
     private _id: string;
+    private _lastQueryResult: QueryResult<T> | AbstractModel<T>;
 
     /**
      * Create an Abstract Model.
      */
     constructor(data?: object)
     {
-        this.previousRelative = null;
+        this.parent = null;
         this.relations = new KVMap<new()=>AbstractModel<any>, Relation<AbstractModel<any>,T>>();
         this.properties = new Properties();
 
@@ -178,7 +180,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     /**
      * Get a relative.
      * @param {new()=>U, extends AbstactModel<U>} name The name of the relative.
-     * @returns {U} The relative. 
+     * @returns {AbstractModel<any>} The relative. 
      */
     protected relative<U extends AbstractModel<U>>(Relative: new()=>U): U
     {
@@ -186,7 +188,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         if(relation)
         {
             let relative = new Relative();
-            relative.previousRelative = this;
+            relative.parent = this;
             return relative;
         }
         
@@ -282,6 +284,18 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     }
 
     /**
+     * Check if the parent of this is the root.
+     * @returns {boolean} True if the parent is the root, else false.
+     */
+    private myParentIsTheRoot(): boolean
+    {
+        if(this.parent)
+            if(!this.parent.parent)
+                return true;
+        return false;
+    }
+
+    /**
      * Assign the given model (this by default) to the given relative.
      * @param {T extends AbstractModel<T>} model The model to be assigned.
      * @param {U extends AbstractModel<U>} relative The relative the given model will be assigned to. 
@@ -322,16 +336,13 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     }
 
     /**
-     * Load the model with the data of the entity with the given id. If no id is passed, the actual id will be taken.
-     * @param {string} [id] The id of the entity. 
+     * Load properties. A chain is possible as well.
+     * @param {<U extends AbstractModel<U>> new() => U} Model The Model (class) of the property to be loaded. 
      * @returns {Promise<this>} This. 
      */
-    async load(id?: string): Promise<this>
+    load<U extends AbstractModel<U>>(Model: new() => U): U
     {
-        let model = await this.get(id);
-        if(model)
-            return this.fill(model);
-        return null;
+        return this.relative(Model);
     }
 
     /**
@@ -343,13 +354,13 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     async get(id?: string): Promise<T>
     {
         // Called over previous.
-        if(this.previousRelative)
+        if(this.parent)
         {
-            let previousQueryResult = await this.previousRelative.find();
-            let relation = this.relations.get(this.previousRelative.Constructor);
-            let thisQueryResult = relation.relationalGet(previousQueryResult.first());
+            let previousQueryResult = await this.parent.find();
+            let relation = this.relations.get(this.parent.Constructor);
+            let thisGetResult = relation.relationalGet(previousQueryResult.first());
 
-            return thisQueryResult;
+            return thisGetResult;
         }
 
         if(!id)
@@ -375,24 +386,53 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      */
     async find(): Promise<QueryResult<T>>
     {
+        let thisQueryResult: QueryResult<T>;
         // Called over previous.
-        if(this.previousRelative)
+        if(this.parent)
         {
-            let previousQueryResult;
-            if(this.previousRelative.previousRelative)
-                previousQueryResult = await this.previousRelative.find();
-            else
+            let previousQueryResult: QueryResult<AbstractModel<any>>;
+            let propertyTarget;
+            let propertyName: string;
+            let relationToParent: Relation<AbstractModel<any>, T>;
+
+            // If it's a first generation find, find only items that belong to the parent
+            if(this.myParentIsTheRoot())
             {
                 previousQueryResult = new QueryResult<AbstractModel<any>>();
-                previousQueryResult.add(this.previousRelative);
+                previousQueryResult.add(this.parent);
+                propertyTarget = this.parent;
             }
-            let relation = this.relations.get(this.previousRelative.Constructor);
-            let thisQueryResult = await relation.relationalFind(previousQueryResult);
+            else
+            {
+                previousQueryResult = await this.parent.find();
+                propertyTarget = this.parent.lastQueryResult;
+            }
             
-            return thisQueryResult;
+            relationToParent = this.relations.get(this.parent.Constructor);
+       
+            thisQueryResult = await relationToParent.relationalFind(previousQueryResult);
+        
+            if(relationToParent instanceof ManyToMany || relationToParent instanceof OneToMany)
+                propertyName = this.asMultiplePropertyName();
+            else
+                propertyName = this.asSinglePropertyName();
+            
+            
+            if(this.myParentIsTheRoot() && (relationToParent instanceof AHoldsNoReferenceToB))
+            {
+                propertyTarget[propertyName] = thisQueryResult.first();
+                this.lastQueryResult = thisQueryResult.first();
+            }
+            else
+            {
+                propertyTarget[propertyName] = thisQueryResult;
+                this.lastQueryResult = thisQueryResult;
+            }
         }
-
-        return await AbstractModel.find(this.Constructor);
+        else
+            thisQueryResult = await AbstractModel.find(this.Constructor);
+        
+        return thisQueryResult;
     }
 
     /**
@@ -408,21 +448,31 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     /**
      * Create the given model (this by default).
      * If called over a relative, try to assign this model to the first retrieved model by the chained query.
-     * This may not be possible depending on the relationship to the previous relative.
+     * This may not be possible depending on the relationship to the parent.
      * @param {T} [model=this] The model to be created.
      */
     async create(model?: T): Promise<void>
     {
         // Called over previous.
-        if(this.previousRelative)
+        if(this.parent)
         {
             // Nothing to do in the meaning of "assign nothing to the results of the previous query result."
             if(!model)
                 return;
 
-            // Assign the given model to the previous query result.
-            let previousQueryResult = await this.previousRelative.find();
-            model = this.relations.get(this.previousRelative.Constructor).assign(model, previousQueryResult.first());
+            let previousQueryResult: QueryResult<AbstractModel<any>>;
+
+            // Previous query result should be just the root in that case
+            if(this.myParentIsTheRoot())
+            {
+                previousQueryResult = new QueryResult<AbstractModel<any>>();
+                previousQueryResult.add(this.parent);
+            }
+            else
+                previousQueryResult = await this.parent.find();
+            
+            model = this.relations.get(this.parent.Constructor).assign(model, previousQueryResult.first());
+           
         }
 
         // Create this.
@@ -445,10 +495,6 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         let relations = model.relations.values();
         for(let idx = 0; idx < relations.length; idx++)
             await relations.get(idx).relationalCreate(model);
-  
-        //model.relations.values().foreachAsync(async(relation)=>{
-        //    await relation.relationalCreate(model);
-        //});
 
         await WixDatabase.create(model);
     }
@@ -456,7 +502,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     /**
      * Create many models.
      * If called over a relative, try to assign this model to the first retrieved model by the chained query.
-     * This may not be possible depending on the relationship of the models in this list to the previous relative.
+     * This may not be possible depending on the relationship of the models in this list to the parent.
      * @param {List<T>} models The List containing the models to be created. 
      */
     async createMultiple(models: List<T>): Promise<void>
@@ -465,11 +511,19 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
             return;
         
         // Called over previous.
-        if(this.previousRelative)
+        if(this.parent)
         {
-            // Assign the given models to the previous query result.
-            let previousQueryResult = await this.previousRelative.find();
-            models = this.relations.get(this.previousRelative.Constructor).assignMultiple(models, previousQueryResult.first());
+            let previousQueryResult: QueryResult<AbstractModel<any>>;
+            // Previous query result should be just the root in that case
+            if(this.myParentIsTheRoot())
+            {
+                previousQueryResult = new QueryResult<AbstractModel<any>>();
+                previousQueryResult.add(this.parent);
+            }
+            else
+                previousQueryResult = await this.parent.find();
+
+            models = this.relations.get(this.parent.Constructor).assignMultiple(models, previousQueryResult.first());
         }
 
         return await AbstractModel.createMultiple(models);
@@ -493,32 +547,34 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         for(let idx = 0; idx < relations.length; idx++)
             await relations.get(idx).relationalCreateMultiple(models);
 
-        // Call save for each relation.
-       // models.get(0).relations.values().foreachAsync(async (relation)=>{
-        //    await relation.relationalCreateMultiple(models);
-        //});
-
         await WixDatabase.createMultiple(models);
     }
 
     /**
      * Save the given model (this by default).
      * If called over a relative, try to assign this model to the first retrieved model by the chained query.
-     * This may not be possible depending on the relationship to the previous relative.
+     * This may not be possible depending on the relationship to the parent.
      * @param {T} [model=this] The model to be saved.
      */
     async save(model?: T): Promise<void>
     {
         // Called over previous.
-        if(this.previousRelative)
+        if(this.parent)
         {
             // Nothing to do in the meaning of "assign nothing to the results of the previous query result."
             if(!model)
                 return;
-
-            // Assign the given model to the previous query result.
-            let previousQueryResult = await this.previousRelative.find();
-            model = this.relations.get(this.previousRelative.Constructor).assign(model, previousQueryResult.first());
+            let previousQueryResult: QueryResult<AbstractModel<any>>;
+            // Previous query result should be just the root in that case
+            if(this.myParentIsTheRoot())
+            {
+                previousQueryResult = new QueryResult<AbstractModel<any>>();
+                previousQueryResult.add(this.parent);
+            }
+            else
+                previousQueryResult = await this.parent.find();
+                
+            model = this.relations.get(this.parent.Constructor).assign(model, previousQueryResult.first());
         }
 
         // Save this.
@@ -541,18 +597,13 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         for(let idx = 0; idx < relations.length; idx++)
             await relations.get(idx).relationalSave(model);        
 
-        // Call save for each relation.
-        //model.relations.values().foreachAsync(async (relation)=>{
-        //    await relation.relationalSave(model);
-        //});
-
         await WixDatabase.save(model);
     }
 
     /**
      * Save many models.
      * If called over a relative, try to assign this model to the first retrieved model by the chained query.
-     * This may not be possible depending on the relationship of the models in this list to the previous relative.
+     * This may not be possible depending on the relationship of the models in this list to the parent.
      * @param {List<T>} models The List containing the models to be saved. 
      */
     async saveMultiple(models: List<T>): Promise<void>
@@ -561,11 +612,19 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
             return;
         
         // Called over previous.
-        if(this.previousRelative)
+        if(this.parent)
         {
-            // Assign the given models to the previous query result.
-            let previousQueryResult = await this.previousRelative.find();
-            models = this.relations.get(this.previousRelative.Constructor).assignMultiple(models, previousQueryResult.first());
+            let previousQueryResult: QueryResult<AbstractModel<any>>;
+            // Previous query result should be just the root in that case
+            if(this.myParentIsTheRoot())
+            {
+                previousQueryResult = new QueryResult<AbstractModel<any>>();
+                previousQueryResult.add(this.parent);
+            }
+            else
+                previousQueryResult = await this.parent.find();
+
+            models = this.relations.get(this.parent.Constructor).assignMultiple(models, previousQueryResult.first());
         }
 
         return await AbstractModel.saveMultiple(models);
@@ -589,32 +648,35 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         for(let idx = 0; idx < relations.length; idx++)
             await relations.get(idx).relationalSaveMultiple(models);
 
-        // Call save for each relation.
-        //models.get(0).relations.values().foreachAsync(async (relation)=>{
-        //    await relation.relationalSaveMultiple(models);
-        //});
-
         await WixDatabase.saveMultiple(models);
     }
 
     /**
      * Update the given model (this by default).
      * If called over a relative, try to assign this model to the first retrieved model by the chained query.
-     * This may not be possible depending on the relationship to the previous relative.
+     * This may not be possible depending on the relationship to the parent.
      * @param {T} [model] The model to be updated.
      */
     async update(model?: T): Promise<void>
     {
         // Called over previous.
-        if(this.previousRelative)
+        if(this.parent)
         {
             // Nothing to do in the meaning of "assign nothing to the results of the previous query result."
             if(!model)
                 return;
 
-            // Assign the given model to the previous query result.
-            let previousQueryResult = await this.previousRelative.find();
-            model = this.relations.get(this.previousRelative.Constructor).assign(model, previousQueryResult.first());
+            let previousQueryResult: QueryResult<AbstractModel<any>>;
+            // Previous query result should be just the root in that case
+            if(this.myParentIsTheRoot())
+            {
+                previousQueryResult = new QueryResult<AbstractModel<any>>();
+                previousQueryResult.add(this.parent);
+            }
+            else
+                previousQueryResult = await this.parent.find();
+
+            model = this.relations.get(this.parent.Constructor).assign(model, previousQueryResult.first());
         }
 
         // Update this.
@@ -637,18 +699,13 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         for(let idx = 0; idx < relations.length; idx++)
             await relations.get(idx).relationalUpdate(model);
 
-        // Call update for each relation.
-//        model.relations.values().foreachAsync(async (relation)=>{
-  //          await relation.relationalUpdate(model);
-    //    });
-
         await WixDatabase.update(model);
     }
 
     /**
      * Update many models.
      * If called over a relative, try to assign this model to the first retrieved model by the chained query.
-     * This may not be possible depending on the relationship of the models in this list to the previous relative.
+     * This may not be possible depending on the relationship of the models in this list to the parent.
      * @param {List<T>} models The List containing the models to be updated. 
      */
     async updateMultiple(models: List<T>): Promise<void>
@@ -657,11 +714,19 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
             return;
         
         // Called over previous.
-        if(this.previousRelative)
+        if(this.parent)
         {
-            // Assign the given models to the previous query result.
-            let previousQueryResult = await this.previousRelative.find();
-            models = this.relations.get(this.previousRelative.Constructor).assignMultiple(models, previousQueryResult.first());
+            let previousQueryResult: QueryResult<AbstractModel<any>>;
+            // Previous query result should be just the root in that case
+            if(this.myParentIsTheRoot())
+            {
+                previousQueryResult = new QueryResult<AbstractModel<any>>();
+                previousQueryResult.add(this.parent);
+            }
+            else
+                previousQueryResult = await this.parent.find();
+
+            models = this.relations.get(this.parent.Constructor).assignMultiple(models, previousQueryResult.first());
         }
 
         return await AbstractModel.updateMultiple(models);
@@ -685,10 +750,6 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         for(let idx = 0; idx < relations.length; idx++)
             await relations.get(idx).relationalUpdateMultiple(models);
 
-        // Call update for each relation.
-       // models.get(0).relations.values().foreachAsync(async (relation)=>{
-        //    await relation.relationalUpdateMultiple(models);
-        //});
 
         await WixDatabase.updateMultiple(models);
     }
@@ -701,13 +762,22 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     async destroy(model?: T): Promise<void>
     {
         // Called over relation.
-        if(this.previousRelative)
+        if(this.parent)
         {
-            // Destroy all models that belong to the models retrieved by find of the previous relative.
+            // Destroy all models that belong to the models retrieved by find of the parent.
             if(!model)
             {
-                let previousQueryResult = await this.previousRelative.find();
-                let toDestroy = await this.relations.get(this.previousRelative.Constructor).relationalFind(previousQueryResult);
+                let previousQueryResult: QueryResult<AbstractModel<any>>;
+                // Previous query result should be just the root in that case
+                if(this.myParentIsTheRoot())
+                {
+                    previousQueryResult = new QueryResult<AbstractModel<any>>();
+                    previousQueryResult.add(this.parent);
+                }
+                else
+                    previousQueryResult = await this.parent.find();
+
+                let toDestroy = await this.relations.get(this.parent.Constructor).relationalFind(previousQueryResult);
                 
                 // Continue with a single destroy if there is just one model to destroy. Else destroy multiple.
                 if(toDestroy.length === 1)
@@ -736,16 +806,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     {
         if(!model.valid())
             throw new DestroyError(PATH, "AbstractModel.destroy()", model);
-
         let relations = model.relations.values();
         for(let idx = 0; idx < relations.length; idx++)
             await relations.get(idx).relationalDestroy(model);
-
-        // Call destroy for each relation.
-//        model.relations.values().foreachAsync(async (relation)=>{
-  //          await relation.relationalDestroy(model);
-    //    });
-
         await WixDatabase.remove(model);
     }
 
@@ -757,13 +820,22 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     async destroyMultiple(models?: List<T>): Promise<void>
     {   
         // Called over relation.
-        if(this.previousRelative)
+        if(this.parent)
         {
-            // Destroy all models that belong to the models retrieved by find of the previous relative.
+            // Destroy all models that belong to the models retrieved by find of the parent.
             if(!models)
             {
-                let previousQueryResult = await this.previousRelative.find();
-                let toDestroy = await this.relations.get(this.previousRelative.Constructor).relationalFind(previousQueryResult);
+                let previousQueryResult: QueryResult<AbstractModel<any>>;
+                // Previous query result should be just the root in that case
+                if(this.myParentIsTheRoot())
+                {
+                    previousQueryResult = new QueryResult<AbstractModel<any>>();
+                    previousQueryResult.add(this.parent);
+                }
+                else
+                    previousQueryResult = await this.parent.find();
+
+                let toDestroy = await this.relations.get(this.parent.Constructor).relationalFind(previousQueryResult);
                 
                 // Continue with a single destroy if there is just one model to destroy. Else destroy multiple.
                 if(toDestroy.length === 1)
@@ -789,21 +861,15 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         if(models.isEmpty())
             return;
 
-        ////console.log("To destroy in destroyMultiple in AbstractModel");
-        ////console.log(models);
         models.foreach((model)=>{
             if(!model.valid())
                 throw new DestroyError(PATH, "AbstractModel.destroyMultiple()", model);
         });
 
-        ////console.log("Passed to last step in destroyMultiple in AbstractMdoel");
         // Call destroy for each relation.
         let relations = models.get(0).relations.values();
         for(let idx = 0; idx < relations.length; idx++)
             await relations.get(idx).relationalDestroyMultiple(models);
-//        models.get(0).relations.values().foreachAsync(async (relation)=>{
-  //          await relation.relationalDestroyMultiple(models);
-    //    });
 
         await WixDatabase.removeMultiple(models);
     }
@@ -842,7 +908,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      */
     public asSinglePropertyName(): string
     {
-        return this.tableName.charAt(0).toLowerCase + this.tableName.slice(1);
+        return this.tableName.charAt(0).toLowerCase() + this.tableName.slice(1);
     }
 
     /**
@@ -851,7 +917,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      */
     public asMultiplePropertyName(): string
     {
-        return this.asSinglePropertyName + "s";
+        return this.asSinglePropertyName() + "s";
     }
 
     /**
@@ -914,21 +980,39 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     }
 
     /**
-     * Set previous relative.
-     * @param {AbstractModel<any>} relative The previous relative.
+     * Set the last query result.
+     * @param {QueryResult<T>} lastQueryResult The last query result.
      */
-    private set previousRelative(relative: AbstractModel<any>)
+    private set lastQueryResult(lastQueryResult: QueryResult<T> | AbstractModel<T>)
     {
-        this._previousRelative = relative;
+        this._lastQueryResult = lastQueryResult;
     }
 
     /**
-     * Get previous relative.
-     * @returns {AbstractModel<any>} The previous relative.
+     * Get the last query result.
+     * @returns {QueryResult<T>} The last query result.
      */
-    private get previousRelative(): AbstractModel<any>
+    private get lastQueryResult(): QueryResult<T> | AbstractModel<T>
     {
-        return this._previousRelative;
+        return this._lastQueryResult;
+    }
+
+    /**
+     * Set parent.
+     * @param {AbstractModel<any>} parent The parent.
+     */
+    private set parent(parent: AbstractModel<any>)
+    {
+        this._parent = parent;
+    }
+
+    /**
+     * Get parent.
+     * @returns {AbstractModel<any>} The parent.
+     */
+    private get parent(): AbstractModel<any>
+    {
+        return this._parent;
     }
 
     /**

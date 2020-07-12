@@ -45,11 +45,7 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C exten
     {
         let aToRole = new OneToMany(this.relativeA, this.roleModel);
         let roleToB = new ManyToOne(this.roleModel, this.relativeB);
-        ////console.log("relatives in relational find many to many");
-        ////console.log(relatives);
         let roleResult = await aToRole.relationalFind(relatives);
-        ////console.log("role models in relational find many to many");
-        ////console.log(roleResult);
         return await roleToB.relationalFind(roleResult);
     }
 

@@ -12,24 +12,24 @@ class Product
 
     setOption(option: ProductOption): void
     {
-        this._options.add(option.type, option);
+        this._options.add(option.type.title, option);
     }
 
-    hasOption(type: string): boolean
+    hasOption(typeTitle: string): boolean
     {
-        if(this.getOption(type))
+        if(this.getOption(typeTitle))
             return true;
         return false;
     }
 
-    getOption(type: string)
+    getOption(typeTitle: string)
     {
-        return this._options.get(type);
+        return this._options.get(typeTitle);
     }
 
-    removeOption(type: string): void
+    removeOption(typeTitle: string): void
     {
-        this._options.remove(type);
+        this._options.remove(typeTitle);
     }
 
     set options(options: List<ProductOption>)
@@ -45,17 +45,38 @@ class Product
     }
 }
 
+class ProductOptionType
+{
+    private _title: string;
+
+    constructor(title: string)
+    {
+
+    }
+
+    set title(title: string)
+    {
+        this._title = title;
+    }
+
+    get title(): string
+    {
+        return this._title;
+    }
+
+    
+}
+
 class ProductOption
 {
     
-    private _type: string;
+    private _type: ProductOptionType;
     private _value: string;
     private _tags: List<string>;
     private _image: string;
 
-    constructor(type: string, value: string, tags?: List<string>, image?: string)
+    constructor(value: string, tags?: List<string>, image?: string)
     {
-        this.type = type;
         this.value = value;
         this.tags = tags;
         this.image = image;
@@ -66,7 +87,7 @@ class ProductOption
         return this.tags.has(tag);
     }
 
-    set type(type: string)
+    set type(type: ProductOptionType)
     {
         this._type = type;
     }
@@ -92,7 +113,7 @@ class ProductOption
             this._image = "";
     }
 
-    get type(): string
+    get type(): ProductOptionType
     {
         return this._type;
     }
@@ -144,13 +165,13 @@ class ProductConfigurationService
      * @param {string} [type=null] The type to be filtered for.
      * @returns {List<ProductOption>} A list containing all valid options considering the request.
      */
-    filterValidOptions(allProductOptions: List<ProductOption>, product: Product, productOptionType: string=null): List<ProductOption>
+    filterValidOptions(allProductOptions: List<ProductOption>, product: Product, productOptionTypeTitle: string=null): List<ProductOption>
     {
         let relevantProductOptions = allProductOptions;
         let filteredProductOptions = new List<ProductOption>();
 
-        if(productOptionType)
-            relevantProductOptions = allProductOptions.filter((option)=>{return option.type === productOptionType;});
+        if(productOptionTypeTitle)
+            relevantProductOptions = allProductOptions.filter((option)=>{return option.type.title === productOptionTypeTitle;});
         
         for(let idx = 0; idx < relevantProductOptions.length; idx++)
         {
@@ -165,25 +186,25 @@ class ProductConfigurationService
 
     /**
      * Find a valid configuration for a product.
-     * @param {string} optionType The starting option type.
+     * @param {string} optionTypeTitle The starting option type.
      * @param {KVMap<string, List<ProductOption>>} optionCandidates All possible product options. 
      * @param {Product} product The product to be configurated.
      */
-    findValidConfiguration(optionType: string, optionCandidates: KVMap<string, List<ProductOption>>, product: Product): boolean
+    findValidConfiguration(optionTypeTitle: string, optionCandidates: KVMap<string, List<ProductOption>>, product: Product): boolean
     {
         // Save old option for backup
-        let oldOption: ProductOption = product.getOption(optionType);
-        let nextOptionType: string = null;
+        let oldOption: ProductOption = product.getOption(optionTypeTitle);
+        let nextOptionTypeTitle: string = null;
 
         // find next optionType for the next deepth
-        if(optionCandidates.keys().indexOf(optionType) < optionCandidates.keys().length-1)
-            nextOptionType = optionCandidates.keys().get(optionCandidates.keys().indexOf(optionType) + 1);
+        if(optionCandidates.keys().indexOf(optionTypeTitle) < optionCandidates.keys().length-1)
+            nextOptionTypeTitle = optionCandidates.keys().get(optionCandidates.keys().indexOf(optionTypeTitle) + 1);
 
         // Iterate through option candidates of the given option type
-        for(let idx = 0; idx < optionCandidates.get(optionType).length; idx ++)
+        for(let idx = 0; idx < optionCandidates.get(optionTypeTitle).length; idx ++)
         {
             // Pick next
-            let option = optionCandidates.get(optionType).get(idx);
+            let option = optionCandidates.get(optionTypeTitle).get(idx);
             
             if(this.productSatisfiesOption(option, product))
             {
@@ -192,9 +213,9 @@ class ProductConfigurationService
                 
                 // If there is a next option type, try to find a valid option withthe given actual configuration
                 // Else, it's the last child in the tree. Return true
-                if(nextOptionType)
+                if(nextOptionTypeTitle)
                 {
-                    if(this.findValidConfiguration(nextOptionType, optionCandidates, product))
+                    if(this.findValidConfiguration(nextOptionTypeTitle, optionCandidates, product))
                         return true;
                 }
                 else
@@ -220,7 +241,7 @@ class ProductConfigurationService
         let ret = true;
         
         let relevantOptionDefinitions = (fillNotRequired)?this.productDefinition.productOptionDefinitions:this.productDefinition.getRequiredProductOptionDefinitions();
-        let unfilledOptionDefinitions = relevantOptionDefinitions.filter((option)=>{return !product.hasOption(option.type);});
+        let unfilledOptionDefinitions = relevantOptionDefinitions.filter((optionDefinition)=>{return !product.hasOption(optionDefinition.type);});
         let productOptionCandidates: KVMap<string, List<ProductOption>> = new KVMap<string, List<ProductOption>>();
 
         // Init productOptionCandidates list
@@ -258,7 +279,7 @@ class ProductConfigurationService
      */
     setOptionOrRejectOnComplications(productOption: ProductOption, product: Product): boolean
     {
-        let oldOption = product.getOption(productOption.type);
+        let oldOption = product.getOption(productOption.type.title);
 
         if(!this.setProductOption)
             return false;
@@ -280,7 +301,7 @@ class ProductConfigurationService
         let toRemove = this.nextUnsatisfiedOption(product);
         while(toRemove)
         {
-            product.removeOption(toRemove.type);
+            product.removeOption(toRemove.type.title);
             toRemove = this.nextUnsatisfiedOption(product);
         }
         
@@ -307,7 +328,7 @@ class ProductConfigurationService
         let foundValidCombination = false;
 
         // find the definition that belongs to this option (by type/name)
-        this.productDefinition.getProductOptionDefinition(productOption.type);
+        this.productDefinition.getProductOptionDefinition(productOption.type.title);
 
         if(!productOptionDefinition)
             throw Error("Unknown option");

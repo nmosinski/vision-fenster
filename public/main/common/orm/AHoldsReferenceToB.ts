@@ -48,8 +48,6 @@ abstract class AHoldsReferenceToB<A extends AbstractModel<A>, B extends Abstract
         {
             asToDestroy = relatives.filter((a)=> { return a[toDestroy.asFk()] === toDestroy.id; });
         }
-        ////console.log("role models to destroy in many to one");
-        ////console.log(asToDestroy);
 
         await AbstractModel.destroyMultiple(asToDestroy);
     }

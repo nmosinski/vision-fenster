@@ -62,54 +62,31 @@ async function afterEach()
 
 async function relationalGet()
 {
-    let item = await testShoppingCartItems.first().testTags().get();
+    let item = await testShoppingCartItems.first().testTagsQ().get();
 
     return testTags.first().id === item.id;
 }
 
 async function relationalFind()
 {
-    let result = await testShoppingCartItems.first().testTags().find();
+    let result = await testShoppingCartItems.first().testTagsQ().find();
     return result.equals(testTags);
 }
-function partB(){}
+
 async function relationalDestroy()
 {
-    let resultBeforeDestroy = await testTags.last().testShoppingCartItems().find();
-    //////console.log(resultBeforeDestroy);
+    new TestTag().testShoppingCartItemsQ();
+    
+    let resultBeforeDestroy = await testTags.last().testShoppingCartItemsQ().find();
     if(!(resultBeforeDestroy.has(testShoppingCartItems.first()) && resultBeforeDestroy.has(testShoppingCartItems.last()) && resultBeforeDestroy.length === 2))
         return false;
 
-    //console.log("shoppingCartItems");
-    //console.log(testShoppingCartItems);
-    //console.log("tags");
-    //console.log(testTags);
-    //console.log("\n");
-
-    //console.log("RoleTable before destroy");
-    //console.log("1");
     let roleTestTableBeforeDestr = await wixData.query("RoleTestShoppingCartItemTestTag").find();
-    //console.log(roleTestTableBeforeDestr);
-    //console.log("\n");
+     await testTags.last().destroy();
 
-    //console.log("destroy...");
-    //console.log("2");
-    await testTags.last().destroy();
-    //console.log("\n");
-
-    //console.log("RoleTable after destroy");
-    //console.log("3");
     let roleTestTableAfterDestr = await wixData.query("RoleTestShoppingCartItemTestTag").find();
-    ////console.log(roleTestTableAfterDestr);
-    //console.log("\n");
 
-
-    //console.log("ShoppingCarts of the last tag after destroying it");
-    //console.log("4");
-    let resultAfterDestroy = await testTags.last().testShoppingCartItems().find();
-    //console.log(resultAfterDestroy);
-    //////console.log(testShoppingCartItems);
-    //////console.log(testTags);
+    let resultAfterDestroy = await testTags.last().testShoppingCartItemsQ().find();
     if(!resultAfterDestroy.isEmpty())
         return false;
     
@@ -118,22 +95,22 @@ async function relationalDestroy()
 
 async function relationalDestroyMultiple()
 {
-    let resultOfLastBeforeDestroy = await testTags.last().testShoppingCartItems().find();
+    let resultOfLastBeforeDestroy = await testTags.last().testShoppingCartItemsQ().find();
     if(!(resultOfLastBeforeDestroy.has(testShoppingCartItems.first()) && resultOfLastBeforeDestroy.has(testShoppingCartItems.last()) && resultOfLastBeforeDestroy.length === 2))
         return false;
 
-    let resultOfFirstBeforeDestroy = await testTags.first().testShoppingCartItems().find();
+    let resultOfFirstBeforeDestroy = await testTags.first().testShoppingCartItemsQ().find();
     if(resultOfFirstBeforeDestroy.first().id !== testShoppingCartItems.first().id)
         return false;
 
     await TestShoppingCartItem.destroyMultiple(testShoppingCartItems);
-    let resultOfLastAfterDestroy = await testTags.last().testShoppingCartItems().find();
+    let resultOfLastAfterDestroy = await testTags.last().testShoppingCartItemsQ().find();
     if(!resultOfLastAfterDestroy.isEmpty())
         return false;
 
-    let resultOfFirstAfterDestroy = await testTags.first().testShoppingCartItems().find();
+    let resultOfFirstAfterDestroy = await testTags.first().testShoppingCartItemsQ().find();
     if(!resultOfFirstAfterDestroy.isEmpty())
         return false;
-    
+
     return true;
 }

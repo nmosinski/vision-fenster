@@ -14,6 +14,7 @@ abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends Abstra
     assign(toBeAssigned: B, relative: A): B 
     {
         toBeAssigned[relative.asFk()] = relative.id;
+      
         return toBeAssigned;
     }
 
@@ -30,30 +31,7 @@ abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends Abstra
 
     async relationalCreate(toCreate: B, relatives?: List<A>): Promise<void> 
     {
-        // Nothing to do. Associate and create shold be a separate function.
-
-        /*
-        // Check if the A that B belongs to is contained in the given relatives.
-        if(relatives)
-            relatives.foreach((a)=>{
-                if(a.id === toCreate[a.asFk()])
-                    return;
-            });
-
-        // Try to find the relative in the storage.
-        let a = new this.relativeA();
-        a.id = toCreate[a.asFk()];
-        a = await a.load(toCreate[a.asFk()]);
-        if(a)
-            return;
         
-        // Try to create a default A for B.
-        if(a.valid())
-            await a.create();
-        
-        // B can't be saved due to the missing relative.
-        throw new CreateError(PATH, "OneToMany.relationalCreate()", toCreate);
-        */
     }
 
     async relationalSave(toSave: B, relatives?: List<A>): Promise<void> 
@@ -76,53 +54,17 @@ abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends Abstra
             return new QueryResult<B>();
 
         let query = this.queryOfRelativeB();
-        query = query.hasSome(new this.relativeA().asFk(), relatives.splitProperty<string>("id"));
+
+        query = query.hasSome(AbstractModel.asFk(this.relativeA), relatives.splitProperty<string>("id"));
         
-        return await query.execute();
+        let result = await query.execute();
+   
+        return result;
     }
 
     async relationalCreateMultiple(toCreate: List<B>, relatives?: List<A>): Promise<void> 
     {
-        /*
-        // Check if the A that B belongs to is contained in the given relatives.
-        let bsWithoutAs = new List<B>();
-
-        if(relatives)
-        {            
-            toCreate.foreach((b)=>{
-                let found = false;
-
-                relatives.foreach((a)=>{
-                    if(a.id === toCreate[a.asFk()])
-                        found = true;
-                });
-                if(!found)
-                    bsWithoutAs.add(b);
-            });
-        }
-
-        if(bsWithoutAs.isEmpty())
-            return;
-
-        let aAsFk = (new this.relativeA()).asFk();
-        let idsOfMissingAs = new List<string>();
-        bsWithoutAs.foreach((b)=>{idsOfMissingAs.add(b[aAsFk]);});
-
-        // Try to find the missing relatives in the storage.
-        let aQuery = this.queryOfRelativeA().hasSome("");
-        let a = new this.relativeA();
-        a.id = toCreate[a.asFk()];
-        a = await a.load(toCreate[a.asFk()]);
-        if(a)
-            return;
         
-        // Try to create a default A for B.
-        if(a.valid())
-            await a.create();
-        
-        // B can't be saved due to the missing relative.
-        throw new CreateError(PATH, "OneToMany.relationalCreate()", toCreate);
-        */
     }
 
     async relationalSaveMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {

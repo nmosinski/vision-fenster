@@ -24,12 +24,12 @@ class TestShoppingCart extends AbstractModel<TestShoppingCart>
         this.zeroOrOneToOne(TestUser);
     }
 
-    testUser()
+    testUserQ()
     {
         return this.relative(TestUser);
     }
 
-    testShoppingCartItems()
+    testShoppingCartItemsQ()
     {
         return this.relative(TestShoppingCartItem);
     }
