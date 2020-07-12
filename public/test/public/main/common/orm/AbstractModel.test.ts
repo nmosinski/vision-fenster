@@ -43,7 +43,7 @@ export async function runAllTests()
 
     tests.add(new Test(PATH, "two generations get", truthly(), twoGenerationsGet));
     tests.add(new Test(PATH, "two generations find", truthly(), twoGenerationsFind));
-    
+
     /*
     tests.add(new Test(PATH, "two generations create", truthly(), twoGenerationsCreate));
     tests.add(new Test(PATH, "two generations create multiple", truthly(), twoGenerationsCreateMultiple));

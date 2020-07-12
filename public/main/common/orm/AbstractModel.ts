@@ -418,7 +418,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
                 propertyName = this.asSinglePropertyName();
             
             
-            if(this.myParentIsTheRoot() && (relationToParent instanceof AHoldsNoReferenceToB))
+            if(this.myParentIsTheRoot() && ((relationToParent instanceof ManyToOne) || (relationToParent instanceof OneToZeroOrOne) || (relationToParent instanceof ZeroOrOneToOne)) )
             {
                 propertyTarget[propertyName] = thisQueryResult.first();
                 this.lastQueryResult = thisQueryResult.first();

@@ -5,7 +5,7 @@ import { Tests, Test, truthly, unspecified, value} from "../../../../../main/com
 import List from "../../../../../main/common/util/collections/list/List";
 import AHoldsReferenceToB from "../../../../../main/common/orm/AHoldsReferenceToB";
 import ManyToOne from "../../../../../main/common/orm/ManyToOne";
-const PATH = "test/public/main/common/orm/AGoldsReferenceToB.test.js"
+const PATH = "test/public/main/common/orm/AHoldsReferenceToB.test.js"
 
 var testShoppingCarts: List<TestShoppingCart>;
 var testShoppingCartItems: List<TestShoppingCartItem>;

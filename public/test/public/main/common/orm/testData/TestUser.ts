@@ -4,6 +4,7 @@ import AbstractModel from "../../../../../../main/common/orm/AbstractModel";
 class TestUser extends AbstractModel<TestUser>
 {
     protected Constructor: new () => TestUser;
+    private _testShoppingCart: any;
     
     init(): void 
     {
@@ -24,6 +25,16 @@ class TestUser extends AbstractModel<TestUser>
     testShoppingCartQ()
     {
         return this.relative(TestShoppingCart);
+    }
+
+    set testShoppingCart(cart)
+    {
+        this._testShoppingCart = cart;
+    }
+
+    get testShoppingCart()
+    {
+        return this._testShoppingCart;
     }
 
 }

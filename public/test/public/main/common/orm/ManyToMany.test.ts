@@ -3,6 +3,7 @@ import WixDatabase from "../../../../../main/common/orm/WixDatabase";
 import { Tests, Test, truthly, unspecified, value} from "../../../../../main/common/test/Test";
 import List from "../../../../../main/common/util/collections/list/List";
 import TestTag from "./testData/TestTag";
+// @ts-ignore
 import wixData from "wix-data"
 import ManyToMany from "../../../../../main/common/orm/ManyToMany";
 const PATH = "test/public/main/common/orm/ManyToMany.test.js"
