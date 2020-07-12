@@ -1,5 +1,4 @@
 import {runAllTests} from "public/test/testRunner"
-import wixData from "wix-data"
 import List from "../../public/main/common/util/collections/list/List";
 
 // @ts-ignore

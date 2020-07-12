@@ -1,140 +1,11 @@
 import List from "../../../common/util/collections/list/List";
 import KVMap from "../../../common/util/collections/map/KVMap";
-
-class Product
-{
-    private _options: KVMap<string, ProductOption>;
-
-    constructor(options?: List<ProductOption>)
-    {
-        this.options = options;
-    }
-
-    setOption(option: ProductOption): void
-    {
-        this._options.add(option.type.title, option);
-    }
-
-    hasOption(typeTitle: string): boolean
-    {
-        if(this.getOption(typeTitle))
-            return true;
-        return false;
-    }
-
-    getOption(typeTitle: string)
-    {
-        return this._options.get(typeTitle);
-    }
-
-    removeOption(typeTitle: string): void
-    {
-        this._options.remove(typeTitle);
-    }
-
-    set options(options: List<ProductOption>)
-    {
-        this._options = new KVMap<string, ProductOption>();
-        if(options)
-            options.foreach((option) => {this.setOption(option);});
-    }
-
-    get options(): List<ProductOption>
-    {
-        return this._options.values();
-    }
-}
-
-class ProductOptionType
-{
-    private _title: string;
-
-    constructor(title: string)
-    {
-
-    }
-
-    set title(title: string)
-    {
-        this._title = title;
-    }
-
-    get title(): string
-    {
-        return this._title;
-    }
-
-    
-}
-
-class ProductOption
-{
-    
-    private _type: ProductOptionType;
-    private _value: string;
-    private _tags: List<string>;
-    private _image: string;
-
-    constructor(value: string, tags?: List<string>, image?: string)
-    {
-        this.value = value;
-        this.tags = tags;
-        this.image = image;
-    }
-
-    hasTag(tag: string): boolean
-    {
-        return this.tags.has(tag);
-    }
-
-    set type(type: ProductOptionType)
-    {
-        this._type = type;
-    }
-
-    set value(value: string)
-    {
-        this._value = value;
-    }
-
-    set tags(tags: List<string>)
-    {
-        if(tags)
-            this._tags = tags;
-        else
-            this._tags = new List<string>();
-    }
-
-    set image(image: string)
-    {
-        if(image)
-            this._image = image;
-        else
-            this._image = "";
-    }
-
-    get type(): ProductOptionType
-    {
-        return this._type;
-    }
-
-    get value(): string
-    {
-        return this._value;
-    }
-
-    get tags(): List<string>
-    {
-        return this._tags;
-    }
-
-    get image(): string
-    {
-        return this._image;
-    }
-}
-
-
+import ProductDefinition from "../model/ProductDefinition";
+import ProductOption from "../model/ProductOption";
+import ProductOptionDefinition from "../model/ProductOptionDefinition";
+import Combination from "../model/Combination";
+import CombinationRequirement from "../model/CombinationRequirement";
+import Product from "../model/Product";
 
 
 class ProductConfigurationService
@@ -171,7 +42,7 @@ class ProductConfigurationService
         let filteredProductOptions = new List<ProductOption>();
 
         if(productOptionTypeTitle)
-            relevantProductOptions = allProductOptions.filter((option)=>{return option.type.title === productOptionTypeTitle;});
+            relevantProductOptions = allProductOptions.filter((option)=>{return option.productOptionType.title === productOptionTypeTitle;});
         
         for(let idx = 0; idx < relevantProductOptions.length; idx++)
         {
@@ -279,7 +150,7 @@ class ProductConfigurationService
      */
     setOptionOrRejectOnComplications(productOption: ProductOption, product: Product): boolean
     {
-        let oldOption = product.getOption(productOption.type.title);
+        let oldOption = product.getOption(productOption.productOptionType.title);
 
         if(!this.setProductOption)
             return false;
@@ -301,7 +172,7 @@ class ProductConfigurationService
         let toRemove = this.nextUnsatisfiedOption(product);
         while(toRemove)
         {
-            product.removeOption(toRemove.type.title);
+            product.removeOption(toRemove.productOptionType.title);
             toRemove = this.nextUnsatisfiedOption(product);
         }
         
@@ -328,7 +199,7 @@ class ProductConfigurationService
         let foundValidCombination = false;
 
         // find the definition that belongs to this option (by type/name)
-        this.productDefinition.getProductOptionDefinition(productOption.type.title);
+        this.productDefinition.getProductOptionDefinition(productOption.productOptionType.title);
 
         if(!productOptionDefinition)
             throw Error("Unknown option");
@@ -389,230 +260,13 @@ class ProductConfigurationService
     }
 }
 
-class ProductDefinition
-{
-    private _productOptionDefinitions: KVMap<string, ProductOptionDefinition>;
-    private _model: string;
-
-    constructor(model: string, productOptionDefinitions: List<ProductOptionDefinition>=new List<ProductOptionDefinition>())
-    {
-        this.model = model;
-        this.productOptionDefinitions = productOptionDefinitions;
-    }
-
-    setProductOptionDefinition(productOptionDefinition: ProductOptionDefinition): void
-    {
-        this._productOptionDefinitions.add(productOptionDefinition.type, productOptionDefinition);
-    }
-
-    getProductOptionDefinition(type: string): ProductOptionDefinition
-    {
-        return this._productOptionDefinitions.get(type);
-    }
-
-    getRequiredProductOptionDefinitions(): List<ProductOptionDefinition>
-    {
-        return this.productOptionDefinitions.filter((def)=>{return def.required;});
-    }
-
-    removeProductOptionDefinition(type: string): void
-    {
-        this._productOptionDefinitions.remove(type);
-    }
-
-    set model(model: string)
-    {
-        this._model = model;
-    }
-
-    set productOptionDefinitions(productOptionDefinitions: List<ProductOptionDefinition>)
-    {
-        this._productOptionDefinitions = new KVMap<string, ProductOptionDefinition>();
-        productOptionDefinitions.foreach((definition)=>{this.setProductOptionDefinition(definition)});
-    }
-
-    get model(): string
-    {
-        return this._model;
-    }
-
-    get productOptionDefinitions(): List<ProductOptionDefinition>
-    {
-        return this._productOptionDefinitions.values();
-    }
-}
-
-class ProductOptionDefinition
-{
-    private _type: string;
-    private _required: boolean;
-    private _combinations: List<Combination>;
-    
-    constructor(type: string, required: boolean, combinations?: List<Combination>)
-    {
-        this.type = type;
-        this.required = required;
-        this.combinations = combinations;
-    }
-
-    addCombination(combination: Combination): void
-    {
-        this._combinations.add(combination);
-    }
-
-    removeCombination(combination: Combination): void
-    {
-        this.combinations.remove(this.combinations.indexOf(combination));
-    }
-
-    set type(type: string)
-    {
-        this._type = type;
-    }
-
-    set required(required: boolean)
-    {
-        this._required = required;
-    }
-
-    set combinations(combinations: List<Combination>)
-    {
-        if(combinations)
-            this._combinations = combinations;
-        else
-            this._combinations = new List<Combination>();
-    }
-
-    get type(): string
-    {
-        return this._type;
-    }
-
-    get required(): boolean
-    {
-        return this._required;
-    }
-
-    get combinations(): List<Combination>
-    {
-        return this._combinations;
-    }
-}
-
-class Combination
-{
-    private _tags: List<string>;
-    private _requirements: KVMap<string, CombinationRequirement>;
-
-    constructor(tags?: List<string>, requirements?: List<CombinationRequirement>)
-    {
-        this.tags = tags;
-        this.requirements = requirements;
-    }
-
-    addTag(tag: string): void
-    {
-        this.tags.add(tag);
-    }
-
-    removeTag(tag: string): void
-    {
-        this.tags.remove(this.tags.indexOf(tag));
-    }
-
-    setRequirement(requirement: CombinationRequirement): void
-    {
-        this._requirements.add(requirement.productOptionType, requirement);
-    }
-
-    getRequirement(productOptionType: string): CombinationRequirement
-    {
-        return this._requirements.get(productOptionType);
-    }
-
-    removeRequirement(productOptionType: string): void
-    {
-        this._requirements.remove(productOptionType);
-    }
-
-    set tags(tags: List<string>)
-    {
-        if(tags)
-            this._tags = tags;
-        else
-            this._tags = new List<string>();
-    }
-    
-    set requirements(requirements: List<CombinationRequirement>)
-    {
-        this._requirements = new KVMap<string, CombinationRequirement>();
-        if(requirements)
-            requirements.foreach((requirement)=>{this.setRequirement(requirement);});
-    }
-
-    get tags(): List<string>
-    {
-        return this._tags;
-    }
-
-    get requirements(): List<CombinationRequirement>
-    {
-        return this._requirements.values();
-    }
-}
-
-class CombinationRequirement
-{
-    private _productOptionType: string;
-    private _tags: List<string>;
-
-    constructor(productOptionType: string, tags?: List<string>)
-    {
-        this.productOptionType = productOptionType;
-        this.tags = tags;
-    }
-
-    addTag(tag: string): void
-    {
-        this.tags.add(tag);
-    }
-
-    removeTag(tag: string): void
-    {
-        this.tags.remove(this.tags.indexOf(tag));
-    }
-
-    set productOptionType(productOptionType: string)
-    {
-        this._productOptionType = productOptionType;
-    }
-
-    set tags(tags: List<string>)
-    {
-        if(tags)
-            this._tags = tags;
-        else
-            this._tags = new List<string>();
-    }
-
-    get productOptionType(): string
-    {
-        return this._productOptionType;
-    }
-
-    get tags(): List<string>
-    {
-        return this._tags;
-    }
-}
-
 function parseProductDefinitions(productDefObj: Object): List<ProductDefinition>
 {
     let productDefinitions = new List<ProductDefinition>();
     for(var key1 in productDefObj)
     {   
         let productDef = productDefObj[key1];
-        let productDefinition = new ProductDefinition(productDef.model);
+        let productDefinition = new ProductDefinition(productDef.productModel);
         
         for(var key2 in productDef.productOptionDefinitions)
         {
@@ -654,7 +308,7 @@ const productDefinitionObject =
 {
     0: 
     {
-        "model": "fenster",
+        "productModel": "fenster",
         "productOptionDefinitions": 
         {
             0: 
