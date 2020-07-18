@@ -308,13 +308,13 @@ class Tests extends List<Test>
      * @param {Function} [beforeEach] The function to be run before each test.
      * @param {Function} [afterEach] The function to be run after each test.
      */
-    constructor(beforeAll: Function=null, afterAll: Function=null, beforeEach: Function=null, afterEach: Function=null)
+    constructor(beforeAll?: Function, afterAll?: Function, beforeEach?: Function, afterEach?: Function)
     {
         super();
-        this.beforeAll = beforeAll;
-        this.afterAll = afterAll;
-        this.beforeEach = beforeEach;
-        this.afterEach = afterEach;
+        this.beforeAll = (beforeAll)?beforeAll: ()=>{};
+        this.afterAll = (afterAll)?afterAll: ()=>{};
+        this.beforeEach = (beforeEach)?beforeEach: ()=>{};
+        this.afterEach = (afterEach)?afterEach: ()=>{};
     }
 
     async runAll(): Promise<void>
