@@ -13,7 +13,7 @@ var relation: AHoldsReferenceToB<TestShoppingCartItem, TestShoppingCart>;
 
 export async function runAllTests()
 {
-    let tests = new Tests(beforeAll, null, beforeEach, afterEach);
+    let tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
     
     tests.add(new Test(PATH, "relational get", truthly(), relationalGet));
     tests.add(new Test(PATH, "relational find", truthly(), relationalFind));

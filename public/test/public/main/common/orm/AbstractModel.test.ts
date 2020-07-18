@@ -5,6 +5,7 @@ import WixDatabase from "../../../../../main/common/orm/WixDatabase";
 import { Tests, Test, truthly, unspecified, value} from "../../../../../main/common/test/Test";
 import AbstractModel from "../../../../../main/common/orm/AbstractModel";
 import List from "../../../../../main/common/util/collections/list/List";
+import InvalidOperationError from "../../../../../main/common/util/error/InvalidOperationError";
 const PATH = "test/public/main/common/orm/AbstractModel.test.js"
 
 var testShoppingCarts: List<TestShoppingCart>;
@@ -13,7 +14,7 @@ var testUsers: List<TestUser>;
 
 export async function runAllTests()
 {
-    let tests = new Tests(beforeAll, null, beforeEach, afterEach);
+    let tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
 
     tests.add(new Test(PATH, "assign", truthly(), assign));
     tests.add(new Test(PATH, "assign multiple", truthly(), assignMultiple));
@@ -26,14 +27,13 @@ export async function runAllTests()
     tests.add(new Test(PATH, "simple update multiple", truthly(), simpleUpdateMultiple));
     tests.add(new Test(PATH, "simple save", truthly(), simpleSave));
     tests.add(new Test(PATH, "simple save multiple", truthly(), simpleSaveMultiple));
-    tests.add(new Test(PATH, "simple destroy", unspecified(), simpleDestroy));
+    tests.add(new Test(PATH, "simple destroy", truthly(), simpleDestroy));
     tests.add(new Test(PATH, "simple destroy multiple", truthly(), simpleDestroyMultiple));
 
     tests.add(new Test(PATH, "one generation get", truthly(), oneGenerationGet));
     tests.add(new Test(PATH, "one generation find", truthly(), oneGenerationFind));
     tests.add(new Test(PATH, "one generation create", truthly(), oneGenerationCreate));
     tests.add(new Test(PATH, "one generation create multiple", truthly(), oneGenerationCreateMultiple));
-
     tests.add(new Test(PATH, "one generation update", truthly(), oneGenerationUpdate));
     tests.add(new Test(PATH, "one generation update multiple", truthly(), oneGenerationUpdateMultiple));
     tests.add(new Test(PATH, "one generation save", truthly(), oneGenerationSave));
@@ -138,9 +138,15 @@ async function simpleCreateMultiple()
 async function simpleUpdate()
 {
     let item = await TestShoppingCartItem.get(testShoppingCartItems.first().id, TestShoppingCartItem);
-    item.count = 3;
+    if(!item)
+        throw new InvalidOperationError(PATH, "simpleUpdate", "Wrong test configuration or get doesn't work like expected!");
+    
+        item.count = 3;
     await item.update();
     let updatedItem = await TestShoppingCartItem.get(item.id, TestShoppingCartItem);   
+    if(!updatedItem)
+        throw new InvalidOperationError(PATH, "simpleUpdate", "Wrong test configuration or get doesn't work like expected!");
+    
     return updatedItem.count;
 }
 
@@ -177,8 +183,9 @@ async function simpleSaveMultiple()
 async function simpleDestroy()
 {
     await TestUser.destroy(testUsers.first());
-    let result = await TestUser.get(testUsers.first().id, TestUser);
-    return result;
+    if(await (TestUser.exists(testUsers.first().id, TestUser)))
+        return false;
+    return true;
 }
 
 async function simpleDestroyMultiple()

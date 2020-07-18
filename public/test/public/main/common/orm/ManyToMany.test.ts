@@ -13,7 +13,7 @@ var testTags: List<TestTag>;
 
 export async function runAllTests()
 {
-    let tests = new Tests(beforeAll, null, beforeEach, afterEach);
+    let tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
     
     //tests.add(new Test(PATH, "relational assign", truthly(), relationalAssign));
     //tests.add(new Test(PATH, "relational assign multiple", truthly(), relationalAssignMultiple));
@@ -38,7 +38,7 @@ async function beforeEach()
     await WixDatabase.createMultiple(testShoppingCartItems);
 
     // the first shopping cart item has all tags / each tag has the first shopping cart
-    let roleItems = [];
+    let roleItems: Array<object> = [];
     testTags.foreach((tag: TestTag)=>{
         roleItems.push({
             "testTagId": tag.id,
@@ -64,6 +64,8 @@ async function afterEach()
 async function relationalGet()
 {
     let item = await testShoppingCartItems.first().testTagsQ().get();
+    if(!item)
+        return false;
 
     return testTags.first().id === item.id;
 }
