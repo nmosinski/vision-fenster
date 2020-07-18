@@ -3,6 +3,7 @@ import JsTypes from "../../jsTypes/JsTypes";
 import VariableTypeError from "../../error/VariableTypeError";
 import InvalidOperationError from "../../error/InvalidOperationError";
 import VariableValueError from "../../error/VariableValueError";
+import NullPointerException from "../../error/NullPointerException";
 
 const PATH = "public/main/common/util/list/List.js";
 
@@ -77,6 +78,8 @@ class List<T> implements IComparable
 			if(e1 === e2)
 				return true;
 		}
+
+		return false;
 	}
 
 	/**
@@ -115,30 +118,39 @@ class List<T> implements IComparable
     	if(!JsTypes.isFunction(f))
     		throw new VariableTypeError(PATH, "List.filter(f)", f, "function");
 
-    	let ret = [];
+    	let ret = new List<T>();
 
     	for(let idx = 0; idx < this.length; idx++)
         {
         	let el = this.get(idx);
         	if(f(el))
-            	ret.push(el);
+            	ret.add(el);
 		}
 
-		return new List(ret);
+		return ret;
 	}
 
 	/**
-	 * Splits a property from the elements of the list and returns a new list containing the given property of each element in the list.
-	 * @param propertyName The name of the property to be splitted.
-	 * @returns {List<U>} A new list containig the given property of each element in the list.
+	 * Reduce the elements of the list to the properties passed to the list.
+	 * @param {any} propertyNames The names of the properties the elements in the list will be reduced to.
+	 * @returns {List<any>} A new list containig the reduced elements. If multiple property names were given, will return objects containing those properties.
 	 */
-	splitProperty<U>(propertyName): List<U>
+	reduce(...propertyNames: Array<any>): List<any>
 	{
-		let us = new List<U>();
+		let reduced = new List<any>();
+		
+		if(propertyNames.length === 1)
+			this.foreach((t)=>{reduced.add(t[propertyNames[0]]);});
+		else
+		this.foreach((t)=>{
+			let tmp = {};
 
-		this.foreach((t)=>{us.add(t[propertyName]);});
+			for(let idx = 0; idx < propertyNames.length; idx++)
+				tmp[propertyNames[idx]] = t[propertyNames[idx]];
+			reduced.add(tmp);
+		});
 
-		return us;
+		return reduced;
 	}
 	
 	/**
@@ -147,7 +159,7 @@ class List<T> implements IComparable
 	 * @param {number} [endIndex=null] The end index until which the items will be returned.
 	 * @return {List<T>} The sublist.
 	 */
-	sublist(startIndex: number, endIndex: number=null): List<T>
+	sublist(startIndex: number, endIndex?: number): List<T>
 	{
 		let list = new List<T>();
 		
@@ -206,7 +218,7 @@ class List<T> implements IComparable
 	 */
     toArray(): Array<T>
     {
-    	let ret = [];
+    	let ret: Array<T> = [];
 
     	for(let idx in this._elements)
     		ret.push(this._elements[idx]);
@@ -216,10 +228,10 @@ class List<T> implements IComparable
 	
 	/**
      * Get a number of items.
-     * @param {number} [count=null] The maximum count of items to be returned.
+     * @param {number} [count] The maximum count of items to be returned.
      * @returns {List<T>} A list containing items. 
      */
-    some(count: number=null): List<T>
+    some(count?: number): List<T>
     {
         if(!count)
             count = this.length;
@@ -229,39 +241,45 @@ class List<T> implements IComparable
     /**
      * Get the first item.
      * @returns {T} The item.
+	 * @throws {NullPointerException} If list is empty.
      */
-    first(): T
+    first(): T|never
     {
 		if(this.length < 1)
-			return null;
+			throw new NullPointerException(PATH, "first", "The list is empty");
 		return this.get(0);
     }
 
     /**
      * Get the last item.
      * @returns {T} The item.
+	 * @throws {NullPointerException} If list is empty.
      */
-    last(): T
+    last(): T|never
     {
+		if(this.length < 1)
+			throw new NullPointerException(PATH, "first", "The list is empty");
+
         return this.get(this.length-1);
     }
 
 	/**
-	 * Add an element.
-	 * @param {T} element - The element.
+	 * Add elements.
+	 * @param {...T} elements - The elements.
 	 */
-	add(element: T): void
+	add(...elements: Array<T>): void
 	{
-		this._elements.push(element);
+		this.addMultiple(elements);
 	}
 
 	/**
-	 * Add multiple elements.
-	 * @param {Array<T>} elements - The elements to be added.
+	 * Add elements.
+	 * @param {Array<T>} elements - The elements.
 	 */
-	addMultiple(element: Array<T>): void
+	addMultiple(elements: Array<T>): void
 	{
-		element.forEach((el)=>{this.add(el);});
+		for(let idx = 0; idx < elements.length; idx++)
+			this._elements.push(elements[idx]);
 	}
 
 	/**
@@ -269,7 +287,7 @@ class List<T> implements IComparable
 	 * @param {number} elementIdx - The index.
 	 * @return {T} The element.
 	 */
-	get(elementIdx: number): T
+	get(elementIdx: number): T|never
 	{
 		if(!JsTypes.isNumber(elementIdx))
 			throw new VariableTypeError(PATH, "List.get(elementIdx)", elementIdx, "Number");
@@ -284,7 +302,7 @@ class List<T> implements IComparable
 	 * Remove the element at the given index.
 	 * @param {number} elementIdx - The index.
 	 */
-	remove(elementIdx: number): void
+	remove(elementIdx: number): void|never
 	{
 		if(!JsTypes.isNumber(elementIdx))
 			throw new VariableTypeError(PATH, "List.get(elementIdx)", elementIdx, "Number");

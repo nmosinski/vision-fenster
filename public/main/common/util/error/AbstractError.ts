@@ -12,7 +12,7 @@ class AbstractError
 	private _errorDescription: string;
 	private _file: string;
 	private _location: string;
-	private _stack: string;
+	private _stack: string|undefined;
 
 	/**
 	 * Create an AbstractError.
@@ -22,6 +22,7 @@ class AbstractError
 	 */
 	constructor(errorDescription: string, file: string, location: string)
 	{
+		console.trace();
 		this.errorDescription = errorDescription;
 		this.file = file;
 		this.location = location;
@@ -61,7 +62,7 @@ class AbstractError
 			this._file = "";
 	}
 
-	set stack(stack)
+	set stack(stack: string|undefined)
 	{
 		this._stack = stack;
 	}
@@ -105,7 +106,7 @@ class AbstractError
 		return this._location;
 	}
 
-	get stack(): string
+	get stack(): string|undefined
 	{
 		return this._stack;
 	}

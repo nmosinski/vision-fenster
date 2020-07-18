@@ -2,6 +2,7 @@ import IComparable from "../../IComparable";
 import JsTypes from "../../jsTypes/JsTypes";
 import VariableTypeError from "../../error/VariableTypeError";
 import List from "../list/List";
+import NullPointerException from "../../error/NullPointerException";
 
 const PATH = "public/main/common/util/map/KVMap.js";
 
@@ -18,7 +19,7 @@ class KVMap<K,V> implements IComparable
 	 * Create a KVMap.
 	 * @param {Map<K,V>} [map: Map<K,V>=null] Create a KVMap from the given Map.
 	 */
-	constructor(map: Map<K, V>=null)
+	constructor(map?: Map<K, V>)
 	{
 		this._elements = new Map<K,V>();
 		if(map instanceof Map)
@@ -143,13 +144,15 @@ class KVMap<K,V> implements IComparable
 	 * @param {V} value The value of which the key will be returned.
 	 * @returns {K} The key or null if not found.
 	 */
-	getKeyOf(value: V): K
+	getKeyOf(value: V): K|never
 	{
-		let key = null;
+		let key: K|undefined = undefined;
 		this.foreach((k,v)=>{
 			if(this.elementsEqual(v,value))
 				key = k;
 		});
+		if(!key)
+			throw new NullPointerException(PATH, "getKeyOf", "Key for the value" + value + " does not exist.");
 		return key;
 	}
 	
@@ -169,15 +172,18 @@ class KVMap<K,V> implements IComparable
 	 * @param {K} key - The key.
 	 * @return {V} The corresponding value.
 	 */
-	get(key: K): V
+	get(key: K): V|never
 	{
-		let ret = null;
+		let value: V|undefined = undefined;
 		this.foreach((k:K, v:V) => {
 			if(this.elementsEqual(k, key))
-				ret = v;
+				value = v;
 		});
 
-		return ret;
+		if(!value)
+			throw new NullPointerException(PATH, "get", "Value for the key " + key + " does not exist.");
+
+		return value;
 	}
 
 	/**
