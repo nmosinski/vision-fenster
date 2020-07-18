@@ -8,7 +8,7 @@ class CombinationRequirement
     constructor(productOptionType: string, tags?: List<string>)
     {
         this.productOptionType = productOptionType;
-        this.tags = tags;
+        this.tags = (tags)?tags: new List<string>();
     }
 
     addTag(tag: string): void
@@ -28,10 +28,7 @@ class CombinationRequirement
 
     set tags(tags: List<string>)
     {
-        if(tags)
-            this._tags = tags;
-        else
-            this._tags = new List<string>();
+        this._tags = tags;
     }
 
     get productOptionType(): string

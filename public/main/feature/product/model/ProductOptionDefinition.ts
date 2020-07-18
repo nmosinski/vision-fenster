@@ -11,7 +11,7 @@ class ProductOptionDefinition
     {
         this.type = type;
         this.required = required;
-        this.combinations = combinations;
+        this.combinations = (combinations)?combinations: new List<Combination>();
     }
 
     addCombination(combination: Combination): void
@@ -36,10 +36,7 @@ class ProductOptionDefinition
 
     set combinations(combinations: List<Combination>)
     {
-        if(combinations)
-            this._combinations = combinations;
-        else
-            this._combinations = new List<Combination>();
+        this._combinations = combinations;
     }
 
     get type(): string

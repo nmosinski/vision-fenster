@@ -18,6 +18,11 @@ class ProductDefinition
         this._productOptionDefinitions.add(productOptionDefinition.type, productOptionDefinition);
     }
 
+    hasProductOptionDefinition(type: string): boolean
+    {
+        return (this._productOptionDefinitions.hasKey(type))?true:false;
+    }
+
     getProductOptionDefinition(type: string): ProductOptionDefinition
     {
         return this._productOptionDefinitions.get(type);

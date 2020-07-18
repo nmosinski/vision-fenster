@@ -1,13 +1,14 @@
 import AbstractModel from "../../../common/orm/AbstractModel";
 import ProductOptionType from "./ProductOptionType";
 import List from "../../../common/util/collections/list/List";
+import Tag from "./Tag";
 
 
 class ProductOption extends AbstractModel<ProductOption>
 {
     private _productOptionType: ProductOptionType;
     private _value: string;
-    private _tags: List<string>;
+    private _tags: List<Tag>;
     private _image: string;
 
     protected Constructor: new () => ProductOption;
@@ -33,9 +34,9 @@ class ProductOption extends AbstractModel<ProductOption>
         return this.relative(ProductOptionType);
     }
 
-    hasTag(tag: string): boolean
+    hasTagOfTitle(tagTitle: string): boolean
     {
-        return this.tags.has(tag);
+        return this.tags.reduce("title").has(tagTitle);
     }
 
     set productOptionType(type: ProductOptionType)
@@ -48,12 +49,12 @@ class ProductOption extends AbstractModel<ProductOption>
         this._value = value;
     }
 
-    set tags(tags: List<string>)
+    set tags(tags: List<Tag>)
     {
         if(tags)
             this._tags = tags;
         else
-            this._tags = new List<string>();
+            this._tags = new List<Tag>();
     }
 
     set image(image: string)
@@ -74,7 +75,7 @@ class ProductOption extends AbstractModel<ProductOption>
         return this._value;
     }
 
-    get tags(): List<string>
+    get tags(): List<Tag>
     {
         return this._tags;
     }

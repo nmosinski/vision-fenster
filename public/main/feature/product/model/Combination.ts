@@ -9,8 +9,8 @@ class Combination
 
     constructor(tags?: List<string>, requirements?: List<CombinationRequirement>)
     {
-        this.tags = tags;
-        this.requirements = requirements;
+        this.tags = (tags)?tags:new List<string>();
+        this.requirements = (requirements)?requirements:new List<CombinationRequirement>();
     }
 
     addTag(tag: string): void
@@ -28,6 +28,11 @@ class Combination
         this._requirements.add(requirement.productOptionType, requirement);
     }
 
+    hasRequirement(productOptionType: string): boolean
+    {
+        return (this._requirements.hasKey(productOptionType))?true:false;
+    }
+
     getRequirement(productOptionType: string): CombinationRequirement
     {
         return this._requirements.get(productOptionType);
@@ -40,17 +45,13 @@ class Combination
 
     set tags(tags: List<string>)
     {
-        if(tags)
-            this._tags = tags;
-        else
-            this._tags = new List<string>();
+        this._tags = tags;
     }
     
     set requirements(requirements: List<CombinationRequirement>)
     {
         this._requirements = new KVMap<string, CombinationRequirement>();
-        if(requirements)
-            requirements.foreach((requirement)=>{this.setRequirement(requirement);});
+        requirements.foreach((requirement)=>{this.setRequirement(requirement);});
     }
 
     get tags(): List<string>

@@ -8,7 +8,7 @@ class Product
 
     constructor(options?: List<ProductOption>)
     {
-        this.options = options;
+        this.options = (options)?options: new List<ProductOption>();
     }
 
     setOption(option: ProductOption): void
@@ -18,12 +18,12 @@ class Product
 
     hasOption(typeTitle: string): boolean
     {
-        if(this.getOption(typeTitle))
+        if(this._options.hasKey(typeTitle))
             return true;
         return false;
     }
 
-    getOption(typeTitle: string)
+    getOption(typeTitle: string): ProductOption
     {
         return this._options.get(typeTitle);
     }
@@ -36,8 +36,7 @@ class Product
     set options(options: List<ProductOption>)
     {
         this._options = new KVMap<string, ProductOption>();
-        if(options)
-            options.foreach((option) => {this.setOption(option);});
+        options.foreach((option) => {this.setOption(option);});
     }
 
     get options(): List<ProductOption>

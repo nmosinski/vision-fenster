@@ -6,7 +6,9 @@ import ProductOptionDefinition from "../model/ProductOptionDefinition";
 import Combination from "../model/Combination";
 import CombinationRequirement from "../model/CombinationRequirement";
 import Product from "../model/Product";
+import InvalidOperationError from "../../../common/util/error/InvalidOperationError";
 
+const PATH = "public/main/feature/product/service/ProductConfigurationService.js";
 
 class ProductConfigurationService
 {
@@ -33,10 +35,10 @@ class ProductConfigurationService
 
     /**
      * Filter the passed options for those that are valid. If a type parameter is passed, filter only for those options of the given type.
-     * @param {string} [type=null] The type to be filtered for.
+     * @param {string} [productOptionTypeTile] The type to be filtered for.
      * @returns {List<ProductOption>} A list containing all valid options considering the request.
      */
-    filterValidOptions(allProductOptions: List<ProductOption>, product: Product, productOptionTypeTitle: string=null): List<ProductOption>
+    filterValidOptions(allProductOptions: List<ProductOption>, product: Product, productOptionTypeTitle?: string): List<ProductOption>
     {
         let relevantProductOptions = allProductOptions;
         let filteredProductOptions = new List<ProductOption>();
@@ -57,31 +59,32 @@ class ProductConfigurationService
 
     /**
      * Find a valid configuration for a product.
-     * @param {string} optionTypeTitle The starting option type.
+     * @param {string} startOptionTypeTitle The starting option type.
      * @param {KVMap<string, List<ProductOption>>} optionCandidates All possible product options. 
      * @param {Product} product The product to be configurated.
+     * @returns {boolean} True if a valid configuration was found, else false.
      */
-    findValidConfiguration(optionTypeTitle: string, optionCandidates: KVMap<string, List<ProductOption>>, product: Product): boolean
+    findValidConfiguration(startOptionTypeTitle: string, optionCandidates: KVMap<string, List<ProductOption>>, product: Product): boolean
     {
-        // Save old option for backup
-        let oldOption: ProductOption = product.getOption(optionTypeTitle);
-        let nextOptionTypeTitle: string = null;
+        let oldOption: ProductOption|undefined = (product.hasOption(startOptionTypeTitle))?product.getOption(startOptionTypeTitle):undefined;
+        let optionCandidatesList: List<ProductOption> = optionCandidates.get(startOptionTypeTitle);
+        let nextOptionTypeTitle: string|undefined;
 
         // find next optionType for the next deepth
-        if(optionCandidates.keys().indexOf(optionTypeTitle) < optionCandidates.keys().length-1)
-            nextOptionTypeTitle = optionCandidates.keys().get(optionCandidates.keys().indexOf(optionTypeTitle) + 1);
-
+        if(optionCandidates.keys().indexOf(startOptionTypeTitle) < optionCandidates.keys().length-1)
+            nextOptionTypeTitle = optionCandidates.keys().get(optionCandidates.keys().indexOf(startOptionTypeTitle) + 1);
+            
         // Iterate through option candidates of the given option type
-        for(let idx = 0; idx < optionCandidates.get(optionTypeTitle).length; idx ++)
+        for(let idx = 0; idx < optionCandidatesList.length; idx ++)
         {
             // Pick next
-            let option = optionCandidates.get(optionTypeTitle).get(idx);
+            let option = optionCandidatesList.get(idx);
             
             if(this.productSatisfiesOption(option, product))
             {
                 // Set the product option
                 this.setProductOption(option, product);
-                
+
                 // If there is a next option type, try to find a valid option withthe given actual configuration
                 // Else, it's the last child in the tree. Return true
                 if(nextOptionTypeTitle)
@@ -95,7 +98,10 @@ class ProductConfigurationService
         }
 
         // Reset the product setting the old option if a valid configuration couldn't be found
-        product.setOption(oldOption);
+        if(oldOption)
+            product.setOption(oldOption);
+        else
+            product.removeOption(startOptionTypeTitle);
         return false;
     }
 
@@ -126,13 +132,17 @@ class ProductConfigurationService
         for(let idx = 0; idx < productOptionCandidates.keys().length; idx++)
         {
             let sortedList = new List<ProductOption>();
-            productOptionCandidates.get(productOptionCandidates.keys().get(idx)).foreach((option)=>{
-                if(option.hasTag("default"))
-                    sortedList.add(option);
-            });
+            let productOptionCandidatesList: List<ProductOption>;
+            
+            productOptionCandidatesList = productOptionCandidates.get(productOptionCandidates.keys().get(idx));
+            productOptionCandidatesList.foreach((option)=>{
+            if(option.hasTagOfTitle("default"))
+                sortedList.add(option);
+        });
 
-            productOptionCandidates.get(productOptionCandidates.keys().get(idx)).foreach((option)=>{
-                if(!option.hasTag("default"))
+            productOptionCandidatesList = productOptionCandidates.get(productOptionCandidates.keys().get(idx));
+            productOptionCandidatesList.foreach((option)=>{
+                if(!option.hasTagOfTitle("default"))
                     sortedList.add(option);
             });
 
@@ -152,11 +162,17 @@ class ProductConfigurationService
     {
         let oldOption = product.getOption(productOption.productOptionType.title);
 
-        if(!this.setProductOption)
+        if(!this.setProductOption(productOption, product))
             return false;
 
         if(this.nextUnsatisfiedOption(product))
-            product.setOption(oldOption);
+        {
+            if(oldOption)
+                product.setOption(oldOption);
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -166,7 +182,7 @@ class ProductConfigurationService
      */
     setOptionAndRemoveOtherOptionsOnComplications(productOption: ProductOption, product: Product): boolean
     {
-        if(!this.setProductOption)
+        if(!this.setProductOption(productOption, product))
             return false;
         
         let toRemove = this.nextUnsatisfiedOption(product);
@@ -199,14 +215,11 @@ class ProductConfigurationService
         let foundValidCombination = false;
 
         // find the definition that belongs to this option (by type/name)
-        this.productDefinition.getProductOptionDefinition(productOption.productOptionType.title);
-
-        if(!productOptionDefinition)
-            throw Error("Unknown option");
+        productOptionDefinition = this.productDefinition.getProductOptionDefinition(productOption.productOptionType.title);
 
         // filter for the combinations that match the tags of the given option. Only those are relevant
         relevantCombinations = productOptionDefinition.combinations.filter((combination)=>{
-            return combination.tags.isSublistOf(productOption.tags);
+            return combination.tags.isSublistOf(productOption.tags.reduce("title"));
         });
 
         // iterate through the relevant combinations
@@ -228,7 +241,7 @@ class ProductConfigurationService
                         requirementsFulfilled = false;
                     // Else, check if the productOption contains the necessary tags in order to satisfy the requirement for the new product option
                     else
-                        if(!requirement.tags.isSublistOf(productOption.tags))
+                        if(!requirement.tags.isSublistOf(productOption.tags.reduce("title")))
                             requirementsFulfilled = false;
                 });
                 // If requirements fulfilled, found a valid combination
@@ -260,355 +273,4 @@ class ProductConfigurationService
     }
 }
 
-function parseProductDefinitions(productDefObj: Object): List<ProductDefinition>
-{
-    let productDefinitions = new List<ProductDefinition>();
-    for(var key1 in productDefObj)
-    {   
-        let productDef = productDefObj[key1];
-        let productDefinition = new ProductDefinition(productDef.productModel);
-        
-        for(var key2 in productDef.productOptionDefinitions)
-        {
-            let productOptDef = productDef.productOptionDefinitions[key2];
-            let productOptionDefinition = new ProductOptionDefinition(productOptDef.type, productOptDef.required);
-
-            for(var key3 in productOptDef.combinations)
-            {
-                let comb = productOptDef.combinations[key3];
-                let combination = new Combination();
-
-                for(var key4 in comb.tags)
-                    combination.addTag(comb.tags[key4]);
-                
-                for(var key5 in comb.requirements)
-                {
-                    let combReq = comb.requirements[key5];
-                    let combinationRequirement = new CombinationRequirement(combReq.productOptionType);
-
-                    for(var key6 in combReq.tags)
-                        combinationRequirement.addTag(combReq.tags[key6]);
-                    
-                    combination.setRequirement(combinationRequirement);
-                }
-
-                productOptionDefinition.addCombination(combination);
-            }
-
-            productDefinition.setProductOptionDefinition(productOptionDefinition);
-        }
-
-        productDefinitions.add(productDefinition);
-    }
-
-    return productDefinitions;
-}
-
-const productDefinitionObject =
-{
-    0: 
-    {
-        "productModel": "fenster",
-        "productOptionDefinitions": 
-        {
-            0: 
-            {
-                "type": "material",
-                "required": true,
-                "combinations": 
-                {
-                    0: 
-                    {
-                        "tags": ["kunststoff"],
-                        "requirements": {}
-                    },
-                    1: 
-                    {
-                        "tags": ["holz"],
-                        "requirements": {}
-                    }, 
-                }
-            },
-            1: 
-            {
-                "type": "profil",
-                "required": true,
-                "combinations": 
-                {
-                    0: 
-                    {
-                        "tags": ["kunststoff", "kömmerling"],
-                        "requirements": 
-                        {
-                            0:
-                            {
-                                "productOptionType":"material",
-                                "tags": ["kunststoff"]
-                            }
-                        }
-                    },
-
-                    1:
-                    {
-                        "tags": ["kunststoff", "arcade"],
-                        "requirements": 
-                        {
-                            0:
-                            {
-                                "productOptionType": "material",
-                                "tags": ["kunststoff"]
-                            }
-                        }
-                    }
-                }
-            },
-            2:
-            {
-                "type": "farbe",
-                "required": true,
-                "combinations":
-                {
-                    0:
-                    {
-                        "tags": ["kunststoff, kömmerling"],
-                        "requirements":
-                        {
-                            0:
-                            {
-                                "productOptionType": "profil",
-                                "tags": ["kunststoff, kömmerling"]
-                            }
-                        }
-                    },
-                    1:
-                    {
-                        "tags": ["kunststoff, arcade"],
-                        "requirements":
-                        {
-                            0:
-                            {
-                                "productOptionType": "profil",
-                                "tags": ["kunststoff, arcade"]
-                            }
-                        }
-                    }
-                }
-            },
-            3:
-            {
-                "type": "fenstertyp",
-                "required": true,
-                "combinations":
-                {
-                    0:
-                    {
-                        "tags": ["einteilig"],
-                        "requirements": {}
-                    },
-                    1:
-                    {
-                        "tags": ["zweiteilig"],
-                        "requirements": {}
-                    },
-                    2:
-                    {
-                        "tags": ["dreiteilig"],
-                        "requirements": {}
-                    }
-                }
-            },
-            4:
-            {
-                "type": "fensterlicht",
-                "required": true,
-                "combinations":
-                {
-                    0:
-                    {
-                        "tags": ["einteilig", "ohnelicht"],
-                        "requirements":
-                        {
-                            0:
-                            {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["einteilig"]
-                            }
-                        }
-                    },
-                    1:
-                    {
-                        "tags": ["einteilig", "unterlicht"],
-                        "requirements":
-                        {
-                            0:
-                            {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["einteilig"]
-                            }
-                        }
-                    },
-                    2:
-                    {
-                        "tags": ["einteilig", "oberlicht"],
-                        "requirements":
-                        {
-                            0:
-                            {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["einteilig"]
-                            }
-                        }
-                    },
-                    3:
-                    {
-                        "tags": ["zweiteilig", "ohnelicht"],
-                        "requirements":
-                        {
-                            0:
-                            {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["zweiteilig"]
-                            }
-                        }
-                    },
-                    4:
-                    {
-                        "tags": ["zweiteilig", "unterlicht"],
-                        "requirements":
-                        {
-                            0:
-                            {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["zweiteilig"]
-                            }
-                        }
-                    },
-                    5:
-                    {
-                        "tags": ["zweiteilig", "oberlicht"],
-                        "requirements":
-                        {
-                            0:
-                            {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["zweiteilig"]
-                            }
-                        }
-                    },
-                    6:
-                    {
-                        "tags": ["dreiteilig", "ohnelicht"],
-                        "requirements":
-                        {
-                            0:
-                            {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["dreiteilig"]
-                            }
-                        }
-                    },
-                    7:
-                    {
-                        "tags": ["dreiteilig", "unterlicht"],
-                        "requirements":
-                        {
-                            0:
-                            {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["dreiteilig"]
-                            }
-                        }
-                    },
-                    8:
-                    {
-                        "tags": ["dreiteilig", "oberlicht"],
-                        "requirements":
-                        {
-                            0:
-                            {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["dreiteilig"]
-                            }
-                        }
-                    }
-                }
-            },
-            5:
-            {
-                "type": "öffnungsart",
-                "required": true,
-                "combinations":
-                {
-                    0:
-                    {
-                        "tags": ["einteilig", "ohnelicht", "fest"],
-                        "requirements":
-                        {
-                            0:
-                            {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["einteilig"]
-                            },
-                            1:
-                            {
-                                "productOptionType": "fensterlicht",
-                                "tags": ["ohnelicht"]
-                            }
-                        }
-                    },
-                    1:
-                    {
-                        "tags": ["einteilig", "ohnelicht", "dreh"],
-                        "requirements":
-                        {
-                            0:
-                            {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["einteilig"]
-                            },
-                            1:
-                            {
-                                "productOptionType": "fensterlicht",
-                                "tags": ["ohnelicht"]
-                            }
-                        }
-                    },
-                    2:
-                    {
-                        "tags": ["einteilig", "ohnelicht", "kipp"],
-                        "requirements":
-                        {
-                            0:
-                            {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["einteilig"]
-                            },
-                            1:
-                            {
-                                "productOptionType": "fensterlicht",
-                                "tags": ["ohnelicht"]
-                            }
-                        }
-                    },
-                    3:
-                    {
-                        "tags": ["einteilig", "ohnelicht", "kipp", "dreh"],
-                        "requirements":
-                        {
-                            0:
-                            {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["einteilig"]
-                            },
-                            1:
-                            {
-                                "productOptionType": "fensterlicht",
-                                "tags": ["ohnelicht"]
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+export default ProductConfigurationService;
