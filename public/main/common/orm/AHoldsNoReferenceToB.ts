@@ -55,7 +55,7 @@ abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends Abstra
 
         let query = this.queryOfRelativeB();
 
-        query = query.hasSome(AbstractModel.asFk(this.relativeA), relatives.splitProperty<string>("id"));
+        query = query.hasSome(AbstractModel.asFk(this.relativeA), relatives.reduce("id"));
         
         let result = await query.execute();
    

@@ -3,9 +3,9 @@ import List from "../util/collections/list/List";
 
 class QueryResult<T extends AbstractModel<T>> extends List<T>
 {
-    constructor(list: List<T>=null)
+    constructor(list?: List<T>)
     {
-        super((list)?list.toArray():null);
+        super((list)?list.toArray():undefined);
     }
 
     /**

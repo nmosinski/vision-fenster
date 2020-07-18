@@ -4,8 +4,9 @@ import AbstractModel from "./AbstractModel";
 import JsTypes from "../util/jsTypes/JsTypes";
 import List from "../util/collections/list/List";
 import QueryResult from "./QueryResult";
+import GetError from "./GetError";
 
-
+const PATH = "public/main/common/orm/WixDatabase.js";
 
 class WixDatabase<T extends AbstractModel<T>>
 {
@@ -34,6 +35,8 @@ class WixDatabase<T extends AbstractModel<T>>
     static async get<U extends AbstractModel<U>>(id: string, Model: new()=>U): Promise<U>
     {
         let item = await wixData.get(new Model().tableName, id);
+        if(!item)
+            throw new GetError(PATH, "get", id, Model);
         return itemToModel(item, Model);
     }
 
@@ -55,7 +58,10 @@ class WixDatabase<T extends AbstractModel<T>>
      */
     static async has<U extends AbstractModel<U>>(id: string, Model: new()=>U): Promise<boolean>
     {
-        return !JsTypes.isUnspecified(await WixDatabase.get(id, Model));
+        let item = await wixData.get(new Model().tableName, id);
+        if(!item)
+            return false;
+        return true;
     }
 
     /**
@@ -227,7 +233,7 @@ class WixDatabase<T extends AbstractModel<T>>
     {
         if(toRemove.isEmpty())
             return;
-        let ids: Array<string> = <Array<string>>toRemove.splitProperty(itemToModelPropertyMapping("_id")).toArray();
+        let ids: Array<string> = <Array<string>>toRemove.reduce(itemToModelPropertyMapping("_id")).toArray();
         await wixData.bulkRemove(toRemove.get(0).tableName, ids);
     }
 
@@ -401,11 +407,8 @@ function modelToItemPropertyMapping(modelPropertyName: string): string
     return modelPropertyName;
 }
 
-function itemToModel<U extends AbstractModel<U>>(item: any, Model: new()=>U): U 
+function itemToModel<U extends AbstractModel<U>>(item: any, Model: new()=>U): U
 {
-    if(!item)
-        return null;
-
     for(let key in item)
         item[itemToModelPropertyMapping(key)] = item[key];
 
@@ -444,7 +447,7 @@ function modelToItem(model: AbstractModel<any>): object
  */
 function modelsToItems(list: List<AbstractModel<any>>): Array<object>
 {
-    let items = [];
+    let items: Array<object> = [];
     list.foreach((model)=>{items.push(modelToItem(model));});
     return items;
 }

@@ -6,8 +6,6 @@ import AbstractCheckedError from "../util/error/AbstractCheckedError";
  */
 abstract class CrudOperationError extends AbstractCheckedError
 {
-    private _modelName: string;
-    private _modelId: string;
 
     /**
      * Create a CrudOperationError.

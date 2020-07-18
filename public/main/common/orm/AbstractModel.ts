@@ -23,6 +23,7 @@ import DestroyError from './DestroyError';
 import InvalidOperationError from '../util/error/InvalidOperationError';
 import AHoldsReferenceToB from './AHoldsReferenceToB.js';
 import AHoldsNoReferenceToB from './AHoldsNoReferenceToB.js';
+import NullPointerException from '../util/error/NullPointerException.js';
 
 /**
  * @todo Add undo operations for save etc. Important in case a save is not possible but uve updated already some references.
@@ -47,7 +48,6 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      */
     constructor(data?: object)
     {
-        this.parent = null;
         this.relations = new KVMap<new()=>AbstractModel<any>, Relation<AbstractModel<any>,T>>();
         this.properties = new Properties();
 
@@ -57,7 +57,8 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         this.init();
         this.addProperties();
         this.addRelations();
-        this.fill(data);
+        if(data)
+            this.fill(data);
     }
 
     abstract init(): void;
@@ -87,7 +88,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {U extends AbstractModel<U>} Model The model of which a dummy will be created.
      * @returns {T} A dummy initialized with valid data.
      */
-    static dummy<U extends AbstractModel<U>>(Model: new()=>U, customChanges: KVMap<string, any>=null): U
+    static dummy<U extends AbstractModel<U>>(Model: new()=>U, customChanges?: KVMap<string, any>): U
     {
         let t = new Model();
         let item = {};
@@ -106,7 +107,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {number} count The amount of dummies to be created.
      * @returns {List<T>} A list containing the given amount of dummies initialized with valid data.
      */
-    static dummies<U extends AbstractModel<U>>(Model: new()=>U, count: number, customChanges: KVMap<string, any>=null): List<U>
+    static dummies<U extends AbstractModel<U>>(Model: new()=>U, count: number, customChanges?: KVMap<string, any>): List<U>
     {
         let l = new List<U>();
         for(let idx = 0; idx < count; idx++)
@@ -178,21 +179,33 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     }
 
     /**
+     * Check if has a relative.
+     * @param {new()=>U, extends AbstactModel<U>} Relative The class obejct/constructor of the relative.
+     * @returns {boolean} True if has relative, else false. 
+     */
+    protected hasRelative<U extends AbstractModel<U>>(Relative: new()=>U): boolean
+    {
+        if(this.relations.get(Relative))
+            return true;
+        
+            return false;
+    }
+
+    /**
      * Get a relative.
-     * @param {new()=>U, extends AbstactModel<U>} name The name of the relative.
+     * @param {new()=>U, extends AbstactModel<U>} Relative The class obejct/constructor of the relative.
      * @returns {AbstractModel<any>} The relative. 
      */
     protected relative<U extends AbstractModel<U>>(Relative: new()=>U): U
     {
         let relation = this.relations.get(Relative);
-        if(relation)
-        {
-            let relative = new Relative();
-            relative.parent = this;
-            return relative;
-        }
         
-        return null;
+        if(!relation)
+            throw new NullPointerException(PATH, "relative", "A relation to the given relative " + Relative + " does not exist");
+        
+        let relative = new Relative();
+        relative.parent = this;
+        return relative;
     }
 
     /**
@@ -344,6 +357,30 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     {
         return this.relative(Model);
     }
+
+    /**
+     * Check if an entity of this model with the given id exists.
+     * @param {string} id The id of the entity.
+     * @returns {boolean} True if exists, else false.
+     */
+    async exists(id: string): Promise<boolean>
+    {
+        return AbstractModel.exists(id, this.Constructor);
+    }
+
+    /**
+     * Check if an entity of the given model with the given id exists.
+     * @param {string} id The id of the entity.
+     * @param {new()=>U} Model The Model of the entity.
+     * @returns {boolean} True if exists, else false.
+     */
+    static async exists<U extends AbstractModel<U>>(id: string, Model: new()=>U): Promise<boolean>
+    {
+        if(await WixDatabase.has(id, Model))
+            return true;
+
+        return false;
+    }    
 
     /**
      * Get an item of the model (this by default) of the given id.
@@ -817,7 +854,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * If called over a relative, destroy all models of T that belong to the models retrieved by the previous.
      * @param {List<T>} [models] The List containing the models to be destroyed. 
      */
-    async destroyMultiple(models?: List<T>): Promise<void>
+    async destroyMultiple(models?: List<T>): Promise<void>|never
     {   
         // Called over relation.
         if(this.parent)
@@ -848,6 +885,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
                 // Nothing specific to do. Destroy the given models in the next step.
             }
         }
+
+        if(!models)
+            throw new NullPointerException(PATH, "destroyMultiple", "The list of the to destroyed models is empty, but shouldn't.");
 
         return await AbstractModel.destroyMultiple(models);
     }
@@ -1107,9 +1147,9 @@ export class StringProperty extends Property
     {
         super();
         
-        this.validAttributes.addMultiple([
+        this.validAttributes.add(
             "emtiable"
-        ]);
+        );
 
         this.attributes = attributes;
     }
@@ -1139,11 +1179,11 @@ export class NumberProperty extends Property
     constructor(attributes: Set<string>)
     {
         super();
-        this.validAttributes.addMultiple([
+        this.validAttributes.add(
             "negative",
             "positive",
             "notZero"
-        ]);
+        );
 
         this.attributes = attributes;
     }

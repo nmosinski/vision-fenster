@@ -59,7 +59,7 @@ abstract class AHoldsReferenceToB<A extends AbstractModel<A>, B extends Abstract
         
         let aRelativeB = new this.relativeB();
         let bQuery = this.queryOfRelativeB();
-        let toFindIds: Set<string> = new Set<string>(relatives.splitProperty<string>(aRelativeB.asFk()).toArray());
+        let toFindIds: Set<string> = new Set<string>(relatives.reduce(aRelativeB.asFk()).toArray());
 
         bQuery = bQuery.hasSome("_id", toFindIds);
         
@@ -84,7 +84,7 @@ abstract class AHoldsReferenceToB<A extends AbstractModel<A>, B extends Abstract
         let bInstance = new this.relativeB();
 
         if(!relatives)
-            asToDestroy = await this.queryOfRelativeA().hasSome(bInstance.asFk(), toDestroy.splitProperty<string>("id")).execute();
+            asToDestroy = await this.queryOfRelativeA().hasSome(bInstance.asFk(), toDestroy.reduce("id")).execute();
         else
             asToDestroy = relatives.filter((a)=> { return toDestroy.toArray().includes(a[bInstance.asFk()]); });
 
