@@ -87,7 +87,7 @@ const productDefinitions =
 
 var product: Product;
 
-const productDefinition = ProductDefinitionParsingService.parseFromJson(productDefinitions).first();
+const productDefinition = ProductDefinitionParsingService.parseFromJson(productDefinitions).get('fenster');
 if (!productDefinition)
     throw new InvalidOperationError(PATH, "", "productDefinition is undefined after parsing from json!");
 const productConfigurationService = new ProductConfigurationService(productDefinition);
