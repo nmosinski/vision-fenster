@@ -17,7 +17,7 @@ class QueryResult<T extends AbstractModel<T>> extends List<T>
         return pks;
     }
 
-    load(...models: Array<new () => AbstractModel<any>>) {
+    load(...models: Array<new () => AbstractModel<any>>): this {
         this.foreach((el) => {
             el.load.apply(el, models);
         });
