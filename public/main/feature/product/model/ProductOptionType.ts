@@ -6,65 +6,54 @@ import ProductModel from "./ProductModel";
 class ProductOptionType extends AbstractModel<ProductOptionType>
 {
     protected Constructor: new () => ProductOptionType;
-    
+
     private _title: string;
     private _productOptions: List<ProductOption>;
     private _productModel: ProductModel;
 
-    init(): void 
-    {
+    init(): void {
         this.Constructor = ProductOptionType;
     }
 
-    addProperties(): void 
-    {
+    addProperties(): void {
         this.properties.
-        string("title");
+            string("title");
     }
 
-    addRelations(): void 
-    {
+    addRelations(): void {
         this.oneToMany(ProductOption);
         this.manyToOne(ProductModel);
     }
 
-    productOptionsQ()
-    {
+    productOptionsQ() {
         return this.relative(ProductOption);
     }
 
-    productModelQ()
-    {
+    productModelQ() {
         return this.relative(ProductModel);
     }
 
-    set title(title: string)
-    {
+    set title(title: string) {
         this._title = title;
     }
 
-    set productOptions(productOptions: List<ProductOption>)
-    {
+    set productOptions(productOptions: List<ProductOption>) {
         this._productOptions = productOptions;
     }
 
-    set productModel(productModel: ProductModel)
-    {
+    set productModel(productModel: ProductModel) {
         this._productModel = productModel;
     }
 
-    get title(): string
-    {
+    get title(): string {
         return this._title;
     }
 
-    get productOptions()
-    {
+    get productOptions(): List<ProductOption> {
         return this._productOptions;
     }
 
-    get productModel()
-    {
+    get productModel() {
         return this._productModel;
     }
 }
