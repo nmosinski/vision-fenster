@@ -34,11 +34,10 @@ import NullPointerException from '../util/error/NullPointerException.js';
  * A class representing an abstract model.
  */
 
-abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
-{
+abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable {
     private _parent: AbstractModel<any>;
-    private _relations: KVMap<new()=>AbstractModel<any>, Relation<AbstractModel<any>,T>>;
-    protected abstract Constructor: new()=>T;
+    private _relations: KVMap<new () => AbstractModel<any>, Relation<AbstractModel<any>, T>>;
+    protected abstract Constructor: new () => T;
     protected _properties: Properties;
     private _id: string;
     private _lastQueryResult: QueryResult<T> | AbstractModel<T>;
@@ -46,18 +45,17 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
     /**
      * Create an Abstract Model.
      */
-    constructor(data?: object)
-    {
-        this.relations = new KVMap<new()=>AbstractModel<any>, Relation<AbstractModel<any>,T>>();
+    constructor(data?: object) {
+        this.relations = new KVMap<new () => AbstractModel<any>, Relation<AbstractModel<any>, T>>();
         this.properties = new Properties();
 
         this.properties.
-        string("id");
-        
+            string("id");
+
         this.init();
         this.addProperties();
         this.addRelations();
-        if(data)
+        if (data)
             this.fill(data);
     }
 
@@ -67,9 +65,8 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Get a new instance of this.
      * @returns {T} A new instance.
      */
-    instance(): T
-    {
-        return new this.Constructor();       
+    instance(): T {
+        return new this.Constructor();
     }
 
     /**
@@ -88,16 +85,15 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {U extends AbstractModel<U>} Model The model of which a dummy will be created.
      * @returns {T} A dummy initialized with valid data.
      */
-    static dummy<U extends AbstractModel<U>>(Model: new()=>U, customChanges?: KVMap<string, any>): U
-    {
+    static dummy<U extends AbstractModel<U>>(Model: new () => U, customChanges?: KVMap<string, any>): U {
         let t = new Model();
         let item = {};
 
-        t.properties.foreach((propertyName, property)=>{item[propertyName] = property.dummy();});
+        t.properties.foreach((propertyName, property) => { item[propertyName] = property.dummy(); });
         t = t.fill(item);
 
-        if(customChanges)
-            customChanges.foreach((propertyname, value)=>{t[propertyname] = value;});
+        if (customChanges)
+            customChanges.foreach((propertyname, value) => { t[propertyname] = value; });
         return t;
     }
 
@@ -107,10 +103,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {number} count The amount of dummies to be created.
      * @returns {List<T>} A list containing the given amount of dummies initialized with valid data.
      */
-    static dummies<U extends AbstractModel<U>>(Model: new()=>U, count: number, customChanges?: KVMap<string, any>): List<U>
-    {
+    static dummies<U extends AbstractModel<U>>(Model: new () => U, count: number, customChanges?: KVMap<string, any>): List<U> {
         let l = new List<U>();
-        for(let idx = 0; idx < count; idx++)
+        for (let idx = 0; idx < count; idx++)
             l.add(AbstractModel.dummy(Model, customChanges));
         return l;
     }
@@ -119,9 +114,8 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @override
      * @inheritdoc
      */
-    equals(model: any): boolean
-    {
-        if(!(model instanceof AbstractModel))
+    equals(model: any): boolean {
+        if (!(model instanceof AbstractModel))
             return false;
         return (this.id === model.id) && (JsTypes.belongToTheSameClass(this, model));
     }
@@ -130,11 +124,10 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Validate all properties.
      * @returns {bolean} True if valid, else false.
      */
-    valid(): boolean
-    {
+    valid(): boolean {
         let valid = true;
-        this._properties.foreach((propertyName, property)=>{
-            if(!property.valid(this[propertyName]))
+        this._properties.foreach((propertyName, property) => {
+            if (!property.valid(this[propertyName]))
                 valid = false;
         });
         return valid;
@@ -145,8 +138,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Return an object holding all properties defined for this model.
      * @returns {object} The object holding the properties defined for this model.
      */
-    strip(): object
-    {
+    strip(): object {
         return AbstractModel.strip(this);
     }
 
@@ -156,10 +148,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {AbstractModel<any>} model The model to be translated.
      * @returns {object} The object holding the properties defined for the given model.
      */
-    static strip<U extends AbstractModel<U>>(model: AbstractModel<U>): object
-    {
+    static strip<U extends AbstractModel<U>>(model: AbstractModel<U>): object {
         let item = {};
-        model.properties.foreach((propertyName)=>{
+        model.properties.foreach((propertyName) => {
             item[propertyName] = model[propertyName];
         });
         return item;
@@ -170,10 +161,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {object} item The item containing the data.
      * @returns {ThisParameterType} This.
      */
-    fill(item: object): this
-    {
-        if(item)
-            for(let [key,value] of Object.entries(item))
+    fill(item: object): this {
+        if (item)
+            for (let [key, value] of Object.entries(item))
                 this[key] = value;
         return this;
     }
@@ -183,12 +173,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {new()=>U, extends AbstactModel<U>} Relative The class obejct/constructor of the relative.
      * @returns {boolean} True if has relative, else false. 
      */
-    protected hasRelative<U extends AbstractModel<U>>(Relative: new()=>U): boolean
-    {
-        if(this.relations.get(Relative))
+    protected hasRelative<U extends AbstractModel<U>>(Relative: new () => U): boolean {
+        if (this.relations.get(Relative))
             return true;
-        
-            return false;
+
+        return false;
     }
 
     /**
@@ -196,13 +185,12 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {new()=>U, extends AbstactModel<U>} Relative The class obejct/constructor of the relative.
      * @returns {AbstractModel<any>} The relative. 
      */
-    protected relative<U extends AbstractModel<U>>(Relative: new()=>U): U
-    {
+    protected relative<U extends AbstractModel<U>>(Relative: new () => U): U {
         let relation = this.relations.get(Relative);
-        
-        if(!relation)
+
+        if (!relation)
             throw new NullPointerException(PATH, "relative", "A relation to the given relative " + Relative + " does not exist");
-        
+
         let relative = new Relative();
         relative.parent = this;
         return relative;
@@ -212,8 +200,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Add a relation of 0..1 to 1 relationship.
      * @param  {{new(): U}} Model The Model (class) this is associated to as 0..1 to 1 - this has one Model.
      */
-    zeroOrOneToOne<U extends AbstractModel<U>>(Model: {new(): U}): void
-    {
+    zeroOrOneToOne<U extends AbstractModel<U>>(Model: { new(): U }): void {
         // This logic inverse.
 
         this.relations.add(Model, new OneToZeroOrOne(Model, this.Constructor));
@@ -224,8 +211,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Add a relation of 1 to 0..1 relationship.
      * @param  {{new(): U}} Model The Model (class) this is associated to as 1 to 0..1 - this has one optional Model.
      */
-    oneToZeroOrOne<U extends AbstractModel<U>>(Model: {new(): U}): void
-    {
+    oneToZeroOrOne<U extends AbstractModel<U>>(Model: { new(): U }): void {
         // This logic inverse.
 
         this.relations.add(Model, new ZeroOrOneToOne(Model, this.Constructor));
@@ -235,19 +221,17 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Add a relation of 1 to n relationship.
      * @param  {{new(): U}} Model The Model (class) this is associated to as 1 to n - this has many Models.
      */
-    oneToMany<U extends AbstractModel<U>>(Model: {new(): U}): void
-    {
+    oneToMany<U extends AbstractModel<U>>(Model: { new(): U }): void {
         // This logic, inverse.
 
         this.relations.add(Model, new ManyToOne(Model, this.Constructor));
     }
-    
+
     /**
      * Add a relation of n to 1 relationship.
      * @param  {{new(): U}} Model The Model (class) this is associated to as n to 1 - this belongs to one Model.
      */
-    manyToOne<U extends AbstractModel<U>>(Model: {new(): U}): void
-    {
+    manyToOne<U extends AbstractModel<U>>(Model: { new(): U }): void {
         // This logic, inverse.
         this.relations.add(Model, new OneToMany(Model, this.Constructor));
         this.properties.string(AbstractModel.asFk(Model));
@@ -258,37 +242,32 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Add a relation of n to n relationship.
      * @param  {{new(): U}} Model The Model (class) this is associated to as n to n - this belongs to many Models.
      */
-    manyToMany<U extends AbstractModel<U>>(Model: {new(): U}): void
-    {
+    manyToMany<U extends AbstractModel<U>>(Model: { new(): U }): void {
         let thisTableName = this.tableName;
         let thisAsFk = this.asFk();
 
         let roleModelClass = class RoleModel extends AbstractModel<RoleModel>{
-            
+
             protected Constructor: new () => RoleModel;
-            
-            init(): void 
-            {
+
+            init(): void {
                 this.Constructor = RoleModel;
             }
 
-            addProperties(): void 
-            {
+            addProperties(): void {
                 this.properties.
-                string(AbstractModel.asFk(Model)).
-                string(thisAsFk);
+                    string(AbstractModel.asFk(Model)).
+                    string(thisAsFk);
             }
 
-            addRelations(): void 
-            {
+            addRelations(): void {
 
             }
 
             /**
              * @override
              */
-            get tableName()
-            {
+            get tableName() {
                 return AbstractModel.roleTableNameOf(thisTableName, AbstractModel.tableName(Model));
             }
         }
@@ -300,10 +279,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Check if the parent of this is the root.
      * @returns {boolean} True if the parent is the root, else false.
      */
-    private myParentIsTheRoot(): boolean
-    {
-        if(this.parent)
-            if(!this.parent.parent)
+    private myParentIsTheRoot(): boolean {
+        if (this.parent)
+            if (!this.parent.parent)
                 return true;
         return false;
     }
@@ -313,8 +291,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {T extends AbstractModel<T>} model The model to be assigned.
      * @param {U extends AbstractModel<U>} relative The relative the given model will be assigned to. 
      */
-    assign<U extends AbstractModel<U>>(relative: U): void
-    {
+    assign<U extends AbstractModel<U>>(relative: U): void {
         AbstractModel.assign(<T><unknown>this, relative);
     }
 
@@ -323,8 +300,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {T extends AbstractModel<T>} model The model to be assigned.
      * @param {U extends AbstractModel<U>} relative The relative the given model will be assigned to. 
      */
-    static assign<P extends AbstractModel<P>, U extends AbstractModel<U>>(model: P, relative: U): void
-    {
+    static assign<P extends AbstractModel<P>, U extends AbstractModel<U>>(model: P, relative: U): void {
         model.relations.get(relative.Constructor).assign(model, relative);
     }
 
@@ -333,8 +309,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {List<T extends AbstractModel<T>>} models The models to be assigned.
      * @param {U extends AbstractModel<U>} relative The relative the given model will be assigned to. 
      */
-    assignMultiple<U extends AbstractModel<U>>(models: List<T>, relative: U): void
-    {
+    assignMultiple<U extends AbstractModel<U>>(models: List<T>, relative: U): void {
         AbstractModel.assignMultiple(models, relative);
     }
 
@@ -343,9 +318,8 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {List<P extends AbstractModel<P>>} models The models to be assigned.
      * @param {U extends AbstractModel<U>} relative The relative the given model will be assigned to. 
      */
-    static assignMultiple<P extends AbstractModel<P>, U extends AbstractModel<U>>(models: List<P>, relative: U): void
-    {
-        models.foreach((model)=>{AbstractModel.assign(model, relative);});
+    static assignMultiple<P extends AbstractModel<P>, U extends AbstractModel<U>>(models: List<P>, relative: U): void {
+        models.foreach((model) => { AbstractModel.assign(model, relative); });
     }
 
     /**
@@ -353,9 +327,19 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {<U extends AbstractModel<U>> new() => U} Model The Model (class) of the property to be loaded. 
      * @returns {Promise<this>} This. 
      */
-    load<U extends AbstractModel<U>>(Model: new() => U): U
-    {
-        return this.relative(Model);
+    async load(...models: Array<new () => AbstractModel<any>>): Promise<this> {
+        let modelList = new List<new () => AbstractModel<any>>(models);
+        await modelList.foreachAsync(async (Model) => {
+            let relative = this.relative(Model);
+            let relation = this.relations.get(Model);
+
+            if (relation instanceof ManyToOne || relation instanceof ManyToMany) {
+                await relative.find();
+            }
+            else
+                this[AbstractModel.asSinglePropertyName(Model)] = await relative.get();
+        });
+        return this;
     }
 
     /**
@@ -363,8 +347,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {string} id The id of the entity.
      * @returns {boolean} True if exists, else false.
      */
-    async exists(id: string): Promise<boolean>
-    {
+    async exists(id: string): Promise<boolean> {
         return AbstractModel.exists(id, this.Constructor);
     }
 
@@ -374,13 +357,12 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {new()=>U} Model The Model of the entity.
      * @returns {boolean} True if exists, else false.
      */
-    static async exists<U extends AbstractModel<U>>(id: string, Model: new()=>U): Promise<boolean>
-    {
-        if(await WixDatabase.has(id, Model))
+    static async exists<U extends AbstractModel<U>>(id: string, Model: new () => U): Promise<boolean> {
+        if (await WixDatabase.has(id, Model))
             return true;
 
         return false;
-    }    
+    }
 
     /**
      * Get an item of the model (this by default) of the given id.
@@ -388,11 +370,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {string} pk The primary key of the item to be retrieved.
      * @return {Promise<T>} The item.
      */
-    async get(id?: string): Promise<T>
-    {
+    async get(id?: string): Promise<T> {
         // Called over previous.
-        if(this.parent)
-        {
+        if (this.parent) {
             let previousQueryResult = await this.parent.find();
             let relation = this.relations.get(this.parent.Constructor);
             let thisGetResult = relation.relationalGet(previousQueryResult.first());
@@ -400,7 +380,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
             return thisGetResult;
         }
 
-        if(!id)
+        if (!id)
             id = this.id;
         return await AbstractModel.get(id, this.Constructor);
     }
@@ -411,8 +391,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {new()=>U} model The model of the item to be retrieved.
      * @returns {Promise<U>} The retrueved model.
      */
-    static async get<U extends AbstractModel<U>>(id: string, model: new()=>U): Promise<U>
-    {
+    static async get<U extends AbstractModel<U>>(id: string, model: new () => U): Promise<U> {
         return await WixDatabase.get(id, model);
     }
 
@@ -421,54 +400,48 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * If called over a relative, return only those entities that are related to the query result returned by the chained query.
      * @returns {Promise<QueryResult<T>>} The result of the executed query. 
      */
-    async find(): Promise<QueryResult<T>>
-    {
+    async find(): Promise<QueryResult<T>> {
         let thisQueryResult: QueryResult<T>;
         // Called over previous.
-        if(this.parent)
-        {
+        if (this.parent) {
             let previousQueryResult: QueryResult<AbstractModel<any>>;
             let propertyTarget;
             let propertyName: string;
             let relationToParent: Relation<AbstractModel<any>, T>;
 
             // If it's a first generation find, find only items that belong to the parent
-            if(this.myParentIsTheRoot())
-            {
+            if (this.myParentIsTheRoot()) {
                 previousQueryResult = new QueryResult<AbstractModel<any>>();
                 previousQueryResult.add(this.parent);
                 propertyTarget = this.parent;
             }
-            else
-            {
+            else {
                 previousQueryResult = await this.parent.find();
                 propertyTarget = this.parent.lastQueryResult;
             }
-            
+
             relationToParent = this.relations.get(this.parent.Constructor);
-       
+
             thisQueryResult = await relationToParent.relationalFind(previousQueryResult);
-        
-            if(relationToParent instanceof ManyToMany || relationToParent instanceof OneToMany)
+
+            if (relationToParent instanceof ManyToMany || relationToParent instanceof OneToMany)
                 propertyName = this.asMultiplePropertyName();
             else
                 propertyName = this.asSinglePropertyName();
-            
-            
-            if(this.myParentIsTheRoot() && ((relationToParent instanceof ManyToOne) || (relationToParent instanceof OneToZeroOrOne) || (relationToParent instanceof ZeroOrOneToOne)) )
-            {
+
+
+            if (this.myParentIsTheRoot() && ((relationToParent instanceof ManyToOne) || (relationToParent instanceof OneToZeroOrOne) || (relationToParent instanceof ZeroOrOneToOne))) {
                 propertyTarget[propertyName] = thisQueryResult.first();
                 this.lastQueryResult = thisQueryResult.first();
             }
-            else
-            {
+            else {
                 propertyTarget[propertyName] = thisQueryResult;
                 this.lastQueryResult = thisQueryResult;
             }
         }
         else
             thisQueryResult = await AbstractModel.find(this.Constructor);
-        
+
         return thisQueryResult;
     }
 
@@ -477,8 +450,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {model: new()=>U} model The QueryElement to be resolved.
      * @returns {Promise<QueryResult<<U extends AbstractModel<U>>>>} The result of the executed querry. 
      */
-    static async find<U extends AbstractModel<U>>(Model: new()=>U): Promise<QueryResult<U>>
-    {
+    static async find<U extends AbstractModel<U>>(Model: new () => U): Promise<QueryResult<U>> {
         return await WixDatabase.query(Model).execute();
     }
 
@@ -488,33 +460,30 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * This may not be possible depending on the relationship to the parent.
      * @param {T} [model=this] The model to be created.
      */
-    async create(model?: T): Promise<void>
-    {
+    async create(model?: T): Promise<void> {
         // Called over previous.
-        if(this.parent)
-        {
+        if (this.parent) {
             // Nothing to do in the meaning of "assign nothing to the results of the previous query result."
-            if(!model)
+            if (!model)
                 return;
 
             let previousQueryResult: QueryResult<AbstractModel<any>>;
 
             // Previous query result should be just the root in that case
-            if(this.myParentIsTheRoot())
-            {
+            if (this.myParentIsTheRoot()) {
                 previousQueryResult = new QueryResult<AbstractModel<any>>();
                 previousQueryResult.add(this.parent);
             }
             else
                 previousQueryResult = await this.parent.find();
-            
+
             model = this.relations.get(this.parent.Constructor).assign(model, previousQueryResult.first());
-           
+
         }
 
         // Create this.
-        if(!model)
-            model = <T><unknown> this;
+        if (!model)
+            model = <T><unknown>this;
 
         return await AbstractModel.create(model);
     }
@@ -523,14 +492,13 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Create a model.
      * @param {T} model The model to be created.
      */
-    static async create<U extends AbstractModel<U>>(model: U): Promise<void>
-    {
-        if(!model.valid())
+    static async create<U extends AbstractModel<U>>(model: U): Promise<void> {
+        if (!model.valid())
             throw new CreateError(PATH, "AbstractModel.create()", model);
 
         // Call create for each relation.
         let relations = model.relations.values();
-        for(let idx = 0; idx < relations.length; idx++)
+        for (let idx = 0; idx < relations.length; idx++)
             await relations.get(idx).relationalCreate(model);
 
         await WixDatabase.create(model);
@@ -542,18 +510,15 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * This may not be possible depending on the relationship of the models in this list to the parent.
      * @param {List<T>} models The List containing the models to be created. 
      */
-    async createMultiple(models: List<T>): Promise<void>
-    {
-        if(models.isEmpty())
+    async createMultiple(models: List<T>): Promise<void> {
+        if (models.isEmpty())
             return;
-        
+
         // Called over previous.
-        if(this.parent)
-        {
+        if (this.parent) {
             let previousQueryResult: QueryResult<AbstractModel<any>>;
             // Previous query result should be just the root in that case
-            if(this.myParentIsTheRoot())
-            {
+            if (this.myParentIsTheRoot()) {
                 previousQueryResult = new QueryResult<AbstractModel<any>>();
                 previousQueryResult.add(this.parent);
             }
@@ -570,18 +535,17 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Create many models.
      * @param {List<<U extends AbstractModel<U>>>} models The List containing the models to be created. 
      */
-    static async createMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void>
-    {
-        if(models.isEmpty())
+    static async createMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void> {
+        if (models.isEmpty())
             return;
 
-        models.foreach((model)=>{
-            if(!model.valid())
+        models.foreach((model) => {
+            if (!model.valid())
                 throw new CreateError(PATH, "AbstractModel.createMultiple()", model);
         });
 
         let relations = models.get(0).relations.values();
-        for(let idx = 0; idx < relations.length; idx++)
+        for (let idx = 0; idx < relations.length; idx++)
             await relations.get(idx).relationalCreateMultiple(models);
 
         await WixDatabase.createMultiple(models);
@@ -593,30 +557,27 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * This may not be possible depending on the relationship to the parent.
      * @param {T} [model=this] The model to be saved.
      */
-    async save(model?: T): Promise<void>
-    {
+    async save(model?: T): Promise<void> {
         // Called over previous.
-        if(this.parent)
-        {
+        if (this.parent) {
             // Nothing to do in the meaning of "assign nothing to the results of the previous query result."
-            if(!model)
+            if (!model)
                 return;
             let previousQueryResult: QueryResult<AbstractModel<any>>;
             // Previous query result should be just the root in that case
-            if(this.myParentIsTheRoot())
-            {
+            if (this.myParentIsTheRoot()) {
                 previousQueryResult = new QueryResult<AbstractModel<any>>();
                 previousQueryResult.add(this.parent);
             }
             else
                 previousQueryResult = await this.parent.find();
-                
+
             model = this.relations.get(this.parent.Constructor).assign(model, previousQueryResult.first());
         }
 
         // Save this.
-        if(!model)
-            model = <T><unknown> this;
+        if (!model)
+            model = <T><unknown>this;
 
         return await AbstractModel.save(model);
     }
@@ -625,14 +586,13 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Save a model.
      * @param {T} model The model to be saved.
      */
-    static async save<U extends AbstractModel<U>>(model: U): Promise<void>
-    {
-        if(!model.valid())
+    static async save<U extends AbstractModel<U>>(model: U): Promise<void> {
+        if (!model.valid())
             throw new SaveError(PATH, "AbstractModel.save()", model);
 
         let relations = model.relations.values();
-        for(let idx = 0; idx < relations.length; idx++)
-            await relations.get(idx).relationalSave(model);        
+        for (let idx = 0; idx < relations.length; idx++)
+            await relations.get(idx).relationalSave(model);
 
         await WixDatabase.save(model);
     }
@@ -643,18 +603,15 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * This may not be possible depending on the relationship of the models in this list to the parent.
      * @param {List<T>} models The List containing the models to be saved. 
      */
-    async saveMultiple(models: List<T>): Promise<void>
-    {
-        if(models.isEmpty())
+    async saveMultiple(models: List<T>): Promise<void> {
+        if (models.isEmpty())
             return;
-        
+
         // Called over previous.
-        if(this.parent)
-        {
+        if (this.parent) {
             let previousQueryResult: QueryResult<AbstractModel<any>>;
             // Previous query result should be just the root in that case
-            if(this.myParentIsTheRoot())
-            {
+            if (this.myParentIsTheRoot()) {
                 previousQueryResult = new QueryResult<AbstractModel<any>>();
                 previousQueryResult.add(this.parent);
             }
@@ -671,18 +628,17 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Save many models.
      * @param {List<<U extends AbstractModel<U>>>} models The List containing the models to be saved. 
      */
-    static async saveMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void>
-    {
-        if(models.isEmpty())
+    static async saveMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void> {
+        if (models.isEmpty())
             return;
 
-        models.foreach((model)=>{
-            if(!model.valid())
+        models.foreach((model) => {
+            if (!model.valid())
                 throw new SaveError(PATH, "AbstractModel.saveMultiple()", model);
         });
 
         let relations = models.get(0).relations.values();
-        for(let idx = 0; idx < relations.length; idx++)
+        for (let idx = 0; idx < relations.length; idx++)
             await relations.get(idx).relationalSaveMultiple(models);
 
         await WixDatabase.saveMultiple(models);
@@ -694,19 +650,16 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * This may not be possible depending on the relationship to the parent.
      * @param {T} [model] The model to be updated.
      */
-    async update(model?: T): Promise<void>
-    {
+    async update(model?: T): Promise<void> {
         // Called over previous.
-        if(this.parent)
-        {
+        if (this.parent) {
             // Nothing to do in the meaning of "assign nothing to the results of the previous query result."
-            if(!model)
+            if (!model)
                 return;
 
             let previousQueryResult: QueryResult<AbstractModel<any>>;
             // Previous query result should be just the root in that case
-            if(this.myParentIsTheRoot())
-            {
+            if (this.myParentIsTheRoot()) {
                 previousQueryResult = new QueryResult<AbstractModel<any>>();
                 previousQueryResult.add(this.parent);
             }
@@ -717,8 +670,8 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
         }
 
         // Update this.
-        if(!model)
-            model = <T><unknown> this;
+        if (!model)
+            model = <T><unknown>this;
 
         return await AbstractModel.update(model);
     }
@@ -727,13 +680,12 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Update a model.
      * @param {<U extends AbstractModel<U>>} model The model to be updated.
      */
-    static async update<U extends AbstractModel<U>>(model: U): Promise<void>
-    {   
-        if(!model.valid())
+    static async update<U extends AbstractModel<U>>(model: U): Promise<void> {
+        if (!model.valid())
             throw new UpdateError(PATH, "AbstractModel.update()", model);
 
         let relations = model.relations.values();
-        for(let idx = 0; idx < relations.length; idx++)
+        for (let idx = 0; idx < relations.length; idx++)
             await relations.get(idx).relationalUpdate(model);
 
         await WixDatabase.update(model);
@@ -745,18 +697,15 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * This may not be possible depending on the relationship of the models in this list to the parent.
      * @param {List<T>} models The List containing the models to be updated. 
      */
-    async updateMultiple(models: List<T>): Promise<void>
-    {
-        if(models.isEmpty())
+    async updateMultiple(models: List<T>): Promise<void> {
+        if (models.isEmpty())
             return;
-        
+
         // Called over previous.
-        if(this.parent)
-        {
+        if (this.parent) {
             let previousQueryResult: QueryResult<AbstractModel<any>>;
             // Previous query result should be just the root in that case
-            if(this.myParentIsTheRoot())
-            {
+            if (this.myParentIsTheRoot()) {
                 previousQueryResult = new QueryResult<AbstractModel<any>>();
                 previousQueryResult.add(this.parent);
             }
@@ -773,18 +722,17 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Update many models.
      * @param {List<<U extends AbstractModel<U>>>} models The List containing the models to be updated. 
      */
-    static async updateMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void>
-    {
-        if(models.isEmpty())
+    static async updateMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void> {
+        if (models.isEmpty())
             return;
 
-        models.foreach((model)=>{
-            if(!model.valid())
+        models.foreach((model) => {
+            if (!model.valid())
                 throw new UpdateError(PATH, "AbstractModel.updateMultiple()", model);
         });
 
         let relations = models.get(0).relations.values();
-        for(let idx = 0; idx < relations.length; idx++)
+        for (let idx = 0; idx < relations.length; idx++)
             await relations.get(idx).relationalUpdateMultiple(models);
 
 
@@ -796,18 +744,14 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * If called over a relative, destroy all models of T that belong to the models retrieved by the previous.
      * @param {T} [model] The model to be destroyed.
      */
-    async destroy(model?: T): Promise<void>
-    {
+    async destroy(model?: T): Promise<void> {
         // Called over relation.
-        if(this.parent)
-        {
+        if (this.parent) {
             // Destroy all models that belong to the models retrieved by find of the parent.
-            if(!model)
-            {
+            if (!model) {
                 let previousQueryResult: QueryResult<AbstractModel<any>>;
                 // Previous query result should be just the root in that case
-                if(this.myParentIsTheRoot())
-                {
+                if (this.myParentIsTheRoot()) {
                     previousQueryResult = new QueryResult<AbstractModel<any>>();
                     previousQueryResult.add(this.parent);
                 }
@@ -815,22 +759,21 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
                     previousQueryResult = await this.parent.find();
 
                 let toDestroy = await this.relations.get(this.parent.Constructor).relationalFind(previousQueryResult);
-                
+
                 // Continue with a single destroy if there is just one model to destroy. Else destroy multiple.
-                if(toDestroy.length === 1)
+                if (toDestroy.length === 1)
                     model = toDestroy.first();
                 else
                     return await AbstractModel.destroyMultiple(toDestroy);
             }
-            else
-            {
+            else {
                 // Nothing specific to do. Destroy the given model in the next step.
             }
         }
 
         // Destroy this.
-        if(!model)
-            model = <T><unknown> this;
+        if (!model)
+            model = <T><unknown>this;
 
         return await AbstractModel.destroy(model);
     }
@@ -839,12 +782,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Destroy a model.
      * @param {U} model The model to be destroyed.
      */
-    static async destroy<U extends AbstractModel<U>>(model: U): Promise<void>
-    {
-        if(!model.valid())
+    static async destroy<U extends AbstractModel<U>>(model: U): Promise<void> {
+        if (!model.valid())
             throw new DestroyError(PATH, "AbstractModel.destroy()", model);
         let relations = model.relations.values();
-        for(let idx = 0; idx < relations.length; idx++)
+        for (let idx = 0; idx < relations.length; idx++)
             await relations.get(idx).relationalDestroy(model);
         await WixDatabase.remove(model);
     }
@@ -854,18 +796,14 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * If called over a relative, destroy all models of T that belong to the models retrieved by the previous.
      * @param {List<T>} [models] The List containing the models to be destroyed. 
      */
-    async destroyMultiple(models?: List<T>): Promise<void>|never
-    {   
+    async destroyMultiple(models?: List<T>): Promise<void> | never {
         // Called over relation.
-        if(this.parent)
-        {
+        if (this.parent) {
             // Destroy all models that belong to the models retrieved by find of the parent.
-            if(!models)
-            {
+            if (!models) {
                 let previousQueryResult: QueryResult<AbstractModel<any>>;
                 // Previous query result should be just the root in that case
-                if(this.myParentIsTheRoot())
-                {
+                if (this.myParentIsTheRoot()) {
                     previousQueryResult = new QueryResult<AbstractModel<any>>();
                     previousQueryResult.add(this.parent);
                 }
@@ -873,20 +811,19 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
                     previousQueryResult = await this.parent.find();
 
                 let toDestroy = await this.relations.get(this.parent.Constructor).relationalFind(previousQueryResult);
-                
+
                 // Continue with a single destroy if there is just one model to destroy. Else destroy multiple.
-                if(toDestroy.length === 1)
+                if (toDestroy.length === 1)
                     return await AbstractModel.destroy(toDestroy.first());
                 else
                     models = toDestroy;
             }
-            else
-            {
+            else {
                 // Nothing specific to do. Destroy the given models in the next step.
             }
         }
 
-        if(!models)
+        if (!models)
             throw new NullPointerException(PATH, "destroyMultiple", "The list of the to destroyed models is empty, but shouldn't.");
 
         return await AbstractModel.destroyMultiple(models);
@@ -896,19 +833,18 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Destroy many models.
      * @param {List<<U extends AbstractModel<U>>>} models The List containing the models to be destroyed. 
      */
-    static async destroyMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void>
-    {
-        if(models.isEmpty())
+    static async destroyMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void> {
+        if (models.isEmpty())
             return;
 
-        models.foreach((model)=>{
-            if(!model.valid())
+        models.foreach((model) => {
+            if (!model.valid())
                 throw new DestroyError(PATH, "AbstractModel.destroyMultiple()", model);
         });
 
         // Call destroy for each relation.
         let relations = models.get(0).relations.values();
-        for(let idx = 0; idx < relations.length; idx++)
+        for (let idx = 0; idx < relations.length; idx++)
             await relations.get(idx).relationalDestroyMultiple(models);
 
         await WixDatabase.removeMultiple(models);
@@ -918,8 +854,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Get the primary key column name of this model.
      * @returns {string} The primary key column name.
      */
-    public asPk(): string
-    {
+    public asPk(): string {
         return "id";
     }
 
@@ -927,8 +862,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Get the foreign key column name of this model.
      * @returns {string} The foreign key column name.
      */
-    public asFk(): string
-    {
+    public asFk(): string {
         return this.tableName.charAt(0).toLowerCase() + this.tableName.slice(1) + "Id";
     }
 
@@ -937,8 +871,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {U extends AbstractModel<U>} Model The model the foreign key column name will be returned of.
      * @returns {string} The foreign key column name. 
      */
-    static asFk<U extends AbstractModel<U>>(Model: new()=>U): string
-    {
+    static asFk<U extends AbstractModel<U>>(Model: new () => U): string {
         return (new Model()).asFk();
     }
 
@@ -946,18 +879,24 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Get the default name of this Model as a single property.
      * @returns {string} The name of this Model as a single property.
      */
-    public asSinglePropertyName(): string
-    {
+    public asSinglePropertyName(): string {
         return this.tableName.charAt(0).toLowerCase() + this.tableName.slice(1);
+    }
+
+    static asSinglePropertyName<U extends AbstractModel<U>>(Model: new () => U): string {
+        return (new Model()).asSinglePropertyName();
     }
 
     /**
      * Get the default name of this Model as a multiple property.
      * @returns {string} The name of this Model as a multiple property.
      */
-    public asMultiplePropertyName(): string
-    {
+    public asMultiplePropertyName(): string {
         return this.asSinglePropertyName() + "s";
+    }
+
+    static asMultiplePropertyName<U extends AbstractModel<U>>(Model: new () => U): string {
+        return (new Model()).asMultiplePropertyName();
     }
 
     /**
@@ -966,14 +905,12 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * @param {string} modelName2 The name of the second model.
      * @returns {string} The name of the role table of two models named by the given names.
      */
-    static roleTableNameOf(modelName1: string, modelName2: string): string
-    {
-        let ending = (modelName1.toLowerCase()<modelName2.toLowerCase())?modelName1 + modelName2: modelName2 + modelName1; 
+    static roleTableNameOf(modelName1: string, modelName2: string): string {
+        let ending = (modelName1.toLowerCase() < modelName2.toLowerCase()) ? modelName1 + modelName2 : modelName2 + modelName1;
         return "Role" + ending;
     }
 
-    static tableName<U extends AbstractModel<U>>(Model: new()=>U): string
-    {
+    static tableName<U extends AbstractModel<U>>(Model: new () => U): string {
         return (new Model()).tableName;
     }
 
@@ -981,8 +918,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Get the table name of this model. Resolves into the name of the model/class by default.
      * @returns {string} The name of the table of this model.
      */
-    get tableName(): string
-    {
+    get tableName(): string {
         return this.Constructor.name;
     }
 
@@ -990,13 +926,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Get the primary key of this model.
      * @returns {string} The primary key of this model.
      */
-    get id(): string
-    {
+    get id(): string {
         return this._id;
     }
 
-    get properties(): Properties
-    {
+    get properties(): Properties {
         return this._properties;
     }
 
@@ -1004,27 +938,24 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Set the primary key of this model.
      * @param {string} id The new primary key.
      */
-    set id(id: string)
-    {
+    set id(id: string) {
         this._id = id;
     }
 
     /**
      * Set properties.
      */
-    set properties(properties: Properties)
-    {
-        if(!this._properties)
+    set properties(properties: Properties) {
+        if (!this._properties)
             this._properties = new Properties();
-        properties.foreach((propertyName, property)=>{this._properties.add(propertyName, property);});
+        properties.foreach((propertyName, property) => { this._properties.add(propertyName, property); });
     }
 
     /**
      * Set the last query result.
      * @param {QueryResult<T>} lastQueryResult The last query result.
      */
-    private set lastQueryResult(lastQueryResult: QueryResult<T> | AbstractModel<T>)
-    {
+    private set lastQueryResult(lastQueryResult: QueryResult<T> | AbstractModel<T>) {
         this._lastQueryResult = lastQueryResult;
     }
 
@@ -1032,8 +963,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Get the last query result.
      * @returns {QueryResult<T>} The last query result.
      */
-    private get lastQueryResult(): QueryResult<T> | AbstractModel<T>
-    {
+    private get lastQueryResult(): QueryResult<T> | AbstractModel<T> {
         return this._lastQueryResult;
     }
 
@@ -1041,8 +971,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Set parent.
      * @param {AbstractModel<any>} parent The parent.
      */
-    private set parent(parent: AbstractModel<any>)
-    {
+    private set parent(parent: AbstractModel<any>) {
         this._parent = parent;
     }
 
@@ -1050,8 +979,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Get parent.
      * @returns {AbstractModel<any>} The parent.
      */
-    private get parent(): AbstractModel<any>
-    {
+    private get parent(): AbstractModel<any> {
         return this._parent;
     }
 
@@ -1059,8 +987,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Set all relations of this model.
      * @param {KVMap<new()=>AbstractModel<any>, Relation<new()=>AbstractModel<any>, new()=>T>>} relations The relations.
      */
-    private set relations(relations: KVMap<new()=>AbstractModel<any>, Relation<AbstractModel<any>,T>>)
-    {
+    private set relations(relations: KVMap<new () => AbstractModel<any>, Relation<AbstractModel<any>, T>>) {
         this._relations = relations;
     }
 
@@ -1068,30 +995,26 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
      * Get all relations of this model.
      * @returns {KVMap<AbstractModel<any>, Relation<AbstractModel<any>, T>>} The relations.
      */
-    private get relations(): KVMap<new()=>AbstractModel<any>, Relation<AbstractModel<any>,T>>
-    {
+    private get relations(): KVMap<new () => AbstractModel<any>, Relation<AbstractModel<any>, T>> {
         return this._relations;
     }
 }
 
 
 
-export class Properties extends KVMap<string,Property>
+export class Properties extends KVMap<string, Property>
 {
-    constructor()
-    {
+    constructor() {
         super();
     }
 
-    string(name: string, ...attributes: Array<string>): this
-    {
+    string(name: string, ...attributes: Array<string>): this {
         let property = new StringProperty(new Set(attributes));
         this.add(name, property);
         return this;
     }
 
-    number(name: string, ...attributes: Array<string>): this
-    {
+    number(name: string, ...attributes: Array<string>): this {
         let property = new NumberProperty(new Set(attributes));
         this.add(name, property);
         return this;
@@ -1099,85 +1022,74 @@ export class Properties extends KVMap<string,Property>
 }
 
 
-export abstract class Property
-{
+export abstract class Property {
     protected validAttributes: Set<string>;
     protected _attributes: Set<string>;
 
-    constructor()
-    {
+    constructor() {
         this.validAttributes = new Set<string>([
             "nullable"
         ]);
-        
+
         this.attributes = new Set<string>();
     }
 
-    valid(toCheck: any): boolean
-    {
-        if(JsTypes.isUnspecified(toCheck))
-            if(!this.attributes.has("nullable"))
+    valid(toCheck: any): boolean {
+        if (JsTypes.isUnspecified(toCheck))
+            if (!this.attributes.has("nullable"))
                 return false;
         return true;
     }
 
     abstract dummy(): any
 
-    set attributes(attributes: Set<string>)
-    {
+    set attributes(attributes: Set<string>) {
         this._attributes = new Set<string>();
 
-        attributes.foreach((attribute)=>{
-            if(this.validAttributes.has(attribute))
-                this._attributes.add(attribute);    
+        attributes.foreach((attribute) => {
+            if (this.validAttributes.has(attribute))
+                this._attributes.add(attribute);
             else
-                throw new InvalidOperationError(PATH, "Property.set attributes()", "The attribute " + attribute + " doesn't exist.");            
+                throw new InvalidOperationError(PATH, "Property.set attributes()", "The attribute " + attribute + " doesn't exist.");
         });
     }
 
-    get attributes(): Set<string>
-    {
+    get attributes(): Set<string> {
         return this._attributes;
     }
 }
 
-export class StringProperty extends Property
-{
-    constructor(attributes: Set<string>)
-    {
+export class StringProperty extends Property {
+    constructor(attributes: Set<string>) {
         super();
-        
+
         this.validAttributes.add(
             "emtiable"
         );
 
         this.attributes = attributes;
     }
-    
-    valid(toCheck: any): boolean
-    {
-        if(!super.valid(toCheck))
+
+    valid(toCheck: any): boolean {
+        if (!super.valid(toCheck))
             return false;
 
-        if(typeof(toCheck) !== "string")
+        if (typeof (toCheck) !== "string")
             return false;
 
-        if(JsTypes.isEmpty(toCheck) && this.attributes.hasNot("emptiable"))
+        if (JsTypes.isEmpty(toCheck) && this.attributes.hasNot("emptiable"))
             return false;
 
         return true;
     }
 
-    dummy(): string
-    {
+    dummy(): string {
         return UUID();
     }
 }
 
-export class NumberProperty extends Property
-{
-    constructor(attributes: Set<string>)
-    {
+export class NumberProperty extends Property {
+    constructor(attributes: Set<string>) {
         super();
         this.validAttributes.add(
             "negative",
@@ -1188,35 +1100,33 @@ export class NumberProperty extends Property
         this.attributes = attributes;
     }
 
-    valid(toCheck: any): boolean
-    {
-        if(!super.valid(toCheck))
+    valid(toCheck: any): boolean {
+        if (!super.valid(toCheck))
             return false;
 
-        if(typeof(toCheck) !== "number")
+        if (typeof (toCheck) !== "number")
             return false;
 
-        if(this.attributes.has("negative") && toCheck > 0)
+        if (this.attributes.has("negative") && toCheck > 0)
             return false;
 
-        if(this.attributes.has("positive") && toCheck < 0)
+        if (this.attributes.has("positive") && toCheck < 0)
             return false;
 
-        if(this.attributes.has("notZero") && toCheck === 0)
+        if (this.attributes.has("notZero") && toCheck === 0)
             return false;
-        
+
         return true;
     }
 
-    dummy() 
-    {
+    dummy() {
         let n = Math.random() * 100;
-        
-        if(this.attributes.has("negative"))
+
+        if (this.attributes.has("negative"))
             n = -n;
 
-        if(this.attributes.has("notZero"))
-            if(n === 0)
+        if (this.attributes.has("notZero"))
+            if (n === 0)
                 n += 1;
 
         return n;
