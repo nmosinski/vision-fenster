@@ -1,42 +1,42 @@
-export const productDefinitionObject =
+const productDefinitions =
 {
-    0: 
+    0:
     {
         "productModel": "fenster",
-        "productOptionDefinitions": 
+        "productOptionDefinitions":
         {
-            0: 
+            0:
             {
                 "type": "material",
                 "required": true,
-                "combinations": 
+                "combinations":
                 {
-                    0: 
+                    0:
                     {
                         "tags": ["kunststoff"],
                         "requirements": {}
                     },
-                    1: 
+                    1:
                     {
                         "tags": ["holz"],
                         "requirements": {}
-                    }, 
+                    },
                 }
             },
-            1: 
+            1:
             {
                 "type": "profil",
                 "required": true,
-                "combinations": 
+                "combinations":
                 {
-                    0: 
+                    0:
                     {
                         "tags": ["kunststoff", "kömmerling"],
-                        "requirements": 
+                        "requirements":
                         {
                             0:
                             {
-                                "productOptionType":"material",
+                                "productOptionType": "material",
                                 "tags": ["kunststoff"]
                             }
                         }
@@ -45,7 +45,7 @@ export const productDefinitionObject =
                     1:
                     {
                         "tags": ["kunststoff", "arcade"],
-                        "requirements": 
+                        "requirements":
                         {
                             0:
                             {
@@ -64,13 +64,13 @@ export const productDefinitionObject =
                 {
                     0:
                     {
-                        "tags": ["kunststoff, kömmerling"],
+                        "tags": ["kunststoff", "kömmerling"],
                         "requirements":
                         {
                             0:
                             {
                                 "productOptionType": "profil",
-                                "tags": ["kunststoff, kömmerling"]
+                                "tags": ["kunststoff", "kömmerling"]
                             }
                         }
                     },
@@ -235,7 +235,7 @@ export const productDefinitionObject =
                 {
                     0:
                     {
-                        "tags": ["einteilig", "ohnelicht", "fest"],
+                        "tags": ["einteilig", "ohnelicht"],
                         "requirements":
                         {
                             0:
@@ -252,7 +252,7 @@ export const productDefinitionObject =
                     },
                     1:
                     {
-                        "tags": ["einteilig", "ohnelicht", "dreh"],
+                        "tags": ["einteilig", "ohnelicht"],
                         "requirements":
                         {
                             0:
@@ -269,7 +269,7 @@ export const productDefinitionObject =
                     },
                     2:
                     {
-                        "tags": ["einteilig", "ohnelicht", "kipp"],
+                        "tags": ["einteilig", "ohnelicht"],
                         "requirements":
                         {
                             0:
@@ -286,7 +286,7 @@ export const productDefinitionObject =
                     },
                     3:
                     {
-                        "tags": ["einteilig", "ohnelicht", "kipp", "dreh"],
+                        "tags": ["einteilig", "ohnelicht"],
                         "requirements":
                         {
                             0:
@@ -300,9 +300,11 @@ export const productDefinitionObject =
                                 "tags": ["ohnelicht"]
                             }
                         }
-                    }
+                    },
                 }
             }
         }
     }
 }
+
+export default productDefinitions;
