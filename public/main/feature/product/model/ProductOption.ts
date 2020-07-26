@@ -24,6 +24,7 @@ class ProductOption extends AbstractModel<ProductOption>
 
     addRelations(): void {
         this.manyToOne(ProductOptionType);
+        this.manyToMany(Tag);
     }
 
     productOptionTypeQ() {

@@ -2,11 +2,13 @@ import AbstractModel from "../../../common/orm/AbstractModel";
 import ProductOptionType from "./ProductOptionType";
 import List from "../../../common/util/collections/list/List";
 import KVMap from "../../../common/util/collections/map/KVMap";
+import Product from "./Product";
 
 class ProductModel extends AbstractModel<ProductModel>
 {
     protected Constructor: new () => ProductModel;
     private _productOptionTypes: KVMap<string, ProductOptionType>;
+    private _title: string;
 
     init(): void {
         this.Constructor = ProductModel;
@@ -19,6 +21,7 @@ class ProductModel extends AbstractModel<ProductModel>
 
     addRelations(): void {
         this.oneToMany(ProductOptionType);
+        this.oneToZeroOrOne(Product);
     }
 
     productOptionTypesQ() {
@@ -31,6 +34,14 @@ class ProductModel extends AbstractModel<ProductModel>
 
     addProductOptionType(type: ProductOptionType) {
         this._productOptionTypes.add(type.title.toLowerCase(), type);
+    }
+
+    set title(title: string) {
+        this._title = title;
+    }
+
+    get title(): string {
+        return this._title;
     }
 
     set productOptionTypes(productOptionTypes: List<ProductOptionType>) {

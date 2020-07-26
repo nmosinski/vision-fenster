@@ -1,140 +1,106 @@
-/*
-import WixLocation from "wix-location"
+import ProductModel from "../../public/main/feature/product/model/ProductModel";
+import ProductOptionType from "../../public/main/feature/product/model/ProductOptionType";
+import ProductOption from "../../public/main/feature/product/model/ProductOption";
+import JsString from "../../public/main/common/util/jsTypes/JsString";
+import Product from "../../public/main/feature/product/model/Product";
+import ProductConfigurationService from "../../public/main/feature/product/service/ProductConfigurationService";
+import ProductConfigurationServiceFactory from "../../public/main/feature/product/factory/ProductConfigurationServiceFactory";
+import Tag from "../../public/main/common/model/Tag";
+import List from "../../public/main/common/util/collections/list/List";
 
-import Logger from "js-logger"
+const PRODUCT_MODEL_ID = "70b29f09-263e-4eaf-b7f9-8bcdc411b389";
+var productModel: ProductModel;
+var product: Product;
+var productConfiguationService: ProductConfigurationService;
+var productOptions: List<ProductOption>;
 
-import WixUsersFrontendAuthenticationService from "../../public/main/common/authenticationService/wixUsers/WixUsersFrontendAuthenticationService.js"
+//@ts-ignore
+$w.onReady(async function () {
+	productOptions = new List<ProductOption>();
+	productModel = await (await ProductModel.get(PRODUCT_MODEL_ID, ProductModel)).load(ProductOptionType);
+	await productModel.productOptionTypes.foreachAsync(async (el) => {
+		await el.load(ProductOption);
+		await el.productOptions.foreachAsync(async (opt) => {
+			opt.productOptionType = el;
+			await opt.load(Tag);
+			productOptions.add(opt);
+		});
+	});
 
-import ShoppingCartApplicationService from "../../public/main/feature/shoppingCart/controllers/ShoppingCartApplicationService.js"
-import SProductRepository from "public/main/feature/shoppingCart/infrastructure/data/foreignDomains/ProductRepository.js"
-import ShoppingCartItemRepository from "public/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartItemRepository.js"
-import ShoppingCartRepository from "public/main/feature/shoppingCart/infrastructure/data/wixData/WixDataShoppingCartRepository.js"
+	productConfiguationService = ProductConfigurationServiceFactory.byModel(productModel);
+	product = new Product();
 
-import ProductApplicationService from 'public/src/main/feature/product/application/ProductApplicationService.js'
-import CreateUserProductCommand from 'public/src/main/feature/product/application/CreateUserProductCommand.js'
-
-import ProductRepository from 'public/src/main/feature/product/infrastructure/data/wixData/WixDataProductRepository.js'
-import ProductModelRepository from 'public/src/main/feature/product/infrastructure/data/wixData/WixDataProductModelRepository.js'
-import ProductOptionTypeRepository from 'public/src/main/feature/product/infrastructure/data/wixData/WixDataProductOptionTypeRepository.js'
-import ProductOptionVariantRepository from 'public/src/main/feature/product/infrastructure/data/wixData/WixDataProductOptionVariantRepository.js'
-import WindowProductConfigurator from 'public/src/main/feature/product/infrastructure/configurator/WindowProductConfigurator.js'
-import Product from "public/main/feature/product/model/Product.js"
-import ProductOptionChoice from "public/main/feature/product/model/ProductOptionChoice.js"
-import ProductOptionVariant from "public/main/feature/product/model/ProductOptionVariant.js"
-import ProductOption from "public/main/feature/product/model/ProductOption.js"
-import KVMap from "../public/main/common/util/collections/map/KVMap.js"
-
-const PRODUCTMODELID = "6b0df06c-cb22-4d60-9550-af1df7de9f3c";
-let productRepository;
-let productOptionTypeRepository;
-let productOptionVariantRepository;
-let productOptions;
-let configurator;
-let product;
-
-let productApplicationService;
-let shoppingCartApplicationService;
-
-$w.onReady(async function () 
-{
-	Logger.useDefaults();
-	productOptionTypeRepository = new ProductOptionTypeRepository();
-	productOptionVariantRepository = new ProductOptionVariantRepository();
-	productRepository = new ProductRepository();
-
-	productOptions = new KVMap<string, ProductOption>();
-	if(WixLocation.query.id)
-		product = await productRepository.getProduct(WixLocation.query.id);
-	else
-		product = new Product("123", PRODUCTMODELID, 20, "https://upload.wikimedia.org/wikipedia/commons/9/9a/Gull_portrait_ca_usa.jpg");
-	
-	let productOptionTypes = await productOptionTypeRepository.getProductOptionTypesByProductModelId(PRODUCTMODELID);
-	let tmpProductOptionTypesArr = productOptionTypes.toArray();
-	for(let idx in tmpProductOptionTypesArr)
-	{
-		let variants = await productOptionVariantRepository.getProductOptionVariantsByProductOptionTypeId(tmpProductOptionTypesArr[idx].id);
-		let variantsMap = new KVMap<string,ProductOptionVariant>();
-		variants.foreach(variant=>{variantsMap.add(variant.id, variant);});
-		productOptions.add(tmpProductOptionTypesArr[idx].id, new ProductOption(tmpProductOptionTypesArr[idx], variantsMap));
-	}
-	configurator = new WindowProductConfigurator();
-	productApplicationService = new ProductApplicationService(productRepository, new ProductModelRepository(), productOptionTypeRepository, productOptionVariantRepository);
-	shoppingCartApplicationService = new ShoppingCartApplicationService(new ShoppingCartRepository(), new ShoppingCartItemRepository(), new SProductRepository(), new WixUsersFrontendAuthenticationService());
-
+	productConfiguationService.fillMissingProductOptionsWithDefault(productOptions, product);
+	console.log(product);
 	initRepeater();
-
-	configurator.applyDefaultConfiguration(productOptions, product);
-	
 	displayProductAsActualConfiguration();
 });
 
-
-function onProductOptionVariantSelection(productOptionTypeId, productOptionVariantId)
-{
-	configurator.saveProductOptionChoice(new ProductOptionChoice(productOptions.get(productOptionTypeId).type, productOptions.get(productOptionTypeId).variants.get(productOptionVariantId)), product);
-	displayProductAsActualConfiguration();
+function onProductOptionSelection(productOption: ProductOption) {
+	productConfiguationService.setOptionAndDefaultOnComplications(productOption, product, productOptions);
+	//displayProductAsActualConfiguration();
 }
 
 
-function displayProductAsActualConfiguration()
-{
+function displayProductAsActualConfiguration(): void {
+	//@ts-ignore
 	$w("#imageConfiguration").src = product.image;
+	//@ts-ignore
 	$w("#textConfigurationPrice").text = "" + product.price + "€";
-	
-	let arr = [];
-	product.productOptionChoices.keys().foreach(key=>{arr.push({"_id": key, choice: product.productOptionChoices.get(key)});});
-	
+
+	let arr: Array<any> = [];
+	product.productOptions.foreach((opt: ProductOption) => { arr.push({ "_id": opt.id, "option": opt }); });
+
 	setDataForRepeater("#repeaterConfigurationDetails", arr);
-	$w("#repeaterConfigurationDetails").forItems(product.productOptionChoices.keys().toArray(), repeaterConfigurationDetailsOnItemReadyFunction);
+	//@ts-ignore
+	$w("#repeaterConfigurationDetails").forItems(product.productOptions.toArray(), repeaterConfigurationDetailsOnItemReadyFunction);
 }
 
-function repeaterConfigurationDetailsOnItemReadyFunction($item, itemData, index)
-{
-	$item("#textConfigurationDetailsItem").text = itemData.choice.productOptionType.title + ": " + itemData.choice.productOptionVariant.title;
+function repeaterConfigurationDetailsOnItemReadyFunction($item: any, itemData: { id: string, option: ProductOption }, index: number): void {
+	console.log(itemData);
+	$item("#textConfigurationDetailsItem").text = itemData.option.productOptionType.title + ": " + itemData.option.value;
 }
 
-function repeaterNameByOptionTypeTitle(optionType)
-{
-	return "#repeater" + optionType;
+function repeaterNameByOptionTypeTitle(optionTypeTitle: string): string {
+	return "#repeater" + JsString.capitalizeFirstLetter(optionTypeTitle);
 }
 
-function getDefaultOnItemReadyRepeaterFunction(optionType)
-{
-	return ($item, itemData, index)=>{
-		$item("#image" + optionType + "Item").src = itemData.image;
-		$item("#image" + optionType + "Item").onClick((event)=>{
-			onProductOptionVariantSelection(itemData.productOptionTypeId, itemData._id);
+function getDefaultOnItemReadyRepeaterFunction(optionTypeTitle: string): Function {
+	return ($item, itemData: any, index: number) => {
+		$item("#image" + optionTypeTitle + "Item").src = itemData.image;
+		$item("#image" + optionTypeTitle + "Item").onClick((event) => {
+			onProductOptionSelection(itemData);
 		});
 	};
 }
 
-function setDataForRepeater(repeaterName, data)
-{
+function setDataForRepeater(repeaterName: string, data: Array<any>): void {
+	//@ts-ignore
 	$w(repeaterName).data = data;
 }
 
-function setOnItemReadyFunctionForRepeater(repeaterName, onItemReadyFunction)
-{
-	$w(repeaterName).onItemReady(onItemReadyFunction);	
+function setOnItemReadyFunctionForRepeater(repeaterName: string, onItemReadyFunction: Function): void {
+	//@ts-ignore
+	$w(repeaterName).onItemReady(onItemReadyFunction);
 }
 
-function initRepeater()
-{
-	productOptions.values().foreach((productOption) => {
-		let optionTypeTitle = productOption.type.title;
+function initRepeater(): void {
+	productModel.productOptionTypes.foreach((productOptionType) => {
+		let optionTypeTitle = JsString.capitalizeFirstLetter(JsString.replaceGermanSpecialLetters(productOptionType.title));
 		let onItemReadyFunction = getDefaultOnItemReadyRepeaterFunction(optionTypeTitle);
 		setOnItemReadyFunctionForRepeater(repeaterNameByOptionTypeTitle(optionTypeTitle), onItemReadyFunction);
-		setDataForRepeater(repeaterNameByOptionTypeTitle(optionTypeTitle), productOption.variants.values().toArray());
+		setDataForRepeater(repeaterNameByOptionTypeTitle(optionTypeTitle), productOptionType.productOptions.toArray());
 	});
 
 	setOnItemReadyFunctionForRepeater("#repeaterConfigurationDetails", repeaterConfigurationDetailsOnItemReadyFunction);
 }
 
-export async function onButtonSaveProductClick(event) 
+/*
+export async function onButtonSaveProductClick(event)
 {
 	let productId = await productApplicationService.createUserProduct(CreateUserProductCommand.fromProduct(product));
 	await shoppingCartApplicationService.addNewItemToCurrentUsersShoppingCart(productId);
 	WixLocation.to("/warenkorb");
-	
+
 }
 */
