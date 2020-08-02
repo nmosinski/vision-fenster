@@ -63,8 +63,12 @@ class ProductConfigurationService {
         let nextOptionTypeTitle: string | undefined;
 
         // find next optionType for the next deepth
-        if (optionCandidates.keys().indexOf(startOptionTypeTitle) < optionCandidates.keys().length - 1)
+        try {
             nextOptionTypeTitle = optionCandidates.keys().get(optionCandidates.keys().indexOf(startOptionTypeTitle) + 1);
+        } catch (err) {
+            // A next doesn't exist.
+            nextOptionTypeTitle = undefined;
+        }
 
         // Iterate through option candidates of the given option type
         for (let idx = 0; idx < optionCandidatesList.length; idx++) {
@@ -132,6 +136,8 @@ class ProductConfigurationService {
         });
 
         // Find a valid combination
+        if (productOptionCandidates.isEmpty())
+            return false;
         return this.findValidConfiguration(productOptionCandidates.keys().first(), productOptionCandidates, product);
     }
 
@@ -183,9 +189,7 @@ class ProductConfigurationService {
      */
     setOptionAndDefaultOnComplications(productOption: ProductOption, product: Product, productOptions: List<ProductOption>, fillNotRequired: boolean = false): boolean {
         this.setOptionAndRemoveOtherOptionsOnComplications(productOption, product);
-        console.log("1");
         this.fillMissingProductOptionsWithDefault(productOptions, product, fillNotRequired);
-        console.log("2");
         return this.productIsValid(product);
     }
 
