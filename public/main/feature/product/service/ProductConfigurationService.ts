@@ -182,9 +182,9 @@ class ProductConfigurationService {
      * Sets the given option and removes options that don't match with the new option.
      * Fills the products missing options with dafault ones.
      * @param {ProductOption} productOption The productOption to be set.
-     * @param product The product to be configured.
-     * @param productOptions A list containing the productOptions that will be used for default filling.
-     * @param fillNotRequired Defines of either to fill optional options with default or not.
+     * @param {Product} product The product to be configured.
+     * @param {List<ProductOption>} productOptions A list containing the productOptions that will be used for default filling.
+     * @param {boolean} fillNotRequired Defines of either to fill optional options with default or not.
      * @returns {boolean} True if the configured product is valid, else false.
      */
     setOptionAndDefaultOnComplications(productOption: ProductOption, product: Product, productOptions: List<ProductOption>, fillNotRequired: boolean = false): boolean {
