@@ -1,84 +1,68 @@
 import JsTypes from "../util/jsTypes/JsTypes";
 import List from "../util/collections/list/List";
 
-abstract class TestExpected
-{
+abstract class TestExpected {
     abstract eval(result: any): boolean;
     abstract toString(): string;
 }
 
-function value(value: any): Value
-{
+function value(value: any): Value {
     return new Value(value);
 }
 
-class Value extends TestExpected
-{
+class Value extends TestExpected {
     private _value: any;
-    
-    constructor(value: any)
-    {
+
+    constructor(value: any) {
         super();
         this.value = value;
     }
 
-    eval(result: any): boolean
-    {
+    eval(result: any): boolean {
         return result === this.value;
     }
 
-    toString(): string
-    {
+    toString(): string {
         return "Value = " + JSON.stringify(this.value);
     }
 
-    set value(value: any)
-    {
+    set value(value: any) {
         this._value = value;
     }
 
-    get value(): any
-    {
+    get value(): any {
         return this._value;
     }
 }
 
-function truthly(): Truthly
-{
+function truthly(): Truthly {
     return new Truthly();
 }
 
-class Truthly extends TestExpected
-{
-    eval(result: any): boolean
-    {
-        if(!result)
+class Truthly extends TestExpected {
+    eval(result: any): boolean {
+        if (!result)
             return false;
         return true;
     }
 
-    toString(): string
-    {
+    toString(): string {
         return "Truthly";
     }
 }
 
-function unspecified(): Unspecified
-{
+function unspecified(): Unspecified {
     return new Unspecified();
 }
 
-class Unspecified extends TestExpected
-{
-    eval(result: any): boolean
-    {
-        if(!JsTypes.isUnspecified(result))
+class Unspecified extends TestExpected {
+    eval(result: any): boolean {
+        if (!JsTypes.isUnspecified(result))
             return false;
         return true;
     }
 
-    toString(): string
-    {
+    toString(): string {
         return "Unspecified (null or undefined)";
     }
 }
@@ -90,13 +74,11 @@ class Unspecified extends TestExpected
  * @param {TestExpected} expected Object, the expected result of the test.
  * @param {Function} implementation The implementation of the test.
  */
-function test(location: string, description: string, expected: TestExpected, implementation: Function): Test
-{
+function test(location: string, description: string, expected: TestExpected, implementation: Function): Test {
     return new Test(location, description, expected, implementation);
 }
 
-class Test
-{
+class Test {
     private _expected: TestExpected;
     private _implementation: Function;
     private _location: string;
@@ -105,7 +87,7 @@ class Test
     private _result: any;
     private _evaluated: boolean;
     private _error: any;
-    
+
     /**
      * Class for printing test reports properly.
      * @param {string} location Location, the location of where the test comes from.
@@ -113,8 +95,7 @@ class Test
      * @param {TestExpected} expected Object, the expected result of the test.
      * @param {Function} implementation The implementation of the test.
      */
-    constructor(location: string, description: string, expected: TestExpected, implementation: Function)
-    {
+    constructor(location: string, description: string, expected: TestExpected, implementation: Function) {
         this.implementation = implementation;
         this.expected = expected;
         this.location = location;
@@ -124,27 +105,22 @@ class Test
         this.error = null;
     }
 
-    print()
-    {
-        if(this.passed)
+    print() {
+        if (this.passed)
             console.log("%c" + this.location + " , " + this.description + ": PASSED", "background: #FFF; color: #1fad1f");
         else
             console.log("%c" + this.location + " , " + this.description + ": FAILED\n" + "Expected " + this.expected.toString() + " but resulted in " + this.result + "\n", "background: #FFF; color: #ff8c00");
-        if(this.error)
-        {
+        if (this.error) {
             console.log("%c" + "The following error has been thrown when executing the upper test:", "background: #FFF; color: #ff0000");
             console.log("%c" + this.error, "background: #FFF; color: #ff0000");
             console.log(this.error);
         }
     }
 
-    async run()
-    {
-        try
-        {
+    async run() {
+        try {
             this.result = await this.implementation();
-        }catch(err)
-        {
+        } catch (err) {
             this.error = err;
         }
         this.passed = this.expected.eval(this.result);
@@ -155,8 +131,7 @@ class Test
      * Set location.
      * @param {string} location The location of the test.
      */
-    set location(location: string)
-    {
+    set location(location: string) {
         this._location = location;
     }
 
@@ -164,8 +139,7 @@ class Test
      * Get location.
      * @returns {string} The location.
      */
-    get location(): string
-    {
+    get location(): string {
         return this._location;
     }
 
@@ -173,17 +147,15 @@ class Test
      * Set passed property.
      * @param {boolean} passed The passed property.
      */
-    set passed(passed: boolean)
-    {
+    set passed(passed: boolean) {
         this._passed = passed;
     }
 
-     /**
-     * Check if test passed.
-     * @returns {boolean} True if passed, else false.
-     */
-    get passed(): boolean
-    {
+    /**
+    * Check if test passed.
+    * @returns {boolean} True if passed, else false.
+    */
+    get passed(): boolean {
         return this._passed;
     }
 
@@ -191,8 +163,7 @@ class Test
      * Set the implementation of the test.
      * @param {Function} passed The implementation of the test.
      */
-    set implementation(implementation: Function)
-    {
+    set implementation(implementation: Function) {
         this._implementation = implementation;
     }
 
@@ -200,8 +171,7 @@ class Test
      * Get the implementation of the test.
      * @returns {Function} The implementation.
      */
-    get implementation(): Function
-    {
+    get implementation(): Function {
         return this._implementation;
     }
 
@@ -209,8 +179,7 @@ class Test
      * Set description for this test.
      * @param {string} description A description.
      */
-    set description(description: string)
-    {
+    set description(description: string) {
         this._description = description;
     }
 
@@ -218,8 +187,7 @@ class Test
      * Get the information if the test has been evaluated already.
      * @returns {boolean} true if yes, else no.
      */
-    get evaluated(): boolean
-    {
+    get evaluated(): boolean {
         return this._evaluated;
     }
 
@@ -227,8 +195,7 @@ class Test
      * Set the information if the test has been evaluated already.
      * @param {boolean} evaluated True if evaluated, else false.
      */
-    set evaluated(evaluated: boolean)
-    {
+    set evaluated(evaluated: boolean) {
         this._evaluated = evaluated;
     }
 
@@ -236,8 +203,7 @@ class Test
      * Get description for this test.
      * @returns {string} The description.
      */
-    get description(): string
-    {
+    get description(): string {
         return this._description;
     }
 
@@ -245,8 +211,7 @@ class Test
      * Set what's expected from the test.
      * @param {TestExpected} expected What's expected from the test.
      */
-    set expected(expected: TestExpected)
-    {
+    set expected(expected: TestExpected) {
         this._expected = expected;
     }
 
@@ -254,8 +219,7 @@ class Test
      * Get what's expected from the test.
      * @returns {TestExpected} What's expected from the test.
      */
-    get expected(): TestExpected
-    {
+    get expected(): TestExpected {
         return this._expected;
     }
 
@@ -263,8 +227,7 @@ class Test
      * Set the result of the test.
      * @param {any} result The result.
      */
-    set result(result: any)
-    {
+    set result(result: any) {
         this._result = result;
     }
 
@@ -272,8 +235,7 @@ class Test
      * Get the result of the test.
      * @returns {any} The result.
      */
-    get result(): any
-    {
+    get result(): any {
         return this._result;
     }
 
@@ -281,8 +243,7 @@ class Test
      * Set the error if occurred during the test execution.
      * @param {any} error The error.
      */
-    set error(error)
-    {
+    set error(error) {
         this._error = error;
     }
 
@@ -290,8 +251,7 @@ class Test
      * Get the error if occurred during the test execution.
      * @returns {any} The error.
      */
-    get error()
-    {
+    get error() {
         return this._error;
     }
 }
@@ -308,26 +268,22 @@ class Tests extends List<Test>
      * @param {Function} [beforeEach] The function to be run before each test.
      * @param {Function} [afterEach] The function to be run after each test.
      */
-    constructor(beforeAll?: Function, afterAll?: Function, beforeEach?: Function, afterEach?: Function)
-    {
+    constructor(beforeAll?: Function, afterAll?: Function, beforeEach?: Function, afterEach?: Function) {
         super();
-        this.beforeAll = (beforeAll)?beforeAll: ()=>{};
-        this.afterAll = (afterAll)?afterAll: ()=>{};
-        this.beforeEach = (beforeEach)?beforeEach: ()=>{};
-        this.afterEach = (afterEach)?afterEach: ()=>{};
+        this.beforeAll = (beforeAll) ? beforeAll : () => { };
+        this.afterAll = (afterAll) ? afterAll : () => { };
+        this.beforeEach = (beforeEach) ? beforeEach : () => { };
+        this.afterEach = (afterEach) ? afterEach : () => { };
     }
 
-    async runAll(): Promise<void>
-    {
+    async runAll(): Promise<void> {
         await this.beforeAll();
-        for(let idx = 0; idx < this.length; idx++)
-        {
-            let test = this.get(idx);
+        await this.foreachAsync(async (test: Test) => {
             await this.beforeEach();
             await test.run();
             test.print();
             await this.afterEach();
-        }
+        });
 
         await this.afterAll();
     }
@@ -335,78 +291,70 @@ class Tests extends List<Test>
     /**
      * @param {Function} beforeAll
      */
-    set beforeAll(beforeAll: Function)
-    {
-        if(typeof(beforeAll) === "function")
+    set beforeAll(beforeAll: Function) {
+        if (typeof (beforeAll) === "function")
             this._beforeAll = beforeAll;
         else
-            this._beforeAll = ()=>{};
+            this._beforeAll = () => { };
     }
 
     /**
      * @param {Function} afterAll
      */
-    set afterAll(afterAll: Function)
-    {
-        if(typeof(afterAll) === "function")
+    set afterAll(afterAll: Function) {
+        if (typeof (afterAll) === "function")
             this._afterAll = afterAll;
         else
-            this._afterAll = ()=>{};
+            this._afterAll = () => { };
     }
 
     /**
      * @param {Function} beforeEach
      */
-    set beforeEach(beforeEach: Function)
-    {
-        if(typeof(beforeEach) === "function")
+    set beforeEach(beforeEach: Function) {
+        if (typeof (beforeEach) === "function")
             this._beforeEach = beforeEach;
         else
-            this._beforeEach = ()=>{};
+            this._beforeEach = () => { };
     }
 
     /**
      * @param {Function} afterEach
      */
-    set afterEach(afterEach: Function)
-    {
-        if(typeof(afterEach) === "function")
+    set afterEach(afterEach: Function) {
+        if (typeof (afterEach) === "function")
             this._afterEach = afterEach;
         else
-            this._afterEach = ()=>{};
+            this._afterEach = () => { };
     }
 
     /**
      * @returns {Function}
      */
-    get beforeAll(): Function
-    {
+    get beforeAll(): Function {
         return this._beforeAll;
     }
 
     /**
      * @returns {Function}
      */
-    get afterAll(): Function
-    {
+    get afterAll(): Function {
         return this._afterAll;
     }
 
     /**
      * @returns {Function}
      */
-    get beforeEach(): Function
-    {
+    get beforeEach(): Function {
         return this._beforeEach;
     }
 
     /**
      * @returns {Function}
      */
-    get afterEach(): Function
-    {
+    get afterEach(): Function {
         return this._afterEach;
     }
 }
 
-export {Tests, Test, Truthly, Unspecified, Value, test, truthly, unspecified, value};
+export { Tests, Test, Truthly, Unspecified, Value, test, truthly, unspecified, value };

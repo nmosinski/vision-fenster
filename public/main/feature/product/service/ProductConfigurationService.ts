@@ -42,12 +42,10 @@ class ProductConfigurationService {
         if (productOptionTypeTitle)
             relevantProductOptions = allProductOptions.filter((option) => { return option.productOptionType.title === productOptionTypeTitle; });
 
-        for (let idx = 0; idx < relevantProductOptions.length; idx++) {
-            let opt = relevantProductOptions.get(idx);
-
+        relevantProductOptions.foreach((opt) => {
             if (this.productSatisfiesOption(opt, product))
                 filteredProductOptions.add(opt);
-        }
+        });
 
         return filteredProductOptions;
     }
@@ -112,31 +110,26 @@ class ProductConfigurationService {
         let productOptionCandidates: KVMap<string, List<ProductOption>> = new KVMap<string, List<ProductOption>>();
 
         // Init productOptionCandidates list
-        for (let idx = 0; idx < unfilledOptionDefinitions.length; idx++) {
-            let productOptionDefinition = unfilledOptionDefinitions.get(idx);
-
+        unfilledOptionDefinitions.foreach((productOptionDefinition) => {
             productOptionCandidates.add(productOptionDefinition.type, allProductOptions.filter(opt => opt.productOptionType.title === productOptionDefinition.type));
-        }
+        });
 
         // Sort the candidates, default first
-        for (let idx = 0; idx < productOptionCandidates.keys().length; idx++) {
+        productOptionCandidates.foreach((key, productOptionCandidatesList) => {
             let sortedList = new List<ProductOption>();
-            let productOptionCandidatesList: List<ProductOption>;
 
-            productOptionCandidatesList = productOptionCandidates.get(productOptionCandidates.keys().get(idx));
             productOptionCandidatesList.foreach((option) => {
                 if (option.hasTagOfTitle("default"))
                     sortedList.add(option);
             });
 
-            productOptionCandidatesList = productOptionCandidates.get(productOptionCandidates.keys().get(idx));
             productOptionCandidatesList.foreach((option) => {
                 if (!option.hasTagOfTitle("default"))
                     sortedList.add(option);
             });
 
-            productOptionCandidates.add(productOptionCandidates.keys().get(idx), sortedList);
-        }
+            productOptionCandidates.add(key, sortedList);
+        });
 
         // Find a valid combination
         return this.findValidConfiguration(productOptionCandidates.keys().first(), productOptionCandidates, product);
@@ -149,7 +142,6 @@ class ProductConfigurationService {
      */
     setOptionOrRejectOnComplications(productOption: ProductOption, product: Product): boolean {
         let oldOption = product.getOption(productOption.productOptionType.title);
-
         if (!this.setProductOption(productOption, product))
             return false;
 
@@ -180,9 +172,21 @@ class ProductConfigurationService {
         return true;
     }
 
-    setOptionAndDefaultOnComplications(productOption: ProductOption, product: Product, productOptions: List<ProductOption>, fillNotRequired: boolean = false) {
+    /**
+     * Sets the given option and removes options that don't match with the new option.
+     * Fills the products missing options with dafault ones.
+     * @param {ProductOption} productOption The productOption to be set.
+     * @param product The product to be configured.
+     * @param productOptions A list containing the productOptions that will be used for default filling.
+     * @param fillNotRequired Defines of either to fill optional options with default or not.
+     * @returns {boolean} True if the configured product is valid, else false.
+     */
+    setOptionAndDefaultOnComplications(productOption: ProductOption, product: Product, productOptions: List<ProductOption>, fillNotRequired: boolean = false): boolean {
         this.setOptionAndRemoveOtherOptionsOnComplications(productOption, product);
+        console.log("1");
         this.fillMissingProductOptionsWithDefault(productOptions, product, fillNotRequired);
+        console.log("2");
+        return this.productIsValid(product);
     }
 
     productIsValid(product: Product): boolean {

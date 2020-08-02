@@ -498,8 +498,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
 
         // Call create for each relation.
         let relations = model.relations.values();
-        for (let idx = 0; idx < relations.length; idx++)
-            await relations.get(idx).relationalCreate(model);
+        await relations.foreachAsync(async (relation) => {
+            await relation.relationalCreate(model);
+        });
 
         await WixDatabase.create(model);
     }
@@ -545,8 +546,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
         });
 
         let relations = models.get(0).relations.values();
-        for (let idx = 0; idx < relations.length; idx++)
-            await relations.get(idx).relationalCreateMultiple(models);
+        await relations.foreachAsync(async (relation) => {
+            await relation.relationalCreateMultiple(models);
+        });
 
         await WixDatabase.createMultiple(models);
     }
@@ -591,8 +593,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
             throw new SaveError(PATH, "AbstractModel.save()", model);
 
         let relations = model.relations.values();
-        for (let idx = 0; idx < relations.length; idx++)
-            await relations.get(idx).relationalSave(model);
+        await relations.foreachAsync(async (relation) => {
+            await relation.relationalSave(model);
+        });
 
         await WixDatabase.save(model);
     }
@@ -637,9 +640,10 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
                 throw new SaveError(PATH, "AbstractModel.saveMultiple()", model);
         });
 
-        let relations = models.get(0).relations.values();
-        for (let idx = 0; idx < relations.length; idx++)
-            await relations.get(idx).relationalSaveMultiple(models);
+        let relations = models.first().relations.values();
+        await relations.foreachAsync(async (relation) => {
+            await relation.relationalSaveMultiple(models);
+        });
 
         await WixDatabase.saveMultiple(models);
     }
@@ -685,8 +689,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
             throw new UpdateError(PATH, "AbstractModel.update()", model);
 
         let relations = model.relations.values();
-        for (let idx = 0; idx < relations.length; idx++)
-            await relations.get(idx).relationalUpdate(model);
+        await relations.foreachAsync(async (relation) => {
+            await relation.relationalUpdate(model);
+        });
 
         await WixDatabase.update(model);
     }
@@ -732,9 +737,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
         });
 
         let relations = models.get(0).relations.values();
-        for (let idx = 0; idx < relations.length; idx++)
-            await relations.get(idx).relationalUpdateMultiple(models);
-
+        await relations.foreachAsync(async (relation) => {
+            await relation.relationalUpdateMultiple(models);
+        });
 
         await WixDatabase.updateMultiple(models);
     }
@@ -786,8 +791,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
         if (!model.valid())
             throw new DestroyError(PATH, "AbstractModel.destroy()", model);
         let relations = model.relations.values();
-        for (let idx = 0; idx < relations.length; idx++)
-            await relations.get(idx).relationalDestroy(model);
+        await relations.foreachAsync(async (relation) => {
+            await relation.relationalDestroy(model);
+        });
         await WixDatabase.remove(model);
     }
 
@@ -844,8 +850,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
 
         // Call destroy for each relation.
         let relations = models.get(0).relations.values();
-        for (let idx = 0; idx < relations.length; idx++)
-            await relations.get(idx).relationalDestroyMultiple(models);
+        await relations.foreachAsync(async (relation) => {
+            await relation.relationalDestroyMultiple(models);
+        });
 
         await WixDatabase.removeMultiple(models);
     }
