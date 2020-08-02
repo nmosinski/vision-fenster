@@ -32,37 +32,36 @@ $w.onReady(async function () {
 
 	productConfiguationService.fillMissingProductOptionsWithDefault(productOptions, product);
 	console.log(product);
+
+	//$w(repeaterNameByProductOptionTypeTitle("material") [{ '_id': 2 }]);
+
 	initRepeater();
+	applyFilterForRepeater();
 	displayProductAsActualConfiguration();
 });
 
 function onProductOptionSelection(productOption: ProductOption) {
-	productConfiguationService.setOptionAndDefaultOnComplications(productOption, product, productOptions);
-	//displayProductAsActualConfiguration();
+	console.log(productConfiguationService.setOptionAndDefaultOnComplications(productOption, product, productOptions));
+	console.log(product);
+	displayProductAsActualConfiguration();
+	applyFilterForRepeater();
+
 }
 
 
 function displayProductAsActualConfiguration(): void {
 	//@ts-ignore
-	$w("#imageConfiguration").src = product.image;
+	$w("#imageConfiguration").src = product.getOption("profil").image;
 	//@ts-ignore
 	$w("#textConfigurationPrice").text = "" + product.price + "€";
 
-	let arr: Array<any> = [];
-	product.productOptions.foreach((opt: ProductOption) => { arr.push({ "_id": opt.id, "option": opt }); });
-
-	setDataForRepeater("#repeaterConfigurationDetails", arr);
+	setDataForRepeater("#repeaterConfigurationDetails", product.productOptions.toArray());
 	//@ts-ignore
-	$w("#repeaterConfigurationDetails").forItems(product.productOptions.toArray(), repeaterConfigurationDetailsOnItemReadyFunction);
+	//$w("#repeaterConfigurationDetails").forItems(product.productOptions.toArray(), repeaterConfigurationDetailsOnItemReadyFunction);
 }
 
-function repeaterConfigurationDetailsOnItemReadyFunction($item: any, itemData: { id: string, option: ProductOption }, index: number): void {
-	console.log(itemData);
-	$item("#textConfigurationDetailsItem").text = itemData.option.productOptionType.title + ": " + itemData.option.value;
-}
-
-function repeaterNameByOptionTypeTitle(optionTypeTitle: string): string {
-	return "#repeater" + JsString.capitalizeFirstLetter(optionTypeTitle);
+function repeaterConfigurationDetailsOnItemReadyFunction($item: any, itemData: ProductOption, index: number): void {
+	$item("#textConfigurationDetailsItem").text = itemData.productOptionType.title + ": " + itemData.value;
 }
 
 function getDefaultOnItemReadyRepeaterFunction(optionTypeTitle: string): Function {
@@ -72,6 +71,21 @@ function getDefaultOnItemReadyRepeaterFunction(optionTypeTitle: string): Functio
 			onProductOptionSelection(itemData);
 		});
 	};
+}
+
+function normalizeOptionTypeTitle(productOptionTypeTitle: string): string {
+	return JsString.capitalizeFirstLetter(JsString.replaceGermanSpecialLetters(productOptionTypeTitle));
+}
+function repeaterNameByProductOptionTypeTitle(productOptionTypeTitle: string): string {
+	return "#repeater" + normalizeOptionTypeTitle(productOptionTypeTitle);
+}
+
+function applyFilterForRepeater(): void {
+	productModel.productOptionTypes.foreach((productOptionType) => {
+		let filteredData = productConfiguationService.filterValidOptions(productOptions, product, productOptionType.title);
+		setDataForRepeater(repeaterNameByProductOptionTypeTitle(productOptionType.title), filteredData.toArray());
+
+	});
 }
 
 function setDataForRepeater(repeaterName: string, data: Array<any>): void {
@@ -86,10 +100,10 @@ function setOnItemReadyFunctionForRepeater(repeaterName: string, onItemReadyFunc
 
 function initRepeater(): void {
 	productModel.productOptionTypes.foreach((productOptionType) => {
-		let optionTypeTitle = JsString.capitalizeFirstLetter(JsString.replaceGermanSpecialLetters(productOptionType.title));
+		let optionTypeTitle = normalizeOptionTypeTitle(productOptionType.title);
 		let onItemReadyFunction = getDefaultOnItemReadyRepeaterFunction(optionTypeTitle);
-		setOnItemReadyFunctionForRepeater(repeaterNameByOptionTypeTitle(optionTypeTitle), onItemReadyFunction);
-		setDataForRepeater(repeaterNameByOptionTypeTitle(optionTypeTitle), productOptionType.productOptions.toArray());
+		setOnItemReadyFunctionForRepeater(repeaterNameByProductOptionTypeTitle(optionTypeTitle), onItemReadyFunction);
+		setDataForRepeater(repeaterNameByProductOptionTypeTitle(optionTypeTitle), productOptionType.productOptions.toArray());
 	});
 
 	setOnItemReadyFunctionForRepeater("#repeaterConfigurationDetails", repeaterConfigurationDetailsOnItemReadyFunction);
