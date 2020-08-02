@@ -174,7 +174,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * @returns {boolean} True if has relative, else false. 
      */
     protected hasRelative<U extends AbstractModel<U>>(Relative: new () => U): boolean {
-        if (this.relations.get(Relative))
+        if (this.relations.has(Relative))
             return true;
 
         return false;
@@ -545,7 +545,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
                 throw new CreateError(PATH, "AbstractModel.createMultiple()", model);
         });
 
-        let relations = models.get(0).relations.values();
+        let relations = models.first().relations.values();
         await relations.foreachAsync(async (relation) => {
             await relation.relationalCreateMultiple(models);
         });
@@ -736,7 +736,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
                 throw new UpdateError(PATH, "AbstractModel.updateMultiple()", model);
         });
 
-        let relations = models.get(0).relations.values();
+        let relations = models.first().relations.values();
         await relations.foreachAsync(async (relation) => {
             await relation.relationalUpdateMultiple(models);
         });
@@ -849,7 +849,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
         });
 
         // Call destroy for each relation.
-        let relations = models.get(0).relations.values();
+        let relations = models.first().relations.values();
         await relations.foreachAsync(async (relation) => {
             await relation.relationalDestroyMultiple(models);
         });
