@@ -173,7 +173,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * @param {new()=>U, extends AbstactModel<U>} Relative The class obejct/constructor of the relative.
      * @returns {boolean} True if has relative, else false. 
      */
-    protected hasRelative<U extends AbstractModel<U>>(Relative: new () => U): boolean {
+    public hasRelative<U extends AbstractModel<U>>(Relative: new () => U): boolean {
         if (this.relations.has(Relative))
             return true;
 
@@ -185,7 +185,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * @param {new()=>U, extends AbstactModel<U>} Relative The class obejct/constructor of the relative.
      * @returns {AbstractModel<any>} The relative. 
      */
-    protected relative<U extends AbstractModel<U>>(Relative: new () => U): U {
+    public relative<U extends AbstractModel<U>>(Relative: new () => U): U {
         let relation = this.relations.get(Relative);
 
         if (!relation)
@@ -890,6 +890,10 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
         return this.tableName.charAt(0).toLowerCase() + this.tableName.slice(1);
     }
 
+    public getRelation<U extends AbstractModel<U>>(relative: new () => U): Relation<any, T> {
+        return this.relations.get(relative);
+    }
+
     static asSinglePropertyName<U extends AbstractModel<U>>(Model: new () => U): string {
         return (new Model()).asSinglePropertyName();
     }
@@ -1004,6 +1008,10 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      */
     private get relations(): KVMap<new () => AbstractModel<any>, Relation<AbstractModel<any>, T>> {
         return this._relations;
+    }
+
+    get Model(): new () => T {
+        return this.Constructor;
     }
 }
 

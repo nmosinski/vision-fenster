@@ -1,6 +1,6 @@
 import { Tests, Test, truthly } from "../../../../../main/common/test/Test";
 import ProductDefinitionParsingService from "../../../../../main/feature/product/service/ProductDefinitionParsingService";
-import ProductConfigurationService from "../../../../../main/feature/product/service/ProductConfigurationService";
+import AbstractProductConfigurationService from "../../../../../main/feature/product/service/configurator/AbstractProductConfigurationService";
 import Product from "../../../../../main/feature/product/model/Product";
 import ProductOption from "../../../../../main/feature/product/model/ProductOption";
 import List from "../../../../../main/common/util/collections/list/List";
@@ -8,6 +8,7 @@ import ProductOptionType from "../../../../../main/feature/product/model/Product
 import KVMap from "../../../../../main/common/util/collections/map/KVMap";
 import InvalidOperationError from "../../../../../main/common/util/error/InvalidOperationError";
 import Tag from "../../../../../main/common/model/Tag";
+import FensterProductConfigurationService from "../../../../../main/feature/product/service/configurator/FensterProductConfigurationService";
 
 const PATH = "test/public/main/feature/product/ProductConfigurationService.test.js"
 
@@ -90,7 +91,7 @@ var product: Product;
 const productDefinition = ProductDefinitionParsingService.parseFromJson(productDefinitions).get('fenster');
 if (!productDefinition)
     throw new InvalidOperationError(PATH, "", "productDefinition is undefined after parsing from json!");
-const productConfigurationService = new ProductConfigurationService(productDefinition);
+const productConfigurationService = new FensterProductConfigurationService();
 
 export async function runAllTests() {
     let tests = new Tests(undefined, undefined, beforeEach, afterEach);
