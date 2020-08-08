@@ -33,21 +33,19 @@ $w.onReady(async function () {
 	productConfiguationService.fillMissingProductOptionsWithDefault(productOptions, product);
 	console.log(product);
 
-	//$w(repeaterNameByProductOptionTypeTitle("material") [{ '_id': 2 }]);
-
 	initRepeater();
 	applyFilterForRepeater();
 	displayProductAsActualConfiguration();
+	product.productOptions.foreach(option => updateViewSelectedItems(option.productOptionType.title));
 });
 
 function onProductOptionSelection(productOption: ProductOption) {
+
 	console.log(productConfiguationService.setOptionAndDefaultOnComplications(productOption, product, productOptions));
 	console.log(product);
 	displayProductAsActualConfiguration();
 	applyFilterForRepeater();
-
 }
-
 
 function displayProductAsActualConfiguration(): void {
 	//@ts-ignore
@@ -55,58 +53,61 @@ function displayProductAsActualConfiguration(): void {
 	//@ts-ignore
 	$w("#textConfigurationPrice").text = "" + product.price + "€";
 
-	setDataForRepeater("#repeaterConfigurationDetails", product.productOptions.toArray());
 	//@ts-ignore
-	//$w("#repeaterConfigurationDetails").forItems(product.productOptions.toArray(), repeaterConfigurationDetailsOnItemReadyFunction);
+	$w("#repeaterConfigurationDetails").data = product.productOptions.toArray();
 }
 
-function repeaterConfigurationDetailsOnItemReadyFunction($item: any, itemData: ProductOption, index: number): void {
-	$item("#textConfigurationDetailsItem").text = itemData.productOptionType.title + ": " + itemData.value;
+function repeaterConfigurationDetailsOnItemReadyFunction($item: any, productOption: ProductOption, index: number): void {
+	$item("#textConfigurationDetails").text = productOption.productOptionType.title + ": " + productOption.value;
+}
+
+function updateViewSelectedItems(productOptionTypeTitle: string): void {
+	repeaterByProductOptionTypeTitle(productOptionTypeTitle).forEachItem(($item: any, productOption: ProductOption, index: number) => {
+		if (product.getOption(productOptionTypeTitle).id === productOption["_id"])
+			$item("#vectorImage" + productOptionTypeTitleAsGuiElementName(productOptionTypeTitle)).show();
+		else
+			$item("#vectorImage" + productOptionTypeTitleAsGuiElementName(productOptionTypeTitle)).hide();
+	});
 }
 
 function getDefaultOnItemReadyRepeaterFunction(optionTypeTitle: string): Function {
-	return ($item, itemData: any, index: number) => {
-		$item("#image" + optionTypeTitle + "Item").src = itemData.image;
-		$item("#image" + optionTypeTitle + "Item").onClick((event) => {
-			onProductOptionSelection(itemData);
+	return ($item, productOption: ProductOption, index: number) => {
+		$item("#image" + optionTypeTitle).src = productOption.image;
+		$item("#vectorImage" + productOptionTypeTitleAsGuiElementName(optionTypeTitle)).hide();
+		$item("#text" + productOptionTypeTitleAsGuiElementName(optionTypeTitle)).text = productOption.title;
+		$item("#image" + optionTypeTitle).onClick((event) => {
+			onProductOptionSelection(productOption);
+			updateViewSelectedItems(productOption.productOptionType.title);
 		});
 	};
 }
 
-function normalizeOptionTypeTitle(productOptionTypeTitle: string): string {
+function productOptionTypeTitleAsGuiElementName(productOptionTypeTitle: string): string {
 	return JsString.capitalizeFirstLetter(JsString.replaceGermanSpecialLetters(productOptionTypeTitle));
 }
-function repeaterNameByProductOptionTypeTitle(productOptionTypeTitle: string): string {
-	return "#repeater" + normalizeOptionTypeTitle(productOptionTypeTitle);
+function repeaterByProductOptionTypeTitle(productOptionTypeTitle: string): any {
+	//@ts-ignore
+	return $w("#repeater" + productOptionTypeTitleAsGuiElementName(productOptionTypeTitle));
 }
 
 function applyFilterForRepeater(): void {
 	productModel.productOptionTypes.foreach((productOptionType) => {
 		let filteredData = productConfiguationService.filterValidOptions(productOptions, product, productOptionType.title);
-		setDataForRepeater(repeaterNameByProductOptionTypeTitle(productOptionType.title), filteredData.toArray());
+		repeaterByProductOptionTypeTitle(productOptionType.title).data = filteredData.toArray();
 
 	});
-}
-
-function setDataForRepeater(repeaterName: string, data: Array<any>): void {
-	//@ts-ignore
-	$w(repeaterName).data = data;
-}
-
-function setOnItemReadyFunctionForRepeater(repeaterName: string, onItemReadyFunction: Function): void {
-	//@ts-ignore
-	$w(repeaterName).onItemReady(onItemReadyFunction);
 }
 
 function initRepeater(): void {
 	productModel.productOptionTypes.foreach((productOptionType) => {
-		let optionTypeTitle = normalizeOptionTypeTitle(productOptionType.title);
+		let optionTypeTitle = productOptionTypeTitleAsGuiElementName(productOptionType.title);
 		let onItemReadyFunction = getDefaultOnItemReadyRepeaterFunction(optionTypeTitle);
-		setOnItemReadyFunctionForRepeater(repeaterNameByProductOptionTypeTitle(optionTypeTitle), onItemReadyFunction);
-		setDataForRepeater(repeaterNameByProductOptionTypeTitle(optionTypeTitle), productOptionType.productOptions.toArray());
+		repeaterByProductOptionTypeTitle(optionTypeTitle).onItemReady(onItemReadyFunction);
+		repeaterByProductOptionTypeTitle(optionTypeTitle).data = productOptionType.productOptions.toArray();
 	});
 
-	setOnItemReadyFunctionForRepeater("#repeaterConfigurationDetails", repeaterConfigurationDetailsOnItemReadyFunction);
+	//@ts-ignore
+	$w("#repeaterConfigurationDetails").onItemReady(repeaterConfigurationDetailsOnItemReadyFunction);
 }
 
 /*
