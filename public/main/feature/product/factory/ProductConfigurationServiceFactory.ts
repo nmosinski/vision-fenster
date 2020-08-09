@@ -1,14 +1,15 @@
 import ProductModel from "../model/ProductModel";
-import ProductConfigurationService from "../service/ProductConfigurationService";
+import AbstractProductConfigurationService from "../service/configurator/AbstractProductConfigurationService";
 import ProductDefinitionParsingService from "../service/ProductDefinitionParsingService";
 import productDefinitions from "../productDefinitions";
+import FensterProductConfigurationService from "../service/configurator/FensterProductConfigurationService";
 
 class ProductConfigurationServiceFactory {
 
-    public static byModelTitle(title: string): ProductConfigurationService {
+    public static byModelTitle(title: string): AbstractProductConfigurationService {
         let definitions = ProductDefinitionParsingService.parseFromJson(productDefinitions);
 
-        let productConfigurationService = new ProductConfigurationService(definitions.get(title));
+        let productConfigurationService = new FensterProductConfigurationService();
         return productConfigurationService;
     }
 

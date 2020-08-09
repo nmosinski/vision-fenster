@@ -78,7 +78,7 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
      * @param {List<A>} relatives The list containing relatives of type A.
      * @returns {Promise<QueryResult<B>>} A list contining all As related to the given As. 
      */
-    async abstract relationalLoad(relatives: List<A>): Promise<List<B>>;
+    async abstract relationalLoad(relatives: List<A>): Promise<QueryResult<B>>;
 
     /**
      * Get all Bs that belong to at least one of the given relatives of type A.

@@ -3,11 +3,12 @@ import ProductOptionType from "./ProductOptionType";
 import List from "../../../common/util/collections/list/List";
 import KVMap from "../../../common/util/collections/map/KVMap";
 import Product from "./Product";
+import QueryResult from "../../../common/orm/QueryResult";
 
 class ProductModel extends AbstractModel<ProductModel>
 {
     protected Constructor: new () => ProductModel;
-    private _productOptionTypes: KVMap<string, ProductOptionType>;
+    private _productOptionTypes: QueryResult<ProductOptionType>;
     private _title: string;
 
     init(): void {
@@ -29,11 +30,11 @@ class ProductModel extends AbstractModel<ProductModel>
     }
 
     getProductOptionType(title: string): ProductOptionType {
-        return this._productOptionTypes.get(title.toLowerCase());
+        return this._productOptionTypes.find((el) => el.title === title.toLowerCase());
     }
 
     addProductOptionType(type: ProductOptionType) {
-        this._productOptionTypes.add(type.title.toLowerCase(), type);
+        this._productOptionTypes.add(type);
     }
 
     set title(title: string) {
@@ -44,13 +45,12 @@ class ProductModel extends AbstractModel<ProductModel>
         return this._title;
     }
 
-    set productOptionTypes(productOptionTypes: List<ProductOptionType>) {
-        this._productOptionTypes = new KVMap<string, ProductOptionType>();
-        productOptionTypes.foreach(type => this.addProductOptionType(type));
+    set productOptionTypes(productOptionTypes: QueryResult<ProductOptionType>) {
+        this._productOptionTypes = new QueryResult<ProductOptionType>(productOptionTypes);
     }
 
-    get productOptionTypes(): List<ProductOptionType> {
-        return this._productOptionTypes.values();
+    get productOptionTypes(): QueryResult<ProductOptionType> {
+        return this.productOptionTypes;
     }
 
 }

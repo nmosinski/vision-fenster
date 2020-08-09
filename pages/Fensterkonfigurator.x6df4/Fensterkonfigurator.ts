@@ -3,19 +3,23 @@ import ProductOptionType from "../../public/main/feature/product/model/ProductOp
 import ProductOption from "../../public/main/feature/product/model/ProductOption";
 import JsString from "../../public/main/common/util/jsTypes/JsString";
 import Product from "../../public/main/feature/product/model/Product";
-import ProductConfigurationService from "../../public/main/feature/product/service/ProductConfigurationService";
+import AbstractProductConfigurationService from "../../public/main/feature/product/service/configurator/AbstractProductConfigurationService";
 import ProductConfigurationServiceFactory from "../../public/main/feature/product/factory/ProductConfigurationServiceFactory";
 import Tag from "../../public/main/common/model/Tag";
 import List from "../../public/main/common/util/collections/list/List";
+//import ProductController from "../../backend/main/feature/product/controllers/ProductController";
+import { index } from "../../backend/main/feature/product/controllers/ProductController";
 
-const PRODUCT_MODEL_ID = "70b29f09-263e-4eaf-b7f9-8bcdc411b389";
 var productModel: ProductModel;
 var product: Product;
-var productConfiguationService: ProductConfigurationService;
+var productConfiguationService: AbstractProductConfigurationService;
 var productOptions: List<ProductOption>;
 
 //@ts-ignore
 $w.onReady(async function () {
+	productModel = await index();
+	console.log(productModel);
+	/*
 	productOptions = new List<ProductOption>();
 	productModel = await (await ProductModel.get(PRODUCT_MODEL_ID, ProductModel)).load(ProductOptionType);
 	await productModel.productOptionTypes.foreachAsync(async (el) => {
@@ -37,6 +41,7 @@ $w.onReady(async function () {
 	applyFilterForRepeater();
 	displayProductAsActualConfiguration();
 	product.productOptions.foreach(option => updateViewSelectedItems(option.productOptionType.title));
+	*/
 });
 
 function onProductOptionSelection(productOption: ProductOption) {

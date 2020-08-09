@@ -1,21 +1,27 @@
-import List from "../../../common/util/collections/list/List";
-import KVMap from "../../../common/util/collections/map/KVMap";
-import ProductDefinition from "../model/ProductDefinition";
-import ProductOption from "../model/ProductOption";
-import ProductOptionDefinition from "../model/ProductOptionDefinition";
-import Combination from "../model/Combination";
-import CombinationRequirement from "../model/CombinationRequirement";
-import Product from "../model/Product";
-import InvalidOperationError from "../../../common/util/error/InvalidOperationError";
+import List from "../../../../common/util/collections/list/List";
+import KVMap from "../../../../common/util/collections/map/KVMap";
+import ProductDefinition from "../../model/ProductDefinition";
+import ProductOption from "../../model/ProductOption";
+import ProductOptionDefinition from "../../model/ProductOptionDefinition";
+import Combination from "../../model/Combination";
+import CombinationRequirement from "../../model/CombinationRequirement";
+import Product from "../../model/Product";
+import InvalidOperationError from "../../../../common/util/error/InvalidOperationError";
 
 const PATH = "public/main/feature/product/service/ProductConfigurationService.js";
 
-class ProductConfigurationService {
+abstract class AbstractProductConfigurationService {
     private _productDefinition: ProductDefinition;
 
     constructor(productDefinition: ProductDefinition) {
         this.productDefinition = productDefinition;
     }
+
+    abstract beforeSetOption(productOption: ProductOption, product: Product): void;
+
+    abstract afterSetOption(productOption: ProductOption, product: Product): void;
+
+    abstract calculatePrice(product: Product): void;
 
     /**
      * Set a product option.
@@ -23,8 +29,12 @@ class ProductConfigurationService {
      * @returns {boolean} True if the option has been set or false, if the option couldn't be set due to complications with higher ranked options.
      */
     setProductOption(productOption: ProductOption, product: Product): boolean {
-        if (this.productSatisfiesOption(productOption, product))
+        if (this.productSatisfiesOption(productOption, product)) {
+            this.beforeSetOption(productOption, product);
             product.setOption(productOption);
+            this.calculatePrice(product);
+            this.afterSetOption(productOption, product);
+        }
         else
             return false;
         return true;
@@ -260,4 +270,4 @@ class ProductConfigurationService {
     }
 }
 
-export default ProductConfigurationService;
+export default AbstractProductConfigurationService;

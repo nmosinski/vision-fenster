@@ -13,7 +13,7 @@ import OneToZeroOrOne from './OneToZeroOrOne';
 import ZeroOrOneToOne from './ZeroOrOneToOne';
 import ManyToOne from './ManyToOne';
 import OneToMany from './OneToMany';
-import WixDatabase from './WixDatabase';
+import WixDatabase, { Query } from './WixDatabase';
 import QueryResult from './QueryResult';
 import ManyToMany from './ManyToMany';
 import CreateError from './CreateError';
@@ -327,14 +327,20 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * @param {<U extends AbstractModel<U>> new() => U} Model The Model (class) of the property to be loaded. 
      * @returns {Promise<this>} This. 
      */
-    async load(...models: Array<new () => AbstractModel<any>>): Promise<this> {
+    async load(...models: Array<new () => AbstractModel<any>>): Promise<this | QueryResult<AbstractModel<any>>> {
+        console.log("in absMod.load");
         let modelList = new List<new () => AbstractModel<any>>(models);
+        let ret: this | QueryResult<T> = this;
         await modelList.foreachAsync(async (Model) => {
             let relative = this.relative(Model);
             let relation = this.relations.get(Model);
 
             if (relation instanceof ManyToOne || relation instanceof ManyToMany) {
-                await relative.find();
+                ret = await relative.find();
+                console.log("ret instanceof QueryRes", ret instanceof QueryResult);
+                console.log("in load, this.types instanceof QueryRes", this.productOptionTypes instanceof QueryResult);
+                console.log("in abstMod.load.ifManyToOne");
+                console.log("relative", relative);
             }
             else
                 this[AbstractModel.asSinglePropertyName(Model)] = await relative.get();
@@ -405,7 +411,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
         // Called over previous.
         if (this.parent) {
             let previousQueryResult: QueryResult<AbstractModel<any>>;
-            let propertyTarget;
+            let propertyTarget: AbstractModel<any> | QueryResult<AbstractModel<any>>;
             let propertyName: string;
             let relationToParent: Relation<AbstractModel<any>, T>;
 
@@ -423,14 +429,15 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
             relationToParent = this.relations.get(this.parent.Constructor);
 
             thisQueryResult = await relationToParent.relationalFind(previousQueryResult);
+            console.log("in find, thisqr", thisQueryResult);
+            console.log("in find, thisqr instanceof qr", thisQueryResult instanceof QueryResult);
 
             if (relationToParent instanceof ManyToMany || relationToParent instanceof OneToMany)
                 propertyName = this.asMultiplePropertyName();
             else
                 propertyName = this.asSinglePropertyName();
-
-
-            if (this.myParentIsTheRoot() && ((relationToParent instanceof ManyToOne) || (relationToParent instanceof OneToZeroOrOne) || (relationToParent instanceof ZeroOrOneToOne))) {
+            // Assign the result as property to parent as list or single one.
+            if (((relationToParent instanceof ManyToOne) || (relationToParent instanceof OneToZeroOrOne) || (relationToParent instanceof ZeroOrOneToOne))) {
                 propertyTarget[propertyName] = thisQueryResult.first();
                 this.lastQueryResult = thisQueryResult.first();
             }
@@ -438,6 +445,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
                 propertyTarget[propertyName] = thisQueryResult;
                 this.lastQueryResult = thisQueryResult;
             }
+            console.log("target: ", propertyTarget, " propName:", propertyName);
+            console.log("in find, target[propName] instanceof qr", propertyTarget[propertyName] instanceof QueryResult);
+            console.log("in find, target[propName]", propertyTarget[propertyName]);
         }
         else
             thisQueryResult = await AbstractModel.find(this.Constructor);

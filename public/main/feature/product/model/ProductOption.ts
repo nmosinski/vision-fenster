@@ -31,6 +31,10 @@ class ProductOption extends AbstractModel<ProductOption>
         return this.relative(ProductOptionType);
     }
 
+    tagsQ() {
+        return this.relative(Tag);
+    }
+
     hasTagOfTitle(tagTitle: string): boolean {
         return this.tags.reduce("title").has(tagTitle);
     }

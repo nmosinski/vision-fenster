@@ -27,12 +27,13 @@ class QueryResult<T extends AbstractModel<T>> extends List<T>
     async load(...models: Array<new () => AbstractModel<any>>): Promise<QueryResult<AbstractModel<any>>> {
         if (this.isEmpty())
             return this;
-
+        console.log("jau");
         let result = this;
         let modelsList = new List<new () => AbstractModel<any>>(models);
         await modelsList.foreachAsync(async (Model: new () => AbstractModel<any>) => {
             let model = new Model();
             let res = await model.getRelation(this.first().Model).relationalLoad(this);
+            console.log(res);
         });
 
         if (this.length === 1)
