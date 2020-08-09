@@ -293,6 +293,7 @@ class List<T> implements IComparable {
 	/**
 	 * Check if list contains element.
 	 * @param {any} element - The element.
+	 * @param {Function} [matchingFunction] The function that defines how the elements match.
 	 * @return {boolean} True if element is in the list, else false.
 	 */
 	has(element: any): boolean {
@@ -302,8 +303,18 @@ class List<T> implements IComparable {
 	}
 
 	/**
+	 * Returns the first element that matches the given filter
+	 * @param {Function} f: The filter.
+	 * @return {T} The found element or null if not found. 
+	 */
+	find(f: (el: T) => boolean): T {
+		return this.filter(f).first();
+	}
+
+	/**
 	 * Check if list does not contain element.
 	 * @param {any} element - The element.
+	 * @param {Function} [matchingFunction] The function that defines how the elements match.
 	 * @return {boolean} True if element is not in the list, else false.
 	 */
 	hasNot(element: any): boolean {
