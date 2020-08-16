@@ -328,7 +328,6 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * @returns {Promise<this>} This. 
      */
     async load(...models: Array<new () => AbstractModel<any>>): Promise<this | QueryResult<AbstractModel<any>>> {
-        console.log("in absMod.load");
         let modelList = new List<new () => AbstractModel<any>>(models);
         let ret: this | QueryResult<T> = this;
         await modelList.foreachAsync(async (Model) => {
@@ -337,13 +336,21 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
 
             if (relation instanceof ManyToOne || relation instanceof ManyToMany) {
                 ret = await relative.find();
-                console.log("ret instanceof QueryRes", ret instanceof QueryResult);
-                console.log("in load, this.types instanceof QueryRes", this.productOptionTypes instanceof QueryResult);
-                console.log("in abstMod.load.ifManyToOne");
-                console.log("relative", relative);
+                this[AbstractModel.asMultiplePropertyName(Model)] = ret;
             }
             else
                 this[AbstractModel.asSinglePropertyName(Model)] = await relative.get();
+        });
+        return ret;
+    }
+
+    async loadChain(...models: Array<new () => AbstractModel<any>>): Promise<this> {
+        let modelsList = new List<new () => AbstractModel<any>>();
+        modelsList.addMultiple(models);
+
+        let res: QueryResult<AbstractModel<any>> | this = this;
+        await modelsList.foreachAsync(async (Model, idx) => {
+            res = await res.load(Model);
         });
         return this;
     }
@@ -429,8 +436,6 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
             relationToParent = this.relations.get(this.parent.Constructor);
 
             thisQueryResult = await relationToParent.relationalFind(previousQueryResult);
-            console.log("in find, thisqr", thisQueryResult);
-            console.log("in find, thisqr instanceof qr", thisQueryResult instanceof QueryResult);
 
             if (relationToParent instanceof ManyToMany || relationToParent instanceof OneToMany)
                 propertyName = this.asMultiplePropertyName();
@@ -445,9 +450,6 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
                 propertyTarget[propertyName] = thisQueryResult;
                 this.lastQueryResult = thisQueryResult;
             }
-            console.log("target: ", propertyTarget, " propName:", propertyName);
-            console.log("in find, target[propName] instanceof qr", propertyTarget[propertyName] instanceof QueryResult);
-            console.log("in find, target[propName]", propertyTarget[propertyName]);
         }
         else
             thisQueryResult = await AbstractModel.find(this.Constructor);

@@ -16,7 +16,7 @@ class FensterProductConfigurationService extends AbstractProductConfigurationSer
     }
 
     afterSetOption(productOption: ProductOption, product: Product): void {
-        if (productOption.title === "profil")
+        if (productOption.productOptionType.title === "profil")
             product.image = productOption.image;
     }
 

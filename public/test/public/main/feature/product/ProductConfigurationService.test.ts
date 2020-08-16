@@ -9,6 +9,7 @@ import KVMap from "../../../../../main/common/util/collections/map/KVMap";
 import InvalidOperationError from "../../../../../main/common/util/error/InvalidOperationError";
 import Tag from "../../../../../main/common/model/Tag";
 import FensterProductConfigurationService from "../../../../../main/feature/product/service/configurator/FensterProductConfigurationService";
+import QueryResult from "../../../../../main/common/orm/QueryResult";
 
 const PATH = "test/public/main/feature/product/ProductConfigurationService.test.js"
 
@@ -114,9 +115,9 @@ async function beforeEach() {
     profilOption.productOptionType = new ProductOptionType({ "title": "profil" });
     rolladenOption.productOptionType = new ProductOptionType({ "title": "rolläden" });
 
-    materialOption.tags = new List<Tag>([new Tag({ "title": "kunststoff" }), new Tag({ "title": "5-Kammer" })]);
-    profilOption.tags = new List<Tag>([new Tag({ "title": "kunststoff" })]);
-    rolladenOption.tags = new List<Tag>([new Tag({ "title": "außen" })]);
+    materialOption.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" }), new Tag({ "title": "5-Kammer" })]);
+    profilOption.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
+    rolladenOption.tags = new QueryResult<Tag>([new Tag({ "title": "außen" })]);
 
     product = new Product(new List<ProductOption>([
         materialOption,
@@ -136,8 +137,8 @@ function productSatisfiesOption() {
     validOption.productOptionType = new ProductOptionType({ "title": "profil" });
     invalidOption.productOptionType = new ProductOptionType({ "title": "profil" });
 
-    validOption.tags = new List<Tag>([new Tag({ "title": "kunststoff" })]);
-    invalidOption.tags = new List<Tag>([new Tag({ "title": "holz" })]);
+    validOption.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
+    invalidOption.tags = new QueryResult<Tag>([new Tag({ "title": "holz" })]);
 
     if (!productConfigurationService.productSatisfiesOption(validOption, product))
         return false;
@@ -156,7 +157,7 @@ function productIsValid() {
     if (!option)
         throw new InvalidOperationError(PATH, "productIsValid", "Wrong test configuration!!!");
 
-    option.tags = new List<Tag>([new Tag({ "title": "no Kunststoff Tag" })]);
+    option.tags = new QueryResult<Tag>([new Tag({ "title": "no Kunststoff Tag" })]);
     if (productConfigurationService.productIsValid(product))
         return false;
 
@@ -172,9 +173,9 @@ function filterValidOptions() {
     invalidOption.productOptionType = new ProductOptionType({ "title": "profil" });
     validOption2.productOptionType = new ProductOptionType({ "title": "profil" });
 
-    validOption1.tags = new List<Tag>([new Tag({ "title": "kunststoff" }), new Tag({ "title": "kunstfurz" })]);
-    invalidOption.tags = new List<Tag>([new Tag({ "title": "holz" })]);
-    validOption2.tags = new List<Tag>([new Tag({ "title": "kunststoff" })]);
+    validOption1.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" }), new Tag({ "title": "kunstfurz" })]);
+    invalidOption.tags = new QueryResult<Tag>([new Tag({ "title": "holz" })]);
+    validOption2.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
 
     let options = new List<ProductOption>([validOption1, invalidOption, validOption2]);
 
@@ -204,14 +205,14 @@ function findValidConfiguration() {
     profilOption2.productOptionType = new ProductOptionType({ "title": "profil" });
     profilOption3.productOptionType = new ProductOptionType({ "title": "profil" });
 
-    materialOption1.tags = new List<Tag>([new Tag({ "title": "marius" })]);
-    materialOption2.tags = new List<Tag>([new Tag({ "title": "kunststoff" })]);
-    profilOption1.tags = new List<Tag>([new Tag({ "title": "holz" })]);
-    profilOption2.tags = new List<Tag>([new Tag({ "title": "kunststoff" }), new Tag({ "title": "kunstfurz" })]);
-    profilOption3.tags = new List<Tag>([new Tag({ "title": "kunststoff" })]);
+    materialOption1.tags = new QueryResult<Tag>([new Tag({ "title": "marius" })]);
+    materialOption2.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
+    profilOption1.tags = new QueryResult<Tag>([new Tag({ "title": "holz" })]);
+    profilOption2.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" }), new Tag({ "title": "kunstfurz" })]);
+    profilOption3.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
 
-    optionCandidates.add("material", new List<ProductOption>([materialOption1, materialOption2]));
-    optionCandidates.add("profil", new List<ProductOption>([profilOption1, profilOption2, profilOption3]));
+    optionCandidates.add("material", new QueryResult<ProductOption>([materialOption1, materialOption2]));
+    optionCandidates.add("profil", new QueryResult<ProductOption>([profilOption1, profilOption2, profilOption3]));
 
     product.removeOption("material");
     product.removeOption("profil");
@@ -244,11 +245,11 @@ function fillMissingProductOptionsWithDefault() {
     profilOption2.productOptionType = new ProductOptionType({ "title": "profil" });
     profilOption3.productOptionType = new ProductOptionType({ "title": "profil" });
 
-    materialOption1.tags = new List<Tag>([new Tag({ "title": "kunststoff" })]);
-    materialOption2.tags = new List<Tag>([new Tag({ "title": "kunststoff" })]);
-    profilOption1.tags = new List<Tag>([new Tag({ "title": "kunststoff" })]);
-    profilOption2.tags = new List<Tag>([new Tag({ "title": "kunststoff" }), new Tag({ "title": "kunstfurz" }), new Tag({ "title": "default" })]);
-    profilOption3.tags = new List<Tag>([new Tag({ "title": "kunststoff" })]);
+    materialOption1.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
+    materialOption2.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
+    profilOption1.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
+    profilOption2.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" }), new Tag({ "title": "kunstfurz" }), new Tag({ "title": "default" })]);
+    profilOption3.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
 
     optionCandidates.add(materialOption1, materialOption2, profilOption1, profilOption2, profilOption3);
 

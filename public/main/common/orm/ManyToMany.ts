@@ -8,16 +8,16 @@ import Relation from "./Relation";
 
 
 
-class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C extends AbstractModel<C>> extends Relation<A, B>
+class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A, B>
 {
-    private _roleModel: new () => C;
+    private _roleModel: new () => AbstractModel<any>;
 
-    constructor(relativeA: new () => A, relativeB: new () => B, roleModel: new () => C) {
+    constructor(relativeA: new () => A, relativeB: new () => B, roleModel: new () => AbstractModel<any>) {
         super(relativeA, relativeB);
         this.roleModel = roleModel;
     }
 
-    inverse(): ManyToMany<B, A, C> {
+    inverse(): ManyToMany<B, A> {
         return new ManyToMany(this.relativeB, this.relativeA, this.roleModel);
     }
 
@@ -61,33 +61,44 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C exten
         await roleToB.relationalDestroy(toDestroy);
     }
 
-    areRelated(a: A, b: B, cs: List<C>): boolean {
+    areRelated(a: A, b: B, cs: List<AbstractModel<any>>): boolean {
         let ret = false;
-        cs.foreach((c: C) => {
+        cs.foreach((c: AbstractModel<any>) => {
             if (c[a.asFk()] === a.id && c[b.asFk()] === b.id)
-                return true;
+                ret = true;
         });
+
 
         return ret;
     }
 
-    async relationalLoad(relatives: List<A>): Promise<List<B>> {
+    async relationalLoad(relatives: List<A>): Promise<QueryResult<B>> {
         let roleToB = new ManyToOne(this.roleModel, this.relativeB);
         let roles = await this.getRoles(relatives);
         let bs = await roleToB.relationalFind(roles);
-
         relatives.foreach((a: A) => {
-            let related = new List<B>();
+            let related = new QueryResult<B>();
             bs.foreach((b: B) => {
                 if (this.areRelated(a, b, roles))
                     related.add(b);
             });
             a[this.bAsPropertyNameForA()] = related;
         });
+
+        bs.foreach((b: B) => {
+            let related = new QueryResult<A>();
+            relatives.foreach((a: A) => {
+                if (this.areRelated(a, b, roles))
+                    related.add(a);
+            });
+            b[this.aAsPropertyNameForB()] = related;
+        });
+
+
         return bs;
     }
 
-    private async getRoles(relatives: List<A>): Promise<QueryResult<C>> {
+    private async getRoles(relatives: List<A>): Promise<QueryResult<AbstractModel<any>>> {
         let aToRole = new OneToMany(this.relativeA, this.roleModel);
         return await aToRole.relationalFind(relatives);
     }
@@ -102,11 +113,11 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>, C exten
         await roleToB.relationalDestroyMultiple(toDestroy);
     }
 
-    set roleModel(roleModel: new () => C) {
+    set roleModel(roleModel: new () => AbstractModel<any>) {
         this._roleModel = roleModel;
     }
 
-    get roleModel(): new () => C {
+    get roleModel(): new () => AbstractModel<any> {
         return this._roleModel;
     }
 }

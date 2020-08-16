@@ -8,40 +8,37 @@ import ProductConfigurationServiceFactory from "../../public/main/feature/produc
 import Tag from "../../public/main/common/model/Tag";
 import List from "../../public/main/common/util/collections/list/List";
 //import ProductController from "../../backend/main/feature/product/controllers/ProductController";
-import { index } from "../../backend/main/feature/product/controllers/ProductController";
+//@ts-ignore
+import { index } from "backend/main/feature/product/controllers/ProductController.jsw";
+import QueryResult from "../../public/main/common/orm/QueryResult";
 
 var productModel: ProductModel;
 var product: Product;
 var productConfiguationService: AbstractProductConfigurationService;
 var productOptions: List<ProductOption>;
+let cache = [];
+
 
 //@ts-ignore
 $w.onReady(async function () {
-	productModel = await index();
+	let pm = JSON.parse(await index());
+	productModel = (new ProductModel()).fill(pm);
+	productModel.typesize(pm);
 	console.log(productModel);
-	/*
-	productOptions = new List<ProductOption>();
-	productModel = await (await ProductModel.get(PRODUCT_MODEL_ID, ProductModel)).load(ProductOptionType);
-	await productModel.productOptionTypes.foreachAsync(async (el) => {
-		await el.load(ProductOption);
-		await el.productOptions.foreachAsync(async (opt) => {
-			opt.productOptionType = el;
-			await opt.load(Tag);
-			productOptions.add(opt);
-		});
-	});
+
+	let productModell = (await ProductModel.find(ProductModel)).first();
+	await productModell.loadChain(ProductOptionType, ProductOption, Tag);
+	console.log("pm", productModell);
 
 	productConfiguationService = ProductConfigurationServiceFactory.byModel(productModel);
 	product = new Product();
 
 	productConfiguationService.fillMissingProductOptionsWithDefault(productOptions, product);
-	console.log(product);
 
 	initRepeater();
 	applyFilterForRepeater();
 	displayProductAsActualConfiguration();
 	product.productOptions.foreach(option => updateViewSelectedItems(option.productOptionType.title));
-	*/
 });
 
 function onProductOptionSelection(productOption: ProductOption) {
@@ -79,7 +76,7 @@ function getDefaultOnItemReadyRepeaterFunction(optionTypeTitle: string): Functio
 	return ($item, productOption: ProductOption, index: number) => {
 		$item("#image" + optionTypeTitle).src = productOption.image;
 		$item("#vectorImage" + productOptionTypeTitleAsGuiElementName(optionTypeTitle)).hide();
-		$item("#text" + productOptionTypeTitleAsGuiElementName(optionTypeTitle)).text = productOption.title;
+		$item("#text" + productOptionTypeTitleAsGuiElementName(optionTypeTitle)).text = productOption.productOptionType.title;
 		$item("#image" + optionTypeTitle).onClick((event) => {
 			onProductOptionSelection(productOption);
 			updateViewSelectedItems(productOption.productOptionType.title);

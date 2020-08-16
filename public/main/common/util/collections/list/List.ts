@@ -305,10 +305,24 @@ class List<T> implements IComparable {
 	/**
 	 * Returns the first element that matches the given filter
 	 * @param {Function} f: The filter.
-	 * @return {T} The found element or null if not found. 
+	 * @return {T} The found element. 
 	 */
 	find(f: (el: T) => boolean): T {
 		return this.filter(f).first();
+	}
+
+	/**
+	 * Returns the first element that matches the given filter or null if there were no matches.
+	 * @param {Function} f: The filter.
+	 * @return {T|null} The found element or null if not found. 
+	 */
+	findOrNull(f: (el: T) => boolean): T | null {
+		try {
+			return this.find(f);
+		}
+		catch (err) {
+			return null;
+		}
 	}
 
 	/**

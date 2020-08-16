@@ -1,0 +1,2 @@
+rm ~/workspace/vision_fenster/wix-repository/src/backend/main/feature/product/controllers/ProductController.jsw
+mv ~/workspace/vision_fenster/wix-repository/src/backend/main/feature/product/controllers/ProductController.js ~/workspace/vision_fenster/wix-repository/src/backend/main/feature/product/controllers/ProductController.jsw

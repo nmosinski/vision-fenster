@@ -74,6 +74,14 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
     abstract bAsPropertyNameForA(): string;
 
     /**
+     * Get the name of A as property for B.
+     * @returns {string} The name.
+     */
+    aAsPropertyNameForB(): string {
+        return this.inverse().bAsPropertyNameForA();
+    }
+
+    /**
      * Find all realtives of type B that belong to any of the given relatives of type A and assign the relatives of type A to the relatives of type B.
      * @param {List<A>} relatives The list containing relatives of type A.
      * @returns {Promise<QueryResult<B>>} A list contining all As related to the given As. 

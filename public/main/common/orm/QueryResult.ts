@@ -1,10 +1,11 @@
 import AbstractModel from "./AbstractModel";
 import List from "../util/collections/list/List";
+import { Query } from "./WixDatabase";
 
 class QueryResult<T extends AbstractModel<T>> extends List<T>
 {
-    constructor(list?: List<T>) {
-        super((list) ? list.toArray() : undefined);
+    constructor(list?: List<T> | Array<T>) {
+        super((list) ? (list instanceof List) ? list.toArray() : list : undefined);
     }
 
     /**
@@ -27,17 +28,27 @@ class QueryResult<T extends AbstractModel<T>> extends List<T>
     async load(...models: Array<new () => AbstractModel<any>>): Promise<QueryResult<AbstractModel<any>>> {
         if (this.isEmpty())
             return this;
-        console.log("jau");
-        let result = this;
+        let result: QueryResult<AbstractModel<any>> = this;
         let modelsList = new List<new () => AbstractModel<any>>(models);
         await modelsList.foreachAsync(async (Model: new () => AbstractModel<any>) => {
             let model = new Model();
-            let res = await model.getRelation(this.first().Model).relationalLoad(this);
-            console.log(res);
+            result = await model.getRelation(this.first().Model).relationalLoad(this);
         });
 
-        if (this.length === 1)
+        if (modelsList.length === 1)
             return result;
+        return this;
+    }
+
+    async loadChain(...models: Array<new () => AbstractModel<any>>): Promise<this> {
+        let modelsList = new List<new () => AbstractModel<any>>();
+        modelsList.addMultiple(models)
+
+        let res = new QueryResult();
+        res.addMultiple(this.toArray());
+        await modelsList.foreachAsync(async (Model, idx) => {
+            res = await res.load(Model);
+        });
         return this;
     }
 }

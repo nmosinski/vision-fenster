@@ -45,7 +45,7 @@ class Product extends AbstractModel<Product>{
     }
 
     removeOption(typeTitle: string): void {
-        this._productOptions.remove();
+        this._productOptions.remove(this._productOptions.indexOf(this._productOptions.findOrNull(productOption => productOption.productOptionType.title === typeTitle)));
     }
 
     productModelQ() {

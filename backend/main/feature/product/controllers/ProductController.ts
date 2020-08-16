@@ -6,15 +6,15 @@ import List from "../../../../../public/main/common/util/collections/list/List";
 import ProductOption from "../../../../../public/main/feature/product/model/ProductOption";
 import ProductOptionType from "../../../../../public/main/feature/product/model/ProductOptionType";
 import Tag from "../../../../../public/main/common/model/Tag";
+import safeStringify from "../../../../../public/main/common/util/jsTypes/safeStringify";
 
 const PATH = "public/feature/product/controllers/ProductController.js";
 const PRODUCT_MODEL_ID = "70b29f09-263e-4eaf-b7f9-8bcdc411b389";
 
 
 export async function index() {
-    let productOptions = new List<ProductOption>();
     let productModel = await ProductModel.get(PRODUCT_MODEL_ID, ProductModel);
-    await productModel.productOptionTypesQ().productOptionsQ().tagsQ().find();
+    await productModel.loadChain(ProductOptionType, ProductOption, Tag);
     /*await productModel.productOptionTypes.foreachAsync(async (el) => {
         await el.load(ProductOption);
         await el.productOptions.foreachAsync(async (opt) => {
@@ -24,7 +24,7 @@ export async function index() {
         });
     });
     */
-    return productModel;
+    return JSON.stringify(productModel, safeStringify);
 }
 
 /**

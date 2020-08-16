@@ -2,13 +2,13 @@ import AbstractModel from "../../../common/orm/AbstractModel";
 import ProductOptionType from "./ProductOptionType";
 import List from "../../../common/util/collections/list/List";
 import Tag from "../../../common/model/Tag";
+import QueryResult from "../../../common/orm/QueryResult";
 
 
-class ProductOption extends AbstractModel<ProductOption>
-{
+class ProductOption extends AbstractModel<ProductOption> implements IsTypesizable {
     private _productOptionType: ProductOptionType;
     private _value: string;
-    private _tags: List<Tag>;
+    private _tags: QueryResult<Tag>;
     private _image: string;
 
     protected Constructor: new () => ProductOption;
@@ -39,6 +39,23 @@ class ProductOption extends AbstractModel<ProductOption>
         return this.tags.reduce("title").has(tagTitle);
     }
 
+    typesize(json: any): this {
+
+        if (this.tags && !(this.tags instanceof QueryResult)) {
+            this.tags = new QueryResult();
+            json._tags._elements.forEach((el) => {
+                let tag = new Tag(el).typesize(el);
+                this.tags.add(tag);
+            });
+        }
+
+        if (this.productOptionType && !(this.productOptionType instanceof ProductOptionType)) {
+            this.productOptionType = new ProductOptionType(json._productOptionType).typesize(json._productOptionType);
+        }
+
+        return this;
+    }
+
     set productOptionType(type: ProductOptionType) {
         this._productOptionType = type;
     }
@@ -47,11 +64,8 @@ class ProductOption extends AbstractModel<ProductOption>
         this._value = value;
     }
 
-    set tags(tags: List<Tag>) {
-        if (tags)
-            this._tags = tags;
-        else
-            this._tags = new List<Tag>();
+    set tags(tags: QueryResult<Tag>) {
+        this._tags = tags;
     }
 
     set image(image: string) {
@@ -69,7 +83,7 @@ class ProductOption extends AbstractModel<ProductOption>
         return this._value;
     }
 
-    get tags(): List<Tag> {
+    get tags(): QueryResult<Tag> {
         return this._tags;
     }
 
