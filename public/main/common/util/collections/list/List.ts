@@ -79,25 +79,31 @@ class List<T> implements IComparable {
 	/**
 	 * Iterate through all elements of this list and calls the passed async function.
 	 * @param {Function} f - The function to be called by each element of this list.
+	 * @returns {Promise<this>} This.
 	 */
-	async foreachAsync(f: (el: T, idx?: number) => Promise<void>): Promise<void> {
+	async foreachAsync(f: (el: T, idx?: number) => Promise<void>): Promise<this> {
 		if (!JsTypes.isFunction(f))
 			throw new VariableTypeError(PATH, "List.foreachAsync(f)", f, "function");
 
 		for (let idx = 0; idx < this.length; idx++)
 			await f(this.get(idx), idx);
+
+		return this;
 	}
 
 	/**
 	 * Iterate through all elements of this list and calls the passed function.
 	 * @param {Function} f - The function to be called by each element of this list.
+	 * @returns {this} This.
 	 */
-	foreach(f: (el: T, idx?: number) => void): void {
+	foreach(f: (el: T, idx?: number) => void): this {
 		if (!JsTypes.isFunction(f))
 			throw new VariableTypeError(PATH, "List.foreach(f)", f, "function");
 
 		for (let idx = 0; idx < this.length; idx++)
 			f(this.get(idx), idx);
+
+		return this;
 	}
 
     /**

@@ -12,7 +12,6 @@ class ProductModel extends AbstractModel<ProductModel> implements IsTypesizable 
 
     init(): void {
         this.Constructor = ProductModel;
-        this.productOptionTypes = new QueryResult();
     }
 
     addProperties(): void {
@@ -33,18 +32,21 @@ class ProductModel extends AbstractModel<ProductModel> implements IsTypesizable 
         return this._productOptionTypes.find((el) => el.title === title.toLowerCase());
     }
 
-    addProductOptionType(type: ProductOptionType) {
-        this._productOptionTypes.add(type);
+    addProductOptionType(productOptionType: ProductOptionType) {
+        if (!this.productOptionTypes)
+            this.productOptionTypes = new QueryResult();
+        if (this.productOptionTypes.hasNot(productOptionType))
+            this.productOptionTypes.add(productOptionType);
     }
 
     typesize(json: any) {
-        if (this.productOptionTypes && !(this.productOptionTypes instanceof QueryResult)) {
+        if (json.productOptionTypes && !(this.productOptionTypes instanceof QueryResult)) {
             this.productOptionTypes = new QueryResult<ProductOptionType>();
             json._productOptionTypes._elements.forEach((el: any) => {
                 let productOptionType = new ProductOptionType(el);
-                productOptionType.typesize(el);
                 productOptionType.productModel = this;
                 this.addProductOptionType(productOptionType);
+                productOptionType.typesize(el);
             });
         }
         return this;

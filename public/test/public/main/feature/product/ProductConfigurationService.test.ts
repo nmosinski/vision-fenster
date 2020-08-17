@@ -7,9 +7,9 @@ import List from "../../../../../main/common/util/collections/list/List";
 import ProductOptionType from "../../../../../main/feature/product/model/ProductOptionType";
 import KVMap from "../../../../../main/common/util/collections/map/KVMap";
 import InvalidOperationError from "../../../../../main/common/util/error/InvalidOperationError";
-import Tag from "../../../../../main/common/model/Tag";
 import FensterProductConfigurationService from "../../../../../main/feature/product/service/configurator/FensterProductConfigurationService";
 import QueryResult from "../../../../../main/common/orm/QueryResult";
+import Tag from "../../../../../main/feature/product/model/Tag";
 
 const PATH = "test/public/main/feature/product/ProductConfigurationService.test.js"
 

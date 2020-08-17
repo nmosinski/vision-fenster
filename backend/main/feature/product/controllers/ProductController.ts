@@ -5,8 +5,8 @@ import ProductModel from "../../../../../public/main/feature/product/model/Produ
 import List from "../../../../../public/main/common/util/collections/list/List";
 import ProductOption from "../../../../../public/main/feature/product/model/ProductOption";
 import ProductOptionType from "../../../../../public/main/feature/product/model/ProductOptionType";
-import Tag from "../../../../../public/main/common/model/Tag";
 import safeStringify from "../../../../../public/main/common/util/jsTypes/safeStringify";
+import Tag from "../../../../../public/main/feature/product/model/Tag";
 
 const PATH = "public/feature/product/controllers/ProductController.js";
 const PRODUCT_MODEL_ID = "70b29f09-263e-4eaf-b7f9-8bcdc411b389";

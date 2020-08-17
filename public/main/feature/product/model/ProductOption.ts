@@ -1,8 +1,8 @@
 import AbstractModel from "../../../common/orm/AbstractModel";
 import ProductOptionType from "./ProductOptionType";
 import List from "../../../common/util/collections/list/List";
-import Tag from "../../../common/model/Tag";
 import QueryResult from "../../../common/orm/QueryResult";
+import Tag from "./Tag";
 
 
 class ProductOption extends AbstractModel<ProductOption> implements IsTypesizable {
@@ -39,18 +39,29 @@ class ProductOption extends AbstractModel<ProductOption> implements IsTypesizabl
         return this.tags.reduce("title").has(tagTitle);
     }
 
+    addTag(tag: Tag) {
+        if (!this.tags)
+            this.tags = new QueryResult();
+        if (this.tags.hasNot(tag))
+            this.tags.add(tag);
+    }
+
     typesize(json: any): this {
 
-        if (this.tags && !(this.tags instanceof QueryResult)) {
+        if (json._tags && !(this.tags instanceof QueryResult)) {
             this.tags = new QueryResult();
             json._tags._elements.forEach((el) => {
-                let tag = new Tag(el).typesize(el);
-                this.tags.add(tag);
+                let tag = new Tag(el);
+                tag.addProductOption(this);
+                this.addTag(tag);
+                tag.typesize(el);
             });
         }
 
-        if (this.productOptionType && !(this.productOptionType instanceof ProductOptionType)) {
-            this.productOptionType = new ProductOptionType(json._productOptionType).typesize(json._productOptionType);
+        if (json._productOptionType && !(this.productOptionType instanceof ProductOptionType)) {
+            this.productOptionType = new ProductOptionType(json._productOptionType);
+            this.productOptionType.addProductOption(this);
+            this.productOptionType.typesize(json._productOptionType);
         }
 
         return this;

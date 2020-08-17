@@ -1,8 +1,7 @@
-import AbstractModel from "../orm/AbstractModel";
-import ProductOption from "../../feature/product/model/ProductOption";
-import ProductOptionType from "../../feature/product/model/ProductOptionType";
-import QueryResult from "../orm/QueryResult";
-import Product from "../../feature/product/model/Product";
+import AbstractModel from "../../../common/orm/AbstractModel";
+import QueryResult from "../../../common/orm/QueryResult";
+import ProductOption from "./ProductOption";
+
 
 class Tag extends AbstractModel<Tag> implements IsTypesizable {
     protected Constructor: new () => Tag;
@@ -21,12 +20,22 @@ class Tag extends AbstractModel<Tag> implements IsTypesizable {
         this.manyToMany(ProductOption);
     }
 
+    addProductOption(productOption: ProductOption) {
+        if (!this.productOptions)
+            this.productOptions = new QueryResult();
+        if (this.productOptions.hasNot(productOption))
+            this.productOptions.add(productOption);
+    }
+
     typesize(json: any): this {
 
-        if (this.productOptions && !(this.productOptions instanceof QueryResult)) {
+        if (json._productOptions && !(this.productOptions instanceof QueryResult)) {
             this.productOptions = new QueryResult<ProductOption>();
             json._productOptions._elements.forEach((el) => {
-                this.productOptions.add((new ProductOption(el)).typesize(el));
+                let productOption = new ProductOption(el);
+                productOption.addTag(this);
+                this.addProductOption(productOption);
+                productOption.typesize(el);
             });
         }
         return this;

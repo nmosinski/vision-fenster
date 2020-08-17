@@ -34,16 +34,27 @@ class ProductOptionType extends AbstractModel<ProductOptionType> implements IsTy
         return this.relative(ProductModel);
     }
 
+    addProductOption(productOption: ProductOption) {
+        if (!this.productOptions)
+            this.productOptions = new QueryResult();
+        if (this.productOptions.hasNot(productOption))
+            this.productOptions.add(productOption);
+    }
+
     typesize(json: any) {
 
-        if (this.productModel && !(this.productModel instanceof ProductModel)) {
-            this.productModel = (new ProductModel(this.productModel)).typesize(this.productModel);
+        if (json._productModel && !(this.productModel instanceof ProductModel)) {
+            this.productModel = (new ProductModel(json._productModel));
+            this.productModel.addProductOptionType(this);
+            this.productModel.typesize(json._productModel);
         }
-        if (this.productOptions && !(this.productOptions instanceof QueryResult)) {
+        if (json._productOptions && !(this.productOptions instanceof QueryResult)) {
             this.productOptions = new QueryResult<ProductOption>();
             json._productOptions._elements.forEach((el) => {
-                let productOption = (new ProductOption(el)).typesize(el);
-                this.productOptions.add(productOption);
+                let productOption = (new ProductOption(el));
+                productOption.productOptionType = this;
+                this.addProductOption(productOption);
+                productOption.typesize(el);
             });
         }
         return this;

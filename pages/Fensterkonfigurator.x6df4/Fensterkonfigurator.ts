@@ -5,12 +5,12 @@ import JsString from "../../public/main/common/util/jsTypes/JsString";
 import Product from "../../public/main/feature/product/model/Product";
 import AbstractProductConfigurationService from "../../public/main/feature/product/service/configurator/AbstractProductConfigurationService";
 import ProductConfigurationServiceFactory from "../../public/main/feature/product/factory/ProductConfigurationServiceFactory";
-import Tag from "../../public/main/common/model/Tag";
 import List from "../../public/main/common/util/collections/list/List";
 //import ProductController from "../../backend/main/feature/product/controllers/ProductController";
 //@ts-ignore
 import { index } from "backend/main/feature/product/controllers/ProductController.jsw";
 import QueryResult from "../../public/main/common/orm/QueryResult";
+import Tag from "../../public/main/feature/product/model/Tag";
 
 var productModel: ProductModel;
 var product: Product;
