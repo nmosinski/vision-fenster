@@ -288,10 +288,10 @@ export class Query<T extends AbstractModel<T>>
     /**
      * Set a filter for the query. Match only those items, that have one of the given values in the property of the given property name.
      * @param {string} propertyName The name of the property. 
-     * @param {any} propertyValues The possible propertyValues.
+     * @param {List<Number|String|Date>} propertyValues The possible propertyValues.
      * @returns {this} This query.
      */
-    hasSome(propertyName: string, propertyValues: List<any>): this {
+    hasSome(propertyName: string, propertyValues: List<Number | String | Date>): this {
         this.query = this.query.hasSome(modelToItemPropertyMapping(propertyName), propertyValues.toArray());
         return this;
     }

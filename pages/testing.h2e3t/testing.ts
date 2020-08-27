@@ -3,6 +3,6 @@ import List from "../../public/main/common/util/collections/list/List";
 
 // @ts-ignore
 $w.onReady(async function () {
-    await runTests("jsTypesizer");
+    await runAllTests();
 
 });

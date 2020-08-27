@@ -3,12 +3,13 @@ import QueryResult from "../../../common/orm/QueryResult";
 import ProductOption from "./ProductOption";
 
 
-class Tag extends AbstractModel<Tag> implements IsTypesizable {
+class Tag extends AbstractModel<Tag>{
     protected Constructor: new () => Tag;
     private _productOptions: QueryResult<ProductOption>;
 
     init(): void {
         this.Constructor = Tag;
+        this.productOptions = new QueryResult<ProductOption>();
     }
 
     addProperties(): void {
@@ -21,24 +22,9 @@ class Tag extends AbstractModel<Tag> implements IsTypesizable {
     }
 
     addProductOption(productOption: ProductOption) {
-        if (!this.productOptions)
-            this.productOptions = new QueryResult();
         if (this.productOptions.hasNot(productOption))
             this.productOptions.add(productOption);
-    }
 
-    typesize(json: any): this {
-
-        if (json._productOptions && !(this.productOptions instanceof QueryResult)) {
-            this.productOptions = new QueryResult<ProductOption>();
-            json._productOptions._elements.forEach((el) => {
-                let productOption = new ProductOption(el);
-                productOption.addTag(this);
-                this.addProductOption(productOption);
-                productOption.typesize(el);
-            });
-        }
-        return this;
     }
 
     set productOptions(productOptions: QueryResult<ProductOption>) {

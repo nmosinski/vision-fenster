@@ -164,7 +164,8 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
     fill(item: object): this {
         if (item)
             for (let [key, value] of Object.entries(item))
-                this[key] = value;
+                if (this.properties.hasKey(key))
+                    this[key] = value;
         return this;
     }
 
@@ -323,27 +324,28 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
     }
 
     /**
-     * Load properties. A chain is possible as well.
+     * Load properties.
      * @param {<U extends AbstractModel<U>> new() => U} Model The Model (class) of the property to be loaded. 
-     * @returns {Promise<this>} This. 
+     * @returns {Promise<this|QueryResult<AbstractModel>>} This if multiple models were passed or the loaded objects if only one model was passed. 
      */
     async load(...models: Array<new () => AbstractModel<any>>): Promise<this | QueryResult<AbstractModel<any>>> {
         let modelList = new List<new () => AbstractModel<any>>(models);
-        let ret: this | QueryResult<T> = this;
+        let ret: this | QueryResult<AbstractModel<any>> = this;
         await modelList.foreachAsync(async (Model) => {
-            let relative = this.relative(Model);
-            let relation = this.relations.get(Model);
-
-            if (relation instanceof ManyToOne || relation instanceof ManyToMany) {
-                ret = await relative.find();
-                this[AbstractModel.asMultiplePropertyName(Model)] = ret;
-            }
-            else
-                this[AbstractModel.asSinglePropertyName(Model)] = await relative.get();
+            let relation = this.relations.get(Model).inverse();
+            // @ts-ignore
+            ret = await relation.relationalLoad(new List<T>([this]));
         });
+
+
         return ret;
     }
 
+    /**
+     * Loads many models that are stored as property and can be accessed indirectly model by model creating a chain.
+     * @param {Array<AbstractModel>} models The models to be loaded in the order of the chain.
+     * @returns {this} This.
+     */
     async loadChain(...models: Array<new () => AbstractModel<any>>): Promise<this> {
         let modelsList = new List<new () => AbstractModel<any>>();
         modelsList.addMultiple(models);
@@ -937,11 +939,23 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
         return (new Model()).tableName;
     }
 
+    static modelName<U extends AbstractModel<U>>(Model: new () => U): string {
+        return (new Model()).modelName;
+    }
+
     /**
      * Get the table name of this model. Resolves into the name of the model/class by default.
      * @returns {string} The name of the table of this model.
      */
     get tableName(): string {
+        return this.Constructor.name;
+    }
+
+    /**
+     * Get the name of this model. Resolves into the name of the model/class by default.
+     * @returns {string} The name of the table of this model.
+     */
+    get modelName(): string {
         return this.Constructor.name;
     }
 

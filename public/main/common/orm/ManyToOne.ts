@@ -1,6 +1,7 @@
 import AbstractModel from "./AbstractModel";
 import AHoldsReferenceToB from "./AHoldsReferenceToB";
 import List from "../util/collections/list/List";
+import OneToMany from "./OneToMany";
 
 class ManyToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends AHoldsReferenceToB<A, B>
 {
@@ -8,8 +9,8 @@ class ManyToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends 
         super(relativeA, relativeB);
     }
 
-    inverse(): ManyToOne<B, A> {
-        return new ManyToOne(this.relativeB, this.relativeA);
+    inverse(): OneToMany<B, A> {
+        return new OneToMany(this.relativeB, this.relativeA);
     }
 
     bAsPropertyNameForA(): string {

@@ -11,47 +11,47 @@ import List from "../../public/main/common/util/collections/list/List";
 import { index } from "backend/main/feature/product/controllers/ProductController.jsw";
 import QueryResult from "../../public/main/common/orm/QueryResult";
 import Tag from "../../public/main/feature/product/model/Tag";
+import { Query } from "../../public/main/common/orm/WixDatabase";
+import safeStringify from "../../public/main/common/util/jsTypes/safeStringify";
 
 var productModel: ProductModel;
 var product: Product;
 var productConfiguationService: AbstractProductConfigurationService;
-var productOptions: List<ProductOption>;
+var allProductOptions: List<ProductOption>;
 let cache = [];
 
 
 //@ts-ignore
 $w.onReady(async function () {
-	let pm = JSON.parse(await index());
-	productModel = (new ProductModel()).fill(pm);
-	productModel.typesize(pm);
-	console.log(productModel);
 
-	let productModell = (await ProductModel.find(ProductModel)).first();
-	await productModell.loadChain(ProductOptionType, ProductOption, Tag);
-	console.log("pm", productModell);
+	productModel = (await ProductModel.find(ProductModel)).first();
+	await productModel.loadChain(ProductOptionType, ProductOption, Tag);
+	console.log("frontend", productModel);
 
+	allProductOptions = new List<ProductOption>();
+	productModel.productOptionTypes.foreach(types => allProductOptions = allProductOptions.OR(types.productOptions));
+	console.log(allProductOptions);
 	productConfiguationService = ProductConfigurationServiceFactory.byModel(productModel);
 	product = new Product();
 
-	productConfiguationService.fillMissingProductOptionsWithDefault(productOptions, product);
+	productConfiguationService.fillMissingProductOptionsWithDefault(allProductOptions, product);
+	console.log(product);
 
 	initRepeater();
 	applyFilterForRepeater();
 	displayProductAsActualConfiguration();
-	product.productOptions.foreach(option => updateViewSelectedItems(option.productOptionType.title));
+	//product.productOptions.foreach(option => updateViewSelectedItems(option.productOptionType.title));
 });
 
 function onProductOptionSelection(productOption: ProductOption) {
 
-	console.log(productConfiguationService.setOptionAndDefaultOnComplications(productOption, product, productOptions));
-	console.log(product);
 	displayProductAsActualConfiguration();
 	applyFilterForRepeater();
 }
 
 function displayProductAsActualConfiguration(): void {
 	//@ts-ignore
-	$w("#imageConfiguration").src = product.getOption("profil").image;
+	$w("#imageConfiguration").src = (product.hasOption('profil')) ? product.getOption("profil").image : 'https://wuerdest-du-eher.de/ratgeber/wp-content/uploads/2017/07/was-heisst-nope-auf-deutsch.jpg';
 	//@ts-ignore
 	$w("#textConfigurationPrice").text = "" + product.price + "€";
 
@@ -94,7 +94,7 @@ function repeaterByProductOptionTypeTitle(productOptionTypeTitle: string): any {
 
 function applyFilterForRepeater(): void {
 	productModel.productOptionTypes.foreach((productOptionType) => {
-		let filteredData = productConfiguationService.filterValidOptions(productOptions, product, productOptionType.title);
+		let filteredData = productConfiguationService.filterValidOptions(allProductOptions, product, productOptionType.title);
 		repeaterByProductOptionTypeTitle(productOptionType.title).data = filteredData.toArray();
 
 	});

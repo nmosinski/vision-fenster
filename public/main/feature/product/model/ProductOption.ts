@@ -3,9 +3,10 @@ import ProductOptionType from "./ProductOptionType";
 import List from "../../../common/util/collections/list/List";
 import QueryResult from "../../../common/orm/QueryResult";
 import Tag from "./Tag";
+import { Query } from "../../../common/orm/WixDatabase";
 
 
-class ProductOption extends AbstractModel<ProductOption> implements IsTypesizable {
+class ProductOption extends AbstractModel<ProductOption>{
     private _productOptionType: ProductOptionType;
     private _value: string;
     private _tags: QueryResult<Tag>;
@@ -14,6 +15,7 @@ class ProductOption extends AbstractModel<ProductOption> implements IsTypesizabl
     protected Constructor: new () => ProductOption;
     init(): void {
         this.Constructor = ProductOption;
+        this.tags = new QueryResult<Tag>();
     }
 
     addProperties(): void {
@@ -40,31 +42,8 @@ class ProductOption extends AbstractModel<ProductOption> implements IsTypesizabl
     }
 
     addTag(tag: Tag) {
-        if (!this.tags)
-            this.tags = new QueryResult();
         if (this.tags.hasNot(tag))
             this.tags.add(tag);
-    }
-
-    typesize(json: any): this {
-
-        if (json._tags && !(this.tags instanceof QueryResult)) {
-            this.tags = new QueryResult();
-            json._tags._elements.forEach((el) => {
-                let tag = new Tag(el);
-                tag.addProductOption(this);
-                this.addTag(tag);
-                tag.typesize(el);
-            });
-        }
-
-        if (json._productOptionType && !(this.productOptionType instanceof ProductOptionType)) {
-            this.productOptionType = new ProductOptionType(json._productOptionType);
-            this.productOptionType.addProductOption(this);
-            this.productOptionType.typesize(json._productOptionType);
-        }
-
-        return this;
     }
 
     set productOptionType(type: ProductOptionType) {

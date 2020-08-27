@@ -132,7 +132,6 @@ class List<T> implements IComparable {
 	 */
 	reduce(...propertyNames: Array<any>): List<any> {
 		let reduced = new List<any>();
-
 		if (propertyNames.length === 1)
 			this.foreach((t) => { reduced.add(t[propertyNames[0]]); });
 		else
@@ -288,10 +287,10 @@ class List<T> implements IComparable {
 	 */
 	remove(elementIdx: number): void | never {
 		if (!JsTypes.isNumber(elementIdx))
-			throw new VariableTypeError(PATH, "List.get(elementIdx)", elementIdx, "Number");
+			throw new VariableTypeError(PATH, "List.remove(elementIdx)", elementIdx, "Number");
 
 		if (elementIdx < 0 || elementIdx >= this.length)
-			throw new VariableValueError(PATH, "List.get(elementIdx)", elementIdx, "-1<x<" + this.length);
+			throw new VariableValueError(PATH, "List.remove(elementIdx)", elementIdx, "-1<x<" + this.length);
 
 		this._elements.splice(elementIdx, 1);
 	}

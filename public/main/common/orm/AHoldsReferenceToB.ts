@@ -82,7 +82,6 @@ abstract class AHoldsReferenceToB<A extends AbstractModel<A>, B extends Abstract
         let aRelativeB = new this.relativeB();
         let bQuery = this.queryOfRelativeB();
         let toFindIds: Set<string> = new Set<string>(relatives.reduce(aRelativeB.asFk()).toArray());
-
         bQuery = bQuery.hasSome("_id", toFindIds);
 
         return await bQuery.execute();

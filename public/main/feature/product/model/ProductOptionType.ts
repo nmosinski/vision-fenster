@@ -1,11 +1,9 @@
 import AbstractModel from "../../../common/orm/AbstractModel";
 import ProductOption from "./ProductOption"
-import List from "../../../common/util/collections/list/List";
 import ProductModel from "./ProductModel";
 import QueryResult from "../../../common/orm/QueryResult";
-import { Query } from "../../../common/orm/WixDatabase";
 
-class ProductOptionType extends AbstractModel<ProductOptionType> implements IsTypesizable {
+class ProductOptionType extends AbstractModel<ProductOptionType>{
     protected Constructor: new () => ProductOptionType;
 
     private _title: string;
@@ -14,6 +12,7 @@ class ProductOptionType extends AbstractModel<ProductOptionType> implements IsTy
 
     init(): void {
         this.Constructor = ProductOptionType;
+        this.productOptions = new QueryResult<ProductOption>();
     }
 
     addProperties(): void {
@@ -35,29 +34,8 @@ class ProductOptionType extends AbstractModel<ProductOptionType> implements IsTy
     }
 
     addProductOption(productOption: ProductOption) {
-        if (!this.productOptions)
-            this.productOptions = new QueryResult();
         if (this.productOptions.hasNot(productOption))
             this.productOptions.add(productOption);
-    }
-
-    typesize(json: any) {
-
-        if (json._productModel && !(this.productModel instanceof ProductModel)) {
-            this.productModel = (new ProductModel(json._productModel));
-            this.productModel.addProductOptionType(this);
-            this.productModel.typesize(json._productModel);
-        }
-        if (json._productOptions && !(this.productOptions instanceof QueryResult)) {
-            this.productOptions = new QueryResult<ProductOption>();
-            json._productOptions._elements.forEach((el) => {
-                let productOption = (new ProductOption(el));
-                productOption.productOptionType = this;
-                this.addProductOption(productOption);
-                productOption.typesize(el);
-            });
-        }
-        return this;
     }
 
     set title(title: string) {

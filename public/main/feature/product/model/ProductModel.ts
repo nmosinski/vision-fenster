@@ -5,13 +5,14 @@ import KVMap from "../../../common/util/collections/map/KVMap";
 import Product from "./Product";
 import QueryResult from "../../../common/orm/QueryResult";
 
-class ProductModel extends AbstractModel<ProductModel> implements IsTypesizable {
+class ProductModel extends AbstractModel<ProductModel>{
     protected Constructor: new () => ProductModel;
     private _productOptionTypes: QueryResult<ProductOptionType>;
     private _title: string;
 
     init(): void {
         this.Constructor = ProductModel;
+        this.productOptionTypes = new QueryResult<ProductOptionType>();
     }
 
     addProperties(): void {
@@ -33,23 +34,8 @@ class ProductModel extends AbstractModel<ProductModel> implements IsTypesizable 
     }
 
     addProductOptionType(productOptionType: ProductOptionType) {
-        if (!this.productOptionTypes)
-            this.productOptionTypes = new QueryResult();
         if (this.productOptionTypes.hasNot(productOptionType))
             this.productOptionTypes.add(productOptionType);
-    }
-
-    typesize(json: any) {
-        if (json.productOptionTypes && !(this.productOptionTypes instanceof QueryResult)) {
-            this.productOptionTypes = new QueryResult<ProductOptionType>();
-            json._productOptionTypes._elements.forEach((el: any) => {
-                let productOptionType = new ProductOptionType(el);
-                productOptionType.productModel = this;
-                this.addProductOptionType(productOptionType);
-                productOptionType.typesize(el);
-            });
-        }
-        return this;
     }
 
     set title(title: string) {

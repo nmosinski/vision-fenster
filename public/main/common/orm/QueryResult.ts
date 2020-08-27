@@ -26,8 +26,6 @@ class QueryResult<T extends AbstractModel<T>> extends List<T>
      * @return {QueryResult<any>} this or a QueryResult containing relatives of all items of this List.
      */
     async load(...models: Array<new () => AbstractModel<any>>): Promise<QueryResult<AbstractModel<any>>> {
-        if (this.isEmpty())
-            return this;
         let result: QueryResult<AbstractModel<any>> = this;
         let modelsList = new List<new () => AbstractModel<any>>(models);
         await modelsList.foreachAsync(async (Model: new () => AbstractModel<any>) => {
