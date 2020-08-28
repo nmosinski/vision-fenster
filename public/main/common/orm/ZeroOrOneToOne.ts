@@ -1,5 +1,6 @@
 import AbstractModel from "./AbstractModel";
 import AHoldsReferenceToB from "./AHoldsReferenceToB";
+import OneToZeroOrOne from "./OneToZeroOrOne";
 
 
 class ZeroOrOneToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends AHoldsReferenceToB<A, B>
@@ -8,8 +9,8 @@ class ZeroOrOneToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> ext
         super(relativeA, relativeB);
     }
 
-    inverse(): ZeroOrOneToOne<B, A> {
-        return new ZeroOrOneToOne(this.relativeB, this.relativeA);
+    inverse(): OneToZeroOrOne<B, A> {
+        return new OneToZeroOrOne(this.relativeB, this.relativeA);
     }
 
     bAsPropertyNameForA(): string {
