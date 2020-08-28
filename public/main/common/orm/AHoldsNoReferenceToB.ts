@@ -47,29 +47,6 @@ abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends Abstra
         return false;
     }
 
-    async relationalLoad(relatives: List<A>): Promise<QueryResult<B>> {
-        let bs = await this.relationalFind(relatives);
-        relatives.foreach((a: A) => {
-            let related = new QueryResult<B>();
-            bs.foreach((b: B) => {
-                if (this.areRelated(a, b))
-                    related.add(b);
-            });
-            a[this.bAsPropertyNameForA()] = related;
-        });
-
-        bs.foreach((b: B) => {
-            let related = new QueryResult<A>();
-            relatives.foreach((a: A) => {
-                if (this.areRelated(a, b))
-                    related.add(a);
-            });
-            b[this.aAsPropertyNameForB()] = related.first();
-        });
-
-        return bs;
-    }
-
     async relationalFind(relatives: List<A>): Promise<QueryResult<B>> {
         if (relatives.isEmpty())
             return new QueryResult<B>();

@@ -146,7 +146,6 @@ async function simpleFind() {
 
 async function simpleLoad() {
     await testUsers.first().load(TestShoppingCart);
-    console.log(testUsers);
 
     if (testUsers.first().testShoppingCart.id !== testShoppingCarts.first().id)
         return false;

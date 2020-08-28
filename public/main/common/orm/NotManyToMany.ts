@@ -12,14 +12,8 @@ abstract class NotManyToMany<A extends AbstractModel<A>, B extends AbstractModel
 
     async relationalLoad(relatives: List<A>): Promise<QueryResult<B>> {
         let bs = await this.relationalFind(relatives);
-        relatives.foreach((a: A) => {
-            let related = new QueryResult<B>();
-            bs.foreach((b: B) => {
-                if (this.areRelated(a, b))
-                    related.add(b);
-            });
-            a[this.bAsPropertyNameForA()] = related;
-        });
+        this.assign(bs, relatives);
+
         return bs;
     }
 }
