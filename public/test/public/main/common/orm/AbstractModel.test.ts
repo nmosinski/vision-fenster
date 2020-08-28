@@ -15,8 +15,8 @@ var testUsers: List<TestUser>;
 export async function runAllTests() {
     let tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
 
+    tests.add(new Test(PATH, "link", truthly(), link));
     tests.add(new Test(PATH, "assign", truthly(), assign));
-    tests.add(new Test(PATH, "assign multiple", truthly(), assignMultiple));
 
     tests.add(new Test(PATH, "simple get", truthly(), simpleGet));
     tests.add(new Test(PATH, "simple find", truthly(), simpleFind));
@@ -70,9 +70,9 @@ async function beforeEach() {
     testShoppingCarts = TestShoppingCart.dummies(TestShoppingCart, 3);
     testShoppingCartItems = TestShoppingCartItem.dummies(TestShoppingCartItem, 5);
     testUsers = TestUser.dummies(TestUser, 2);
-    testShoppingCartItems.first().assign(testShoppingCarts.first());
-    testShoppingCartItems.get(1).assign(testShoppingCarts.first());
-    testShoppingCarts.first().assign(testUsers.first());
+    testShoppingCartItems.first().link(testShoppingCarts.first());
+    testShoppingCartItems.get(1).link(testShoppingCarts.first());
+    testShoppingCarts.first().link(testUsers.first());
 
     await WixDatabase.createMultiple(testShoppingCarts);
     await WixDatabase.createMultiple(testShoppingCartItems);
@@ -85,18 +85,48 @@ async function afterEach() {
     await WixDatabase.removeAll(TestShoppingCartItem);
 }
 
-function assign() {
-    testShoppingCartItems.last().assign(testShoppingCarts.last());
-    return testShoppingCartItems.last()[TestShoppingCart.asFk(TestShoppingCart)] === testShoppingCarts.last().id;
+function link() {
+    let ret = true;
+
+    testShoppingCartItems.last().link(testShoppingCarts.last());
+    if (testShoppingCartItems.last()[TestShoppingCart.asFk(TestShoppingCart)] !== testShoppingCarts.last().id) {
+        console.log(testShoppingCartItems, "testShoppingCartItems");
+        console.log(testShoppingCarts, "testShoppingCarts");
+        console.log("first if");
+        return false;
+    }
+    testShoppingCartItems.foreach((item) => { item.link(testShoppingCarts.last()); });
+
+    testShoppingCartItems.foreach((testShoppingCartItem) => {
+        if (testShoppingCartItem[TestShoppingCart.asFk(TestShoppingCart)] !== testShoppingCarts.last().id) {
+            console.log(testShoppingCartItem, "testShoppingCartItem");
+            console.log(testShoppingCarts.last(), "testShoppingCart");
+            ret = false;
+        }
+    });
+    return ret;
 }
 
-function assignMultiple() {
+function assign() {
     let ret = true;
+
+    testShoppingCartItems.last().link(testShoppingCarts.last());
+    testShoppingCartItems.last().assign(testShoppingCarts.last());
+    if (testShoppingCartItems.last()["testShoppingCart"] !== testShoppingCarts.last()) {
+        console.log(testShoppingCartItems, "testShoppingCartItems");
+        console.log(testShoppingCarts, "testShoppingCarts");
+        console.log("first if");
+        return false;
+    }
+    testShoppingCartItems.foreach((item) => { item.link(testShoppingCarts.last()); });
     testShoppingCartItems.foreach((item) => { item.assign(testShoppingCarts.last()); });
 
-    testShoppingCartItems.foreach((item) => {
-        if (item[TestShoppingCart.asFk(TestShoppingCart)] !== testShoppingCarts.last().id)
+    testShoppingCartItems.foreach((testShoppingCartItem) => {
+        if (testShoppingCartItem["testShoppingCart"] !== testShoppingCarts.last()) {
+            console.log(testShoppingCartItem, "testShoppingCartItem");
+            console.log(testShoppingCarts.last(), "testShoppingCart");
             ret = false;
+        }
     });
     return ret;
 }
@@ -116,8 +146,11 @@ async function simpleFind() {
 
 async function simpleLoad() {
     await testUsers.first().load(TestShoppingCart);
+    console.log(testUsers);
+
     if (testUsers.first().testShoppingCart.id !== testShoppingCarts.first().id)
         return false;
+
 
     await testShoppingCarts.first().load(TestShoppingCartItem);
     if (!testShoppingCarts.first().testShoppingCartItems.equals(new List([testShoppingCartItems.first(), testShoppingCartItems.get(1)])))

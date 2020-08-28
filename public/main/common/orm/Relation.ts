@@ -17,20 +17,18 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
     abstract inverse(): Relation<B, A>;
 
     /**
-     * Assign a B to a relative of type A. 
-     * @param {B} toBeAssigned The B that will be assigned to A.
-     * @param {A} relative The relative the B will be assigned to.
-     * @returns {B} The B.
+     * Assign Bs to relatives of type A and reverse if they belong to each other. 
+     * @param {B|List<B>} bs The Bs that will be assigned to As.
+     * @param {A|List<A} as The As the Bs will be assigned to.
      */
-    abstract assign(toBeAssigned: B, relative: A): B;
+    abstract assign(bs: B | List<B>, as: A | List<A>): void;
 
     /**
-     * Assign multiple Bs to a relative of type A. 
-     * @param {List<B>} toBeAssigned The Bs that will be assigned to A.
-     * @param {A} relative The relative the B will be assigned to.
-     * @returns {List<B>} The Bs.
+     * Link Bs to relatives of type A and reverse.
+     * @param {B|List<B>} bs The Bs that will be linked to As.
+     * @param {A|List<A} as The As the Bs will be linked to.
      */
-    abstract assignMultiple(toBeAssigned: List<B>, relative: A): List<B>;
+    abstract link(bs: B | List<B>, as: A | List<A>): void;
 
     /**
      * Get a B that belongs to the given relative of type A.

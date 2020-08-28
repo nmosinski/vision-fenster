@@ -16,8 +16,8 @@ var testTags: List<TestTag>;
 export async function runAllTests() {
     let tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
 
-    //tests.add(new Test(PATH, "relational assign", truthly(), relationalAssign));
-    //tests.add(new Test(PATH, "relational assign multiple", truthly(), relationalAssignMultiple));
+    //tests.add(new Test(PATH, "relational link", truthly(), relationalLink));
+    //tests.add(new Test(PATH, "relational link multiple", truthly(), relationalLinkMultiple));
     tests.add(new Test(PATH, "relational get", truthly(), relationalGet));
     tests.add(new Test(PATH, "relational find", truthly(), relationalFind));
     tests.add(new Test(PATH, "relational destroy", truthly(), relationalDestroy));

@@ -3,9 +3,9 @@ import List from "../util/collections/list/List";
 import QueryResult from "./QueryResult";
 import OneToMany from "./OneToMany";
 import ManyToOne from "./ManyToOne";
-import AHoldsNoReferenceToB from "./AHoldsNoReferenceToB";
 import Relation from "./Relation";
-
+import NotImplementedError from "../util/error/NotImplementedError";
+const PATH = "public/main/common/orm/ManyToMany"
 
 
 class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends Relation<A, B>
@@ -25,30 +25,54 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends
         return AbstractModel.asMultiplePropertyName(this.relativeB);
     }
 
-    assign(toBeAssigned: B, relative: A): B {
-        throw new Error("Method not implemented.");
-    }
-    assignMultiple(toBeAssigned: List<B>, relative: A): List<B> {
-        throw new Error("Method not implemented.");
+    assign(bs: B | List<B>, as: A | List<A>): void {
+        throw new NotImplementedError(PATH, "assign");
+        /**
+        let asList: List<A> = (as instanceof List) ? as : new List<A>([as]);
+        let bsList: List<B> = (bs instanceof List) ? bs : new List<B>([bs]);
+
+        asList.foreach((a: A) => {
+            let related = new QueryResult<B>();
+            bsList.foreach((b: B) => {
+                if (this.areRelated(a, b, roles))
+                    related.add(b);
+            });
+            a[this.bAsPropertyNameForA()] = related;
+        });
+
+        bsList.foreach((b: B) => {
+            let related = new QueryResult<A>();
+            asList.foreach((a: A) => {
+                if (this.areRelated(a, b, roles))
+                    related.add(a);
+            });
+            b[this.aAsPropertyNameForB()] = related;
+        });
+        */
     }
 
+    link(bs: B | List<B>, as: A | List<A>): void {
+        throw new NotImplementedError(PATH, "link");
+    }
+
+
     relationalCreate(toCreate: B, relatives?: List<A>): Promise<void> {
-        throw new Error("Method not implemented.");
+        throw new NotImplementedError(PATH, "relationalCreate");
     }
     relationalSave(toSave: B, relatives?: List<A>): Promise<void> {
-        throw new Error("Method not implemented.");
+        throw new NotImplementedError(PATH, "relationalSave");
     }
     relationalUpdate(toUpdate: B, relatives?: List<A>): Promise<void> {
-        throw new Error("Method not implemented.");
+        throw new NotImplementedError(PATH, "relationalUpdate");
     }
     relationalCreateMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {
-        throw new Error("Method not implemented.");
+        throw new NotImplementedError(PATH, "relationalCreateMultiple");
     }
     relationalSaveMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {
-        throw new Error("Method not implemented.");
+        throw new NotImplementedError(PATH, "relationalSaveMultiple");
     }
     relationalUpdateMultiple(toUpdate: List<B>, relatives?: List<A>): Promise<void> {
-        throw new Error("Method not implemented.");
+        throw new NotImplementedError(PATH, "relationalUpdateMultiple");
     }
 
     async relationalGet(relative: A): Promise<B> {

@@ -288,39 +288,43 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
     }
 
     /**
-     * Assign the given model (this by default) to the given relative.
+     * Assign the given model (this by default) to the given relative if linked.
      * @param {T extends AbstractModel<T>} model The model to be assigned.
      * @param {U extends AbstractModel<U>} relative The relative the given model will be assigned to. 
      */
-    assign<U extends AbstractModel<U>>(relative: U): void {
-        AbstractModel.assign(<T><unknown>this, relative);
+    assign<U extends AbstractModel<U>>(relatives: U | List<U>): void {
+        AbstractModel.assign(<T><unknown>this, relatives);
     }
 
     /**
-     * Assign the given model (this by default) to the given relative.
+     * Assign the given model (this by default) to the given relative if linked.
      * @param {T extends AbstractModel<T>} model The model to be assigned.
      * @param {U extends AbstractModel<U>} relative The relative the given model will be assigned to. 
      */
-    static assign<P extends AbstractModel<P>, U extends AbstractModel<U>>(model: P, relative: U): void {
-        model.relations.get(relative.Constructor).assign(model, relative);
+    static assign<P extends AbstractModel<P>, U extends AbstractModel<U>>(models: P | List<P>, relatives: U | List<U>): void {
+        let model = (models instanceof List) ? models.first() : models;
+        let relative = (relatives instanceof List) ? relatives.first() : relatives;
+        model.relations.get(relative.Constructor).assign(models, relatives);
     }
 
     /**
-     * Assign multiple models to the given relative.
-     * @param {List<T extends AbstractModel<T>>} models The models to be assigned.
-     * @param {U extends AbstractModel<U>} relative The relative the given model will be assigned to. 
+     * Link the given model (this by default) to the given relative.
+     * @param {T extends AbstractModel<T>} model The model to be linked.
+     * @param {U extends AbstractModel<U>} relative The relative the given model will be linked to. 
      */
-    assignMultiple<U extends AbstractModel<U>>(models: List<T>, relative: U): void {
-        AbstractModel.assignMultiple(models, relative);
+    link<U extends AbstractModel<U>>(relatives: U | List<U>): void {
+        AbstractModel.link(<T><unknown>this, relatives);
     }
 
     /**
-     * Assign multiple models to the given relative.
-     * @param {List<P extends AbstractModel<P>>} models The models to be assigned.
-     * @param {U extends AbstractModel<U>} relative The relative the given model will be assigned to. 
+     * Link the given model (this by default) to the given relative.
+     * @param {T extends AbstractModel<T>} model The model to be linked.
+     * @param {U extends AbstractModel<U>} relative The relative the given model will be linked to. 
      */
-    static assignMultiple<P extends AbstractModel<P>, U extends AbstractModel<U>>(models: List<P>, relative: U): void {
-        models.foreach((model) => { AbstractModel.assign(model, relative); });
+    static link<P extends AbstractModel<P>, U extends AbstractModel<U>>(models: P | List<P>, relatives: U | List<U>): void {
+        let model = (models instanceof List) ? models.first() : models;
+        let relative = (relatives instanceof List) ? relatives.first() : relatives;
+        model.relations.get(relative.Constructor).link(models, relatives);
     }
 
     /**
@@ -470,7 +474,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
 
     /**
      * Create the given model (this by default).
-     * If called over a relative, try to assign this model to the first retrieved model by the chained query.
+     * If called over a relative, try to link this model to the first retrieved model by the chained query.
      * This may not be possible depending on the relationship to the parent.
      * @param {T} [model=this] The model to be created.
      */
@@ -491,7 +495,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
             else
                 previousQueryResult = await this.parent.find();
 
-            model = this.relations.get(this.parent.Constructor).assign(model, previousQueryResult.first());
+            this.relations.get(this.parent.Constructor).link(model, previousQueryResult.first());
 
         }
 
@@ -540,7 +544,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
             else
                 previousQueryResult = await this.parent.find();
 
-            models = this.relations.get(this.parent.Constructor).assignMultiple(models, previousQueryResult.first());
+            this.relations.get(this.parent.Constructor).link(models, previousQueryResult.first());
         }
 
         return await AbstractModel.createMultiple(models);
@@ -588,7 +592,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
             else
                 previousQueryResult = await this.parent.find();
 
-            model = this.relations.get(this.parent.Constructor).assign(model, previousQueryResult.first());
+            this.relations.get(this.parent.Constructor).link(model, previousQueryResult.first());
         }
 
         // Save this.
@@ -635,7 +639,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
             else
                 previousQueryResult = await this.parent.find();
 
-            models = this.relations.get(this.parent.Constructor).assignMultiple(models, previousQueryResult.first());
+            this.relations.get(this.parent.Constructor).link(models, previousQueryResult.first());
         }
 
         return await AbstractModel.saveMultiple(models);
@@ -684,7 +688,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
             else
                 previousQueryResult = await this.parent.find();
 
-            model = this.relations.get(this.parent.Constructor).assign(model, previousQueryResult.first());
+            this.relations.get(this.parent.Constructor).link(model, previousQueryResult.first());
         }
 
         // Update this.
@@ -731,7 +735,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
             else
                 previousQueryResult = await this.parent.find();
 
-            models = this.relations.get(this.parent.Constructor).assignMultiple(models, previousQueryResult.first());
+            this.relations.get(this.parent.Constructor).link(models, previousQueryResult.first());
         }
 
         return await AbstractModel.updateMultiple(models);

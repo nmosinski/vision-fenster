@@ -50,7 +50,6 @@ async function relationalFind() {
     testShoppingCartItems.foreach((item) => { item[TestShoppingCart.asFk(TestShoppingCart)] = testShoppingCarts.first().id });
     testShoppingCartItems.first()[TestShoppingCart.asFk(TestShoppingCart)] = testShoppingCarts.get(1).id;
     let expectedSublist = testShoppingCarts.sublist(0, 1);
-
     let result = await relation.relationalFind(testShoppingCartItems);
 
     return result.equals(expectedSublist);

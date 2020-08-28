@@ -16,8 +16,7 @@ var relation: AHoldsNoReferenceToB<TestShoppingCart, TestShoppingCartItem>;
 export async function runAllTests() {
     let tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
 
-    tests.add(new Test(PATH, "relational assign", truthly(), relationalAssign));
-    tests.add(new Test(PATH, "relational assignMultiple", truthly(), relationalAssignMultiple));
+    tests.add(new Test(PATH, "relational link", truthly(), relationalLink));
     tests.add(new Test(PATH, "relational get", truthly(), relationalGet));
     tests.add(new Test(PATH, "relational find", truthly(), relationalFind));
 
@@ -41,14 +40,13 @@ async function afterEach() {
     await WixDatabase.removeAll(TestShoppingCartItem);
 }
 
-function relationalAssign() {
-    relation.assign(testShoppingCartItems.first(), testShoppingCarts.first());
-    return testShoppingCartItems.first()[TestShoppingCart.asFk(TestShoppingCart)] === testShoppingCarts.first().id;
-}
-
-function relationalAssignMultiple() {
+function relationalLink() {
     let ret = true;
-    relation.assignMultiple(testShoppingCartItems, testShoppingCarts.first());
+
+    relation.link(testShoppingCartItems.first(), testShoppingCarts.first());
+    ret = testShoppingCartItems.first()[TestShoppingCart.asFk(TestShoppingCart)] === testShoppingCarts.first().id;
+
+    relation.link(testShoppingCartItems, testShoppingCarts.first());
 
     testShoppingCartItems.foreach((item) => {
         if (item[TestShoppingCart.asFk(TestShoppingCart)] !== testShoppingCarts.first().id)

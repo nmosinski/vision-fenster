@@ -237,6 +237,16 @@ class List<T> implements IComparable {
 		return this.get(0);
 	}
 
+	/**
+     * Get the first item or return null, if the first is empty.
+     * @returns {T} The item.
+     */
+	firstOrNull(): T | null {
+		if (this.length < 1)
+			return null;
+		return this.get(0);
+	}
+
     /**
      * Get the last item.
      * @returns {T} The item.

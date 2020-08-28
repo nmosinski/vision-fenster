@@ -12,15 +12,13 @@ const PATH = "public/main/common/orm/AHoldsNoReferenceToB.js";
  */
 abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends AbstractModel<B>> extends NotManyToMany<A, B>
 {
-    assign(toBeAssigned: B, relative: A): B {
-        toBeAssigned[relative.asFk()] = relative.id;
+    link(bs: B | List<B>, as: A | List<A>): void {
+        let a: A = (as instanceof List) ? as.first() : as;
+        let bsList: List<B> = (bs instanceof List) ? bs : new List<B>([bs]);
 
-        return toBeAssigned;
-    }
-
-    assignMultiple(toBeAssigned: List<B>, relative: A): List<B> {
-        toBeAssigned.foreach((b) => { this.assign(b, relative); });
-        return toBeAssigned;
+        bsList.foreach((b: B) => {
+            b[AbstractModel.asFk(this.relativeA)] = a.id;
+        });
     }
 
     async relationalGet(relative: A): Promise<B> {
