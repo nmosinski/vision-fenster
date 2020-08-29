@@ -17,12 +17,19 @@ class List<T> implements IComparable {
 	 * Create a List.
 	 * @param {Array<T>} [elements=Array<T>] - An array of elements that the list will contain from the beginning.
 	 */
-	constructor(elements: Array<T> = []) {
+	constructor(elements: Array<T> | T | List<T> = []) {
 		this._elements = [];
+		let toInsert = [];
 
-		if (JsTypes.isArray(elements))
-			for (let idx in elements)
-				this.add(elements[idx]);
+		if (elements instanceof List)
+			toInsert = elements.toArray();
+		else if (Array.isArray(elements))
+			toInsert = elements;
+		else
+			toInsert.push(elements);
+
+		for (let idx in toInsert)
+			this.add(toInsert[idx]);
 	}
 
 	/**
