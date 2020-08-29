@@ -78,49 +78,47 @@ class WixDatabase<T extends AbstractModel<T>>
 
     /**
      * Create an item.
-     * @param {T} toCreate The item to be created. 
+     * @param {T|List<T>} toCreate The item to be created. 
      */
-    async create(toCreate: T): Promise<void> {
+    async create(toCreate: T | List<T>): Promise<void> {
         return await WixDatabase.create(toCreate);
     }
 
     /**
      * Create an item.
-     * @param {U} toCreate The item to be created. 
+     * @param {U|List<U>} toCreate The item to be created. 
      */
-    static async create<U extends AbstractModel<U>>(toCreate: U): Promise<void> {
-        await wixData.insert(toCreate.tableName, modelToItem(toCreate));
+    static async create<U extends AbstractModel<U>>(toCreate: U | List<U>): Promise<void> {
+        if (toCreate instanceof List)
+            return await WixDatabase.createMultiple(toCreate);
+        else
+            return await wixData.insert(toCreate.tableName, modelToItem(toCreate));
     }
 
     /**
      * Save an item.
-     * @param {T} toSave The item to be saved. 
+     * @param {T|List<T>} toSave The item to be saved. 
      */
-    async save(toSave: T): Promise<void> {
+    async save(toSave: T | List<T>): Promise<void> {
         return await WixDatabase.save(toSave);
     }
 
     /**
      * Save an item.
-     * @param {U} toSave The item to be saved. 
+     * @param {U|List<U>} toSave The item to be saved. 
      */
-    static async save<U extends AbstractModel<U>>(toSave: U): Promise<void> {
-        await wixData.save(toSave.tableName, modelToItem(toSave));
+    static async save<U extends AbstractModel<U>>(toSave: U | List<U>): Promise<void> {
+        if (toSave instanceof List)
+            await WixDatabase.saveMultiple(toSave);
+        else
+            await wixData.save(toSave.tableName, modelToItem(toSave));
     }
 
     /**
      * Create multiple items.
-     * @param {T} toSave The items to be created. 
+     * @param {List<U>} toCreate The items to be created. 
      */
-    async createMultiple(toCreate: List<T>): Promise<void> {
-        return await WixDatabase.createMultiple(toCreate);
-    }
-
-    /**
-     * Create multiple items.
-     * @param {U} toCreate The items to be created. 
-     */
-    static async createMultiple<U extends AbstractModel<U>>(toCreate: List<U>): Promise<void> {
+    private static async createMultiple<U extends AbstractModel<U>>(toCreate: List<U>): Promise<void> {
         if (toCreate.isEmpty())
             return;
 
@@ -129,85 +127,69 @@ class WixDatabase<T extends AbstractModel<T>>
 
     /**
      * Save multiple items.
-     * @param {T} toSave The items to be saved. 
+     * @param {List<U>} toSave The items to be saved. 
      */
-    async saveMultiple(toSave: List<T>): Promise<void> {
-        return await WixDatabase.saveMultiple(toSave);
-    }
-
-    /**
-     * Save multiple items.
-     * @param {U} toSave The items to be saved. 
-     */
-    static async saveMultiple<U extends AbstractModel<U>>(toSave: List<U>): Promise<void> {
+    private static async saveMultiple<U extends AbstractModel<U>>(toSave: List<U>): Promise<void> {
         if (toSave.isEmpty())
             return;
+
         await wixData.bulkSave(toSave.first().tableName, modelsToItems(toSave));
     }
 
     /**
      * Save an item.
-     * @param {T} toSave The item to be saved. 
+     * @param {T|List<T>} toSave The item to be saved. 
      */
-    async update(toUpdate: T): Promise<void> {
-        return await WixDatabase.update(toUpdate);
+    async update(toUpdate: T | List<T>): Promise<void> {
+        await WixDatabase.update(toUpdate);
     }
 
     /**
      * Save an item.
-     * @param {U} toSave The item to be saved. 
+     * @param {U|List<U>} toSave The item to be saved. 
      */
-    static async update<U extends AbstractModel<U>>(toUpdate: U): Promise<void> {
-        await wixData.update(toUpdate.tableName, modelToItem(toUpdate));
+    static async update<U extends AbstractModel<U>>(toUpdate: U | List<U>): Promise<void> {
+        if (toUpdate instanceof List)
+            await WixDatabase.updateMultiple(toUpdate);
+        else
+            await wixData.update(toUpdate.tableName, modelToItem(toUpdate));
     }
 
     /**
      * Update multiple items.
-     * @param {T} toUpdate The items to be updated. 
+     * @param {List<U>} toUpdate The items to be updated. 
      */
-    async updateMultiple(toUpdate: List<T>): Promise<void> {
-        return await WixDatabase.updateMultiple(toUpdate);
-    }
-
-    /**
-     * Update multiple items.
-     * @param {U} toUpdate The items to be updated. 
-     */
-    static async updateMultiple<U extends AbstractModel<U>>(toUpdate: List<U>): Promise<void> {
+    private static async updateMultiple<U extends AbstractModel<U>>(toUpdate: List<U>): Promise<void> {
         if (toUpdate.isEmpty())
             return;
+
         await wixData.bulkUpdate(toUpdate.first().tableName, modelsToItems(toUpdate));
     }
 
     /**
      * Remove an item.
-     * @param {T} toRemove The item to be removed. 
+     * @param {T|List<T>} toRemove The item to be removed. 
      */
-    async remove(toRemove: T): Promise<void> {
-        return await WixDatabase.remove(toRemove);
+    async remove(toRemove: T | List<T>): Promise<void> {
+        await WixDatabase.remove(toRemove);
     }
 
     /**
      * Remove an item.
-     * @param {U} toRemove The item to be removed. 
+     * @param {U|List<U>} toRemove The item to be removed. 
      */
-    static async remove<U extends AbstractModel<U>>(toRemove: U): Promise<void> {
-        await wixData.remove(toRemove.tableName, toRemove[itemToModelPropertyMapping("_id")]);
-    }
-
-    /**
-     * Remove multiple items.
-     * @param {List<T>} toRemove The items to be removed. 
-     */
-    async removeMultiple(toRemove: List<T>): Promise<void> {
-        return await WixDatabase.removeMultiple(toRemove);
+    static async remove<U extends AbstractModel<U>>(toRemove: U | List<U>): Promise<void> {
+        if (toRemove instanceof List)
+            await WixDatabase.removeMultiple(toRemove);
+        else
+            await wixData.remove(toRemove.tableName, toRemove[itemToModelPropertyMapping("_id")]);
     }
 
     /**
      * Remove multiple items.
      * @param {List<U>} toRemove The items to be removed. 
      */
-    static async removeMultiple<U extends AbstractModel<U>>(toRemove: List<U>): Promise<void> {
+    private static async removeMultiple<U extends AbstractModel<U>>(toRemove: List<U>): Promise<void> {
         if (toRemove.isEmpty())
             return;
         let ids: Array<string> = <Array<string>>toRemove.reduce(itemToModelPropertyMapping("_id")).toArray();
@@ -223,7 +205,7 @@ class WixDatabase<T extends AbstractModel<T>>
 
     /**
      * Remove all items from the collection of the given model.
-     * @param {U extends AbstractModel<u>} Model The model of which the items in its collection will be removed.
+     * @param {U extends AbstractModel<U>, new()=> U} Model The model of which the items in its collection will be removed.
      */
     static async removeAll<U extends AbstractModel<U>>(Model: new () => U): Promise<void> {
         return await wixData.truncate((new Model()).tableName);

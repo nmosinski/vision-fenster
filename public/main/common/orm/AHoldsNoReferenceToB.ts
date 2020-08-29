@@ -3,13 +3,11 @@ import Relation from "./Relation";
 import List from "../util/collections/list/List";
 import QueryResult from "./QueryResult";
 import NotManyToMany from "./NotManyToMany";
+import WixDatabase, { Query } from "./WixDatabase";
+import { AnyNumber } from "../util/supportive";
 
 const PATH = "public/main/common/orm/AHoldsNoReferenceToB.js";
 
-
-/**
- * @todo
- */
 abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends AbstractModel<B>> extends NotManyToMany<A, B>
 {
     link(bs: B | List<B>, as: A | List<A>): void {
@@ -21,24 +19,19 @@ abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends Abstra
         });
     }
 
-    async relationalGet(relative: A): Promise<B> {
+    async relationalGet(relative: A): Promise<B | never> {
         return (await this.queryOfRelativeB().eq(relative.asFk(), relative.id).execute(1)).first();
     }
 
-    async relationalCreate(toCreate: B, relatives?: List<A>): Promise<void> {
+    async relationalDestroy(relatives: AnyNumber<A> = []): Promise<void> {
+        let relativesList = new List<A>(relatives);
 
-    }
+        if (relativesList.isEmpty())
+            relativesList = await AbstractModel.find(this.relativeA);
 
-    async relationalSave(toSave: B, relatives?: List<A>): Promise<void> {
-        await this.relationalCreate(toSave, relatives);
-    }
+        let toDestroy = await this.relationalFind(relativesList);
 
-    async relationalUpdate(toUpdate: B, relatives?: List<A>): Promise<void> {
-        await this.relationalCreate(toUpdate, relatives);
-    }
-
-    async relationalDestroy(toDestroy: B, relatives?: List<A>): Promise<void> {
-        // Nothing to do.
+        await AbstractModel.destroy(toDestroy);
     }
 
     areRelated(a: A, b: B): boolean {
@@ -47,30 +40,16 @@ abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends Abstra
         return false;
     }
 
-    async relationalFind(relatives: List<A>): Promise<QueryResult<B>> {
-        if (relatives.isEmpty())
-            return new QueryResult<B>();
+    async relationalFind(relatives?: List<A>): Promise<QueryResult<B>> {
+        let relativesList = new QueryResult<A>(relatives);
+        if (relativesList.isEmpty())
+            relativesList = await AbstractModel.find(this.relativeA);
 
         let query = this.queryOfRelativeB();
-        query = query.hasSome(AbstractModel.asFk(this.relativeA), relatives.reduce("id"));
+        query = query.hasSome(AbstractModel.asFk(this.relativeA), relativesList.toPks());
 
         let result = await query.execute();
-
         return result;
-    }
-
-    async relationalCreateMultiple(toCreate: List<B>, relatives?: List<A>): Promise<void> {
-
-    }
-
-    async relationalSaveMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {
-        // throw new Error("Method not implemented.");
-    }
-    async relationalUpdateMultiple(toUpdate: List<B>, relatives?: List<A>): Promise<void> {
-        // throw new Error("Method not implemented.");
-    }
-    async relationalDestroyMultiple(toDestroy: List<B>, relatives?: List<A>): Promise<void> {
-        // Nothingto do.    
     }
 }
 

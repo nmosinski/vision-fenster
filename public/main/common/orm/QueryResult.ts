@@ -1,11 +1,12 @@
 import AbstractModel from "./AbstractModel";
 import List from "../util/collections/list/List";
 import { Query } from "./WixDatabase";
+import { AnyNumber } from "../util/supportive";
 
 class QueryResult<T extends AbstractModel<T>> extends List<T>
 {
-    constructor(list?: List<T> | Array<T>) {
-        super((list) ? (list instanceof List) ? list.toArray() : list : undefined);
+    constructor(items?: AnyNumber<T>) {
+        super(items);
     }
 
     /**
@@ -13,9 +14,49 @@ class QueryResult<T extends AbstractModel<T>> extends List<T>
      * @returns {List<string>} A list containing the primary keys of all items of this QueryResult.
      */
     toPks(): List<string> {
-        let pks = new List<string>();
-        this.foreach((item) => { pks.add(item.id); });
-        return pks;
+        return this.reduce('id');
+    }
+
+    /**
+     * Create this models.
+     */
+    async create() {
+        await AbstractModel.create(this);
+    }
+
+    /**
+     * Save this models.
+     */
+    async save() {
+        await AbstractModel.save(this);
+    }
+
+    /**
+     * Update this models.
+     */
+    async update() {
+        await AbstractModel.update(this);
+    }
+
+    /**
+     * Destroy this models.
+     */
+    async destroy() {
+        await AbstractModel.destroy(this);
+    }
+
+    /**
+     * Assign this models to the given models.
+     */
+    async assign(models: AbstractModel<any> | List<AbstractModel<any>>) {
+        AbstractModel.assign(models, this);
+    }
+
+    /**
+     * Link this models to the given models.
+     */
+    async link(models: AbstractModel<any> | List<AbstractModel<any>>) {
+        AbstractModel.link(models, this);
     }
 
     /**
@@ -25,12 +66,16 @@ class QueryResult<T extends AbstractModel<T>> extends List<T>
      * @param {...AbstractModel<any>} models The models to be loaded.
      * @return {QueryResult<any>} this or a QueryResult containing relatives of all items of this List.
      */
-    async load(...models: Array<new () => AbstractModel<any>>): Promise<QueryResult<AbstractModel<any>>> {
-        let result: QueryResult<AbstractModel<any>> = this;
+    async load(models: AnyNumber<new () => AbstractModel<any>>): Promise<QueryResult<AbstractModel<any>>> {
+        if (this.isEmpty())
+            return new QueryResult();
+
         let modelsList = new List<new () => AbstractModel<any>>(models);
+        let result: QueryResult<AbstractModel<any>> = this;
+
         await modelsList.foreachAsync(async (Model: new () => AbstractModel<any>) => {
-            let model = new Model();
-            result = await model.getRelation(this.first().Model).relationalLoad(this);
+            result = await this.first().getRelation(Model).inverse().relationalFind(this);
+            result.assign(this);
         });
 
         if (modelsList.length === 1)
@@ -38,12 +83,18 @@ class QueryResult<T extends AbstractModel<T>> extends List<T>
         return this;
     }
 
-    async loadChain(...models: Array<new () => AbstractModel<any>>): Promise<this> {
-        let modelsList = new List<new () => AbstractModel<any>>();
-        modelsList.addMultiple(models)
+    /**
+     * Load models in chain mode.
+     * @param {AnyNumber<new()=>AbstractModel<any>>} models The chain containing all models to be loaded in the corresponding order.
+     * @returns {this} This. 
+     */
+    async loadChain(models: AnyNumber<new () => AbstractModel<any>>): Promise<this> {
+        if (this.isEmpty())
+            return this;
 
-        let res = new QueryResult();
-        res.addMultiple(this.toArray());
+        let modelsList = new List<new () => AbstractModel<any>>(models);
+        let res: QueryResult<AbstractModel<any>> = this;
+
         await modelsList.foreachAsync(async (Model, idx) => {
             res = await res.load(Model);
         });

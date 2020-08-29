@@ -24,6 +24,7 @@ import InvalidOperationError from '../util/error/InvalidOperationError';
 import AHoldsReferenceToB from './AHoldsReferenceToB.js';
 import AHoldsNoReferenceToB from './AHoldsNoReferenceToB.js';
 import NullPointerException from '../util/error/NullPointerException.js';
+import type { AnyNumber } from "../util/supportive";
 
 /**
  * @todo Add undo operations for save etc. Important in case a save is not possible but uve updated already some references.
@@ -103,8 +104,8 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * @param {number} count The amount of dummies to be created.
      * @returns {List<T>} A list containing the given amount of dummies initialized with valid data.
      */
-    static dummies<U extends AbstractModel<U>>(Model: new () => U, count: number, customChanges?: KVMap<string, any>): List<U> {
-        let l = new List<U>();
+    static dummies<U extends AbstractModel<U>>(Model: new () => U, count: number, customChanges?: KVMap<string, any>): QueryResult<U> {
+        let l = new QueryResult<U>();
         for (let idx = 0; idx < count; idx++)
             l.add(AbstractModel.dummy(Model, customChanges));
         return l;
@@ -289,70 +290,77 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
 
     /**
      * Assign the given model (this by default) to the given relative if linked.
-     * @param {T extends AbstractModel<T>} model The model to be assigned.
-     * @param {U extends AbstractModel<U>} relative The relative the given model will be assigned to. 
+     * @param {U extends AbstractModel<U>, AnyNumber<U>} relatives The relatives the given model will be assigned to.
+     * @returns {this} This.
      */
-    assign<U extends AbstractModel<U>>(relatives: U | List<U>): void {
+    assign<U extends AbstractModel<U>>(relatives: AnyNumber<U>): this {
         AbstractModel.assign(<T><unknown>this, relatives);
+        return this;
     }
 
     /**
-     * Assign the given model (this by default) to the given relative if linked.
-     * @param {T extends AbstractModel<T>} model The model to be assigned.
-     * @param {U extends AbstractModel<U>} relative The relative the given model will be assigned to. 
+     * Assign the given models to the given relatives if linked.
+     * @param {P extends AbstractModel<P>, AnyNumber<P>} models The models to be assigned.
+     * @param {U extends AbstractModel<U>, AnyNumber<U>} relatives The relatives the given model will be assigned to. 
      */
-    static assign<P extends AbstractModel<P>, U extends AbstractModel<U>>(models: P | List<P>, relatives: U | List<U>): void {
-        let model = (models instanceof List) ? models.first() : models;
-        let relative = (relatives instanceof List) ? relatives.first() : relatives;
-        model.relations.get(relative.Constructor).assign(models, relatives);
+    static assign<P extends AbstractModel<P>, U extends AbstractModel<U>>(models: AnyNumber<P>, relatives: AnyNumber<U>): void {
+        let modelsList = new List<P>(models);
+        let relativesList = new List<U>(relatives);
+        if (modelsList.isEmpty() || relativesList.isEmpty())
+            return;
+
+        modelsList.first().relations.get(relativesList.first().Constructor).assign(models, relatives);
     }
 
     /**
      * Link the given model (this by default) to the given relative.
-     * @param {T extends AbstractModel<T>} model The model to be linked.
-     * @param {U extends AbstractModel<U>} relative The relative the given model will be linked to. 
+     * @param {U extends AbstractModel<U>, AnyNumber<U>} relatives The relatives the given model will be linked to.
+     * @returns {this} This.
      */
-    link<U extends AbstractModel<U>>(relatives: U | List<U>): void {
+    link<U extends AbstractModel<U>>(relatives: AnyNumber<U>): this {
         AbstractModel.link(<T><unknown>this, relatives);
+        return this;
     }
 
     /**
-     * Link the given model (this by default) to the given relative.
-     * @param {T extends AbstractModel<T>} model The model to be linked.
-     * @param {U extends AbstractModel<U>} relative The relative the given model will be linked to. 
+     * Link the given models to the given relatives.
+     * @param {T extends AbstractModel<T>, AnyNumber<T>} models The models to be linked.
+     * @param {U extends AbstractModel<U>, AnyNumber<U>} relatives The relatives the given model will be linked to. 
      */
-    static link<P extends AbstractModel<P>, U extends AbstractModel<U>>(models: P | List<P>, relatives: U | List<U>): void {
-        let model = (models instanceof List) ? models.first() : models;
-        let relative = (relatives instanceof List) ? relatives.first() : relatives;
-        model.relations.get(relative.Constructor).link(models, relatives);
+    static link<P extends AbstractModel<P>, U extends AbstractModel<U>>(models: AnyNumber<P>, relatives: AnyNumber<U>): void {
+        let modelsList = new List<P>(models);
+        let relativesList = new List<U>(relatives);
+        if (modelsList.isEmpty() || relativesList.isEmpty())
+            return;
+        modelsList.first().relations.get(relativesList.first().Constructor).link(models, relatives);
     }
 
     /**
-     * Load properties.
-     * @param {<U extends AbstractModel<U>> new() => U} Model The Model (class) of the property to be loaded. 
-     * @returns {Promise<this|QueryResult<AbstractModel>>} This if multiple models were passed or the loaded objects if only one model was passed. 
+     * Load Models.
+     * @param {<U extends AbstractModel<U>>, AnyNumber<new() => U>} Models The Models (classes) to be loaded. 
+     * @returns {Promise<this|QueryResult<AbstractModel>>} This if multiple models were passed or 
+     * the loaded objects if only one model was passed (allowing to chain operations).
      */
-    async load(...models: Array<new () => AbstractModel<any>>): Promise<this | QueryResult<AbstractModel<any>>> {
-        let modelList = new List<new () => AbstractModel<any>>(models);
+    async load(models: AnyNumber<new () => AbstractModel<any>>): Promise<this | QueryResult<AbstractModel<any>>> {
+        let modelsList = new List<new () => AbstractModel<any>>(models);
+
         let ret: this | QueryResult<AbstractModel<any>> = this;
-        await modelList.foreachAsync(async (Model) => {
+        await modelsList.foreachAsync(async (Model) => {
             let relation = this.relations.get(Model).inverse();
-            // @ts-ignore
-            ret = await relation.relationalLoad(new List<T>([this]));
+            ret = await relation.relationalFind(<T><unknown>this);
+            ret.assign(this);
         });
-
 
         return ret;
     }
 
     /**
      * Loads many models that are stored as property and can be accessed indirectly model by model creating a chain.
-     * @param {Array<AbstractModel>} models The models to be loaded in the order of the chain.
+     * @param {AnyNumber<new()=>AbstractModel<any>>} models The models to be loaded in the order of the chain.
      * @returns {this} This.
      */
-    async loadChain(...models: Array<new () => AbstractModel<any>>): Promise<this> {
-        let modelsList = new List<new () => AbstractModel<any>>();
-        modelsList.addMultiple(models);
+    async loadChain(Models: AnyNumber<new () => AbstractModel<any>>): Promise<this> {
+        let modelsList = new List<new () => AbstractModel<any>>(Models);
 
         let res: QueryResult<AbstractModel<any>> | this = this;
         await modelsList.foreachAsync(async (Model, idx) => {
@@ -430,8 +438,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
 
             // If it's a first generation find, find only items that belong to the parent
             if (this.myParentIsTheRoot()) {
-                previousQueryResult = new QueryResult<AbstractModel<any>>();
-                previousQueryResult.add(this.parent);
+                previousQueryResult = new QueryResult<AbstractModel<any>>(this.parent);
                 propertyTarget = this.parent;
             }
             else {
@@ -457,8 +464,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
                 this.lastQueryResult = thisQueryResult;
             }
         }
-        else
+        else {
             thisQueryResult = await AbstractModel.find(this.Constructor);
+        }
 
         return thisQueryResult;
     }
@@ -473,406 +481,156 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
     }
 
     /**
-     * Create the given model (this by default).
-     * If called over a relative, try to link this model to the first retrieved model by the chained query.
-     * This may not be possible depending on the relationship to the parent.
-     * @param {T} [model=this] The model to be created.
+     * Create this model (save it in the database).
+     * Passed models will be linked to this model before create.
+     * If called over relations, try to link this model to the retrieved models by the chained query.
+     * Linking not be possible depending on the relationship to the models.
+     * @param {T|List<T>} [models] The model to be linked.
      */
-    async create(model?: T): Promise<void> {
+    async create(): Promise<void> {
+        let toCreate = this.root;
         // Called over previous.
         if (this.parent) {
-            // Nothing to do in the meaning of "assign nothing to the results of the previous query result."
-            if (!model)
-                return;
-
-            let previousQueryResult: QueryResult<AbstractModel<any>>;
-
-            // Previous query result should be just the root in that case
-            if (this.myParentIsTheRoot()) {
-                previousQueryResult = new QueryResult<AbstractModel<any>>();
-                previousQueryResult.add(this.parent);
-            }
-            else
-                previousQueryResult = await this.parent.find();
-
-            this.relations.get(this.parent.Constructor).link(model, previousQueryResult.first());
+            models = await this.find();
+            AbstractModel.link(models, toCreate);
 
         }
 
-        // Create this.
-        if (!model)
-            model = <T><unknown>this;
-
-        return await AbstractModel.create(model);
+        return await AbstractModel.create(toCreate);
     }
 
     /**
-     * Create a model.
-     * @param {T} model The model to be created.
+     * Create models.
+     * @param {U|List<U>} models The models to be created.
      */
-    static async create<U extends AbstractModel<U>>(model: U): Promise<void> {
-        if (!model.valid())
-            throw new CreateError(PATH, "AbstractModel.create()", model);
+    static async create<U extends AbstractModel<U>>(models: U | List<U>): Promise<void> {
+        let modelsList = new List<U>(models);
 
-        // Call create for each relation.
-        let relations = model.relations.values();
-        await relations.foreachAsync(async (relation) => {
-            await relation.relationalCreate(model);
+        if (modelsList.isEmpty())
+            return;
+
+        modelsList.foreach((model) => {
+            if (!model.id)
+                model.id = UUID();
         });
 
-        await WixDatabase.create(model);
-    }
-
-    /**
-     * Create many models.
-     * If called over a relative, try to assign this model to the first retrieved model by the chained query.
-     * This may not be possible depending on the relationship of the models in this list to the parent.
-     * @param {List<T>} models The List containing the models to be created. 
-     */
-    async createMultiple(models: List<T>): Promise<void> {
-        if (models.isEmpty())
-            return;
-
-        // Called over previous.
-        if (this.parent) {
-            let previousQueryResult: QueryResult<AbstractModel<any>>;
-            // Previous query result should be just the root in that case
-            if (this.myParentIsTheRoot()) {
-                previousQueryResult = new QueryResult<AbstractModel<any>>();
-                previousQueryResult.add(this.parent);
-            }
-            else
-                previousQueryResult = await this.parent.find();
-
-            this.relations.get(this.parent.Constructor).link(models, previousQueryResult.first());
-        }
-
-        return await AbstractModel.createMultiple(models);
-    }
-
-    /**
-     * Create many models.
-     * @param {List<<U extends AbstractModel<U>>>} models The List containing the models to be created. 
-     */
-    static async createMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void> {
-        if (models.isEmpty())
-            return;
-
-        models.foreach((model) => {
+        modelsList.foreach((model) => {
             if (!model.valid())
-                throw new CreateError(PATH, "AbstractModel.createMultiple()", model);
+                throw new CreateError(PATH, "AbstractModel.create()", model);
         });
 
-        let relations = models.first().relations.values();
-        await relations.foreachAsync(async (relation) => {
-            await relation.relationalCreateMultiple(models);
-        });
-
-        await WixDatabase.createMultiple(models);
+        await WixDatabase.create(models);
     }
 
     /**
-     * Save the given model (this by default).
-     * If called over a relative, try to assign this model to the first retrieved model by the chained query.
-     * This may not be possible depending on the relationship to the parent.
-     * @param {T} [model=this] The model to be saved.
+     * Save this model (save it in the database).
+     * Passed models will be linked to this model before save.
+     * If called over relations, try to link this model to the retrieved models by the chained query.
+     * Linking not be possible depending on the relationship to the models.
+     * @param {T|List<T>} [models] The models to be linked.
      */
-    async save(model?: T): Promise<void> {
+    async save(models?: AbstractModel<any> | List<AbstractModel<any>>): Promise<void> {
+        let toSave = this.root;
         // Called over previous.
         if (this.parent) {
-            // Nothing to do in the meaning of "assign nothing to the results of the previous query result."
-            if (!model)
-                return;
-            let previousQueryResult: QueryResult<AbstractModel<any>>;
-            // Previous query result should be just the root in that case
-            if (this.myParentIsTheRoot()) {
-                previousQueryResult = new QueryResult<AbstractModel<any>>();
-                previousQueryResult.add(this.parent);
-            }
-            else
-                previousQueryResult = await this.parent.find();
-
-            this.relations.get(this.parent.Constructor).link(model, previousQueryResult.first());
+            models = await this.find();
+            AbstractModel.link(models, toSave);
         }
 
-        // Save this.
-        if (!model)
-            model = <T><unknown>this;
-
-        return await AbstractModel.save(model);
+        return await AbstractModel.save(toSave);
     }
 
     /**
-     * Save a model.
-     * @param {T} model The model to be saved.
+     * Save models.
+     * @param {U|List<U>} models The models to be saved.
      */
-    static async save<U extends AbstractModel<U>>(model: U): Promise<void> {
-        if (!model.valid())
-            throw new SaveError(PATH, "AbstractModel.save()", model);
+    static async save<U extends AbstractModel<U>>(models: U | List<U>): Promise<void> {
+        let modelsList = new List<U>(models);
 
-        let relations = model.relations.values();
-        await relations.foreachAsync(async (relation) => {
-            await relation.relationalSave(model);
-        });
-
-        await WixDatabase.save(model);
-    }
-
-    /**
-     * Save many models.
-     * If called over a relative, try to assign this model to the first retrieved model by the chained query.
-     * This may not be possible depending on the relationship of the models in this list to the parent.
-     * @param {List<T>} models The List containing the models to be saved. 
-     */
-    async saveMultiple(models: List<T>): Promise<void> {
-        if (models.isEmpty())
+        if (modelsList.isEmpty())
             return;
 
-        // Called over previous.
-        if (this.parent) {
-            let previousQueryResult: QueryResult<AbstractModel<any>>;
-            // Previous query result should be just the root in that case
-            if (this.myParentIsTheRoot()) {
-                previousQueryResult = new QueryResult<AbstractModel<any>>();
-                previousQueryResult.add(this.parent);
-            }
-            else
-                previousQueryResult = await this.parent.find();
-
-            this.relations.get(this.parent.Constructor).link(models, previousQueryResult.first());
-        }
-
-        return await AbstractModel.saveMultiple(models);
-    }
-
-    /**
-     * Save many models.
-     * @param {List<<U extends AbstractModel<U>>>} models The List containing the models to be saved. 
-     */
-    static async saveMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void> {
-        if (models.isEmpty())
-            return;
-
-        models.foreach((model) => {
+        modelsList.foreach((model) => {
             if (!model.valid())
-                throw new SaveError(PATH, "AbstractModel.saveMultiple()", model);
+                throw new CreateError(PATH, "AbstractModel.save()", model);
         });
 
-        let relations = models.first().relations.values();
-        await relations.foreachAsync(async (relation) => {
-            await relation.relationalSaveMultiple(models);
-        });
-
-        await WixDatabase.saveMultiple(models);
+        await WixDatabase.save(models);
     }
 
     /**
-     * Update the given model (this by default).
-     * If called over a relative, try to assign this model to the first retrieved model by the chained query.
-     * This may not be possible depending on the relationship to the parent.
-     * @param {T} [model] The model to be updated.
+     * Update this model (update it in the database).
+     * Passed models will be linked to this model before update.
+     * If called over relations, try to link this model to the retrieved models by the chained query.
+     * Linking not be possible depending on the relationship to the models.
+     * @param {T|List<T>} [models] The model to be linked.
      */
-    async update(model?: T): Promise<void> {
+    async update(models?: AbstractModel<any> | List<AbstractModel<any>>): Promise<void> {
+        let toUpdate = this.root;
         // Called over previous.
         if (this.parent) {
-            // Nothing to do in the meaning of "assign nothing to the results of the previous query result."
-            if (!model)
-                return;
-
-            let previousQueryResult: QueryResult<AbstractModel<any>>;
-            // Previous query result should be just the root in that case
-            if (this.myParentIsTheRoot()) {
-                previousQueryResult = new QueryResult<AbstractModel<any>>();
-                previousQueryResult.add(this.parent);
-            }
-            else
-                previousQueryResult = await this.parent.find();
-
-            this.relations.get(this.parent.Constructor).link(model, previousQueryResult.first());
+            models = await this.find();
+            AbstractModel.link(models, toUpdate);
         }
 
-        // Update this.
-        if (!model)
-            model = <T><unknown>this;
-
-        return await AbstractModel.update(model);
+        return await AbstractModel.update(toUpdate);
     }
 
     /**
-     * Update a model.
-     * @param {<U extends AbstractModel<U>>} model The model to be updated.
+     * Update models.
+     * @param {U | List<U>} models The models to be updated.
      */
-    static async update<U extends AbstractModel<U>>(model: U): Promise<void> {
-        if (!model.valid())
-            throw new UpdateError(PATH, "AbstractModel.update()", model);
+    static async update<U extends AbstractModel<U>>(models: U | List<U>): Promise<void> {
+        let modelsList = new List<U>(models);
 
-        let relations = model.relations.values();
-        await relations.foreachAsync(async (relation) => {
-            await relation.relationalUpdate(model);
-        });
-
-        await WixDatabase.update(model);
-    }
-
-    /**
-     * Update many models.
-     * If called over a relative, try to assign this model to the first retrieved model by the chained query.
-     * This may not be possible depending on the relationship of the models in this list to the parent.
-     * @param {List<T>} models The List containing the models to be updated. 
-     */
-    async updateMultiple(models: List<T>): Promise<void> {
-        if (models.isEmpty())
+        if (modelsList.isEmpty())
             return;
 
+        modelsList.foreach((model) => {
+            if (!model.valid())
+                throw new CreateError(PATH, "AbstractModel.update()", model);
+        });
+
+        await WixDatabase.update(models);
+    }
+
+    /**
+     * Destroy this model (destroy it in the database).
+     * If called over relations, destroy the models returned by the query.
+     * @param {boolean} [doNotCascade=false] Will not destroy relatives that belong to this model if true.
+     */
+    async destroy(doNotCascade: boolean = false): Promise<void> {
+        let toDestroy: List<AbstractModel<any>> = new List<AbstractModel<any>>(this);
         // Called over previous.
         if (this.parent) {
-            let previousQueryResult: QueryResult<AbstractModel<any>>;
-            // Previous query result should be just the root in that case
-            if (this.myParentIsTheRoot()) {
-                previousQueryResult = new QueryResult<AbstractModel<any>>();
-                previousQueryResult.add(this.parent);
-            }
-            else
-                previousQueryResult = await this.parent.find();
-
-            this.relations.get(this.parent.Constructor).link(models, previousQueryResult.first());
+            toDestroy = await this.find();
         }
 
-        return await AbstractModel.updateMultiple(models);
+        return await AbstractModel.destroy(toDestroy, doNotCascade);
     }
 
     /**
-     * Update many models.
-     * @param {List<<U extends AbstractModel<U>>>} models The List containing the models to be updated. 
+     * Destroy models.
+     * @param {U | List<U>} models The models to be destroyed.
+     * @param {boolean} [doNotCascade=false] Will not destroy relatives that belong to this model if true.
      */
-    static async updateMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void> {
-        if (models.isEmpty())
+    static async destroy<U extends AbstractModel<U>>(models: U | List<U>, doNotCascade: boolean = false): Promise<void> {
+        let modelsList = new List<U>(models);
+
+        if (modelsList.isEmpty())
             return;
 
-        models.foreach((model) => {
+        modelsList.foreach((model) => {
             if (!model.valid())
-                throw new UpdateError(PATH, "AbstractModel.updateMultiple()", model);
+                throw new CreateError(PATH, "AbstractModel.destroy()", model);
         });
 
-        let relations = models.first().relations.values();
-        await relations.foreachAsync(async (relation) => {
-            await relation.relationalUpdateMultiple(models);
-        });
+        if (!doNotCascade)
+            await modelsList.first().relations.values().foreachAsync(async (relation) => {
+                await relation.inverse().relationalDestroy(modelsList);
+            });
 
-        await WixDatabase.updateMultiple(models);
-    }
-
-    /**
-     * Destroy the given model (this by default).
-     * If called over a relative, destroy all models of T that belong to the models retrieved by the previous.
-     * @param {T} [model] The model to be destroyed.
-     */
-    async destroy(model?: T): Promise<void> {
-        // Called over relation.
-        if (this.parent) {
-            // Destroy all models that belong to the models retrieved by find of the parent.
-            if (!model) {
-                let previousQueryResult: QueryResult<AbstractModel<any>>;
-                // Previous query result should be just the root in that case
-                if (this.myParentIsTheRoot()) {
-                    previousQueryResult = new QueryResult<AbstractModel<any>>();
-                    previousQueryResult.add(this.parent);
-                }
-                else
-                    previousQueryResult = await this.parent.find();
-
-                let toDestroy = await this.relations.get(this.parent.Constructor).relationalFind(previousQueryResult);
-
-                // Continue with a single destroy if there is just one model to destroy. Else destroy multiple.
-                if (toDestroy.length === 1)
-                    model = toDestroy.first();
-                else
-                    return await AbstractModel.destroyMultiple(toDestroy);
-            }
-            else {
-                // Nothing specific to do. Destroy the given model in the next step.
-            }
-        }
-
-        // Destroy this.
-        if (!model)
-            model = <T><unknown>this;
-
-        return await AbstractModel.destroy(model);
-    }
-
-    /**
-     * Destroy a model.
-     * @param {U} model The model to be destroyed.
-     */
-    static async destroy<U extends AbstractModel<U>>(model: U): Promise<void> {
-        if (!model.valid())
-            throw new DestroyError(PATH, "AbstractModel.destroy()", model);
-        let relations = model.relations.values();
-        await relations.foreachAsync(async (relation) => {
-            await relation.relationalDestroy(model);
-        });
-        await WixDatabase.remove(model);
-    }
-
-    /**
-     * Destroy many models.
-     * If called over a relative, destroy all models of T that belong to the models retrieved by the previous.
-     * @param {List<T>} [models] The List containing the models to be destroyed. 
-     */
-    async destroyMultiple(models?: List<T>): Promise<void> | never {
-        // Called over relation.
-        if (this.parent) {
-            // Destroy all models that belong to the models retrieved by find of the parent.
-            if (!models) {
-                let previousQueryResult: QueryResult<AbstractModel<any>>;
-                // Previous query result should be just the root in that case
-                if (this.myParentIsTheRoot()) {
-                    previousQueryResult = new QueryResult<AbstractModel<any>>();
-                    previousQueryResult.add(this.parent);
-                }
-                else
-                    previousQueryResult = await this.parent.find();
-
-                let toDestroy = await this.relations.get(this.parent.Constructor).relationalFind(previousQueryResult);
-
-                // Continue with a single destroy if there is just one model to destroy. Else destroy multiple.
-                if (toDestroy.length === 1)
-                    return await AbstractModel.destroy(toDestroy.first());
-                else
-                    models = toDestroy;
-            }
-            else {
-                // Nothing specific to do. Destroy the given models in the next step.
-            }
-        }
-
-        if (!models)
-            throw new NullPointerException(PATH, "destroyMultiple", "The list of the to destroyed models is empty, but shouldn't.");
-
-        return await AbstractModel.destroyMultiple(models);
-    }
-
-    /**
-     * Destroy many models.
-     * @param {List<<U extends AbstractModel<U>>>} models The List containing the models to be destroyed. 
-     */
-    static async destroyMultiple<U extends AbstractModel<U>>(models: List<U>): Promise<void> {
-        if (models.isEmpty())
-            return;
-
-        models.foreach((model) => {
-            if (!model.valid())
-                throw new DestroyError(PATH, "AbstractModel.destroyMultiple()", model);
-        });
-
-        // Call destroy for each relation.
-        let relations = models.first().relations.values();
-        await relations.foreachAsync(async (relation) => {
-            await relation.relationalDestroyMultiple(models);
-        });
-
-        await WixDatabase.removeMultiple(models);
+        await WixDatabase.remove(modelsList);
     }
 
     /**
@@ -1022,6 +780,17 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      */
     private get parent(): AbstractModel<any> {
         return this._parent;
+    }
+
+    /**
+     * Get the root element.
+     * @returns {AbstractModel<any>} The root element or this, if this is the root element.
+     */
+    private get root(): AbstractModel<any> {
+        let next: AbstractModel<any> = this;
+        while (next.parent)
+            next = next.parent;
+        return next;
     }
 
     /**

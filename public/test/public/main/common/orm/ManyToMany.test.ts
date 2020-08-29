@@ -16,8 +16,8 @@ var testTags: List<TestTag>;
 export async function runAllTests() {
     let tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
 
-    //tests.add(new Test(PATH, "relational link", truthly(), relationalLink));
-    //tests.add(new Test(PATH, "relational link multiple", truthly(), relationalLinkMultiple));
+    tests.add(new Test(PATH, "relational link", truthly(), relationalLink));
+    tests.add(new Test(PATH, "relational link multiple", truthly(), relationalLinkMultiple));
     tests.add(new Test(PATH, "relational get", truthly(), relationalGet));
     tests.add(new Test(PATH, "relational find", truthly(), relationalFind));
     tests.add(new Test(PATH, "relational destroy", truthly(), relationalDestroy));
@@ -34,8 +34,8 @@ async function beforeAll() {
 async function beforeEach() {
     testTags = TestTag.dummies(TestTag, 5);
     testShoppingCartItems = TestShoppingCartItem.dummies(TestShoppingCartItem, 5);
-    await WixDatabase.createMultiple(testTags);
-    await WixDatabase.createMultiple(testShoppingCartItems);
+    await WixDatabase.create(testTags);
+    await WixDatabase.create(testShoppingCartItems);
 
     // the first shopping cart item has all tags / each tag has the first shopping cart
     let roleItems: Array<object> = [];
@@ -58,6 +58,14 @@ async function afterEach() {
     await WixDatabase.removeAll(TestTag);
     await WixDatabase.removeAll(TestShoppingCartItem);
     await wixData.truncate("RoleTestShoppingCartItemTestTag");
+}
+
+function relationalLink() {
+    return false;
+}
+
+function relationalLinkMultiple() {
+    return false;
 }
 
 async function relationalGet() {
@@ -101,7 +109,7 @@ async function relationalDestroyMultiple() {
     if (resultOfFirstBeforeDestroy.first().id !== testShoppingCartItems.first().id)
         return false;
 
-    await TestShoppingCartItem.destroyMultiple(testShoppingCartItems);
+    await TestShoppingCartItem.destroy(testShoppingCartItems);
     let resultOfLastAfterDestroy = await testTags.last().testShoppingCartItemsQ().find();
     if (!resultOfLastAfterDestroy.isEmpty())
         return false;

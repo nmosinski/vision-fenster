@@ -30,8 +30,8 @@ async function beforeAll() {
 async function beforeEach() {
     testShoppingCarts = TestShoppingCart.dummies(TestShoppingCart, 5);
     testShoppingCartItems = TestShoppingCartItem.dummies(TestShoppingCartItem, 5);
-    await WixDatabase.createMultiple(testShoppingCarts);
-    await WixDatabase.createMultiple(testShoppingCartItems);
+    await WixDatabase.create(testShoppingCarts);
+    await WixDatabase.create(testShoppingCartItems);
 }
 
 async function afterEach() {
@@ -61,9 +61,9 @@ async function relationalDestroy() {
     });
     testShoppingCartItems.last()[TestShoppingCart.asFk(TestShoppingCart)] = "None";
 
-    await WixDatabase.updateMultiple(testShoppingCartItems);
+    await WixDatabase.update(testShoppingCartItems);
 
-    await relation.relationalDestroy(testShoppingCarts.first());
+    await relation.inverse().relationalDestroy(testShoppingCarts.first());
     let items = await WixDatabase.query(TestShoppingCartItem).execute();
 
     if (!(items.length === 1 && items.first().id === testShoppingCartItems.last().id))
@@ -77,9 +77,9 @@ async function relationalDestroyMultiple() {
         testShoppingCartItems.get(idx)[TestShoppingCart.asFk(TestShoppingCart)] = testShoppingCarts.get(idx).id;
     testShoppingCartItems.last()[TestShoppingCart.asFk(TestShoppingCart)] = "None";
 
-    await WixDatabase.updateMultiple(testShoppingCartItems);
+    await WixDatabase.update(testShoppingCartItems);
 
-    await relation.relationalDestroyMultiple(testShoppingCarts);
+    await relation.inverse().relationalDestroy(testShoppingCarts);
     let items = await WixDatabase.query(TestShoppingCartItem).execute();
 
     if (!(items.length === 1 && items.first().id === testShoppingCartItems.last().id))

@@ -1,26 +1,27 @@
 import TestShoppingCart from "./testData/TestShoppingCart";
 import TestShoppingCartItem from "./testData/TestShoppingCartItem";
 import TestUser from "./testData/TestUser";
-import WixDatabase from "../../../../../main/common/orm/WixDatabase";
+import WixDatabase, { Query } from "../../../../../main/common/orm/WixDatabase";
 import { Tests, Test, truthly, unspecified, value } from "../../../../../main/common/test/Test";
 import AbstractModel from "../../../../../main/common/orm/AbstractModel";
 import List from "../../../../../main/common/util/collections/list/List";
 import InvalidOperationError from "../../../../../main/common/util/error/InvalidOperationError";
+import QueryResult from "../../../../../main/common/orm/QueryResult";
 const PATH = "test/public/main/common/orm/AbstractModel.test.js"
 
-var testShoppingCarts: List<TestShoppingCart>;
-var testShoppingCartItems: List<TestShoppingCartItem>;
-var testUsers: List<TestUser>;
+var testShoppingCarts: QueryResult<TestShoppingCart>;
+var testShoppingCartItems: QueryResult<TestShoppingCartItem>;
+var testUsers: QueryResult<TestUser>;
 
 export async function runAllTests() {
     let tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
 
+    /*
     tests.add(new Test(PATH, "link", truthly(), link));
     tests.add(new Test(PATH, "assign", truthly(), assign));
 
     tests.add(new Test(PATH, "simple get", truthly(), simpleGet));
     tests.add(new Test(PATH, "simple find", truthly(), simpleFind));
-    tests.add(new Test(PATH, "simple load", truthly(), simpleLoad));
     tests.add(new Test(PATH, "simple create", truthly(), simpleCreate));
     tests.add(new Test(PATH, "simple create multiple", truthly(), simpleCreateMultiple));
     tests.add(new Test(PATH, "simple update", value(3), simpleUpdate));
@@ -32,9 +33,11 @@ export async function runAllTests() {
 
     tests.add(new Test(PATH, "one generation get", truthly(), oneGenerationGet));
     tests.add(new Test(PATH, "one generation find", truthly(), oneGenerationFind));
-    //tests.add(new Test(PATH, "one generation load", truthly(), oneGenerationLoad));
+    tests.add(new Test(PATH, "one generation load", truthly(), oneGenerationLoad));
+    tests.add(new Test(PATH, "one generation load multiple", truthly(), oneGenerationLoadMultiple));
+    */
     tests.add(new Test(PATH, "one generation create", truthly(), oneGenerationCreate));
-    tests.add(new Test(PATH, "one generation create multiple", truthly(), oneGenerationCreateMultiple));
+    /*tests.add(new Test(PATH, "one generation create multiple", truthly(), oneGenerationCreateMultiple));
     tests.add(new Test(PATH, "one generation update", truthly(), oneGenerationUpdate));
     tests.add(new Test(PATH, "one generation update multiple", truthly(), oneGenerationUpdateMultiple));
     tests.add(new Test(PATH, "one generation save", truthly(), oneGenerationSave));
@@ -44,6 +47,7 @@ export async function runAllTests() {
 
     tests.add(new Test(PATH, "two generations get", truthly(), twoGenerationsGet));
     tests.add(new Test(PATH, "two generations find", truthly(), twoGenerationsFind));
+    tests.add(new Test(PATH, "two generations find result as property", truthly(), twoGenerationsFindResultAsProperty));
 
     /*
     tests.add(new Test(PATH, "two generations load", truthly(), twoGenerationsLoad));
@@ -56,8 +60,6 @@ export async function runAllTests() {
     tests.add(new Test(PATH, "two generations destroy", unspecified(), twoGenerationsDestroy));
     tests.add(new Test(PATH, "two generations destroy multiple", truthly(), twoGenerationsDestroyMultiple));
     */
-
-    tests.add(new Test(PATH, "two generations find result as property", truthly(), twoGenerationsFindResultAsProperty));
 
     await tests.runAll();
 }
@@ -74,9 +76,9 @@ async function beforeEach() {
     testShoppingCartItems.get(1).link(testShoppingCarts.first());
     testShoppingCarts.first().link(testUsers.first());
 
-    await WixDatabase.createMultiple(testShoppingCarts);
-    await WixDatabase.createMultiple(testShoppingCartItems);
-    await WixDatabase.createMultiple(testUsers);
+    await WixDatabase.create(testShoppingCarts);
+    await WixDatabase.create(testShoppingCartItems);
+    await WixDatabase.create(testUsers);
 }
 
 async function afterEach() {
@@ -144,20 +146,6 @@ async function simpleFind() {
     return result.equals(testShoppingCartItems);
 }
 
-async function simpleLoad() {
-    await testUsers.first().load(TestShoppingCart);
-
-    if (testUsers.first().testShoppingCart.id !== testShoppingCarts.first().id)
-        return false;
-
-
-    await testShoppingCarts.first().load(TestShoppingCartItem);
-    if (!testShoppingCarts.first().testShoppingCartItems.equals(new List([testShoppingCartItems.first(), testShoppingCartItems.get(1)])))
-        return false;
-
-    return true;
-}
-
 async function simpleCreate() {
     let shoppingCart = TestShoppingCart.dummy(TestShoppingCart);
     await shoppingCart.create();
@@ -167,9 +155,14 @@ async function simpleCreate() {
 
 async function simpleCreateMultiple() {
     await WixDatabase.removeAll(TestShoppingCartItem);
-    await TestShoppingCartItem.createMultiple(testShoppingCartItems);
+    await TestShoppingCartItem.create(testShoppingCartItems);
     let result = await TestShoppingCartItem.find(TestShoppingCartItem);
-    return result.equals(testShoppingCartItems);
+    if (!result.equals(testShoppingCartItems)) {
+        console.log("result", result);
+        console.log("testShoppingCartItems", testShoppingCartItems);
+        return false;
+    }
+    return true;
 }
 
 async function simpleUpdate() {
@@ -190,7 +183,7 @@ async function simpleUpdateMultiple() {
     let ret = true;
     let items = await TestShoppingCartItem.find(TestShoppingCartItem);
     items.foreach((item) => { item.count = 3; });
-    await TestShoppingCartItem.updateMultiple(items);
+    await TestShoppingCartItem.update(items);
     let updatedItems = await TestShoppingCartItem.find(TestShoppingCartItem);
     updatedItems.foreach((item) => {
         if (item.count !== 3)
@@ -201,14 +194,14 @@ async function simpleUpdateMultiple() {
 
 async function simpleSave() {
     await WixDatabase.removeAll(TestShoppingCartItem);
-    await TestShoppingCartItem.saveMultiple(testShoppingCartItems);
+    await TestShoppingCartItem.save(testShoppingCartItems.first());
     let result = await TestShoppingCartItem.find(TestShoppingCartItem);
-    return result.equals(testShoppingCartItems);
+    return result.has(testShoppingCartItems.first());
 }
 
 async function simpleSaveMultiple() {
     await WixDatabase.removeAll(TestShoppingCartItem);
-    await TestShoppingCartItem.saveMultiple(testShoppingCartItems);
+    await TestShoppingCartItem.save(testShoppingCartItems);
     let result = await TestShoppingCartItem.find(TestShoppingCartItem);
     return result.equals(testShoppingCartItems);
 }
@@ -221,7 +214,7 @@ async function simpleDestroy() {
 }
 
 async function simpleDestroyMultiple() {
-    await TestUser.destroyMultiple(testUsers);
+    await TestUser.destroy(testUsers);
     let result = await TestUser.find(TestUser);
     return result.isEmpty();
 }
@@ -234,6 +227,46 @@ async function oneGenerationGet() {
         return result.id === testShoppingCartItems.first().id;
     else
         return result;
+}
+
+async function oneGenerationLoad() {
+    await testUsers.first().load(TestShoppingCart);
+
+    if (testUsers.first().testShoppingCart.id !== testShoppingCarts.first().id) {
+        console.log("testUsers", testUsers);
+        console.log("first if");
+        return false;
+    }
+
+
+    await testShoppingCarts.first().load(TestShoppingCartItem);
+    if (!testShoppingCarts.first().testShoppingCartItems.equals(new List([testShoppingCartItems.first(), testShoppingCartItems.get(1)]))) {
+        console.log("testShoppingCarts", testShoppingCarts);
+        console.log("second if");
+        return false;
+    }
+
+    return true;
+}
+
+async function oneGenerationLoadMultiple() {
+    await testUsers.load(TestShoppingCart);
+
+    if (testUsers.first().testShoppingCart.id !== testShoppingCarts.first().id) {
+        console.log("testUsers", testUsers);
+        console.log("first if");
+        return false;
+    }
+
+
+    await testShoppingCarts.first().load(TestShoppingCartItem);
+    if (!testShoppingCarts.first().testShoppingCartItems.equals(new List([testShoppingCartItems.first(), testShoppingCartItems.get(1)]))) {
+        console.log("testShoppingCarts", testShoppingCarts);
+        console.log("second if");
+        return false;
+    }
+
+    return true;
 }
 
 async function oneGenerationFind() {
@@ -254,9 +287,10 @@ async function oneGenerationFind() {
 
 async function oneGenerationCreate() {
     let item = TestShoppingCartItem.dummy(TestShoppingCartItem);
-    await testShoppingCarts.last().testShoppingCartItemsQ().create(item);
-
+    await item.create(testShoppingCarts.last());
+    console.log("item", item);
     let result = await testShoppingCarts.last().testShoppingCartItemsQ().find();
+    console.log("result", result);
 
     if (!result.has(item))
         return false;
@@ -266,7 +300,7 @@ async function oneGenerationCreate() {
 async function oneGenerationCreateMultiple() {
     let ret = true;
     let items = TestShoppingCartItem.dummies(TestShoppingCartItem, 3);
-    await testShoppingCarts.last().testShoppingCartItemsQ().createMultiple(items);
+    await testShoppingCarts.last().testShoppingCartItemsQ().create(items);
 
     let result = await testShoppingCarts.last().testShoppingCartItemsQ().find();
 
@@ -292,7 +326,7 @@ async function oneGenerationUpdate() {
 async function oneGenerationUpdateMultiple() {
     let ret = true;
     let items = TestShoppingCartItem.dummies(TestShoppingCartItem, 3);
-    await testShoppingCarts.last().testShoppingCartItemsQ().createMultiple(items);
+    await testShoppingCarts.last().testShoppingCartItemsQ().create(items);
 
     let result = await testShoppingCarts.last().testShoppingCartItemsQ().find();
 
@@ -318,7 +352,7 @@ async function oneGenerationSave() {
 async function oneGenerationSaveMultiple() {
     let ret = true;
     let items = TestShoppingCartItem.dummies(TestShoppingCartItem, 3);
-    await testShoppingCarts.last().testShoppingCartItemsQ().createMultiple(items);
+    await testShoppingCarts.last().testShoppingCartItemsQ().create(items);
 
     let result = await testShoppingCarts.last().testShoppingCartItemsQ().find();
 
@@ -338,7 +372,7 @@ async function oneGenerationDestroy() {
 }
 
 async function oneGenerationDestroyMultiple() {
-    await testShoppingCarts.first().testShoppingCartItemsQ().destroyMultiple();
+    await testShoppingCarts.first().testShoppingCartItemsQ().destroy();
     let items = await testShoppingCarts.first().testShoppingCartItemsQ().find();
 
     return items.length === 0;

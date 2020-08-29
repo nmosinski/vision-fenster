@@ -31,8 +31,8 @@ async function beforeAll() {
 async function beforeEach() {
     testShoppingCarts = TestShoppingCart.dummies(TestShoppingCart, 5);
     testShoppingCartItems = TestShoppingCartItem.dummies(TestShoppingCartItem, 5);
-    await WixDatabase.createMultiple(testShoppingCarts);
-    await WixDatabase.createMultiple(testShoppingCartItems);
+    await WixDatabase.create(testShoppingCarts);
+    await WixDatabase.create(testShoppingCartItems);
 }
 
 async function afterEach() {
@@ -67,7 +67,7 @@ async function relationalGet() {
 async function relationalFind() {
     testShoppingCartItems.foreach((item) => { item[TestShoppingCart.asFk(TestShoppingCart)] = testShoppingCarts.first().id });
     testShoppingCartItems.first()[TestShoppingCart.asFk(TestShoppingCart)] = testShoppingCarts.get(1).id;
-    await TestShoppingCartItem.updateMultiple(testShoppingCartItems);
+    await TestShoppingCartItem.update(testShoppingCartItems);
     let expectedSublist = testShoppingCartItems;
 
     let result = await relation.relationalFind(testShoppingCarts);

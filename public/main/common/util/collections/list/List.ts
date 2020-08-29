@@ -4,6 +4,7 @@ import VariableTypeError from "../../error/VariableTypeError";
 import InvalidOperationError from "../../error/InvalidOperationError";
 import VariableValueError from "../../error/VariableValueError";
 import NullPointerException from "../../error/NullPointerException";
+import { AnyNumber } from "../../supportive";
 
 const PATH = "public/main/common/util/list/List.js";
 
@@ -17,14 +18,16 @@ class List<T> implements IComparable {
 	 * Create a List.
 	 * @param {Array<T>} [elements=Array<T>] - An array of elements that the list will contain from the beginning.
 	 */
-	constructor(elements: Array<T> | T | List<T> = []) {
+	constructor(elements: AnyNumber<T> = []) {
 		this._elements = [];
-		let toInsert = [];
+		let toInsert: Array<T> = [];
 
 		if (elements instanceof List)
 			toInsert = elements.toArray();
 		else if (Array.isArray(elements))
 			toInsert = elements;
+		else if (JsTypes.isUnspecified(elements))
+			toInsert = [];
 		else
 			toInsert.push(elements);
 

@@ -4,6 +4,7 @@ import List from "../util/collections/list/List";
 import Set from "../util/collections/set/Set";
 import QueryResult from "./QueryResult";
 import NotManyToMany from "./NotManyToMany";
+import { AnyNumber } from "../util/supportive";
 
 const PATH = "public/main/common/orm/AHoldsReferenceToB.js";
 
@@ -19,30 +20,12 @@ abstract class AHoldsReferenceToB<A extends AbstractModel<A>, B extends Abstract
         });
     }
 
-    async relationalGet(relative: A): Promise<B> {
-        return (await this.relationalFind(new List([relative]))).first();
+    async relationalGet(relative: A): Promise<B | never> {
+        return await AbstractModel.get(relative[AbstractModel.asFk(this.relativeB)], this.relativeB);
     }
 
-    async relationalCreate(toCreate: B, relatives?: List<A>): Promise<void> {
-        // Nothing to do.
-    }
-    async relationalSave(toSave: B, relatives?: List<A>): Promise<void> {
-        // Nothing to do.
-    }
-    async relationalUpdate(toUpdate: B, relatives?: List<A>): Promise<void> {
-        // Nothing to do.
-    }
-
-    async relationalDestroy(toDestroy: B, relatives?: List<A>): Promise<void> {
-        let asToDestroy: List<A>;
-
-        if (!relatives)
-            asToDestroy = await this.queryOfRelativeA().eq(toDestroy.asFk(), toDestroy.id).execute();
-        else {
-            asToDestroy = relatives.filter((a) => { return a[toDestroy.asFk()] === toDestroy.id; });
-        }
-
-        await AbstractModel.destroyMultiple(asToDestroy);
+    async relationalDestroy(relatives: AnyNumber<A> = []): Promise<void> {
+        // Nothing to do
     }
 
     areRelated(a: A, b: B): boolean {
@@ -51,39 +34,18 @@ abstract class AHoldsReferenceToB<A extends AbstractModel<A>, B extends Abstract
         return false;
     }
 
-    async relationalFind(relatives: List<A>): Promise<QueryResult<B>> {
-        if (relatives.isEmpty())
-            return new QueryResult<B>();
+    async relationalFind(relatives: AnyNumber<A>): Promise<QueryResult<B>> {
+        let relativesList = new QueryResult(relatives);
+        if (relativesList.isEmpty())
+            relativesList = await AbstractModel.find(this.relativeA);
 
         let aRelativeB = new this.relativeB();
         let bQuery = this.queryOfRelativeB();
-        let toFindIds: Set<string> = new Set<string>(relatives.reduce(aRelativeB.asFk()).toArray());
+        let toFindIds: Set<string> = new Set<string>(relativesList.reduce(aRelativeB.asFk()));
         bQuery = bQuery.hasSome("_id", toFindIds);
 
         return await bQuery.execute();
     }
-
-    async relationalCreateMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {
-        // Nothing to do.
-    }
-    async relationalSaveMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {
-        // Nothing to do.
-    }
-    async relationalUpdateMultiple(toUpdate: List<B>, relatives?: List<A>): Promise<void> {
-        // Nothing to do.
-    }
-    async relationalDestroyMultiple(toDestroy: List<B>, relatives?: List<A>): Promise<void> {
-        let asToDestroy = new List<A>();
-        let bInstance = new this.relativeB();
-
-        if (!relatives)
-            asToDestroy = await this.queryOfRelativeA().hasSome(bInstance.asFk(), toDestroy.reduce("id")).execute();
-        else
-            asToDestroy = relatives.filter((a) => { return toDestroy.toArray().includes(a[bInstance.asFk()]); });
-
-        await AbstractModel.destroyMultiple(asToDestroy);
-    }
-
 }
 
 export default AHoldsReferenceToB;

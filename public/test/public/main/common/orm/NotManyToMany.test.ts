@@ -29,8 +29,8 @@ async function beforeAll() {
 async function beforeEach() {
     testShoppingCarts = TestShoppingCart.dummies(TestShoppingCart, 5);
     testShoppingCartItems = TestShoppingCartItem.dummies(TestShoppingCartItem, 5);
-    await WixDatabase.createMultiple(testShoppingCarts);
-    await WixDatabase.createMultiple(testShoppingCartItems);
+    await WixDatabase.create(testShoppingCarts);
+    await WixDatabase.create(testShoppingCartItems);
 }
 
 async function afterEach() {

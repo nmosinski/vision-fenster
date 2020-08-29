@@ -14,7 +14,7 @@ const PRODUCT_MODEL_ID = "70b29f09-263e-4eaf-b7f9-8bcdc411b389";
 
 export async function index() {
     let productModel = await ProductModel.get(PRODUCT_MODEL_ID, ProductModel);
-    await productModel.loadChain(ProductOptionType, ProductOption, Tag);
+    await productModel.loadChain([ProductOptionType, ProductOption, Tag]);
     /*await productModel.productOptionTypes.foreachAsync(async (el) => {
         await el.load(ProductOption);
         await el.productOptions.foreachAsync(async (opt) => {

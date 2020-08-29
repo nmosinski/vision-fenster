@@ -2,6 +2,7 @@ import AbstractModel from "./AbstractModel";
 import List from "../util/collections/list/List";
 import QueryResult from "./QueryResult";
 import WixDatabase, { Query } from "./WixDatabase";
+import { AnyNumber } from "../util/supportive";
 
 
 abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
@@ -17,53 +18,47 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
     abstract inverse(): Relation<B, A>;
 
     /**
-     * Assign Bs to relatives of type A and reverse if they belong to each other. 
-     * @param {B|List<B>} bs The Bs that will be assigned to As.
-     * @param {A|List<A} as The As the Bs will be assigned to.
+     * Assign Bs to relatives of type A and reverse if they are linked. 
+     * @param {AnyNumber<B>} bs The Bs that will be assigned to As.
+     * @param {AnyNumber<A>} as The As the Bs will be assigned to.
      */
-    abstract assign(bs: B | List<B>, as: A | List<A>): void;
+    abstract assign(bs: AnyNumber<B>, as: AnyNumber<A>): void;
 
     /**
      * Link Bs to relatives of type A and reverse.
-     * @param {B|List<B>} bs The Bs that will be linked to As.
-     * @param {A|List<A} as The As the Bs will be linked to.
+     * @param {AnyNumber<B>} bs The Bs that will be linked to As.
+     * @param {AnyNumber<A>} as The As the Bs will be linked to.
      */
-    abstract link(bs: B | List<B>, as: A | List<A>): void;
+    abstract link(bs: AnyNumber<B>, as: AnyNumber<A>): void;
 
     /**
      * Get a B that belongs to the given relative of type A.
-     * @param {List<A>}  [relative] The relative.
+     * @param {A}  [relative] The relative.
      * @returns {Promise<B>} B of the given id. 
      */
-    async abstract relationalGet(relative: A): Promise<B>;
+    async abstract relationalGet(relative: A): Promise<B | never>;
 
     /**
-     * Perform all necessary operations on all given relatives of type A that need to be done when storing the given B.
-     * @param {B} toCreate The B to be created. 
-     * @param {List<A>} [relatives] The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
+     * Destroy all Bs that belong to the given As.
+     * @param {AnyNumber<A>} relatives The as. If not given, the method will consider all existing A's.
      */
-    async abstract relationalCreate(toCreate: B, relatives?: List<A>): Promise<void>;
+    async abstract relationalDestroy(relatives?: AnyNumber<A>): Promise<void>;
 
     /**
-     * Perform all necessary operations on all given relatives of type A that need to be done when saving the given B.
-     * @param {B} toSave The B to be saved. 
-     * @param {List<A>} [relatives] The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
+     * Get all Bs that belong to at least one of the given relatives of type A.
+     * @param {AnyNumber<A>}  [relatives] The relatives. If not given, the method will consider all existing A's.
+     * @returns {Promise<QueryResult<B>>} Bs that belong to the given relatives.
      */
-    async abstract relationalSave(toSave: B, relatives?: List<A>): Promise<void>;
+    async abstract relationalFind(relatives?: AnyNumber<A>): Promise<QueryResult<B>>;
 
     /**
-     * Perform all necessary operations on all given relatives of type A that need to be done when updating the given B.
-     * @param {B} toUpdate The B to be updated. 
-     * @param {List<A>} relatives The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
+     * Get a custom query.
+     * @param {new()=> U, U extends AbstractModel<U>} Model The model of the query.
+     * @returns {Query<U>} A query. 
      */
-    async abstract relationalUpdate(toUpdate: B, relatives?: List<A>): Promise<void>;
-
-    /**
-     * Perform all necessary operations on all given relatives of type A that need to be done when destroying the given B.
-     * @param {B} toDestroy The B to be destroyed. 
-     * @param {List<A>} relatives The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
-     */
-    async abstract relationalDestroy(toDestroy: B, relatives?: List<A>): Promise<void>;
+    customQuery<U extends AbstractModel<U>>(Model: new () => U): Query<U> {
+        return WixDatabase.query(Model);
+    }
 
     /**
      * Get the name of B as property for A.
@@ -77,52 +72,6 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
      */
     aAsPropertyNameForB(): string {
         return this.inverse().bAsPropertyNameForA();
-    }
-
-    /**
-     * Find all realtives of type B that belong to any of the given relatives of type A and assign the relatives of type A to the relatives of type B.
-     * @param {List<A>} relatives The list containing relatives of type A.
-     * @returns {Promise<QueryResult<B>>} A list contining all As related to the given As. 
-     */
-    async abstract relationalLoad(relatives: List<A>): Promise<QueryResult<B>>;
-
-    /**
-     * Get all Bs that belong to at least one of the given relatives of type A.
-     * @param {List<A>}  [relatives] The relatives. If not given, the method will consider all existing A's.
-     * @returns {Promise<List<B>>} Bs that belong to the given relatives.
-     */
-    async abstract relationalFind(relatives?: List<A>): Promise<QueryResult<B>>;
-
-    /**
-     * Perform all necessary operations on all given relatives of type A that need to be done when storing the given B's.
-     * @param {List<B>} toSave The Bs to be created. 
-     * @param {List<A>} relatives The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
-     */
-    async abstract relationalCreateMultiple(toSave: List<B>, relatives?: List<A>): Promise<void>;
-
-    /**
-     * Perform all necessary operations on all given relatives of type A that need to be done when saving the given B's.
-     * @param {List<B>} toSave The Bs to be created. 
-     * @param {List<A>} relatives The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
-     */
-    async abstract relationalSaveMultiple(toSave: List<B>, relatives?: List<A>): Promise<void>;
-
-    /**
-     * Perform all necessary operations on all given relatives of type A that need to be done when updating the given B's.
-     * @param {List<B>} toUpdate The Bs to be updated. 
-     * @param {List<A>} relatives The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
-     */
-    async abstract relationalUpdateMultiple(toUpdate: List<B>, relatives?: List<A>): Promise<void>;
-
-    /**
-     * Perform all necessary operations on all given relatives of type A that need to be done when destroying the given B's.
-     * @param {List<B>} toDestroy The Bs to be destroyed. 
-     * @param {List<A>} relatives The relatives on which the needed operations will be performed. If not given, the operations will be performed on all existing A's.
-     */
-    async abstract relationalDestroyMultiple(toDestroy: List<B>, relatives?: List<A>): Promise<void>;
-
-    customQuery<U extends AbstractModel<U>>(Model: new () => U): Query<U> {
-        return WixDatabase.query(Model);
     }
 
     queryOfRelativeA(): Query<A> {

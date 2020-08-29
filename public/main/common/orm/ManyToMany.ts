@@ -55,26 +55,6 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends
         throw new NotImplementedError(PATH, "link");
     }
 
-
-    relationalCreate(toCreate: B, relatives?: List<A>): Promise<void> {
-        throw new NotImplementedError(PATH, "relationalCreate");
-    }
-    relationalSave(toSave: B, relatives?: List<A>): Promise<void> {
-        throw new NotImplementedError(PATH, "relationalSave");
-    }
-    relationalUpdate(toUpdate: B, relatives?: List<A>): Promise<void> {
-        throw new NotImplementedError(PATH, "relationalUpdate");
-    }
-    relationalCreateMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {
-        throw new NotImplementedError(PATH, "relationalCreateMultiple");
-    }
-    relationalSaveMultiple(toSave: List<B>, relatives?: List<A>): Promise<void> {
-        throw new NotImplementedError(PATH, "relationalSaveMultiple");
-    }
-    relationalUpdateMultiple(toUpdate: List<B>, relatives?: List<A>): Promise<void> {
-        throw new NotImplementedError(PATH, "relationalUpdateMultiple");
-    }
-
     async relationalGet(relative: A): Promise<B> {
         let bs = await this.relationalFind(new List<A>([relative]));
         return bs.first();

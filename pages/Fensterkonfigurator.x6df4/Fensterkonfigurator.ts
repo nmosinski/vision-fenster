@@ -25,7 +25,7 @@ let cache = [];
 $w.onReady(async function () {
 
 	productModel = (await ProductModel.find(ProductModel)).first();
-	await productModel.loadChain(ProductOptionType, ProductOption, Tag);
+	await productModel.loadChain([ProductOptionType, ProductOption, Tag]);
 	console.log("frontend", productModel);
 
 	allProductOptions = new List<ProductOption>();
