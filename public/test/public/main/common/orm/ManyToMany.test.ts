@@ -16,12 +16,10 @@ var testTags: List<TestTag>;
 export async function runAllTests() {
     let tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
 
-    tests.add(new Test(PATH, "relational link", truthly(), relationalLink));
-    tests.add(new Test(PATH, "relational link multiple", truthly(), relationalLinkMultiple));
     tests.add(new Test(PATH, "relational get", truthly(), relationalGet));
+    tests.add(new Test(PATH, "relational are related", truthly(), relationalAreRelated));
     tests.add(new Test(PATH, "relational find", truthly(), relationalFind));
     tests.add(new Test(PATH, "relational destroy", truthly(), relationalDestroy));
-    tests.add(new Test(PATH, "relational destroy multiple", truthly(), relationalDestroyMultiple));
     tests.add(new Test(PATH, "relational load", truthly(), relationalLoad));
 
     await tests.runAll();
@@ -60,16 +58,14 @@ async function afterEach() {
     await wixData.truncate("RoleTestShoppingCartItemTestTag");
 }
 
-function relationalLink() {
+function relationalAreRelated() {
+    console.log("Test not implemented.");
     return false;
 }
 
-function relationalLinkMultiple() {
-    return false;
-}
 
 async function relationalGet() {
-    let item = await testShoppingCartItems.first().testTagsQ().get();
+    let item = await testShoppingCartItems.first().testTagsQ().synchronize();
     if (!item)
         return false;
 
@@ -95,27 +91,6 @@ async function relationalDestroy() {
 
     let resultAfterDestroy = await testTags.last().testShoppingCartItemsQ().find();
     if (!resultAfterDestroy.isEmpty())
-        return false;
-
-    return true;
-}
-
-async function relationalDestroyMultiple() {
-    let resultOfLastBeforeDestroy = await testTags.last().testShoppingCartItemsQ().find();
-    if (!(resultOfLastBeforeDestroy.has(testShoppingCartItems.first()) && resultOfLastBeforeDestroy.has(testShoppingCartItems.last()) && resultOfLastBeforeDestroy.length === 2))
-        return false;
-
-    let resultOfFirstBeforeDestroy = await testTags.first().testShoppingCartItemsQ().find();
-    if (resultOfFirstBeforeDestroy.first().id !== testShoppingCartItems.first().id)
-        return false;
-
-    await TestShoppingCartItem.destroy(testShoppingCartItems);
-    let resultOfLastAfterDestroy = await testTags.last().testShoppingCartItemsQ().find();
-    if (!resultOfLastAfterDestroy.isEmpty())
-        return false;
-
-    let resultOfFirstAfterDestroy = await testTags.first().testShoppingCartItemsQ().find();
-    if (!resultOfFirstAfterDestroy.isEmpty())
         return false;
 
     return true;

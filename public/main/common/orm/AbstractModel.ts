@@ -392,24 +392,12 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
     }
 
     /**
-     * Get an item of the model (this by default) of the given id.
-     * If called over a relative, return the item that is related to any (the first) element returned by the previous query.
-     * @param {string} pk The primary key of the item to be retrieved.
+     * Get this item with the data in database.
      * @return {Promise<T>} The item.
      */
-    async get(id?: string): Promise<T> {
-        // Called over previous.
-        if (this.parent) {
-            let previousQueryResult = await this.parent.find();
-            let relation = this.relations.get(this.parent.Constructor);
-            let thisGetResult = relation.relationalGet(previousQueryResult.first());
-
-            return thisGetResult;
-        }
-
-        if (!id)
-            id = this.id;
-        return await AbstractModel.get(id, this.Constructor);
+    async synchronize(): Promise<this> {
+        let item = await AbstractModel.get(this.id, this.Constructor);
+        return this.fill(item);
     }
 
     /**
@@ -482,21 +470,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
 
     /**
      * Create this model (save it in the database).
-     * Passed models will be linked to this model before create.
-     * If called over relations, try to link this model to the retrieved models by the chained query.
-     * Linking not be possible depending on the relationship to the models.
-     * @param {T|List<T>} [models] The model to be linked.
      */
     async create(): Promise<void> {
-        let toCreate = this.root;
-        // Called over previous.
-        if (this.parent) {
-            models = await this.find();
-            AbstractModel.link(models, toCreate);
-
-        }
-
-        return await AbstractModel.create(toCreate);
+        return await AbstractModel.create(<T><unknown>this);
     }
 
     /**
@@ -524,20 +500,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
 
     /**
      * Save this model (save it in the database).
-     * Passed models will be linked to this model before save.
-     * If called over relations, try to link this model to the retrieved models by the chained query.
-     * Linking not be possible depending on the relationship to the models.
-     * @param {T|List<T>} [models] The models to be linked.
      */
-    async save(models?: AbstractModel<any> | List<AbstractModel<any>>): Promise<void> {
-        let toSave = this.root;
-        // Called over previous.
-        if (this.parent) {
-            models = await this.find();
-            AbstractModel.link(models, toSave);
-        }
-
-        return await AbstractModel.save(toSave);
+    async save(): Promise<void> {
+        return await AbstractModel.save(<T><unknown>this);
     }
 
     /**
@@ -560,20 +525,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
 
     /**
      * Update this model (update it in the database).
-     * Passed models will be linked to this model before update.
-     * If called over relations, try to link this model to the retrieved models by the chained query.
-     * Linking not be possible depending on the relationship to the models.
-     * @param {T|List<T>} [models] The model to be linked.
      */
     async update(models?: AbstractModel<any> | List<AbstractModel<any>>): Promise<void> {
-        let toUpdate = this.root;
-        // Called over previous.
-        if (this.parent) {
-            models = await this.find();
-            AbstractModel.link(models, toUpdate);
-        }
-
-        return await AbstractModel.update(toUpdate);
+        return await AbstractModel.update(<T><unknown>this);
     }
 
     /**

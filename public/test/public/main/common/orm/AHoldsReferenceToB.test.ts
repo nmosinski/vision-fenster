@@ -15,9 +15,9 @@ export async function runAllTests() {
     let tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
 
     tests.add(new Test(PATH, "relational get", truthly(), relationalGet));
+    tests.add(new Test(PATH, "relational are related", truthly(), relationalAreRelated));
     tests.add(new Test(PATH, "relational find", truthly(), relationalFind));
     tests.add(new Test(PATH, "relational destroy", truthly(), relationalDestroy));
-    tests.add(new Test(PATH, "relational destroy multiple", truthly(), relationalDestroyMultiple));
 
     await tests.runAll();
 }
@@ -53,6 +53,11 @@ async function relationalFind() {
     let result = await relation.relationalFind(testShoppingCartItems);
 
     return result.equals(expectedSublist);
+}
+
+function relationalAreRelated() {
+    console.log("Test not implemented.");
+    return false;
 }
 
 async function relationalDestroy() {

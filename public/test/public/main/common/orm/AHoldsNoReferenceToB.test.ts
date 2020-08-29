@@ -16,8 +16,10 @@ var relation: AHoldsNoReferenceToB<TestShoppingCart, TestShoppingCartItem>;
 export async function runAllTests() {
     let tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
 
+    tests.add(new Test(PATH, "relational are related", truthly(), relationalAreRelated));
     tests.add(new Test(PATH, "relational link", truthly(), relationalLink));
     tests.add(new Test(PATH, "relational get", truthly(), relationalGet));
+    tests.add(new Test(PATH, "relational destroy", truthly(), relationalDestroy));
     tests.add(new Test(PATH, "relational find", truthly(), relationalFind));
 
     await tests.runAll();
@@ -38,6 +40,16 @@ async function beforeEach() {
 async function afterEach() {
     await WixDatabase.removeAll(TestShoppingCart);
     await WixDatabase.removeAll(TestShoppingCartItem);
+}
+
+function relationalAreRelated() {
+    console.log("TestNotImplemented");
+    return false;
+}
+
+function relationalDestroy() {
+    console.log("TestNotImplemented");
+    return false;
 }
 
 function relationalLink() {

@@ -11,9 +11,9 @@ const PATH = "public/main/common/orm/AHoldsReferenceToB.js";
 
 abstract class AHoldsReferenceToB<A extends AbstractModel<A>, B extends AbstractModel<B>> extends NotManyToMany<A, B>
 {
-    link(bs: B | List<B>, as: A | List<A>): void {
-        let asList: List<A> = (as instanceof List) ? as : new List<A>([as]);
-        let b: B = (bs instanceof List) ? bs.first() : bs;
+    link(bs: AnyNumber<B>, as: AnyNumber<A>): void {
+        let asList: List<A> = new List<A>(as);
+        let b: B = new List<B>(bs).first();
 
         asList.foreach((a: A) => {
             a[AbstractModel.asFk(this.relativeB)] = b.id;

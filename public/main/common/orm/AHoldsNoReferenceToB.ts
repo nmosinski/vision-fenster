@@ -10,9 +10,9 @@ const PATH = "public/main/common/orm/AHoldsNoReferenceToB.js";
 
 abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends AbstractModel<B>> extends NotManyToMany<A, B>
 {
-    link(bs: B | List<B>, as: A | List<A>): void {
-        let a: A = (as instanceof List) ? as.first() : as;
-        let bsList: List<B> = (bs instanceof List) ? bs : new List<B>([bs]);
+    link(bs: AnyNumber<B>, as: AnyNumber<A>): void {
+        let a: A = new List<A>(as).first();
+        let bsList: List<B> = new List<B>(bs);
 
         bsList.foreach((b: B) => {
             b[AbstractModel.asFk(this.relativeA)] = a.id;
@@ -40,7 +40,7 @@ abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends Abstra
         return false;
     }
 
-    async relationalFind(relatives?: List<A>): Promise<QueryResult<B>> {
+    async relationalFind(relatives?: AnyNumber<A>): Promise<QueryResult<B>> {
         let relativesList = new QueryResult<A>(relatives);
         if (relativesList.isEmpty())
             relativesList = await AbstractModel.find(this.relativeA);

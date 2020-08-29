@@ -51,7 +51,7 @@ class Product extends AbstractModel<Product>{
     }
 
     productModelQ() {
-        return this.relative(ProductModel).get();
+        return this.relative(ProductModel).synchronize();
     }
 
     set productModelId(productModelId: string) {

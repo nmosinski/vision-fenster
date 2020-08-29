@@ -4,7 +4,6 @@ import { runAllTests as aHoldsReferenceToBTests } from "./public/main/common/orm
 import { runAllTests as aHoldsNoReferenceToBTests } from "./public/main/common/orm/AHoldsNoReferenceToB.test";
 import { runAllTests as manyToManyTests } from "./public/main/common/orm/ManyToMany.test";
 import { runAllTests as productConfigurationServiceTests } from "./public/main/feature/product/ProductConfigurationService.test";
-import { runAllTests as notManyToManyTests } from "./public/main/common/orm/NotManyToMany.test";
 import KVMap from "../main/common/util/collections/map/KVMap";
 import List from "../main/common/util/collections/list/List";
 
@@ -17,7 +16,6 @@ function init() {
     tests.add("aHoldsNoReferenceToB", aHoldsNoReferenceToBTests);
     tests.add("manyToMany", manyToManyTests);
     tests.add("productConfigurationService", productConfigurationServiceTests);
-    tests.add("notManyToMany", notManyToManyTests);
 }
 
 export async function runAllTests() {

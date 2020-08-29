@@ -5,6 +5,7 @@ import OneToMany from "./OneToMany";
 import ManyToOne from "./ManyToOne";
 import Relation from "./Relation";
 import NotImplementedError from "../util/error/NotImplementedError";
+import { AnyNumber } from "../util/supportive";
 const PATH = "public/main/common/orm/ManyToMany"
 
 
@@ -25,7 +26,11 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends
         return AbstractModel.asMultiplePropertyName(this.relativeB);
     }
 
-    assign(bs: B | List<B>, as: A | List<A>): void {
+    link(bs: AnyNumber<B>, as: AnyNumber<A>): void {
+        throw new NotImplementedError(PATH, "link");
+    }
+
+    assign(bs: AnyNumber<B>, as: AnyNumber<A>): void {
         throw new NotImplementedError(PATH, "assign");
         /**
         let asList: List<A> = (as instanceof List) ? as : new List<A>([as]);
@@ -51,23 +56,22 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends
         */
     }
 
-    link(bs: B | List<B>, as: A | List<A>): void {
-        throw new NotImplementedError(PATH, "link");
-    }
-
     async relationalGet(relative: A): Promise<B> {
         let bs = await this.relationalFind(new List<A>([relative]));
         return bs.first();
     }
 
-    async relationalDestroy(toDestroy: B, relatives?: List<A>): Promise<void> {
+    async relationalDestroy(relatives?: AnyNumber<A>): Promise<void> {
+        let roleToA = new OneToMany(this.relativeA, this.roleModel);
+        let roles = await roleToA.relationalFind(relatives);
         let roleToB = new ManyToOne(this.roleModel, this.relativeB);
-        await roleToB.relationalDestroy(toDestroy);
+        await roleToB.relationalDestroy(roles);
     }
 
-    areRelated(a: A, b: B, cs: List<AbstractModel<any>>): boolean {
+    areRelated(a: A, b: B, roles: AnyNumber<AbstractModel<any>>): boolean {
         let ret = false;
-        cs.foreach((c: AbstractModel<any>) => {
+        let rolesList = new List<AbstractModel<any>>(roles);
+        rolesList.foreach((c: AbstractModel<any>) => {
             if (c[a.asFk()] === a.id && c[b.asFk()] === b.id)
                 ret = true;
         });
@@ -110,11 +114,6 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends
     async relationalFind(relatives: List<A>): Promise<QueryResult<B>> {
         let roleToB = new ManyToOne(this.roleModel, this.relativeB);
         return await roleToB.relationalFind(await (this.getRoles(relatives)));
-    }
-
-    async relationalDestroyMultiple(toDestroy: List<B>, relatives?: List<A>): Promise<void> {
-        let roleToB = new ManyToOne(this.roleModel, this.relativeB);
-        await roleToB.relationalDestroyMultiple(toDestroy);
     }
 
     set roleModel(roleModel: new () => AbstractModel<any>) {
