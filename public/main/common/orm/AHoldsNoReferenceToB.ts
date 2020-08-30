@@ -10,7 +10,7 @@ const PATH = "public/main/common/orm/AHoldsNoReferenceToB.js";
 
 abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends AbstractModel<B>> extends NotManyToMany<A, B>
 {
-    link(bs: AnyNumber<B>, as: AnyNumber<A>): void {
+    async link(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void> {
         let a: A = new List<A>(as).first();
         let bsList: List<B> = new List<B>(bs);
 

@@ -8,15 +8,18 @@ import wixData from "wix-data"
 import ManyToMany from "../../../../../main/common/orm/ManyToMany";
 import QueryResult from "../../../../../main/common/orm/QueryResult";
 import JsTypes from "../../../../../main/common/util/jsTypes/JsTypes";
+import AbstractModel from "../../../../../main/common/orm/AbstractModel";
 const PATH = "test/public/main/common/orm/ManyToMany.test.js"
 
-var testShoppingCartItems: List<TestShoppingCartItem>;
-var testTags: List<TestTag>;
+var testShoppingCartItems: QueryResult<TestShoppingCartItem>;
+var testTags: QueryResult<TestTag>;
 
 export async function runAllTests() {
     let tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
 
     tests.add(new Test(PATH, "relational get", truthly(), relationalGet));
+    tests.add(new Test(PATH, "relational link", truthly(), relationalLink));
+    tests.add(new Test(PATH, "relational assign", truthly(), relationalAssign));
     tests.add(new Test(PATH, "relational are related", truthly(), relationalAreRelated));
     tests.add(new Test(PATH, "relational find", truthly(), relationalFind));
     tests.add(new Test(PATH, "relational destroy", truthly(), relationalDestroy));
@@ -65,11 +68,46 @@ function relationalAreRelated() {
 
 
 async function relationalGet() {
-    let item = await testShoppingCartItems.first().testTagsQ().synchronize();
-    if (!item)
+    let testShippingCartItem = testShoppingCartItems.first();
+    let testShoppingCartItem2 = await AbstractModel.get(testShippingCartItem.id, TestShoppingCartItem);
+    if (!testShoppingCartItem2) {
+        console.log("testShoppingCartItem2", testShoppingCartItem2);
+        console.log("first if");
         return false;
+    }
 
-    return testTags.first().id === item.id;
+    if (testShippingCartItem.id !== testShoppingCartItem2.id) {
+        console.log("testShoppingCartItem", testShippingCartItem);
+        console.log("testShoppingCartItem2", testShoppingCartItem2);
+        console.log("second if");
+        return false;
+    }
+
+    return true;
+}
+
+async function relationalLink() {
+    await testShoppingCartItems.link(testTags);
+    let tags = await testShoppingCartItems.get(1).testShoppingCartQ().find();
+    if (!tags.equals(testTags)) {
+        console.log("tags", tags);
+        console.log("testTags", testTags);
+        console.log("first if");
+        return false;
+    }
+}
+
+async function relationalAssign() {
+    await testShoppingCartItems.link(testTags);
+    await testShoppingCartItems.assign(testTags);
+    let tags = testShoppingCartItems.get(1).testTags;
+    if (!tags.equals(testTags)) {
+        console.log("tags", tags);
+        console.log("testTags", testTags);
+        console.log("first if");
+        return false;
+    }
+    return true;
 }
 
 async function relationalFind() {

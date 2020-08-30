@@ -49,7 +49,7 @@ class QueryResult<T extends AbstractModel<T>> extends List<T>
      * Assign this models to the given models.
      */
     async assign(models: AbstractModel<any> | List<AbstractModel<any>>) {
-        AbstractModel.assign(models, this);
+        await AbstractModel.assign(models, this);
     }
 
     /**
@@ -75,7 +75,7 @@ class QueryResult<T extends AbstractModel<T>> extends List<T>
 
         await modelsList.foreachAsync(async (Model: new () => AbstractModel<any>) => {
             result = await this.first().getRelation(Model).inverse().relationalFind(this);
-            result.assign(this);
+            await result.assign(this);
         });
 
         if (modelsList.length === 1)

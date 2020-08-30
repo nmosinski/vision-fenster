@@ -1,11 +1,13 @@
 import AbstractModel from "./AbstractModel";
 import List from "../util/collections/list/List";
+import Set from "../util/collections/set/Set";
 import QueryResult from "./QueryResult";
 import OneToMany from "./OneToMany";
 import ManyToOne from "./ManyToOne";
 import Relation from "./Relation";
 import NotImplementedError from "../util/error/NotImplementedError";
 import { AnyNumber } from "../util/supportive";
+import { Query } from "./WixDatabase";
 const PATH = "public/main/common/orm/ManyToMany"
 
 
@@ -26,12 +28,54 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends
         return AbstractModel.asMultiplePropertyName(this.relativeB);
     }
 
-    link(bs: AnyNumber<B>, as: AnyNumber<A>): void {
-        throw new NotImplementedError(PATH, "link");
+    async link(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void> {
+        let asList = new List<A>(as);
+        let bsList = new List<B>(bs);
+
+        if (asList.isEmpty() || bsList.isEmpty())
+            return;
+        let roles = await this.getRoles(as);
+
+        asList.foreach((a: A) => {
+            let related = new QueryResult<B>();
+            bsList.foreach((b: B) => {
+                if (this.areRelated(a, b, roles))
+                    related.add(b);
+            });
+            a[this.bAsPropertyNameForA()] = related;
+        });
+
+        bsList.foreach((b: B) => {
+            let related = new QueryResult<A>();
+            asList.foreach((a: A) => {
+                if (this.areRelated(a, b, roles))
+                    related.add(a);
+            });
+            b[this.aAsPropertyNameForB()] = related;
+        });
     }
 
-    assign(bs: AnyNumber<B>, as: AnyNumber<A>): void {
-        throw new NotImplementedError(PATH, "assign");
+    async assign(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void> {
+        let asList = new List<A>(as);
+        let bsList = new List<B>(bs);
+
+        if (asList.isEmpty() || bsList.isEmpty())
+            return;
+
+        let roles = await this.getRoles(as);
+        let rolesSet = new Set(roles);
+        bsList.foreach((b: B) => {
+            asList.foreach((a: A) => {
+                let roleModel = new (this.roleModel)();
+                let aAsFk = a.asFk();
+                let bAsFk = b.asFk();
+                roleModel.fill({ aAsFk: a.id, bAsFk: b.id });
+                rolesSet.add(roleModel);
+            });
+        });
+
+        await AbstractModel.save(rolesSet);
+
         /**
         let asList: List<A> = (as instanceof List) ? as : new List<A>([as]);
         let bsList: List<B> = (bs instanceof List) ? bs : new List<B>([bs]);
@@ -71,11 +115,10 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends
     areRelated(a: A, b: B, roles: AnyNumber<AbstractModel<any>>): boolean {
         let ret = false;
         let rolesList = new List<AbstractModel<any>>(roles);
-        rolesList.foreach((c: AbstractModel<any>) => {
-            if (c[a.asFk()] === a.id && c[b.asFk()] === b.id)
+        rolesList.foreach((role: AbstractModel<any>) => {
+            if (role[a.asFk()] === a.id && role[b.asFk()] === b.id)
                 ret = true;
         });
-
 
         return ret;
     }
@@ -106,9 +149,13 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends
         return bs;
     }
 
-    private async getRoles(relatives: List<A>): Promise<QueryResult<AbstractModel<any>>> {
+    private async getRoles(relatives: AnyNumber<A>): Promise<QueryResult<AbstractModel<any>>> {
+        let relativesList = new List<A>(relatives);
+        if (relativesList.isEmpty())
+            return new QueryResult<A>();
+
         let aToRole = new OneToMany(this.relativeA, this.roleModel);
-        return await aToRole.relationalFind(relatives);
+        return await aToRole.relationalFind(relativesList);
     }
 
     async relationalFind(relatives: List<A>): Promise<QueryResult<B>> {

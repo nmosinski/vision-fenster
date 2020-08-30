@@ -3,6 +3,6 @@ import List from "../../public/main/common/util/collections/list/List";
 
 // @ts-ignore
 $w.onReady(async function () {
-    await runAllTests();
-    //await runTests("list", "abstractModel");
+    //await runAllTests();
+    await runTests("aHoldsReferenceToB", "aHoldsNoReferenceToB", "manyToMany");
 });

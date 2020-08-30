@@ -22,14 +22,14 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
      * @param {AnyNumber<B>} bs The Bs that will be assigned to As.
      * @param {AnyNumber<A>} as The As the Bs will be assigned to.
      */
-    abstract assign(bs: AnyNumber<B>, as: AnyNumber<A>): void;
+    abstract async assign(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void>;
 
     /**
      * Link Bs to relatives of type A and reverse.
      * @param {AnyNumber<B>} bs The Bs that will be linked to As.
      * @param {AnyNumber<A>} as The As the Bs will be linked to.
      */
-    abstract link(bs: AnyNumber<B>, as: AnyNumber<A>): void;
+    abstract async link(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void>;
 
     /**
      * Get a B that belongs to the given relative of type A.

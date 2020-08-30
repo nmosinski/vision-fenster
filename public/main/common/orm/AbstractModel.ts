@@ -248,7 +248,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
         let thisTableName = this.tableName;
         let thisAsFk = this.asFk();
 
-        let roleModelClass = class RoleModel extends AbstractModel<RoleModel>{
+        let roleModelClass = class RoleModel extends AbstractModel<RoleModel> implements IComparable {
 
             protected Constructor: new () => RoleModel;
 
@@ -264,6 +264,26 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
 
             addRelations(): void {
 
+            }
+
+            /**
+             * @override
+             */
+            equals(object: any): boolean {
+                if (!(object instanceof RoleModel))
+                    return false;
+                if (object.tableName !== this.tableName)
+                    return false;
+
+                let thisIdA = this[AbstractModel.asFk(Model)];
+                let objectIdA = object[AbstractModel.asFk(Model)];
+
+                if (thisIdA === objectIdA && this[thisAsFk] === object[thisAsFk])
+                    return true;
+                else if (thisIdA === object[thisAsFk] && this[thisAsFk] === objectIdA)
+                    return true;
+                else
+                    return false;
             }
 
             /**
@@ -293,8 +313,8 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * @param {U extends AbstractModel<U>, AnyNumber<U>} relatives The relatives the given model will be assigned to.
      * @returns {this} This.
      */
-    assign<U extends AbstractModel<U>>(relatives: AnyNumber<U>): this {
-        AbstractModel.assign(<T><unknown>this, relatives);
+    async assign<U extends AbstractModel<U>>(relatives: AnyNumber<U>): Promise<this> {
+        await AbstractModel.assign(<T><unknown>this, relatives);
         return this;
     }
 
@@ -303,13 +323,13 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * @param {P extends AbstractModel<P>, AnyNumber<P>} models The models to be assigned.
      * @param {U extends AbstractModel<U>, AnyNumber<U>} relatives The relatives the given model will be assigned to. 
      */
-    static assign<P extends AbstractModel<P>, U extends AbstractModel<U>>(models: AnyNumber<P>, relatives: AnyNumber<U>): void {
+    static async assign<P extends AbstractModel<P>, U extends AbstractModel<U>>(models: AnyNumber<P>, relatives: AnyNumber<U>): Promise<void> {
         let modelsList = new List<P>(models);
         let relativesList = new List<U>(relatives);
         if (modelsList.isEmpty() || relativesList.isEmpty())
             return;
 
-        modelsList.first().relations.get(relativesList.first().Constructor).assign(models, relatives);
+        await modelsList.first().relations.get(relativesList.first().Constructor).assign(models, relatives);
     }
 
     /**
@@ -317,8 +337,8 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * @param {U extends AbstractModel<U>, AnyNumber<U>} relatives The relatives the given model will be linked to.
      * @returns {this} This.
      */
-    link<U extends AbstractModel<U>>(relatives: AnyNumber<U>): this {
-        AbstractModel.link(<T><unknown>this, relatives);
+    async link<U extends AbstractModel<U>>(relatives: AnyNumber<U>): Promise<this> {
+        await AbstractModel.link(<T><unknown>this, relatives);
         return this;
     }
 
@@ -327,12 +347,12 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * @param {T extends AbstractModel<T>, AnyNumber<T>} models The models to be linked.
      * @param {U extends AbstractModel<U>, AnyNumber<U>} relatives The relatives the given model will be linked to. 
      */
-    static link<P extends AbstractModel<P>, U extends AbstractModel<U>>(models: AnyNumber<P>, relatives: AnyNumber<U>): void {
+    static async link<P extends AbstractModel<P>, U extends AbstractModel<U>>(models: AnyNumber<P>, relatives: AnyNumber<U>): Promise<void> {
         let modelsList = new List<P>(models);
         let relativesList = new List<U>(relatives);
         if (modelsList.isEmpty() || relativesList.isEmpty())
             return;
-        modelsList.first().relations.get(relativesList.first().Constructor).link(models, relatives);
+        await modelsList.first().relations.get(relativesList.first().Constructor).link(models, relatives);
     }
 
     /**
@@ -348,7 +368,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
         await modelsList.foreachAsync(async (Model) => {
             let relation = this.relations.get(Model).inverse();
             ret = await relation.relationalFind(<T><unknown>this);
-            ret.assign(this);
+            await ret.assign(this);
         });
 
         return ret;
@@ -444,8 +464,8 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
                 propertyName = this.asSinglePropertyName();
             // Assign the result as property to parent as list or single one.
             if (((relationToParent instanceof ManyToOne) || (relationToParent instanceof OneToZeroOrOne) || (relationToParent instanceof ZeroOrOneToOne))) {
-                propertyTarget[propertyName] = thisQueryResult.first();
-                this.lastQueryResult = thisQueryResult.first();
+                propertyTarget[propertyName] = thisQueryResult.firstOrNull();
+                this.lastQueryResult = thisQueryResult.firstOrNull();
             }
             else {
                 propertyTarget[propertyName] = thisQueryResult;

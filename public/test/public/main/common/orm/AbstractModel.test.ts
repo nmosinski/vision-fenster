@@ -51,9 +51,9 @@ async function beforeEach() {
     testShoppingCarts = TestShoppingCart.dummies(TestShoppingCart, 3);
     testShoppingCartItems = TestShoppingCartItem.dummies(TestShoppingCartItem, 5);
     testUsers = TestUser.dummies(TestUser, 2);
-    testShoppingCartItems.first().link(testShoppingCarts.first());
-    testShoppingCartItems.get(1).link(testShoppingCarts.first());
-    testShoppingCarts.first().link(testUsers.first());
+    await testShoppingCartItems.first().link(testShoppingCarts.first());
+    await testShoppingCartItems.get(1).link(testShoppingCarts.first());
+    await testShoppingCarts.first().link(testUsers.first());
 
     await WixDatabase.create(testShoppingCarts);
     await WixDatabase.create(testShoppingCartItems);
@@ -66,17 +66,17 @@ async function afterEach() {
     await WixDatabase.removeAll(TestShoppingCartItem);
 }
 
-function link() {
+async function link() {
     let ret = true;
 
-    testShoppingCartItems.last().link(testShoppingCarts.last());
+    await testShoppingCartItems.last().link(testShoppingCarts.last());
     if (testShoppingCartItems.last()[TestShoppingCart.asFk(TestShoppingCart)] !== testShoppingCarts.last().id) {
         console.log(testShoppingCartItems, "testShoppingCartItems");
         console.log(testShoppingCarts, "testShoppingCarts");
         console.log("first if");
         return false;
     }
-    testShoppingCartItems.foreach((item) => { item.link(testShoppingCarts.last()); });
+    await testShoppingCartItems.foreachAsync(async (item) => { await item.link(testShoppingCarts.last()); });
 
     testShoppingCartItems.foreach((testShoppingCartItem) => {
         if (testShoppingCartItem[TestShoppingCart.asFk(TestShoppingCart)] !== testShoppingCarts.last().id) {
@@ -88,19 +88,19 @@ function link() {
     return ret;
 }
 
-function assign() {
+async function assign() {
     let ret = true;
 
-    testShoppingCartItems.last().link(testShoppingCarts.last());
-    testShoppingCartItems.last().assign(testShoppingCarts.last());
+    await testShoppingCartItems.last().link(testShoppingCarts.last());
+    await testShoppingCartItems.last().assign(testShoppingCarts.last());
     if (testShoppingCartItems.last()["testShoppingCart"] !== testShoppingCarts.last()) {
         console.log(testShoppingCartItems, "testShoppingCartItems");
         console.log(testShoppingCarts, "testShoppingCarts");
         console.log("first if");
         return false;
     }
-    testShoppingCartItems.foreach((item) => { item.link(testShoppingCarts.last()); });
-    testShoppingCartItems.foreach((item) => { item.assign(testShoppingCarts.last()); });
+    await testShoppingCartItems.foreachAsync(async (item) => { await item.link(testShoppingCarts.last()); });
+    await testShoppingCartItems.foreachAsync(async (item) => { await item.assign(testShoppingCarts.last()); });
 
     testShoppingCartItems.foreach((testShoppingCartItem) => {
         if (testShoppingCartItem["testShoppingCart"] !== testShoppingCarts.last()) {

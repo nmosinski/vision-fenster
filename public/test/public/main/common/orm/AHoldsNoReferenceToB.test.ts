@@ -7,16 +7,16 @@ import AHoldsNoReferenceToB from "../../../../../main/common/orm/AHoldsNoReferen
 import OneToMany from "../../../../../main/common/orm/OneToMany";
 import QueryResult from "../../../../../main/common/orm/QueryResult";
 import JsTypes from "../../../../../main/common/util/jsTypes/JsTypes";
+import AbstractModel from "../../../../../main/common/orm/AbstractModel";
 const PATH = "test/public/main/common/orm/AHoldsNoReferenceToB.test.js"
 
-var testShoppingCarts: List<TestShoppingCart>;
-var testShoppingCartItems: List<TestShoppingCartItem>;
+var testShoppingCarts: QueryResult<TestShoppingCart>;
+var testShoppingCartItems: QueryResult<TestShoppingCartItem>;
 var relation: AHoldsNoReferenceToB<TestShoppingCart, TestShoppingCartItem>;
 
 export async function runAllTests() {
     let tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
 
-    tests.add(new Test(PATH, "relational are related", truthly(), relationalAreRelated));
     tests.add(new Test(PATH, "relational link", truthly(), relationalLink));
     tests.add(new Test(PATH, "relational get", truthly(), relationalGet));
     tests.add(new Test(PATH, "relational destroy", truthly(), relationalDestroy));
@@ -42,23 +42,33 @@ async function afterEach() {
     await WixDatabase.removeAll(TestShoppingCartItem);
 }
 
-function relationalAreRelated() {
-    console.log("TestNotImplemented");
-    return false;
+async function relationalDestroy() {
+    await testShoppingCarts.link(testShoppingCartItems);
+    await testShoppingCartItems.save();
+    await testShoppingCarts.destroy();
+    let shoppingCarts = await AbstractModel.find(TestShoppingCart);
+    let shoppingCartItems = await AbstractModel.find(TestShoppingCartItem);
+    if (shoppingCarts.length > 0) {
+        console.log("shoppingCarts", shoppingCarts);
+        console.log("first if");
+        return false;
+    }
+
+    if (shoppingCartItems.length > 0) {
+        console.log("shoppingCartItems", shoppingCartItems);
+        console.log("second if");
+        return false;
+    }
+    return true;
 }
 
-function relationalDestroy() {
-    console.log("TestNotImplemented");
-    return false;
-}
-
-function relationalLink() {
+async function relationalLink() {
     let ret = true;
 
-    relation.link(testShoppingCartItems.first(), testShoppingCarts.first());
+    await relation.link(testShoppingCartItems.first(), testShoppingCarts.first());
     ret = testShoppingCartItems.first()[TestShoppingCart.asFk(TestShoppingCart)] === testShoppingCarts.first().id;
 
-    relation.link(testShoppingCartItems, testShoppingCarts.first());
+    await relation.link(testShoppingCartItems, testShoppingCarts.first());
 
     testShoppingCartItems.foreach((item) => {
         if (item[TestShoppingCart.asFk(TestShoppingCart)] !== testShoppingCarts.first().id)

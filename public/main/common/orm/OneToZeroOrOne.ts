@@ -10,7 +10,7 @@ class OneToZeroOrOne<A extends AbstractModel<A>, B extends AbstractModel<B>> ext
         super(relativeA, relativeB);
     }
 
-    assign(bs: B | List<B>, as: A | List<A>): void {
+    async assign(bs: B | List<B>, as: A | List<A>): Promise<void> {
         let asList: List<A> = (as instanceof List) ? as : new List<A>([as]);
         let bsList: List<B> = (bs instanceof List) ? bs : new List<B>([bs]);
 
