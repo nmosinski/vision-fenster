@@ -3,75 +3,65 @@ import TestShoppingCart from "./TestShoppingCart";
 import AbstractModel from "../../../../../../main/common/orm/AbstractModel";
 import TestTag from "./TestTag";
 import List from "../../../../../../main/common/util/collections/list/List";
+import QueryResult from "../../../../../../main/common/orm/QueryResult";
 
 
 class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
 {
     private _count: any;
-    
+
     protected Constructor: new () => TestShoppingCartItem;
     private _testShoppingCart: TestShoppingCart;
-    private _testTags: any;
-    
-    init(): void 
-    {
+    private _testTags: QueryResult<TestTag>;
+
+    init(): void {
         this.Constructor = TestShoppingCartItem;
     }
 
-    addProperties(): void 
-    {
+    addProperties(): void {
         this.properties.
-        number("count", "positive").
-        number("price", "positive");
+            number("count", "positive").
+            number("price", "positive");
     }
-    
-    addRelations(): void 
-    {
+
+    addRelations(): void {
         this.manyToOne(TestShoppingCart);
         this.manyToMany(TestTag);
     }
 
-    testShoppingCartQ()
-    {
+    testShoppingCartQ() {
         return this.relative(TestShoppingCart);
     }
 
-    testTagsQ()
-    {
+    testTagsQ() {
         return this.relative(TestTag);
     }
 
-    set count(count)
-    {
+    set count(count) {
         this._count = count;
     }
 
-    set testShoppingCart(testShoppingCart: TestShoppingCart)
-    {
+    set testShoppingCart(testShoppingCart: TestShoppingCart) {
         this._testShoppingCart = testShoppingCart;
     }
 
-    set testTags(testTags: List<TestTag>)
-    {
+    set testTags(testTags: QueryResult<TestTag>) {
         this._testTags = testTags;
     }
 
-    get count()
-    {
+    get count() {
         return this._count;
     }
 
-    get testShoppingCart()
-    {
+    get testShoppingCart() {
         return this._testShoppingCart;
     }
 
-    get testTags()
-    {
+    get testTags(): QueryResult<TestTag> {
         return this._testTags;
     }
 
-    
+
 
 }
 

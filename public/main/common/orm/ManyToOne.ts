@@ -10,12 +10,12 @@ class ManyToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends 
         super(relativeA, relativeB);
     }
 
-    async assign(bs: B | List<B>, as: A | List<A>): Promise<void> {
-        let asList: List<A> = (as instanceof List) ? as : new List<A>([as]);
-        let bsList: List<B> = (bs instanceof List) ? bs : new List<B>([bs]);
+    async link(bs: B | List<B>, as: A | List<A>): Promise<void> {
+        const asList: List<A> = (as instanceof List) ? as : new List<A>([as]);
+        const bsList: List<B> = (bs instanceof List) ? bs : new List<B>([bs]);
 
         asList.foreach((a: A) => {
-            let related = new QueryResult<B>();
+            const related = new QueryResult<B>();
             bsList.foreach((b: B) => {
                 if (this.areRelated(a, b))
                     related.add(b);
@@ -24,7 +24,7 @@ class ManyToOne<A extends AbstractModel<A>, B extends AbstractModel<B>> extends 
         });
 
         bsList.foreach((b: B) => {
-            let related = new QueryResult<A>();
+            const related = new QueryResult<A>();
             asList.foreach((a: A) => {
                 if (this.areRelated(a, b))
                     related.add(a);

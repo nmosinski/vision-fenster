@@ -27,5 +27,5 @@ export async function runTests(...testNames: Array<string>) {
     init();
     let toRun = new List<string>(testNames);
 
-    await toRun.foreachAsync(async name => await tests.get(name)());
+    await toRun.foreachAsync(async name => await (tests.get(name)()));
 }

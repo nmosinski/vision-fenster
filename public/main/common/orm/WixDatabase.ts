@@ -1,4 +1,4 @@
-//@ts-ignore
+// @ts-ignore
 import wixData from "wix-data";
 import AbstractModel from "./AbstractModel";
 import JsTypes from "../util/jsTypes/JsTypes";
@@ -31,7 +31,7 @@ class WixDatabase<T extends AbstractModel<T>>
      * @returns {new()=>U} The item of the given pk.
      */
     static async get<U extends AbstractModel<U>>(id: string, Model: new () => U): Promise<U> {
-        let item = await wixData.get(new Model().tableName, id);
+        const item = await wixData.get(new Model().tableName, id);
         if (!item)
             throw new GetError(PATH, "get", id, Model);
         return itemToModel(item, Model);
@@ -53,7 +53,7 @@ class WixDatabase<T extends AbstractModel<T>>
      * @returns {boolean} true if the item exists, else false.
      */
     static async has<U extends AbstractModel<U>>(id: string, Model: new () => U): Promise<boolean> {
-        let item = await wixData.get(new Model().tableName, id);
+        const item = await wixData.get(new Model().tableName, id);
         if (!item)
             return false;
         return true;
@@ -192,7 +192,7 @@ class WixDatabase<T extends AbstractModel<T>>
     private static async removeMultiple<U extends AbstractModel<U>>(toRemove: List<U>): Promise<void> {
         if (toRemove.isEmpty())
             return;
-        let ids: Array<string> = <Array<string>>toRemove.reduce(itemToModelPropertyMapping("_id")).toArray();
+        const ids: string[] = toRemove.reduce(itemToModelPropertyMapping("_id")).toArray() as string[];
         await wixData.bulkRemove(toRemove.first().tableName, ids);
     }
 
@@ -232,10 +232,10 @@ class WixDatabase<T extends AbstractModel<T>>
  * @class
  * A class representign a wix-data query.
  */
+// tslint:disable-next-line: max-classes-per-file
 export class Query<T extends AbstractModel<T>>
 {
     private _model: new () => T;
-    //private _subquery: Query<AbstractModel<any>>;
     private _query: any;
 
     /**
@@ -246,15 +246,6 @@ export class Query<T extends AbstractModel<T>>
         this.Model = Model;
         this.query = wixData.query(new Model().tableName);
     }
-
-    /*
-    join<U extends AbstractModel<U>>(Model: new()=>U)
-    {
-        let newQuery = new Query(Model);
-        newQuery.subquery = this;
-        return newQuery;
-    }
-    */
 
     /**
      * Set a filter for the query. Match only those items, that have the given value in the property of the given property name.
@@ -273,7 +264,7 @@ export class Query<T extends AbstractModel<T>>
      * @param {List<Number|String|Date>} propertyValues The possible propertyValues.
      * @returns {this} This query.
      */
-    hasSome(propertyName: string, propertyValues: List<Number | String | Date>): this {
+    hasSome(propertyName: string, propertyValues: List<number | string | Date>): this {
         this.query = this.query.hasSome(modelToItemPropertyMapping(propertyName), propertyValues.toArray());
         return this;
     }
@@ -289,7 +280,7 @@ export class Query<T extends AbstractModel<T>>
         if(this.subquery)
             previousQueryResult = await this.subquery.execute();
         */
-        let wixQueryResult = await this.query.limit(limit).find();
+        const wixQueryResult = await this.query.limit(limit).find();
         return itemsToQueryResult(wixQueryResult.items, this.Model);
     }
 
@@ -353,10 +344,10 @@ function modelToItemPropertyMapping(modelPropertyName: string): string {
 }
 
 function itemToModel<U extends AbstractModel<U>>(item: any, Model: new () => U): U {
-    for (let key in item)
+    for (const key in item)
         item[itemToModelPropertyMapping(key)] = item[key];
 
-    let model = new Model().fill(item);
+    const model = new Model().fill(item);
     return model;
 }
 
@@ -366,17 +357,17 @@ function itemToModel<U extends AbstractModel<U>>(item: any, Model: new () => U):
  * @param {new()=>U} model The model of the items to be returned.
  * @returns {QueryResult<U>} The QueryResult. 
  */
-function itemsToQueryResult<U extends AbstractModel<U>>(items: Array<object>, Model: new () => U): QueryResult<U> {
-    let result = new QueryResult<U>();
+function itemsToQueryResult<U extends AbstractModel<U>>(items: object[], Model: new () => U): QueryResult<U> {
+    const result = new QueryResult<U>();
     items.forEach((item) => { result.add(itemToModel(item, Model)); });
     return result;
 }
 
 function modelToItem(model: AbstractModel<any>): object {
-    let stripped = model.strip();
-    let item = {};
+    const stripped = model.strip();
+    const item = {};
 
-    for (let key in stripped)
+    for (const key in stripped)
         item[modelToItemPropertyMapping(key)] = stripped[key];
 
     return item;
@@ -387,8 +378,8 @@ function modelToItem(model: AbstractModel<any>): object {
  * @param {List<AbstractModel<any>>}list The list containing the models.
  * @returns {Array<object>} The objects.
  */
-function modelsToItems(list: List<AbstractModel<any>>): Array<object> {
-    let items: Array<object> = [];
+function modelsToItems(list: List<AbstractModel<any>>): object[] {
+    const items: object[] = [];
     list.foreach((model) => { items.push(modelToItem(model)); });
     return items;
 }

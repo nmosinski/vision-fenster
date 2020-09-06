@@ -40,16 +40,16 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
 
     /**
      * Destroy all Bs that belong to the given As.
-     * @param {AnyNumber<A>} relatives The as. If not given, the method will consider all existing A's.
+     * @param {AnyNumber<A>} relatives The as.
      */
-    async abstract relationalDestroy(relatives?: AnyNumber<A>): Promise<void>;
+    async abstract relationalDestroy(relatives: AnyNumber<A>): Promise<void>;
 
     /**
      * Get all Bs that belong to at least one of the given relatives of type A.
-     * @param {AnyNumber<A>}  [relatives] The relatives. If not given, the method will consider all existing A's.
+     * @param {AnyNumber<A>}  [relatives] The relatives.
      * @returns {Promise<QueryResult<B>>} Bs that belong to the given relatives.
      */
-    async abstract relationalFind(relatives?: AnyNumber<A>): Promise<QueryResult<B>>;
+    async abstract relationalFind(relatives: AnyNumber<A>): Promise<QueryResult<B>>;
 
     /**
      * Get a custom query.
@@ -82,20 +82,20 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
         return WixDatabase.query(this.relativeB);
     }
 
-    get relativeA(): new () => A {
-        return this._relativeA;
-    }
-
-    get relativeB(): new () => B {
-        return this._relativeB;
-    }
-
     set relativeA(relative: new () => A) {
         this._relativeA = relative;
     }
 
+    get relativeA(): new () => A {
+        return this._relativeA;
+    }
+
     set relativeB(relative: new () => B) {
         this._relativeB = relative;
+    }
+
+    get relativeB(): new () => B {
+        return this._relativeB;
     }
 }
 

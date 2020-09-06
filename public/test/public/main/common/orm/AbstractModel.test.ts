@@ -10,12 +10,12 @@ import QueryResult from "../../../../../main/common/orm/QueryResult";
 import JsTypes from "../../../../../main/common/util/jsTypes/JsTypes";
 const PATH = "test/public/main/common/orm/AbstractModel.test.js"
 
-var testShoppingCarts: QueryResult<TestShoppingCart>;
-var testShoppingCartItems: QueryResult<TestShoppingCartItem>;
-var testUsers: QueryResult<TestUser>;
+let testShoppingCarts: QueryResult<TestShoppingCart>;
+let testShoppingCartItems: QueryResult<TestShoppingCartItem>;
+let testUsers: QueryResult<TestUser>;
 
 export async function runAllTests() {
-    let tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
+    const tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
 
     tests.add(new Test(PATH, "link", truthly(), link));
     tests.add(new Test(PATH, "assign", truthly(), assign));
@@ -51,9 +51,9 @@ async function beforeEach() {
     testShoppingCarts = TestShoppingCart.dummies(TestShoppingCart, 3);
     testShoppingCartItems = TestShoppingCartItem.dummies(TestShoppingCartItem, 5);
     testUsers = TestUser.dummies(TestUser, 2);
-    await testShoppingCartItems.first().link(testShoppingCarts.first());
-    await testShoppingCartItems.get(1).link(testShoppingCarts.first());
-    await testShoppingCarts.first().link(testUsers.first());
+    await testShoppingCartItems.first().assign(testShoppingCarts.first());
+    await testShoppingCartItems.get(1).assign(testShoppingCarts.first());
+    await testShoppingCarts.first().assign(testUsers.first());
 
     await WixDatabase.create(testShoppingCarts);
     await WixDatabase.create(testShoppingCartItems);
@@ -66,7 +66,7 @@ async function afterEach() {
     await WixDatabase.removeAll(TestShoppingCartItem);
 }
 
-async function link() {
+async function assign() {
     let ret = true;
 
     await testShoppingCartItems.last().link(testShoppingCarts.last());
@@ -88,7 +88,7 @@ async function link() {
     return ret;
 }
 
-async function assign() {
+async function link() {
     let ret = true;
 
     await testShoppingCartItems.last().link(testShoppingCarts.last());
@@ -113,7 +113,7 @@ async function assign() {
 }
 
 async function simpleGet() {
-    let result = await AbstractModel.get(testShoppingCarts.first().id, TestShoppingCart);
+    const result = await AbstractModel.get(testShoppingCarts.first().id, TestShoppingCart);
     if (result)
         return result.id === testShoppingCarts.first().id;
     else
@@ -121,7 +121,7 @@ async function simpleGet() {
 }
 
 async function simpleFind() {
-    let result = await AbstractModel.find(TestShoppingCartItem);
+    const result = await AbstractModel.find(TestShoppingCartItem);
     return result.equals(testShoppingCartItems);
 }
 
@@ -161,16 +161,16 @@ async function simpleLoadChain() {
 }
 
 async function simpleCreate() {
-    let shoppingCart = TestShoppingCart.dummy(TestShoppingCart);
+    const shoppingCart = TestShoppingCart.dummy(TestShoppingCart);
     await shoppingCart.create();
-    let result = await TestShoppingCart.get(shoppingCart.id, TestShoppingCart);
+    const result = await TestShoppingCart.get(shoppingCart.id, TestShoppingCart);
     return result;
 }
 
 async function simpleCreateMultiple() {
     await WixDatabase.removeAll(TestShoppingCartItem);
     await TestShoppingCartItem.create(testShoppingCartItems);
-    let result = await TestShoppingCartItem.find(TestShoppingCartItem);
+    const result = await TestShoppingCartItem.find(TestShoppingCartItem);
     if (!result.equals(testShoppingCartItems)) {
         console.log("result", result);
         console.log("testShoppingCartItems", testShoppingCartItems);
@@ -180,13 +180,13 @@ async function simpleCreateMultiple() {
 }
 
 async function simpleUpdate() {
-    let item = await TestShoppingCartItem.get(testShoppingCartItems.first().id, TestShoppingCartItem);
+    const item = await TestShoppingCartItem.get(testShoppingCartItems.first().id, TestShoppingCartItem);
     if (!item)
         throw new InvalidOperationError(PATH, "simpleUpdate", "Wrong test configuration or get doesn't work like expected!");
 
     item.count = 3;
     await item.update();
-    let updatedItem = await TestShoppingCartItem.get(item.id, TestShoppingCartItem);
+    const updatedItem = await TestShoppingCartItem.get(item.id, TestShoppingCartItem);
     if (!updatedItem)
         throw new InvalidOperationError(PATH, "simpleUpdate", "Wrong test configuration or get doesn't work like expected!");
 
@@ -195,10 +195,10 @@ async function simpleUpdate() {
 
 async function simpleUpdateMultiple() {
     let ret = true;
-    let items = await TestShoppingCartItem.find(TestShoppingCartItem);
+    const items = await TestShoppingCartItem.find(TestShoppingCartItem);
     items.foreach((item) => { item.count = 3; });
     await TestShoppingCartItem.update(items);
-    let updatedItems = await TestShoppingCartItem.find(TestShoppingCartItem);
+    const updatedItems = await TestShoppingCartItem.find(TestShoppingCartItem);
     updatedItems.foreach((item) => {
         if (item.count !== 3)
             ret = false;
@@ -209,14 +209,14 @@ async function simpleUpdateMultiple() {
 async function simpleSave() {
     await WixDatabase.removeAll(TestShoppingCartItem);
     await TestShoppingCartItem.save(testShoppingCartItems.first());
-    let result = await TestShoppingCartItem.find(TestShoppingCartItem);
+    const result = await TestShoppingCartItem.find(TestShoppingCartItem);
     return result.has(testShoppingCartItems.first());
 }
 
 async function simpleSaveMultiple() {
     await WixDatabase.removeAll(TestShoppingCartItem);
     await TestShoppingCartItem.save(testShoppingCartItems);
-    let result = await TestShoppingCartItem.find(TestShoppingCartItem);
+    const result = await TestShoppingCartItem.find(TestShoppingCartItem);
     return result.equals(testShoppingCartItems);
 }
 
@@ -229,12 +229,12 @@ async function simpleDestroy() {
 
 async function simpleDestroyMultiple() {
     await TestUser.destroy(testUsers);
-    let result = await TestUser.find(TestUser);
+    const result = await TestUser.find(TestUser);
     return result.isEmpty();
 }
 
 async function oneGenerationFind() {
-    let result = await testShoppingCarts.first().testShoppingCartItemsQ().find();
+    const result = await testShoppingCarts.first().testShoppingCartItemsQ().find();
 
     if (result) {
         if (result.length !== 2)
@@ -250,7 +250,7 @@ async function oneGenerationFind() {
 }
 
 async function oneGenerationFindResultAsProperty() {
-    let result = await testShoppingCarts.first().testShoppingCartItemsQ().find();
+    const result = await testShoppingCarts.first().testShoppingCartItemsQ().find();
 
     if (result) {
         if (testShoppingCarts.first().testShoppingCartItems !== result) {
@@ -266,7 +266,7 @@ async function oneGenerationFindResultAsProperty() {
 }
 
 async function twoGenerationsFind() {
-    let result = await testUsers.first().testShoppingCartQ().testShoppingCartItemsQ().find();
+    const result = await testUsers.first().testShoppingCartQ().testShoppingCartItemsQ().find();
 
     if (result) {
         if (result.length !== 2)
@@ -283,7 +283,7 @@ async function twoGenerationsFind() {
 
 
 async function twoGenerationsFindResultAsProperty() {
-    let result = await testUsers.first().testShoppingCartQ().testShoppingCartItemsQ().find();
+    const result = await testUsers.first().testShoppingCartQ().testShoppingCartItemsQ().find();
 
     if (result) {
         if (!(testUsers.first().testShoppingCart.id === testShoppingCarts.first().id))

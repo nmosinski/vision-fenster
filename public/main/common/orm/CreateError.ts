@@ -6,8 +6,7 @@ import AbstractModel from "./AbstractModel";
  * @class
  * A class representing an error that occurrs during a create operation.
  */
-class CreateError extends CrudOperationError
-{
+class CreateError extends CrudOperationError {
     private _model: AbstractModel<any>;
 
     /**
@@ -16,8 +15,7 @@ class CreateError extends CrudOperationError
      * @param {string} location A more specific location hint in the file where the problem occurred.
      * @param {string} model The model that couldn't be created.
      */
-    constructor(path: string, location: string, model: AbstractModel<any>)
-    {
+    constructor(path: string, location: string, model: AbstractModel<any>) {
         super("An error occurred when trying to create a model.", path, location);
         this.model = model;
     }
@@ -26,21 +24,18 @@ class CreateError extends CrudOperationError
      * @override
      * @inheritdoc
      */
-    toString(): string
-    {
+    toString(): string {
         let ret = super.toString();
         ret += "\nModel: " + this.model.tableName;
         ret += "\n" + JSON.stringify(this.model);
         return ret;
     }
 
-    set model(model: AbstractModel<any>)
-    {
+    set model(model: AbstractModel<any>) {
         this._model = model;
     }
 
-    get model(): AbstractModel<any>
-    {
+    get model(): AbstractModel<any> {
         return this._model;
     }
 }

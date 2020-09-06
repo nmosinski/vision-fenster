@@ -11,9 +11,9 @@ const PATH = "public/main/common/orm/AHoldsReferenceToB.js";
 
 abstract class AHoldsReferenceToB<A extends AbstractModel<A>, B extends AbstractModel<B>> extends NotManyToMany<A, B>
 {
-    async link(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void> {
-        let asList: List<A> = new List<A>(as);
-        let b: B = new List<B>(bs).first();
+    async assign(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void> {
+        const asList: List<A> = new List<A>(as);
+        const b: B = new List<B>(bs).first();
 
         asList.foreach((a: A) => {
             a[AbstractModel.asFk(this.relativeB)] = b.id;
@@ -35,13 +35,12 @@ abstract class AHoldsReferenceToB<A extends AbstractModel<A>, B extends Abstract
     }
 
     async relationalFind(relatives: AnyNumber<A>): Promise<QueryResult<B>> {
-        let relativesList = new QueryResult(relatives);
+        const relativesList = new QueryResult(relatives);
         if (relativesList.isEmpty())
-            relativesList = await AbstractModel.find(this.relativeA);
-
-        let aRelativeB = new this.relativeB();
+            return new QueryResult();
+        const aRelativeB = new this.relativeB();
         let bQuery = this.queryOfRelativeB();
-        let toFindIds: Set<string> = new Set<string>(relativesList.reduce(aRelativeB.asFk()));
+        const toFindIds: Set<string> = new Set<string>(relativesList.reduce(aRelativeB.asFk()));
         bQuery = bQuery.hasSome("_id", toFindIds);
 
         return await bQuery.execute();

@@ -10,9 +10,9 @@ const PATH = "public/main/common/orm/AHoldsNoReferenceToB.js";
 
 abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends AbstractModel<B>> extends NotManyToMany<A, B>
 {
-    async link(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void> {
-        let a: A = new List<A>(as).first();
-        let bsList: List<B> = new List<B>(bs);
+    async assign(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void> {
+        const a: A = new List<A>(as).first();
+        const bsList: List<B> = new List<B>(bs);
 
         bsList.foreach((b: B) => {
             b[AbstractModel.asFk(this.relativeA)] = a.id;
@@ -24,12 +24,12 @@ abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends Abstra
     }
 
     async relationalDestroy(relatives: AnyNumber<A> = []): Promise<void> {
-        let relativesList = new List<A>(relatives);
+        const relativesList = new List<A>(relatives);
 
         if (relativesList.isEmpty())
-            relativesList = await AbstractModel.find(this.relativeA);
+            return;
 
-        let toDestroy = await this.relationalFind(relativesList);
+        const toDestroy = await this.relationalFind(relativesList);
 
         await AbstractModel.destroy(toDestroy);
     }
@@ -40,15 +40,14 @@ abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends Abstra
         return false;
     }
 
-    async relationalFind(relatives?: AnyNumber<A>): Promise<QueryResult<B>> {
-        let relativesList = new QueryResult<A>(relatives);
+    async relationalFind(relatives: AnyNumber<A>): Promise<QueryResult<B>> {
+        const relativesList = new QueryResult<A>(relatives);
         if (relativesList.isEmpty())
-            relativesList = await AbstractModel.find(this.relativeA);
-
+            return new QueryResult();
         let query = this.queryOfRelativeB();
         query = query.hasSome(AbstractModel.asFk(this.relativeA), relativesList.toPks());
 
-        let result = await query.execute();
+        const result = await query.execute();
         return result;
     }
 }

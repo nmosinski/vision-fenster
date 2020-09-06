@@ -56,7 +56,7 @@ class QueryResult<T extends AbstractModel<T>> extends List<T>
      * Link this models to the given models.
      */
     async link(models: AbstractModel<any> | List<AbstractModel<any>>) {
-        AbstractModel.link(models, this);
+        await AbstractModel.link(models, this);
     }
 
     /**
@@ -70,12 +70,12 @@ class QueryResult<T extends AbstractModel<T>> extends List<T>
         if (this.isEmpty())
             return new QueryResult();
 
-        let modelsList = new List<new () => AbstractModel<any>>(models);
+        const modelsList = new List<new () => AbstractModel<any>>(models);
         let result: QueryResult<AbstractModel<any>> = this;
 
         await modelsList.foreachAsync(async (Model: new () => AbstractModel<any>) => {
             result = await this.first().getRelation(Model).inverse().relationalFind(this);
-            await result.assign(this);
+            await result.link(this);
         });
 
         if (modelsList.length === 1)
@@ -92,7 +92,7 @@ class QueryResult<T extends AbstractModel<T>> extends List<T>
         if (this.isEmpty())
             return this;
 
-        let modelsList = new List<new () => AbstractModel<any>>(models);
+        const modelsList = new List<new () => AbstractModel<any>>(models);
         let res: QueryResult<AbstractModel<any>> = this;
 
         await modelsList.foreachAsync(async (Model, idx) => {

@@ -10,12 +10,12 @@ import JsTypes from "../../../../../main/common/util/jsTypes/JsTypes";
 import AbstractModel from "../../../../../main/common/orm/AbstractModel";
 const PATH = "test/public/main/common/orm/AHoldsNoReferenceToB.test.js"
 
-var testShoppingCarts: QueryResult<TestShoppingCart>;
-var testShoppingCartItems: QueryResult<TestShoppingCartItem>;
-var relation: AHoldsNoReferenceToB<TestShoppingCart, TestShoppingCartItem>;
+let testShoppingCarts: QueryResult<TestShoppingCart>;
+let testShoppingCartItems: QueryResult<TestShoppingCartItem>;
+let relation: AHoldsNoReferenceToB<TestShoppingCart, TestShoppingCartItem>;
 
 export async function runAllTests() {
-    let tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
+    const tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
 
     tests.add(new Test(PATH, "relational link", truthly(), relationalLink));
     tests.add(new Test(PATH, "relational get", truthly(), relationalGet));
@@ -46,8 +46,8 @@ async function relationalDestroy() {
     await testShoppingCarts.link(testShoppingCartItems);
     await testShoppingCartItems.save();
     await testShoppingCarts.destroy();
-    let shoppingCarts = await AbstractModel.find(TestShoppingCart);
-    let shoppingCartItems = await AbstractModel.find(TestShoppingCartItem);
+    const shoppingCarts = await AbstractModel.find(TestShoppingCart);
+    const shoppingCartItems = await AbstractModel.find(TestShoppingCartItem);
     if (shoppingCarts.length > 0) {
         console.log("shoppingCarts", shoppingCarts);
         console.log("first if");
@@ -81,7 +81,7 @@ async function relationalGet() {
     testShoppingCartItems.first()[testShoppingCarts.first().asFk()] = testShoppingCarts.first().id;
     await TestShoppingCartItem.update(testShoppingCartItems.first());
 
-    let item = (await relation.relationalGet(testShoppingCarts.first()));
+    const item = (await relation.relationalGet(testShoppingCarts.first()));
 
     return testShoppingCartItems.first().id === item.id;
 }
@@ -90,9 +90,9 @@ async function relationalFind() {
     testShoppingCartItems.foreach((item) => { item[TestShoppingCart.asFk(TestShoppingCart)] = testShoppingCarts.first().id });
     testShoppingCartItems.first()[TestShoppingCart.asFk(TestShoppingCart)] = testShoppingCarts.get(1).id;
     await TestShoppingCartItem.update(testShoppingCartItems);
-    let expectedSublist = testShoppingCartItems;
+    const expectedSublist = testShoppingCartItems;
 
-    let result = await relation.relationalFind(testShoppingCarts);
+    const result = await relation.relationalFind(testShoppingCarts);
 
     return result.equals(expectedSublist);
 }
