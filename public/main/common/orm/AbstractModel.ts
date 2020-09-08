@@ -126,9 +126,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * Validate all properties.
      * @returns {bolean} True if valid, else false.
      */
-    valid(): boolean {
+    valid(propertyNamesToCheck?: AnyNumber<string>): boolean {
         let valid = true;
-        this._properties.foreach((propertyName, property) => {
+        const propertyNamesToCheckList = new List<string>(propertyNamesToCheck);
+        const toCheck = (propertyNamesToCheckList.isEmpty()) ? this._properties : this._properties.filter(name => propertyNamesToCheckList.has(name));
+        toCheck.foreach((propertyName, property) => {
             if (!property.valid(this[propertyName]))
                 valid = false;
         });
@@ -136,12 +138,11 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
     }
 
     /**
-     * @todo Remove this? Moved to WixDatabase?
      * Return an object holding all properties defined for this model.
      * @returns {object} The object holding the properties defined for this model.
      */
-    strip(): object {
-        return AbstractModel.strip(this);
+    strip(propertyNamesToConsider: AnyNumber<string>): object {
+        return AbstractModel.strip(this, propertyNamesToConsider);
     }
 
     /**
@@ -150,12 +151,32 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * @param {AbstractModel<any>} model The model to be translated.
      * @returns {object} The object holding the properties defined for the given model.
      */
-    static strip<U extends AbstractModel<U>>(model: AbstractModel<U>): object {
+    static strip<U extends AbstractModel<U>>(model: AbstractModel<U>, propertyNamesToConsider: AnyNumber<string>): object {
         const item = {};
-        model.properties.foreach((propertyName) => {
+        const propertyNamesToConsiderList = new List<string>(propertyNamesToConsider);
+        const properties = (propertyNamesToConsiderList.isEmpty()) ? model.properties : model.properties.filter(name => propertyNamesToConsiderList.has(name));
+        properties.foreach((propertyName) => {
             item[propertyName] = model[propertyName];
         });
         return item;
+    }
+
+    /**
+     * Get a new Model that equals this one considering only the properties with the given property names.
+     * @param {AnyNumber<string>} propertyNamesToConsider The property names to be considered.
+     * @returns {AbstractModel<T>} The new model. 
+     */
+    reduce(propertyNamesToConsider: AnyNumber<string>): AbstractModel<T> {
+        return AbstractModel.reduce(this as unknown as T, propertyNamesToConsider).first();
+    }
+
+    static reduce<U extends AbstractModel<U>>(models: AnyNumber<U>, propertyNamesToConsider: AnyNumber<string>): List<U> {
+        const propertyNamesToConsiderList = new List<string>(propertyNamesToConsider);
+        return new List(models).map((model: U) => {
+            const ret = new model.Constructor();
+            propertyNamesToConsiderList.foreach(fieldName => ret[fieldName] = model[fieldName]);
+            return ret;
+        });
     }
 
     /**
@@ -363,6 +384,17 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
         await modelsList.first().relations.get(relativesList.first().Constructor).link(models, relatives);
     }
 
+    async assignAndLink<U extends AbstractModel<U>>(relatives: AnyNumber<U>): Promise<this> {
+        await this.assign(relatives);
+        await this.link(relatives);
+        return this;
+    }
+
+    static async assignAndLink<U extends AbstractModel<U>, P extends AbstractModel<P>>(models: AnyNumber<U>, relatives: AnyNumber<P>): Promise<void> {
+        await AbstractModel.assign(models, relatives);
+        await AbstractModel.link(models, relatives);
+    }
+
     /**
      * Load Models.
      * @param {<U extends AbstractModel<U>>, AnyNumber<new() => U>} Models The Models (classes) to be loaded.
@@ -505,9 +537,9 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
 
     /**
      * Create models.
-     * @param {U|List<U>} models The models to be created.
+     * @param {AnyNumber<U>} models The models to be created.
      */
-    static async create<U extends AbstractModel<U>>(models: U | List<U>): Promise<void> {
+    static async create<U extends AbstractModel<U>>(models: AnyNumber<U>): Promise<void> {
         const modelsList = new List<U>(models);
 
         if (modelsList.isEmpty())
@@ -523,7 +555,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
                 throw new CreateError(PATH, "AbstractModel.create()", model);
         });
 
-        await WixDatabase.create(models);
+        await WixDatabase.create(modelsList);
     }
 
     /**
@@ -537,7 +569,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * Save models.
      * @param {U|List<U>} models The models to be saved.
      */
-    static async save<U extends AbstractModel<U>>(models: U | List<U>): Promise<void> {
+    static async save<U extends AbstractModel<U>>(models: AnyNumber<U>): Promise<void> {
         const modelsList = new List<U>(models);
 
         if (modelsList.isEmpty())
@@ -553,32 +585,34 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
                 throw new SaveError(PATH, "AbstractModel.save()", model);
         });
 
-        await WixDatabase.save(models);
+        await WixDatabase.save(modelsList);
     }
 
     /**
      * Update this model (update it in the database).
      */
-    async update(models?: AbstractModel<any> | List<AbstractModel<any>>): Promise<void> {
-        return await AbstractModel.update(this as unknown as T);
+    async update(fieldsToUpdate?: AnyNumber<string>): Promise<void> {
+        return await AbstractModel.update(this as unknown as T, fieldsToUpdate);
     }
 
     /**
      * Update models.
      * @param {U | List<U>} models The models to be updated.
      */
-    static async update<U extends AbstractModel<U>>(models: U | List<U>): Promise<void> {
+    static async update<U extends AbstractModel<U>>(models: AnyNumber<U>, fieldsToUpdate?: AnyNumber<string>): Promise<void> {
         const modelsList = new List<U>(models);
+        const fieldsToUpdateList = new List<string>(fieldsToUpdate).add('id');
+        const toUpdate = modelsList.map(model => model.reduce(fieldsToUpdateList));
 
         if (modelsList.isEmpty())
             return;
 
-        modelsList.foreach((model) => {
-            if (!model.valid())
+        modelsList.foreach(model => {
+            if (!model.valid(fieldsToUpdateList))
                 throw new UpdateError(PATH, "AbstractModel.update()", model);
         });
 
-        await WixDatabase.update(models);
+        await WixDatabase.update(toUpdate);
     }
 
     /**
@@ -601,7 +635,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * @param {U | List<U>} models The models to be destroyed.
      * @param {boolean} [doNotCascade=false] Will not destroy relatives that belong to this model if true.
      */
-    static async destroy<U extends AbstractModel<U>>(models: U | List<U>, doNotCascade: boolean = false): Promise<void> {
+    static async destroy<U extends AbstractModel<U>>(models: AnyNumber<U>, doNotCascade: boolean = false): Promise<void> {
         const modelsList = new List<U>(models);
 
         if (modelsList.isEmpty())

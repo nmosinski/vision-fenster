@@ -24,7 +24,7 @@ abstract class AHoldsReferenceToB<A extends AbstractModel<A>, B extends Abstract
         return await AbstractModel.get(relative[AbstractModel.asFk(this.relativeB)], this.relativeB);
     }
 
-    async relationalDestroy(relatives: AnyNumber<A> = []): Promise<void> {
+    async relationalDestroy(relatives: AnyNumber<A>): Promise<void> {
         // Nothing to do
     }
 

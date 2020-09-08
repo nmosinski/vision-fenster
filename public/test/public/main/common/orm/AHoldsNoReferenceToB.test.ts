@@ -17,7 +17,7 @@ let relation: AHoldsNoReferenceToB<TestShoppingCart, TestShoppingCartItem>;
 export async function runAllTests() {
     const tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
 
-    tests.add(new Test(PATH, "relational link", truthly(), relationalLink));
+    tests.add(new Test(PATH, "relational assign", truthly(), relationalAssign));
     tests.add(new Test(PATH, "relational get", truthly(), relationalGet));
     tests.add(new Test(PATH, "relational destroy", truthly(), relationalDestroy));
     tests.add(new Test(PATH, "relational find", truthly(), relationalFind));
@@ -43,7 +43,7 @@ async function afterEach() {
 }
 
 async function relationalDestroy() {
-    await testShoppingCarts.link(testShoppingCartItems);
+    await testShoppingCarts.assign(testShoppingCartItems);
     await testShoppingCartItems.save();
     await testShoppingCarts.destroy();
     const shoppingCarts = await AbstractModel.find(TestShoppingCart);
@@ -62,13 +62,13 @@ async function relationalDestroy() {
     return true;
 }
 
-async function relationalLink() {
+async function relationalAssign() {
     let ret = true;
 
-    await relation.link(testShoppingCartItems.first(), testShoppingCarts.first());
+    await relation.assign(testShoppingCartItems.first(), testShoppingCarts.first());
     ret = testShoppingCartItems.first()[TestShoppingCart.asFk(TestShoppingCart)] === testShoppingCarts.first().id;
 
-    await relation.link(testShoppingCartItems, testShoppingCarts.first());
+    await relation.assign(testShoppingCartItems, testShoppingCarts.first());
 
     testShoppingCartItems.foreach((item) => {
         if (item[TestShoppingCart.asFk(TestShoppingCart)] !== testShoppingCarts.first().id)

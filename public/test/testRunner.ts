@@ -7,7 +7,7 @@ import { runAllTests as productConfigurationServiceTests } from "./public/main/f
 import KVMap from "../main/common/util/collections/map/KVMap";
 import List from "../main/common/util/collections/list/List";
 
-var tests = new KVMap<string, Function>();
+const tests = new KVMap<string, () => Promise<void>>();
 
 function init() {
     tests.add("list", listTests);
@@ -23,9 +23,16 @@ export async function runAllTests() {
     await tests.values().foreachAsync(async (testFunction) => await testFunction());
 }
 
-export async function runTests(...testNames: Array<string>) {
+export async function runTests(...testNames: string[]) {
     init();
-    let toRun = new List<string>(testNames);
+    const toRun = new List<string>(testNames);
 
     await toRun.foreachAsync(async name => await (tests.get(name)()));
+}
+
+export async function runAllTestsExcept(...testNames: string[]) {
+    init();
+    const notToRun = new List<string>(testNames);
+
+    await tests.filter((name, test) => !notToRun.has(name)).foreachAsync(async name => await (tests.get(name)()));
 }

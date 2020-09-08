@@ -115,7 +115,7 @@ async function relationalFind() {
     }
 
     const result2 = await testShoppingCartItems.last().testTagsQ().find();
-    if (result2.length !== 1 || !result2.firstOrNull().equals(testTags.last())) {
+    if (result2.length !== 1 || !result2.first().equals(testTags.last())) {
         console.log('second if');
         console.log(result2, 'result2');
     }

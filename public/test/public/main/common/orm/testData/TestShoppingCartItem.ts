@@ -9,6 +9,7 @@ import QueryResult from "../../../../../../main/common/orm/QueryResult";
 class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
 {
     private _count: any;
+    private _price: any;
 
     protected Constructor: new () => TestShoppingCartItem;
     private _testShoppingCart: TestShoppingCart;
@@ -20,8 +21,8 @@ class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
 
     addProperties(): void {
         this.properties.
-            number("count", "positive").
-            number("price", "positive");
+            number("count", "positive", 'nullable').
+            number("price", "positive", 'nullable');
     }
 
     addRelations(): void {
@@ -41,27 +42,33 @@ class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
         this._count = count;
     }
 
-    set testShoppingCart(testShoppingCart: TestShoppingCart) {
-        this._testShoppingCart = testShoppingCart;
-    }
-
-    set testTags(testTags: QueryResult<TestTag>) {
-        this._testTags = testTags;
-    }
-
     get count() {
         return this._count;
+    }
+
+    set testShoppingCart(testShoppingCart: TestShoppingCart) {
+        this._testShoppingCart = testShoppingCart;
     }
 
     get testShoppingCart() {
         return this._testShoppingCart;
     }
 
+    set testTags(testTags: QueryResult<TestTag>) {
+        this._testTags = testTags;
+    }
+
     get testTags(): QueryResult<TestTag> {
         return this._testTags;
     }
 
+    set price(price: number) {
+        this._price = price;
+    }
 
+    get price(): number {
+        return this._price;
+    }
 
 }
 

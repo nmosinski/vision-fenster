@@ -91,7 +91,7 @@ class ManyToMany<A extends AbstractModel<A>, B extends AbstractModel<B>> extends
         return bs.first();
     }
 
-    async relationalDestroy(relatives?: AnyNumber<A>): Promise<void> {
+    async relationalDestroy(relatives: AnyNumber<A>): Promise<void> {
         const relativesList = new List<A>(relatives);
         await (await this.getRoles(relativesList)).destroy();
     }

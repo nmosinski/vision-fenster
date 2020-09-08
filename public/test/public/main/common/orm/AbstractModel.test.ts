@@ -17,8 +17,9 @@ let testUsers: QueryResult<TestUser>;
 export async function runAllTests() {
     const tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
 
-    tests.add(new Test(PATH, "link", truthly(), link));
     tests.add(new Test(PATH, "assign", truthly(), assign));
+    tests.add(new Test(PATH, "link", truthly(), link));
+    tests.add(new Test(PATH, "assign and link", truthly(), assignAndLink));
 
     tests.add(new Test(PATH, "simple get", truthly(), simpleGet));
     tests.add(new Test(PATH, "simple find", truthly(), simpleFind));
@@ -69,14 +70,14 @@ async function afterEach() {
 async function assign() {
     let ret = true;
 
-    await testShoppingCartItems.last().link(testShoppingCarts.last());
+    await testShoppingCartItems.last().assign(testShoppingCarts.last());
     if (testShoppingCartItems.last()[TestShoppingCart.asFk(TestShoppingCart)] !== testShoppingCarts.last().id) {
         console.log(testShoppingCartItems, "testShoppingCartItems");
         console.log(testShoppingCarts, "testShoppingCarts");
         console.log("first if");
         return false;
     }
-    await testShoppingCartItems.foreachAsync(async (item) => { await item.link(testShoppingCarts.last()); });
+    await testShoppingCartItems.foreachAsync(async (item) => { await item.assign(testShoppingCarts.last()); });
 
     testShoppingCartItems.foreach((testShoppingCartItem) => {
         if (testShoppingCartItem[TestShoppingCart.asFk(TestShoppingCart)] !== testShoppingCarts.last().id) {
@@ -91,16 +92,40 @@ async function assign() {
 async function link() {
     let ret = true;
 
-    await testShoppingCartItems.last().link(testShoppingCarts.last());
     await testShoppingCartItems.last().assign(testShoppingCarts.last());
+    await testShoppingCartItems.last().link(testShoppingCarts.last());
     if (testShoppingCartItems.last()["testShoppingCart"] !== testShoppingCarts.last()) {
         console.log(testShoppingCartItems, "testShoppingCartItems");
         console.log(testShoppingCarts, "testShoppingCarts");
         console.log("first if");
         return false;
     }
-    await testShoppingCartItems.foreachAsync(async (item) => { await item.link(testShoppingCarts.last()); });
     await testShoppingCartItems.foreachAsync(async (item) => { await item.assign(testShoppingCarts.last()); });
+    await testShoppingCartItems.foreachAsync(async (item) => { await item.link(testShoppingCarts.last()); });
+
+
+    testShoppingCartItems.foreach((testShoppingCartItem) => {
+        if (testShoppingCartItem["testShoppingCart"] !== testShoppingCarts.last()) {
+            console.log(testShoppingCartItem, "testShoppingCartItem");
+            console.log(testShoppingCarts.last(), "testShoppingCart");
+            ret = false;
+        }
+    });
+    return ret;
+}
+
+async function assignAndLink() {
+    let ret = true;
+
+    await testShoppingCartItems.last().assignAndLink(testShoppingCarts.last());
+    if (testShoppingCartItems.last()["testShoppingCart"] !== testShoppingCarts.last()) {
+        console.log(testShoppingCartItems, "testShoppingCartItems");
+        console.log(testShoppingCarts, "testShoppingCarts");
+        console.log("first if");
+        return false;
+    }
+    await testShoppingCartItems.foreachAsync(async (item) => { await item.assignAndLink(testShoppingCarts.last()); });
+
 
     testShoppingCartItems.foreach((testShoppingCartItem) => {
         if (testShoppingCartItem["testShoppingCart"] !== testShoppingCarts.last()) {
@@ -186,9 +211,21 @@ async function simpleUpdate() {
 
     item.count = 3;
     await item.update();
-    const updatedItem = await TestShoppingCartItem.get(item.id, TestShoppingCartItem);
+    let updatedItem = await TestShoppingCartItem.get(item.id, TestShoppingCartItem);
     if (!updatedItem)
         throw new InvalidOperationError(PATH, "simpleUpdate", "Wrong test configuration or get doesn't work like expected!");
+
+    item.count = 4;
+    item.price = 7;
+
+    await item.update(['price']);
+    updatedItem = await TestShoppingCartItem.get(item.id, TestShoppingCartItem);
+    if (updatedItem.price !== 7) {
+        console.log('second if');
+        console.log(item, 'item');
+        console.log(updatedItem, 'updatedItem');
+        return false;
+    }
 
     return updatedItem.count;
 }

@@ -7,12 +7,12 @@ import AHoldsReferenceToB from "../../../../../main/common/orm/AHoldsReferenceTo
 import ManyToOne from "../../../../../main/common/orm/ManyToOne";
 const PATH = "test/public/main/common/orm/AHoldsReferenceToB.test.js"
 
-var testShoppingCarts: List<TestShoppingCart>;
-var testShoppingCartItems: List<TestShoppingCartItem>;
-var relation: AHoldsReferenceToB<TestShoppingCartItem, TestShoppingCart>;
+let testShoppingCarts: List<TestShoppingCart>;
+let testShoppingCartItems: List<TestShoppingCartItem>;
+let relation: AHoldsReferenceToB<TestShoppingCartItem, TestShoppingCart>;
 
 export async function runAllTests() {
-    let tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
+    const tests = new Tests(beforeAll, undefined, beforeEach, afterEach);
 
     tests.add(new Test(PATH, "relational get", truthly(), relationalGet));
     tests.add(new Test(PATH, "relational find", truthly(), relationalFind));
@@ -41,7 +41,7 @@ async function afterEach() {
 
 async function relationalGet() {
     testShoppingCartItems.first()[testShoppingCarts.first().asFk()] = testShoppingCarts.first().id;
-    let item = (await relation.relationalGet(testShoppingCartItems.first()));
+    const item = (await relation.relationalGet(testShoppingCartItems.first()));
 
     return testShoppingCarts.first().id === item.id;
 }
@@ -49,8 +49,8 @@ async function relationalGet() {
 async function relationalFind() {
     testShoppingCartItems.foreach((item) => { item[TestShoppingCart.asFk(TestShoppingCart)] = testShoppingCarts.first().id });
     testShoppingCartItems.first()[TestShoppingCart.asFk(TestShoppingCart)] = testShoppingCarts.get(1).id;
-    let expectedSublist = testShoppingCarts.sublist(0, 1);
-    let result = await relation.relationalFind(testShoppingCartItems);
+    const expectedSublist = testShoppingCarts.sublist(0, 1);
+    const result = await relation.relationalFind(testShoppingCartItems);
 
     return result.equals(expectedSublist);
 }
@@ -64,7 +64,7 @@ async function relationalDestroy() {
     await WixDatabase.update(testShoppingCartItems);
 
     await relation.inverse().relationalDestroy(testShoppingCarts.first());
-    let items = await WixDatabase.query(TestShoppingCartItem).execute();
+    const items = await WixDatabase.query(TestShoppingCartItem).execute();
 
     if (!(items.length === 1 && items.first().id === testShoppingCartItems.last().id))
         return false;
@@ -80,7 +80,7 @@ async function relationalDestroyMultiple() {
     await WixDatabase.update(testShoppingCartItems);
 
     await relation.inverse().relationalDestroy(testShoppingCarts);
-    let items = await WixDatabase.query(TestShoppingCartItem).execute();
+    const items = await WixDatabase.query(TestShoppingCartItem).execute();
 
     if (!(items.length === 1 && items.first().id === testShoppingCartItems.last().id))
         return false;

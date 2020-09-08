@@ -48,15 +48,20 @@ class QueryResult<T extends AbstractModel<T>> extends List<T>
     /**
      * Assign this models to the given models.
      */
-    async assign(models: AbstractModel<any> | List<AbstractModel<any>>) {
+    async assign(models: AnyNumber<AbstractModel<any>>) {
         await AbstractModel.assign(models, this);
     }
 
     /**
      * Link this models to the given models.
      */
-    async link(models: AbstractModel<any> | List<AbstractModel<any>>) {
+    async link(models: AnyNumber<AbstractModel<any>>) {
         await AbstractModel.link(models, this);
+    }
+
+    async assignAndLink(models: AnyNumber<AbstractModel<any>>) {
+        await this.assign(models);
+        await this.link(models);
     }
 
     /**

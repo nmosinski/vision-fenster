@@ -13,14 +13,14 @@ const PATH = "public/main/common/util/list/List.js";
  * Class representing a List.
  */
 class List<T> implements IComparable {
-	protected _elements: Array<T>;
+	protected _elements: T[];
 	/**
 	 * Create a List.
 	 * @param {Array<T>} [elements=Array<T>] - An array of elements that the list will contain from the beginning.
 	 */
 	constructor(elements: AnyNumber<T> = []) {
 		this._elements = [];
-		let toInsert: Array<T> = [];
+		let toInsert: T[] = [];
 
 		if (elements instanceof List)
 			toInsert = elements.toArray();
@@ -31,7 +31,7 @@ class List<T> implements IComparable {
 		else
 			toInsert.push(elements);
 
-		for (let idx in toInsert)
+		for (const idx in toInsert)
 			this.add(toInsert[idx]);
 	}
 
@@ -56,7 +56,7 @@ class List<T> implements IComparable {
 		if (!(list instanceof List))
 			throw new VariableTypeError(PATH, "List.AND()", list, "List");
 
-		let l = new List(this.toArray());
+		const l = new List(this.toArray());
 
 		list.foreach((el: T) => {
 			if (!l.has(el))
@@ -73,7 +73,7 @@ class List<T> implements IComparable {
 	 */
 	protected elementsEqual(e1: any, e2: any): boolean {
 		try {
-			//@ts-ignore
+			// @ts-ignore
 			if (e1.equals(e2))
 				return true;
 		}
@@ -116,6 +116,22 @@ class List<T> implements IComparable {
 		return this;
 	}
 
+	/**
+	 * Iterate through all elements of this list and calls the mapping function which returns the mapped element.
+	 * @param {Function} f - The mapping function to be called by each element of this list.
+	 * @returns {List<T>} A list containing the mapped elements.
+	 */
+	map(f: (el: T, idx?: number) => T): List<T> {
+		if (!JsTypes.isFunction(f))
+			throw new VariableTypeError(PATH, "List.foreach(f)", f, "function");
+
+		const mappedElements = new List<T>();
+		for (let idx = 0; idx < this.length; idx++)
+			mappedElements.add(f(this.get(idx), idx));
+
+		return mappedElements;
+	}
+
     /**
      * Filters all elements of this list by the given expression and returns a new list with the elements that match.
      * @param {Function} f A function representing the filtering expression.
@@ -125,7 +141,7 @@ class List<T> implements IComparable {
 		if (!JsTypes.isFunction(f))
 			throw new VariableTypeError(PATH, "List.filter(f)", f, "function");
 
-		let ret = new List<T>();
+		const ret = new List<T>();
 
 		this.foreach((el) => {
 			if (f(el))
@@ -140,13 +156,13 @@ class List<T> implements IComparable {
 	 * @param {any} propertyNames The names of the properties the elements in the list will be reduced to.
 	 * @returns {List<any>} A new list containig the reduced elements. If multiple property names were given, will return objects containing those properties.
 	 */
-	reduce(...propertyNames: Array<any>): List<any> {
-		let reduced = new List<any>();
+	reduce(...propertyNames: any[]): List<any> {
+		const reduced = new List<any>();
 		if (propertyNames.length === 1)
 			this.foreach((t) => { reduced.add(t[propertyNames[0]]); });
 		else
 			this.foreach((t) => {
-				let tmp = {};
+				const tmp = {};
 
 				for (let idx = 0; idx < propertyNames.length; idx++)
 					tmp[propertyNames[idx]] = t[propertyNames[idx]];
@@ -163,7 +179,7 @@ class List<T> implements IComparable {
 	 * @return {List<T>} The sublist.
 	 */
 	sublist(startIndex: number, endIndex?: number): List<T> {
-		let list = new List<T>();
+		const list = new List<T>();
 
 		if (startIndex >= this.length)
 			throw new InvalidOperationError(PATH, "List.sublist()", "StartIndex is bigger than the length of this list.");
@@ -216,10 +232,10 @@ class List<T> implements IComparable {
 	 * Get all elements of this list as array.
 	 * @return {Array<T>} The elements.
 	 */
-	toArray(): Array<T> {
-		let ret: Array<T> = [];
+	toArray(): T[] {
+		const ret: T[] = [];
 
-		for (let idx in this._elements)
+		for (const idx in this._elements)
 			ret.push(this._elements[idx]);
 
 		return ret;
@@ -273,17 +289,18 @@ class List<T> implements IComparable {
 	 * Add elements.
 	 * @param {...T} elements - The elements.
 	 */
-	add(...elements: Array<T>): void {
-		this.addMultiple(elements);
+	add(...elements: T[]): this {
+		return this.addMultiple(elements);
 	}
 
 	/**
 	 * Add elements.
 	 * @param {Array<T>} elements - The elements.
 	 */
-	addMultiple(elements: Array<T>): void {
+	addMultiple(elements: T[]): this {
 		for (let idx = 0; idx < elements.length; idx++)
 			this._elements.push(elements[idx]);
+		return this;
 	}
 
 	/**
@@ -305,7 +322,7 @@ class List<T> implements IComparable {
 	 * Remove the element at the given index.
 	 * @param {number} elementIdx - The index.
 	 */
-	remove(elementIdx: number): void | never {
+	remove(elementIdx: number): this | never {
 		if (!JsTypes.isNumber(elementIdx))
 			throw new VariableTypeError(PATH, "List.remove(elementIdx)", elementIdx, "Number");
 
@@ -313,6 +330,7 @@ class List<T> implements IComparable {
 			throw new VariableValueError(PATH, "List.remove(elementIdx)", elementIdx, "-1<x<" + this.length);
 
 		this._elements.splice(elementIdx, 1);
+		return this;
 	}
 
 	/**
@@ -377,11 +395,11 @@ class List<T> implements IComparable {
 	 * Create a copy of this list. If T implements clonable, create a deep copy, else a shallow copy.
 	 */
 	copy(): List<T> {
-		let l = new List<T>();
+		const l = new List<T>();
 
 		this.foreach((el: T) => {
 			try {
-				//@ts-ignore
+				// @ts-ignore
 				l.add(el.clone());
 			}
 			catch (err) {
@@ -404,7 +422,7 @@ class List<T> implements IComparable {
 	/**
 	 * @param {Array<T>} elements
 	 */
-	private set elements(elements: Array<T>) {
+	private set elements(elements: T[]) {
 		this._elements = elements;
 	}
 

@@ -17,18 +17,19 @@ class Set<T> extends List<T>
      * Add an element to the set if it doesn't exist yet.
      * @param {...T} elements - The element.
 	 */
-    add(...elements: Array<T>): void {
-        this.addMultiple(elements);
+    add(...elements: Array<T>): this {
+        return this.addMultiple(elements);
     }
 
     /**
 	 * Add elements.
 	 * @param {Array<T>} elements - The elements.
 	 */
-    addMultiple(elements: Array<T>): void {
+    addMultiple(elements: Array<T>): this {
         for (let idx = 0; idx < elements.length; idx++)
             if (!this.has(elements[idx]))
                 this._elements.push(elements[idx]);
+        return this;
     }
 }
 

@@ -23,7 +23,7 @@ abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends Abstra
         return (await this.queryOfRelativeB().eq(relative.asFk(), relative.id).execute(1)).first();
     }
 
-    async relationalDestroy(relatives: AnyNumber<A> = []): Promise<void> {
+    async relationalDestroy(relatives: AnyNumber<A>): Promise<void> {
         const relativesList = new List<A>(relatives);
 
         if (relativesList.isEmpty())
