@@ -260,7 +260,7 @@ function fillMissingProductOptionsWithDefault() {
     materialOption1.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
     materialOption2.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
     profilOption1.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
-    profilOption2.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" }), new Tag({ "title": "kunstfurz" }), new Tag({ "title": "default" })]);
+    profilOption2.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" }), new Tag({ "title": "kunstfurz" }), new Tag({ "title": "PREFERRED" })]);
     profilOption3.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
 
     optionCandidates.add(materialOption1, materialOption2, profilOption1, profilOption2, profilOption3);
@@ -300,7 +300,7 @@ function fillMissingProductOptionsWithInvalidDefault() {
     materialOption1.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
     materialOption2.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
     profilOption1.tags = new QueryResult<Tag>([new Tag({ "title": "unknownMat" })]);
-    profilOption2.tags = new QueryResult<Tag>([new Tag({ "title": "unknownMat" }), new Tag({ "title": "kunstfurz" }), new Tag({ "title": "default" })]);
+    profilOption2.tags = new QueryResult<Tag>([new Tag({ "title": "unknownMat" }), new Tag({ "title": "kunstfurz" }), new Tag({ "title": "PREFERRED" })]);
     profilOption3.tags = new QueryResult<Tag>([new Tag({ "title": "unknownMat" })]);
 
     optionCandidates.add(materialOption1, materialOption2, profilOption1, profilOption2, profilOption3);

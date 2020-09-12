@@ -133,12 +133,12 @@ abstract class AbstractProductConfigurationService {
             const sortedList = new List<ProductOption>();
 
             productOptionCandidatesList.foreach((option) => {
-                if (option.hasTagOfTitle("default"))
+                if (option.hasTagOfTitle("PREFERRED"))
                     sortedList.add(option);
             });
 
             productOptionCandidatesList.foreach((option) => {
-                if (!option.hasTagOfTitle("default"))
+                if (!option.hasTagOfTitle("PREFERRED"))
                     sortedList.add(option);
             });
 
