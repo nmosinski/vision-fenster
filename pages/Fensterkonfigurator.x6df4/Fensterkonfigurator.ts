@@ -17,34 +17,33 @@ let allProductOptions: List<ProductOption>;
 
 // @ts-ignore
 $w.onReady(async () => {
-
+	// retrieve data
 	productModel = (await ProductModel.find(ProductModel)).first();
 	await productModel.loadChain([ProductOptionType, ProductOption, Tag]);
-	console.log("frontend", productModel);
 
+	// merge all product options
 	allProductOptions = new List<ProductOption>();
 	productModel.productOptionTypes.foreach(types => allProductOptions = allProductOptions.OR(types.productOptions));
 
-	console.log(allProductOptions);
-
-	productConfiguationService = ProductConfigurationServiceFactory.byModel(productModel);
 	product = new Product();
 
-	productConfiguationService.fillMissingProductOptionsWithDefault(allProductOptions, product);
+	productConfiguationService = ProductConfigurationServiceFactory.byModel(productModel);
 
-	console.log(product);
+
+	productConfiguationService.fillMissingProductOptionsWithDefault(allProductOptions, product);
 
 	initRepeater();
 	applyFilterForRepeater();
 	displayProductAsActualConfiguration();
-
-	// product.productOptions.foreach(option => updateViewSelectedItems(option.productOptionType.title));
+	updateallSelectedItemViews();
 });
 
 function onProductOptionSelection(productOption: ProductOption) {
-
+	updateSelectedItemView(productOption.productOptionType.title);
+	productConfiguationService.setOptionAndDefaultOnComplications(productOption, product, allProductOptions);
 	displayProductAsActualConfiguration();
 	applyFilterForRepeater();
+	updateallSelectedItemViews();
 }
 
 function displayProductAsActualConfiguration(): void {
@@ -61,7 +60,11 @@ function repeaterConfigurationDetailsOnItemReadyFunction($item: any, productOpti
 	$item("#textConfigurationDetails").text = productOption.productOptionType.title + ": " + productOption.value;
 }
 
-function updateViewSelectedItems(productOptionTypeTitle: string): void {
+function updateallSelectedItemViews() {
+	product.productOptions.foreach(option => updateSelectedItemView(option.productOptionType.title));
+}
+
+function updateSelectedItemView(productOptionTypeTitle: string): void {
 	repeaterByProductOptionTypeTitle(productOptionTypeTitle).forEachItem(($item: any, productOption: ProductOption) => {
 		if (product.getOption(productOptionTypeTitle).id === productOption.id)
 			$item("#vectorImage" + productOptionTypeTitleAsGuiElementName(productOptionTypeTitle)).show();
@@ -77,7 +80,6 @@ function getDefaultOnItemReadyRepeaterFunction(optionTypeTitle: string): (item: 
 		$item("#text" + productOptionTypeTitleAsGuiElementName(optionTypeTitle)).text = productOption.productOptionType.title;
 		$item("#image" + optionTypeTitle).onClick((event: any) => {
 			onProductOptionSelection(productOption);
-			updateViewSelectedItems(productOption.productOptionType.title);
 		});
 	};
 }
