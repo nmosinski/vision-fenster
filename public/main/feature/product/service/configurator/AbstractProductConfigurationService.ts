@@ -47,7 +47,7 @@ abstract class AbstractProductConfigurationService {
      */
     filterValidOptions(allProductOptions: List<ProductOption>, product: Product, productOptionTypeTitle?: string): List<ProductOption> {
         let relevantProductOptions = allProductOptions;
-        let filteredProductOptions = new List<ProductOption>();
+        const filteredProductOptions = new List<ProductOption>();
 
         if (productOptionTypeTitle)
             relevantProductOptions = allProductOptions.filter((option) => { return option.productOptionType.title === productOptionTypeTitle; });
@@ -68,8 +68,8 @@ abstract class AbstractProductConfigurationService {
      * @returns {boolean} True if a valid configuration was found, else false.
      */
     findValidConfiguration(startOptionTypeTitle: string, optionCandidates: KVMap<string, List<ProductOption>>, product: Product): boolean {
-        let oldOption: ProductOption | undefined = (product.hasOption(startOptionTypeTitle)) ? product.getOption(startOptionTypeTitle) : undefined;
-        let optionCandidatesList: List<ProductOption> = optionCandidates.get(startOptionTypeTitle);
+        const oldOption: ProductOption | undefined = (product.hasOption(startOptionTypeTitle)) ? product.getOption(startOptionTypeTitle) : undefined;
+        const optionCandidatesList: List<ProductOption> = optionCandidates.get(startOptionTypeTitle);
         let nextOptionTypeTitle: string | undefined;
 
         // find next optionType for the next deepth
@@ -83,7 +83,7 @@ abstract class AbstractProductConfigurationService {
         // Iterate through option candidates of the given option type
         for (let idx = 0; idx < optionCandidatesList.length; idx++) {
             // Pick next
-            let option = optionCandidatesList.get(idx);
+            const option = optionCandidatesList.get(idx);
 
             if (this.productSatisfiesOption(option, product)) {
 
@@ -118,10 +118,10 @@ abstract class AbstractProductConfigurationService {
      * @returns {boolean} True if the product could be filled with all required product options, else false.
      */
     fillMissingProductOptionsWithDefault(allProductOptions: List<ProductOption>, product: Product, fillNotRequired: boolean = false): boolean {
-        let ret = true;
-        let relevantOptionDefinitions = (fillNotRequired) ? this.productDefinition.productOptionDefinitions : this.productDefinition.getRequiredProductOptionDefinitions();
-        let unfilledOptionDefinitions = relevantOptionDefinitions.filter((optionDefinition) => { return !product.hasOption(optionDefinition.type); });
-        let productOptionCandidates: KVMap<string, List<ProductOption>> = new KVMap<string, List<ProductOption>>();
+        const ret = true;
+        const relevantOptionDefinitions = (fillNotRequired) ? this.productDefinition.productOptionDefinitions : this.productDefinition.getRequiredProductOptionDefinitions();
+        const unfilledOptionDefinitions = relevantOptionDefinitions.filter((optionDefinition) => { return !product.hasOption(optionDefinition.type); });
+        const productOptionCandidates: KVMap<string, List<ProductOption>> = new KVMap<string, List<ProductOption>>();
 
         // Init productOptionCandidates list
         unfilledOptionDefinitions.foreach((productOptionDefinition) => {
@@ -130,7 +130,7 @@ abstract class AbstractProductConfigurationService {
 
         // Sort the candidates, default first
         productOptionCandidates.foreach((key, productOptionCandidatesList) => {
-            let sortedList = new List<ProductOption>();
+            const sortedList = new List<ProductOption>();
 
             productOptionCandidatesList.foreach((option) => {
                 if (option.hasTagOfTitle("default"))
@@ -157,7 +157,7 @@ abstract class AbstractProductConfigurationService {
      * @returns {boolean} True if no complications appeared, else false.
      */
     setOptionOrRejectOnComplications(productOption: ProductOption, product: Product): boolean {
-        let oldOption = product.getOption(productOption.productOptionType.title);
+        const oldOption = product.getOption(productOption.productOptionType.title);
         if (!this.setProductOption(productOption, product))
             return false;
 
@@ -239,8 +239,8 @@ abstract class AbstractProductConfigurationService {
                         requirementsFulfilled = false;
                     // Else, check if the productOption contains the necessary tags in order to satisfy the requirement for the new product option
                     else {
-                        let productOption = product.getOption(requirement.productOptionType);
-                        if (!requirement.tags.isSublistOf(productOption.tags.reduce("title")))
+                        const newProductOption = product.getOption(requirement.productOptionType);
+                        if (!requirement.tags.isSublistOf(newProductOption.tags.reduce("title")))
                             requirementsFulfilled = false;
                     }
                 });
