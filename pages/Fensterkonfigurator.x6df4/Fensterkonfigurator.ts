@@ -58,7 +58,7 @@ function displayProductAsActualConfiguration(): void {
 }
 
 function repeaterConfigurationDetailsOnItemReadyFunction($item: any, productOption: ProductOption): void {
-	$item("#textConfigurationDetails").text = productOption.productOptionType.title + ": " + productOption.value;
+	$item("#textConfigurationDetails").text = productOption.productOptionType.presentationde + ": " + productOption.presentationde;
 }
 
 function updateallSelectedItemViews() {
@@ -78,7 +78,7 @@ function getDefaultOnItemReadyRepeaterFunction(optionTypeTitle: string): (item: 
 	return ($item, productOption: ProductOption) => {
 		$item("#image" + optionTypeTitle).src = productOption.image;
 		$item("#vectorImage" + productOptionTypeTitleAsGuiElementName(optionTypeTitle)).hide();
-		$item("#text" + productOptionTypeTitleAsGuiElementName(optionTypeTitle)).text = productOption.productOptionType.title;
+		$item("#text" + productOptionTypeTitleAsGuiElementName(optionTypeTitle)).text = productOption.presentationde;
 		$item("#image" + optionTypeTitle).onClick((event: any) => {
 			onProductOptionSelection(productOption);
 		});
