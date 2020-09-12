@@ -9,6 +9,7 @@ class ProductModel extends AbstractModel<ProductModel>{
     protected Constructor: new () => ProductModel;
     private _productOptionTypes: QueryResult<ProductOptionType>;
     private _title: string;
+    private _presentationde: string;
 
     init(): void {
         this.Constructor = ProductModel;
@@ -17,6 +18,7 @@ class ProductModel extends AbstractModel<ProductModel>{
 
     addProperties(): void {
         this.properties.
+            string("presentationde").
             string("title");
     }
 
@@ -52,6 +54,14 @@ class ProductModel extends AbstractModel<ProductModel>{
 
     get productOptionTypes(): QueryResult<ProductOptionType> {
         return this._productOptionTypes;
+    }
+
+    set presentationde(presentation: string) {
+        this._presentationde = presentation;
+    }
+
+    get presentationde(): string {
+        return this._presentationde;
     }
 
 }

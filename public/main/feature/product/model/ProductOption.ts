@@ -9,6 +9,7 @@ import { Query } from "../../../common/orm/WixDatabase";
 class ProductOption extends AbstractModel<ProductOption>{
     private _productOptionType: ProductOptionType;
     private _value: string;
+    private _presentationde: string;
     private _tags: QueryResult<Tag>;
     private _image: string;
 
@@ -21,6 +22,7 @@ class ProductOption extends AbstractModel<ProductOption>{
     addProperties(): void {
         this.properties.
             string("value").
+            string('presentationde').
             string("image", "nullable");
     }
 
@@ -50,12 +52,24 @@ class ProductOption extends AbstractModel<ProductOption>{
         this._productOptionType = type;
     }
 
+    get productOptionType(): ProductOptionType {
+        return this._productOptionType;
+    }
+
     set value(value: string) {
         this._value = value;
     }
 
+    get value(): string {
+        return this._value;
+    }
+
     set tags(tags: QueryResult<Tag>) {
         this._tags = tags;
+    }
+
+    get tags(): QueryResult<Tag> {
+        return this._tags;
     }
 
     set image(image: string) {
@@ -65,20 +79,16 @@ class ProductOption extends AbstractModel<ProductOption>{
             this._image = "";
     }
 
-    get productOptionType(): ProductOptionType {
-        return this._productOptionType;
-    }
-
-    get value(): string {
-        return this._value;
-    }
-
-    get tags(): QueryResult<Tag> {
-        return this._tags;
-    }
-
     get image(): string {
         return this._image;
+    }
+
+    set presentationde(presentation: string) {
+        this._presentationde = presentation;
+    }
+
+    get presentationde(): string {
+        return this._presentationde;
     }
 }
 

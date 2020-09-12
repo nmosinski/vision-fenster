@@ -7,6 +7,7 @@ class ProductOptionType extends AbstractModel<ProductOptionType>{
     protected Constructor: new () => ProductOptionType;
 
     private _title: string;
+    private _presentationde: string;
     private _productOptions: QueryResult<ProductOption>;
     private _productModel: ProductModel;
 
@@ -17,6 +18,7 @@ class ProductOptionType extends AbstractModel<ProductOptionType>{
 
     addProperties(): void {
         this.properties.
+            string('presentationde').
             string("title");
     }
 
@@ -42,24 +44,32 @@ class ProductOptionType extends AbstractModel<ProductOptionType>{
         this._title = title;
     }
 
-    set productOptions(productOptions: QueryResult<ProductOption>) {
-        this._productOptions = productOptions;
-    }
-
-    set productModel(productModel: ProductModel) {
-        this._productModel = productModel;
-    }
-
     get title(): string {
         return this._title;
+    }
+
+    set productOptions(productOptions: QueryResult<ProductOption>) {
+        this._productOptions = productOptions;
     }
 
     get productOptions(): QueryResult<ProductOption> {
         return this._productOptions;
     }
 
+    set productModel(productModel: ProductModel) {
+        this._productModel = productModel;
+    }
+
     get productModel() {
         return this._productModel;
+    }
+
+    set presentationde(presentation: string) {
+        this._presentationde = presentation;
+    }
+
+    get presentationde(): string {
+        return this._presentationde;
     }
 }
 
