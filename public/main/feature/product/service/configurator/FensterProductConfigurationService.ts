@@ -5,11 +5,13 @@ import ProductOption from "../../model/ProductOption";
 import Product from "../../model/Product";
 import ProductConfigurationServiceFactory from "../../factory/ProductConfigurationServiceFactory";
 import ProductDefinition from "../../model/ProductDefinition";
+import { FensterProductOptionTypes } from "../../productOptionTypes";
+import { ProductModels } from "../../productModels";
 
 class FensterProductConfigurationService extends AbstractProductConfigurationService {
 
     constructor(productDefinition?: ProductDefinition) {
-        super((productDefinition) ? productDefinition : ProductDefinitionParsingService.parseFromJson(productDefinitions).get("fenster"));
+        super((productDefinition) ? productDefinition : ProductDefinitionParsingService.parseFromJson(productDefinitions).get(ProductModels.FENSTER));
     }
 
     beforeSetOption(productOption: ProductOption, product: Product): void {
@@ -17,7 +19,7 @@ class FensterProductConfigurationService extends AbstractProductConfigurationSer
     }
 
     afterSetOption(productOption: ProductOption, product: Product): void {
-        if (productOption.productOptionType.title === "profil")
+        if (productOption.productOptionType.title === FensterProductOptionTypes.PROFIL)
             product.image = productOption.image;
     }
 

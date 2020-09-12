@@ -9,6 +9,7 @@ import List from "../../public/main/common/util/collections/list/List";
 // @ts-ignore
 import { index } from "backend/main/feature/product/controllers/ProductController.jsw";
 import Tag from "../../public/main/feature/product/model/Tag";
+import { FensterProductOptionTypes } from "../../public/main/feature/product/productOptionTypes";
 
 let productModel: ProductModel;
 let product: Product;
@@ -48,7 +49,7 @@ function onProductOptionSelection(productOption: ProductOption) {
 
 function displayProductAsActualConfiguration(): void {
 	// @ts-ignore
-	$w("#imageConfiguration").src = (product.hasOption('profil')) ? product.getOption("profil").image : 'https://wuerdest-du-eher.de/ratgeber/wp-content/uploads/2017/07/was-heisst-nope-auf-deutsch.jpg';
+	$w("#imageConfiguration").src = (product.hasOption(FensterProductOptionTypes.PROFIL)) ? product.getOption(FensterProductOptionTypes.PROFIL).image : 'https://wuerdest-du-eher.de/ratgeber/wp-content/uploads/2017/07/was-heisst-nope-auf-deutsch.jpg';
 	// @ts-ignore
 	$w("#textConfigurationPrice").text = "" + product.price + "€";
 

@@ -1,4 +1,5 @@
-export enum WindowTags {
+export enum FensterTags {
+    PREFERRED = 'preferred',
     KUNSTSTOFF = 'kunststoff',
     HOLZ = 'holz',
     KOEMMERLING = 'koemmerling',

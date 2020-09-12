@@ -1,56 +1,60 @@
+import { ProductModels } from "./productModels";
+import { FensterProductOptionTypes } from "./productOptionTypes";
+import { FensterTags } from "./tags";
+
 const productDefinitions =
 {
     0:
     {
-        "productModel": "fenster",
+        "productModel": ProductModels.FENSTER,
         "productOptionDefinitions":
         {
             0:
             {
-                "type": "material",
+                "type": FensterProductOptionTypes.MATERIAL,
                 "required": true,
                 "combinations":
                 {
                     0:
                     {
-                        "tags": ["kunststoff"],
+                        "tags": [FensterTags.KUNSTSTOFF],
                         "requirements": {}
                     },
                     1:
                     {
-                        "tags": ["holz"],
+                        "tags": [FensterTags.HOLZ],
                         "requirements": {}
                     },
                 }
             },
             1:
             {
-                "type": "profil",
+                "type": FensterProductOptionTypes.PROFIL,
                 "required": true,
                 "combinations":
                 {
                     0:
                     {
-                        "tags": ["kunststoff", "kömmerling"],
+                        "tags": [FensterTags.KUNSTSTOFF, FensterTags.KOEMMERLING],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "material",
-                                "tags": ["kunststoff"]
+                                "productOptionType": FensterProductOptionTypes.MATERIAL,
+                                "tags": [FensterTags.KUNSTSTOFF]
                             }
                         }
                     },
 
                     1:
                     {
-                        "tags": ["kunststoff", "arcade"],
+                        "tags": [FensterTags.KUNSTSTOFF, FensterTags.ARCADE],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "material",
-                                "tags": ["kunststoff"]
+                                "productOptionType": FensterProductOptionTypes.MATERIAL,
+                                "tags": [FensterTags.KUNSTSTOFF]
                             }
                         }
                     }
@@ -58,31 +62,31 @@ const productDefinitions =
             },
             2:
             {
-                "type": "farbe",
+                "type": FensterProductOptionTypes.FARBE,
                 "required": true,
                 "combinations":
                 {
                     0:
                     {
-                        "tags": ["kunststoff", "kömmerling"],
+                        "tags": [FensterTags.KUNSTSTOFF, FensterTags.KOEMMERLING],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "profil",
-                                "tags": ["kunststoff", "kömmerling"]
+                                "productOptionType": FensterProductOptionTypes.PROFIL,
+                                "tags": [FensterTags.KUNSTSTOFF, FensterTags.KOEMMERLING]
                             }
                         }
                     },
                     1:
                     {
-                        "tags": ["kunststoff, arcade"],
+                        "tags": [FensterTags.KUNSTSTOFF, FensterTags.ARCADE],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "profil",
-                                "tags": ["kunststoff, arcade"]
+                                "productOptionType": FensterProductOptionTypes.PROFIL,
+                                "tags": [FensterTags.KUNSTSTOFF, FensterTags.ARCADE]
                             }
                         }
                     }
@@ -90,138 +94,138 @@ const productDefinitions =
             },
             3:
             {
-                "type": "fenstertyp",
+                "type": FensterProductOptionTypes.FENSTERTYP,
                 "required": true,
                 "combinations":
                 {
                     0:
                     {
-                        "tags": ["einteilig"],
+                        "tags": [FensterTags.EINTEILIG],
                         "requirements": {}
                     },
                     1:
                     {
-                        "tags": ["zweiteilig"],
+                        "tags": [FensterTags.ZWEITEILIG],
                         "requirements": {}
                     },
                     2:
                     {
-                        "tags": ["dreiteilig"],
+                        "tags": [FensterTags.DREITEILIG],
                         "requirements": {}
                     }
                 }
             },
             4:
             {
-                "type": "fensterlicht",
+                "type": FensterProductOptionTypes.FENSTERLICHT,
                 "required": true,
                 "combinations":
                 {
                     0:
                     {
-                        "tags": ["einteilig", "ohnelicht"],
+                        "tags": [FensterTags.EINTEILIG, FensterTags.OHNELICHT],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["einteilig"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.EINTEILIG]
                             }
                         }
                     },
                     1:
                     {
-                        "tags": ["einteilig", "unterlicht"],
+                        "tags": [FensterTags.EINTEILIG, FensterTags.UNTERLICHT],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["einteilig"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.EINTEILIG]
                             }
                         }
                     },
                     2:
                     {
-                        "tags": ["einteilig", "oberlicht"],
+                        "tags": [FensterTags.EINTEILIG, FensterTags.OBERLICHT],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["einteilig"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.EINTEILIG]
                             }
                         }
                     },
                     3:
                     {
-                        "tags": ["zweiteilig", "ohnelicht"],
+                        "tags": [FensterTags.ZWEITEILIG, FensterTags.OHNELICHT],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["zweiteilig"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.ZWEITEILIG]
                             }
                         }
                     },
                     4:
                     {
-                        "tags": ["zweiteilig", "unterlicht"],
+                        "tags": [FensterTags.ZWEITEILIG, FensterTags.UNTERLICHT],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["zweiteilig"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.ZWEITEILIG]
                             }
                         }
                     },
                     5:
                     {
-                        "tags": ["zweiteilig", "oberlicht"],
+                        "tags": [FensterTags.ZWEITEILIG, FensterTags.OBERLICHT],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["zweiteilig"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.ZWEITEILIG]
                             }
                         }
                     },
                     6:
                     {
-                        "tags": ["dreiteilig", "ohnelicht"],
+                        "tags": [FensterTags.DREITEILIG, FensterTags.OHNELICHT],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["dreiteilig"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.DREITEILIG]
                             }
                         }
                     },
                     7:
                     {
-                        "tags": ["dreiteilig", "unterlicht"],
+                        "tags": [FensterTags.DREITEILIG, FensterTags.UNTERLICHT],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["dreiteilig"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.DREITEILIG]
                             }
                         }
                     },
                     8:
                     {
-                        "tags": ["dreiteilig", "oberlicht"],
+                        "tags": [FensterTags.DREITEILIG, FensterTags.OBERLICHT],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["dreiteilig"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.DREITEILIG]
                             }
                         }
                     }
@@ -229,75 +233,75 @@ const productDefinitions =
             },
             5:
             {
-                "type": "öffnungsart",
+                "type": FensterProductOptionTypes.OEFFNUNGSART,
                 "required": true,
                 "combinations":
                 {
                     0:
                     {
-                        "tags": ["einteilig", "ohnelicht"],
+                        "tags": [FensterTags.EINTEILIG, FensterTags.OHNELICHT],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["einteilig"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.EINTEILIG]
                             },
                             1:
                             {
-                                "productOptionType": "fensterlicht",
-                                "tags": ["ohnelicht"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERLICHT,
+                                "tags": [FensterTags.OHNELICHT]
                             }
                         }
                     },
                     1:
                     {
-                        "tags": ["einteilig", "ohnelicht"],
+                        "tags": [FensterTags.EINTEILIG, FensterTags.OBERLICHT],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["einteilig"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.EINTEILIG]
                             },
                             1:
                             {
-                                "productOptionType": "fensterlicht",
-                                "tags": ["ohnelicht"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERLICHT,
+                                "tags": [FensterTags.OBERLICHT]
                             }
                         }
                     },
                     2:
                     {
-                        "tags": ["einteilig", "ohnelicht"],
+                        "tags": [FensterTags.EINTEILIG, FensterTags.UNTERLICHT],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["einteilig"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.EINTEILIG]
                             },
                             1:
                             {
-                                "productOptionType": "fensterlicht",
-                                "tags": ["ohnelicht"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERLICHT,
+                                "tags": [FensterTags.UNTERLICHT]
                             }
                         }
                     },
                     3:
                     {
-                        "tags": ["einteilig", "ohnelicht"],
+                        "tags": [FensterTags.EINTEILIG, FensterTags.OHNELICHT],
                         "requirements":
                         {
                             0:
                             {
-                                "productOptionType": "fenstertyp",
-                                "tags": ["einteilig"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.EINTEILIG]
                             },
                             1:
                             {
-                                "productOptionType": "fensterlicht",
-                                "tags": ["ohnelicht"]
+                                "productOptionType": FensterProductOptionTypes.FENSTERLICHT,
+                                "tags": [FensterTags.OHNELICHT]
                             }
                         }
                     },

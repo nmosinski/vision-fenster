@@ -7,6 +7,7 @@ import Combination from "../../model/Combination";
 import CombinationRequirement from "../../model/CombinationRequirement";
 import Product from "../../model/Product";
 import InvalidOperationError from "../../../../common/util/error/InvalidOperationError";
+import { FensterTags } from "../../tags";
 
 const PATH = "public/main/feature/product/service/ProductConfigurationService.js";
 
@@ -133,12 +134,12 @@ abstract class AbstractProductConfigurationService {
             const sortedList = new List<ProductOption>();
 
             productOptionCandidatesList.foreach((option) => {
-                if (option.hasTagOfTitle("PREFERRED"))
+                if (option.hasTagOfTitle(FensterTags.PREFERRED))
                     sortedList.add(option);
             });
 
             productOptionCandidatesList.foreach((option) => {
-                if (!option.hasTagOfTitle("PREFERRED"))
+                if (!option.hasTagOfTitle(FensterTags.PREFERRED))
                     sortedList.add(option);
             });
 
