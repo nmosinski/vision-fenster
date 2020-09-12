@@ -4,7 +4,8 @@ import List from "../../public/main/common/util/collections/list/List";
 // @ts-ignore
 $w.onReady(async function () {
     // await runAllTests();
-    await runAllTestsExcept('productConfigurationService');
+    // await runAllTestsExcept('productConfigurationService');
+    await runTests('list', "productConfigurationService");
     // await runTests("manyToMany");
-    // await runTests("abstractModel");
+    // await runTests("list", "abstractModel");
 });

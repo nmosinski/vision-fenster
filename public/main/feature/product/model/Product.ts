@@ -26,7 +26,9 @@ class Product extends AbstractModel<Product>{
         this.manyToMany(ProductOption);
     }
 
-    setOption(option: ProductOption): void {
+    saveOption(option: ProductOption): void {
+        if (this.hasOption(option.productOptionType.title))
+            this.removeOption(option.productOptionType.title);
         this._productOptions.add(option);
     }
 

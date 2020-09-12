@@ -31,7 +31,7 @@ abstract class AbstractProductConfigurationService {
     setProductOption(productOption: ProductOption, product: Product): boolean {
         if (this.productSatisfiesOption(productOption, product)) {
             this.beforeSetOption(productOption, product);
-            product.setOption(productOption);
+            product.saveOption(productOption);
             this.calculatePrice(product);
             this.afterSetOption(productOption, product);
         }
@@ -103,7 +103,7 @@ abstract class AbstractProductConfigurationService {
 
         // Reset the product setting the old option if a valid configuration couldn't be found
         if (oldOption)
-            product.setOption(oldOption);
+            product.saveOption(oldOption);
         else
             product.removeOption(startOptionTypeTitle);
         return false;
@@ -163,7 +163,7 @@ abstract class AbstractProductConfigurationService {
 
         if (this.nextUnsatisfiedOption(product)) {
             if (oldOption)
-                product.setOption(oldOption);
+                product.saveOption(oldOption);
             return false;
         }
 

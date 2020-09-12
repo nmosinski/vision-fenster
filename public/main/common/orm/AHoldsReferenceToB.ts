@@ -18,6 +18,8 @@ abstract class AHoldsReferenceToB<A extends AbstractModel<A>, B extends Abstract
         asList.foreach((a: A) => {
             a[AbstractModel.asFk(this.relativeB)] = b.id;
         });
+
+        await AbstractModel.update(asList, AbstractModel.asFk(this.relativeB));
     }
 
     async relationalGet(relative: A): Promise<B | never> {

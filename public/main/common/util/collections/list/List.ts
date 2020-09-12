@@ -132,11 +132,11 @@ class List<T> implements IComparable {
 		return mappedElements;
 	}
 
-    /**
-     * Filters all elements of this list by the given expression and returns a new list with the elements that match.
-     * @param {Function} f A function representing the filtering expression.
-     * @return {List} A new list with the filtered elements.
-     */
+	/**
+	 * Filters all elements of this list by the given expression and returns a new list with the elements that match.
+	 * @param {Function} f A function representing the filtering expression.
+	 * @return {List} A new list with the filtered elements.
+	 */
 	filter(f: (el: T) => boolean): List<T> {
 		if (!JsTypes.isFunction(f))
 			throw new VariableTypeError(PATH, "List.filter(f)", f, "function");
@@ -156,16 +156,19 @@ class List<T> implements IComparable {
 	 * @param {any} propertyNames The names of the properties the elements in the list will be reduced to.
 	 * @returns {List<any>} A new list containig the reduced elements. If multiple property names were given, will return objects containing those properties.
 	 */
-	reduce(...propertyNames: any[]): List<any> {
+	reduce(propertyNames: AnyNumber<string>): List<any> {
+		const propertyNamesList = new List<string>(propertyNames);
 		const reduced = new List<any>();
-		if (propertyNames.length === 1)
-			this.foreach((t) => { reduced.add(t[propertyNames[0]]); });
+		if (propertyNamesList.length === 1)
+			this.foreach((t) => { reduced.add(t[propertyNamesList.first()]); });
 		else
 			this.foreach((t) => {
 				const tmp = {};
 
-				for (let idx = 0; idx < propertyNames.length; idx++)
-					tmp[propertyNames[idx]] = t[propertyNames[idx]];
+				propertyNamesList.foreach(propertyName => {
+					tmp[propertyName] = t[propertyName];
+
+				});
 				reduced.add(tmp);
 			});
 
@@ -242,21 +245,21 @@ class List<T> implements IComparable {
 	}
 
 	/**
-     * Get a number of items.
-     * @param {number} [count] The maximum count of items to be returned.
-     * @returns {List<T>} A list containing items. 
-     */
+	 * Get a number of items.
+	 * @param {number} [count] The maximum count of items to be returned.
+	 * @returns {List<T>} A list containing items. 
+	 */
 	some(count?: number): List<T> {
 		if (!count)
 			count = this.length;
 		return this.sublist(0, count);
 	}
 
-    /**
-     * Get the first item.
-     * @returns {T} The item.
+	/**
+	 * Get the first item.
+	 * @returns {T} The item.
 	 * @throws {NullPointerException} If list is empty.
-     */
+	 */
 	first(): T | never {
 		if (this.length < 1)
 			throw new NullPointerException(PATH, "first", "The list is empty");
@@ -264,20 +267,20 @@ class List<T> implements IComparable {
 	}
 
 	/**
-     * Get the first item or return null, if the first is empty.
-     * @returns {T} The item.
-     */
+	 * Get the first item or return null, if the first is empty.
+	 * @returns {T} The item.
+	 */
 	firstOrNull(): T | null {
 		if (this.length < 1)
 			return null;
 		return this.get(0);
 	}
 
-    /**
-     * Get the last item.
-     * @returns {T} The item.
+	/**
+	 * Get the last item.
+	 * @returns {T} The item.
 	 * @throws {NullPointerException} If list is empty.
-     */
+	 */
 	last(): T | never {
 		if (this.length < 1)
 			throw new NullPointerException(PATH, "first", "The list is empty");

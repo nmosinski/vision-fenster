@@ -141,7 +141,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * Return an object holding all properties defined for this model.
      * @returns {object} The object holding the properties defined for this model.
      */
-    strip(propertyNamesToConsider: AnyNumber<string>): object {
+    strip(propertyNamesToConsider?: AnyNumber<string>): object {
         return AbstractModel.strip(this, propertyNamesToConsider);
     }
 
@@ -151,12 +151,14 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * @param {AbstractModel<any>} model The model to be translated.
      * @returns {object} The object holding the properties defined for the given model.
      */
-    static strip<U extends AbstractModel<U>>(model: AbstractModel<U>, propertyNamesToConsider: AnyNumber<string>): object {
+    static strip<U extends AbstractModel<U>>(model: AbstractModel<U>, propertyNamesToConsider?: AnyNumber<string>): object {
         const item = {};
         const propertyNamesToConsiderList = new List<string>(propertyNamesToConsider);
-        const properties = (propertyNamesToConsiderList.isEmpty()) ? model.properties : model.properties.filter(name => propertyNamesToConsiderList.has(name));
+        const properties = (propertyNamesToConsiderList.isEmpty()) ? model.properties : model.properties.filter((name) => propertyNamesToConsiderList.has(name));
+
         properties.foreach((propertyName) => {
-            item[propertyName] = model[propertyName];
+            if (model[propertyName] !== undefined)
+                item[propertyName] = model[propertyName];
         });
         return item;
     }
@@ -166,7 +168,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * @param {AnyNumber<string>} propertyNamesToConsider The property names to be considered.
      * @returns {AbstractModel<T>} The new model. 
      */
-    reduce(propertyNamesToConsider: AnyNumber<string>): AbstractModel<T> {
+    reduce(propertyNamesToConsider: AnyNumber<string>): T {
         return AbstractModel.reduce(this as unknown as T, propertyNamesToConsider).first();
     }
 
@@ -601,18 +603,26 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      */
     static async update<U extends AbstractModel<U>>(models: AnyNumber<U>, fieldsToUpdate?: AnyNumber<string>): Promise<void> {
         const modelsList = new List<U>(models);
-        const fieldsToUpdateList = new List<string>(fieldsToUpdate).add('id');
-        const toUpdate = modelsList.map(model => model.reduce(fieldsToUpdateList));
+        const fieldsToUpdateList = new List<string>(fieldsToUpdate);
+        let toUpdateList = modelsList;
 
         if (modelsList.isEmpty())
             return;
+
+        if (!fieldsToUpdateList.isEmpty()) {
+            fieldsToUpdateList.add('id');
+            const existentItems = await WixDatabase.query(modelsList.first().Constructor).hasSome('_id', modelsList.reduce('id')).execute();
+            const reducedList = modelsList.reduce(fieldsToUpdateList);
+            existentItems.foreach(item => item.fill(reducedList.find(model => model.id === item.id)));
+            toUpdateList = existentItems;
+        }
 
         modelsList.foreach(model => {
             if (!model.valid(fieldsToUpdateList))
                 throw new UpdateError(PATH, "AbstractModel.update()", model);
         });
 
-        await WixDatabase.update(toUpdate);
+        await WixDatabase.update(toUpdateList);
     }
 
     /**

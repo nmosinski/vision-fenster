@@ -9,6 +9,7 @@ import InvalidOperationError from "../../../../../main/common/util/error/Invalid
 import QueryResult from "../../../../../main/common/orm/QueryResult";
 import JsTypes from "../../../../../main/common/util/jsTypes/JsTypes";
 const PATH = "test/public/main/common/orm/AbstractModel.test.js"
+import wixData from 'wix-data';
 
 let testShoppingCarts: QueryResult<TestShoppingCart>;
 let testShoppingCartItems: QueryResult<TestShoppingCartItem>;
@@ -20,6 +21,8 @@ export async function runAllTests() {
     tests.add(new Test(PATH, "assign", truthly(), assign));
     tests.add(new Test(PATH, "link", truthly(), link));
     tests.add(new Test(PATH, "assign and link", truthly(), assignAndLink));
+    tests.add(new Test(PATH, "reduce", truthly(), reduce));
+    tests.add(new Test(PATH, "strip", truthly(), strip));
 
     tests.add(new Test(PATH, "simple get", truthly(), simpleGet));
     tests.add(new Test(PATH, "simple find", truthly(), simpleFind));
@@ -72,20 +75,34 @@ async function assign() {
 
     await testShoppingCartItems.last().assign(testShoppingCarts.last());
     if (testShoppingCartItems.last()[TestShoppingCart.asFk(TestShoppingCart)] !== testShoppingCarts.last().id) {
+        console.log('first if');
         console.log(testShoppingCartItems, "testShoppingCartItems");
         console.log(testShoppingCarts, "testShoppingCarts");
-        console.log("first if");
         return false;
     }
-    await testShoppingCartItems.foreachAsync(async (item) => { await item.assign(testShoppingCarts.last()); });
+
+    await testShoppingCartItems.assign(testShoppingCarts.last());
 
     testShoppingCartItems.foreach((testShoppingCartItem) => {
         if (testShoppingCartItem[TestShoppingCart.asFk(TestShoppingCart)] !== testShoppingCarts.last().id) {
+            console.log('second if');
             console.log(testShoppingCartItem, "testShoppingCartItem");
             console.log(testShoppingCarts.last(), "testShoppingCart");
             ret = false;
         }
     });
+
+    const dbTestShoppingCartItems = await AbstractModel.find(TestShoppingCartItem);
+
+    dbTestShoppingCartItems.foreach((testShoppingCartItem) => {
+        if (testShoppingCartItem[TestShoppingCart.asFk(TestShoppingCart)] !== testShoppingCarts.last().id) {
+            console.log('third if');
+            console.log(testShoppingCartItem, "testShoppingCartItem");
+            console.log(testShoppingCarts.last(), "testShoppingCart");
+            ret = false;
+        }
+    });
+
     return ret;
 }
 
@@ -135,6 +152,64 @@ async function assignAndLink() {
         }
     });
     return ret;
+}
+
+async function reduce() {
+    let shoppingCart = testShoppingCarts.first();
+    shoppingCart.id = '2';
+    shoppingCart.count = 2;
+    shoppingCart.name = 'Norbert';
+
+    shoppingCart = shoppingCart.reduce('count');
+
+    if (shoppingCart.name || !(shoppingCart instanceof TestShoppingCart)) {
+        console.log('first if');
+        console.log(shoppingCart);
+        return false;
+    }
+
+    shoppingCart.id = '2';
+    shoppingCart.count = 2;
+    shoppingCart.name = 'Norbert';
+
+    shoppingCart = shoppingCart.reduce('name');
+
+    if (shoppingCart.name !== 'Norbert' || !(shoppingCart instanceof TestShoppingCart)) {
+        console.log('second if');
+        console.log(shoppingCart);
+        return false;
+    }
+
+    return true;
+}
+
+async function strip() {
+    const shoppingCart = testShoppingCarts.first();
+    shoppingCart.id = '2';
+    shoppingCart.count = 2;
+    shoppingCart.name = 'Norbert';
+
+    const strippedShoppingCart = shoppingCart.strip('count');
+
+    if (strippedShoppingCart.name || strippedShoppingCart instanceof TestShoppingCart) {
+        console.log('first if');
+        console.log(strippedShoppingCart);
+        return false;
+    }
+
+    const shoppingCartItem = testShoppingCartItems.last();
+    shoppingCartItem.id = '2';
+    shoppingCartItem.count = 2;
+
+    const strippedShoppingCartItem = shoppingCartItem.strip();
+
+    if (strippedShoppingCartItem.count !== 2 || strippedShoppingCartItem instanceof TestShoppingCartItem) {
+        console.log('second if');
+        console.log(strippedShoppingCartItem);
+        return false;
+    }
+
+    return true;
 }
 
 async function simpleGet() {
@@ -211,9 +286,15 @@ async function simpleUpdate() {
 
     item.count = 3;
     await item.update();
+
     let updatedItem = await TestShoppingCartItem.get(item.id, TestShoppingCartItem);
-    if (!updatedItem)
-        throw new InvalidOperationError(PATH, "simpleUpdate", "Wrong test configuration or get doesn't work like expected!");
+    if (!updatedItem || updatedItem.count !== 3) {
+        console.log('first if');
+        console.log(item, 'item');
+        console.log(updatedItem, 'updatedItem');
+        return false;
+    }
+
 
     item.count = 4;
     item.price = 7;

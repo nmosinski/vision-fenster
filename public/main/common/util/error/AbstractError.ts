@@ -1,3 +1,5 @@
+import CONFIG from "../../../../config";
+import options from "../../../../options";
 import JsTypes from "../jsTypes/JsTypes";
 
 const PATH = "public/main/common/util/error/AbstractError.js";
@@ -20,7 +22,8 @@ class AbstractError {
 	 * @param {string} location - A closer description of the location in the file in which the error occurred.
 	 */
 	constructor(errorDescription: string, file: string, location: string) {
-		console.trace();
+		if (CONFIG.DEBUG)
+			console.trace();
 		this.errorDescription = errorDescription;
 		this.file = file;
 		this.location = location;

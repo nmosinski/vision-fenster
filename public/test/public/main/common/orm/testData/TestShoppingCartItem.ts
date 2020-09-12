@@ -8,8 +8,8 @@ import QueryResult from "../../../../../../main/common/orm/QueryResult";
 
 class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
 {
-    private _count: any;
-    private _price: any;
+    private _count: number;
+    private _price: number;
 
     protected Constructor: new () => TestShoppingCartItem;
     private _testShoppingCart: TestShoppingCart;

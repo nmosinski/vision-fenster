@@ -92,7 +92,11 @@ var product: Product;
 const productDefinition = ProductDefinitionParsingService.parseFromJson(productDefinitions).get('fenster');
 if (!productDefinition)
     throw new InvalidOperationError(PATH, "", "productDefinition is undefined after parsing from json!");
-const productConfigurationService = new FensterProductConfigurationService();
+const productConfigurationService = new FensterProductConfigurationService(productDefinition);
+
+
+
+
 
 export async function runAllTests() {
     let tests = new Tests(undefined, undefined, beforeEach, afterEach);
@@ -102,14 +106,16 @@ export async function runAllTests() {
     tests.add(new Test(PATH, "filter valid options", truthly(), filterValidOptions));
     tests.add(new Test(PATH, "find valid configuration", truthly(), findValidConfiguration));
     tests.add(new Test(PATH, "fill missing product options with default", truthly(), fillMissingProductOptionsWithDefault));
+    tests.add(new Test(PATH, "fill missing product options with invalid default", truthly(), fillMissingProductOptionsWithInvalidDefault));
+
 
     await tests.runAll();
 }
 
 async function beforeEach() {
-    let materialOption = new ProductOption();
-    let profilOption = new ProductOption();
-    let rolladenOption = new ProductOption();
+    const materialOption = new ProductOption();
+    const profilOption = new ProductOption();
+    const rolladenOption = new ProductOption();
 
     materialOption.productOptionType = new ProductOptionType({ "title": "material" });
     profilOption.productOptionType = new ProductOptionType({ "title": "profil" });
@@ -119,11 +125,8 @@ async function beforeEach() {
     profilOption.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
     rolladenOption.tags = new QueryResult<Tag>([new Tag({ "title": "außen" })]);
 
-    product = new Product(new List<ProductOption>([
-        materialOption,
-        profilOption,
-        rolladenOption
-    ]));
+    product = new Product();
+    product.productOptions = new QueryResult([materialOption, profilOption, rolladenOption]);
 }
 
 async function afterEach() {
@@ -131,17 +134,22 @@ async function afterEach() {
 }
 
 function productSatisfiesOption() {
-    let validOption = new ProductOption();
-    let invalidOption = new ProductOption();
+    const validOption = new ProductOption();
+    const invalidOption = new ProductOption();
 
     validOption.productOptionType = new ProductOptionType({ "title": "profil" });
     invalidOption.productOptionType = new ProductOptionType({ "title": "profil" });
 
-    validOption.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
+    validOption.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" }), new Tag({ "title": "kömmerling" })]);
     invalidOption.tags = new QueryResult<Tag>([new Tag({ "title": "holz" })]);
 
-    if (!productConfigurationService.productSatisfiesOption(validOption, product))
+    if (!productConfigurationService.productSatisfiesOption(validOption, product)) {
+        console.log('first if');
+        console.log(validOption, 'valid option');
+        console.log(product, 'product');
+        console.log(productConfigurationService.productDefinition, 'productDefinition');
         return false;
+    }
 
     if (productConfigurationService.productSatisfiesOption(invalidOption, product))
         return false;
@@ -150,8 +158,12 @@ function productSatisfiesOption() {
 }
 
 function productIsValid() {
-    if (!productConfigurationService.productIsValid(product))
+    if (!productConfigurationService.productIsValid(product)) {
+        console.log('first if');
+        console.log(product, 'product');
+        console.log(productConfigurationService.productDefinition, 'productDefinition');
         return false;
+    }
 
     let option = product.getOption("profil");
     if (!option)
@@ -253,7 +265,7 @@ function fillMissingProductOptionsWithDefault() {
 
     optionCandidates.add(materialOption1, materialOption2, profilOption1, profilOption2, profilOption3);
 
-    product.setOption(materialOption2);
+    product.saveOption(materialOption2);
     product.removeOption("profil");
 
     productConfigurationService.fillMissingProductOptionsWithDefault(optionCandidates, product);
@@ -269,4 +281,45 @@ function fillMissingProductOptionsWithDefault() {
 
     return true;
 }
+
+function fillMissingProductOptionsWithInvalidDefault() {
+    let optionCandidates = new List<ProductOption>();
+
+    let materialOption1 = new ProductOption({ "id": "1" });
+    let materialOption2 = new ProductOption({ "id": "2" });
+    let profilOption1 = new ProductOption({ "id": "3" });
+    let profilOption2 = new ProductOption({ "id": "4" });
+    let profilOption3 = new ProductOption({ "id": "5" });
+
+    materialOption1.productOptionType = new ProductOptionType({ "title": "material" });
+    materialOption2.productOptionType = new ProductOptionType({ "title": "material" });
+    profilOption1.productOptionType = new ProductOptionType({ "title": "profil" });
+    profilOption2.productOptionType = new ProductOptionType({ "title": "profil" });
+    profilOption3.productOptionType = new ProductOptionType({ "title": "profil" });
+
+    materialOption1.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
+    materialOption2.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
+    profilOption1.tags = new QueryResult<Tag>([new Tag({ "title": "unknownMat" })]);
+    profilOption2.tags = new QueryResult<Tag>([new Tag({ "title": "unknownMat" }), new Tag({ "title": "kunstfurz" }), new Tag({ "title": "default" })]);
+    profilOption3.tags = new QueryResult<Tag>([new Tag({ "title": "unknownMat" })]);
+
+    optionCandidates.add(materialOption1, materialOption2, profilOption1, profilOption2, profilOption3);
+
+    product.saveOption(materialOption2);
+    product.removeOption("profil");
+
+    const success = productConfigurationService.fillMissingProductOptionsWithDefault(optionCandidates, product);
+
+    if (success) {
+        console.log('first if');
+        console.log(product, 'product');
+        console.log(optionCandidates, 'optionCandidates');
+        console.log(productConfigurationService.productDefinition, 'productDefinition');
+        return false;
+    }
+
+    return true;
+}
+
+
 

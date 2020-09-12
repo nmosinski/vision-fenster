@@ -4,11 +4,12 @@ import productDefinitions from "../../productDefinitions";
 import ProductOption from "../../model/ProductOption";
 import Product from "../../model/Product";
 import ProductConfigurationServiceFactory from "../../factory/ProductConfigurationServiceFactory";
+import ProductDefinition from "../../model/ProductDefinition";
 
 class FensterProductConfigurationService extends AbstractProductConfigurationService {
 
-    constructor() {
-        super(ProductDefinitionParsingService.parseFromJson(productDefinitions).get("fenster"));
+    constructor(productDefinition?: ProductDefinition) {
+        super((productDefinition) ? productDefinition : ProductDefinitionParsingService.parseFromJson(productDefinitions).get("fenster"));
     }
 
     beforeSetOption(productOption: ProductOption, product: Product): void {
