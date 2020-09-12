@@ -18,6 +18,10 @@ function init() {
     tests.add("productConfigurationService", productConfigurationServiceTests);
 }
 
+async function run(toRun: List<() => Promise<void>>) {
+    await toRun.foreachAsync(async (testFunction) => await testFunction());
+}
+
 export async function runAllTests() {
     init();
     await tests.values().foreachAsync(async (testFunction) => await testFunction());

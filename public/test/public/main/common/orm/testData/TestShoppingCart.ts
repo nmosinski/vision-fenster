@@ -35,6 +35,10 @@ class TestShoppingCart extends AbstractModel<TestShoppingCart>
         this._testShoppingCartItems = items;
     }
 
+    get testShoppingCartItems() {
+        return this._testShoppingCartItems;
+    }
+
     set testUser(user: TestUser) {
         this._testUser = user;
     }
@@ -42,11 +46,6 @@ class TestShoppingCart extends AbstractModel<TestShoppingCart>
     get testUser() {
         return this._testUser;
     }
-
-    get testShoppingCartItems() {
-        return this._testShoppingCartItems;
-    }
-
 }
 
 export default TestShoppingCart;

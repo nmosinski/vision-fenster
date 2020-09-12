@@ -1,5 +1,4 @@
 import CONFIG from "../../../../config";
-import options from "../../../../options";
 import JsTypes from "../jsTypes/JsTypes";
 
 const PATH = "public/main/common/util/error/AbstractError.js";
@@ -39,17 +38,6 @@ class AbstractError {
 	}
 
 	/**
-	 * Set the error description.
-	 * @param {string} errorDescription - The description.
-	 */
-	set errorDescription(errorDescription: string) {
-		if (JsTypes.isString(errorDescription))
-			this._errorDescription = errorDescription;
-		else
-			this._errorDescription = "";
-	}
-
-	/**
 	 * Set the file path of where the error occurred.
 	 * @param {string} file - The path to the file.
 	 */
@@ -60,8 +48,28 @@ class AbstractError {
 			this._file = "";
 	}
 
+	/**
+	 * Get the file path.
+	 * @return {string} The file path of where the error occurred.
+	 */
+	get file(): string {
+		return this._file;
+	}
+
 	set stack(stack: string | undefined) {
 		this._stack = stack;
+	}
+
+	get stack(): string | undefined {
+		return this._stack;
+	}
+
+	/**
+	 * Get the location inside the given file of where the error occurred.
+	 * @return {string} The location.
+	 */
+	get location(): string {
+		return this._location;
 	}
 
 	/**
@@ -76,31 +84,22 @@ class AbstractError {
 	}
 
 	/**
+	 * Set the error description.
+	 * @param {string} errorDescription - The description.
+	 */
+	set errorDescription(errorDescription: string) {
+		if (JsTypes.isString(errorDescription))
+			this._errorDescription = errorDescription;
+		else
+			this._errorDescription = "";
+	}
+
+	/**
 	 * Get the error description of the error.
 	 * @return {string} The description of the error.
 	 */
 	get errorDescription(): string {
 		return this._errorDescription;
-	}
-
-	/**
-	 * Get the file path.
-	 * @return {string} The file path of where the error occurred.
-	 */
-	get file(): string {
-		return this._file;
-	}
-
-	/**
-	 * Get the location inside the given file of where the error occurred.
-	 * @return {string} The location.
-	 */
-	get location(): string {
-		return this._location;
-	}
-
-	get stack(): string | undefined {
-		return this._stack;
 	}
 }
 

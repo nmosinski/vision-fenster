@@ -87,7 +87,7 @@ const productDefinitions =
     }
 }
 
-var product: Product;
+let product: Product;
 
 const productDefinition = ProductDefinitionParsingService.parseFromJson(productDefinitions).get('fenster');
 if (!productDefinition)
@@ -99,7 +99,7 @@ const productConfigurationService = new FensterProductConfigurationService(produ
 
 
 export async function runAllTests() {
-    let tests = new Tests(undefined, undefined, beforeEach, afterEach);
+    const tests = new Tests(undefined, undefined, beforeEach, afterEach);
 
     tests.add(new Test(PATH, "product satisfies option", truthly(), productSatisfiesOption));
     tests.add(new Test(PATH, "product is valid", truthly(), productIsValid));
@@ -165,7 +165,7 @@ function productIsValid() {
         return false;
     }
 
-    let option = product.getOption("profil");
+    const option = product.getOption("profil");
     if (!option)
         throw new InvalidOperationError(PATH, "productIsValid", "Wrong test configuration!!!");
 
@@ -177,9 +177,9 @@ function productIsValid() {
 }
 
 function filterValidOptions() {
-    let validOption1 = new ProductOption({ "id": "1" });
-    let invalidOption = new ProductOption({ "id": "2" });
-    let validOption2 = new ProductOption({ "id": "3" });
+    const validOption1 = new ProductOption({ "id": "1" });
+    const invalidOption = new ProductOption({ "id": "2" });
+    const validOption2 = new ProductOption({ "id": "3" });
 
     validOption1.productOptionType = new ProductOptionType({ "title": "profil" });
     invalidOption.productOptionType = new ProductOptionType({ "title": "profil" });
@@ -189,9 +189,9 @@ function filterValidOptions() {
     invalidOption.tags = new QueryResult<Tag>([new Tag({ "title": "holz" })]);
     validOption2.tags = new QueryResult<Tag>([new Tag({ "title": "kunststoff" })]);
 
-    let options = new List<ProductOption>([validOption1, invalidOption, validOption2]);
+    const options = new List<ProductOption>([validOption1, invalidOption, validOption2]);
 
-    let filteredOptions = productConfigurationService.filterValidOptions(options, product);
+    const filteredOptions = productConfigurationService.filterValidOptions(options, product);
 
     if (filteredOptions.length !== 2)
         return false;
@@ -203,13 +203,13 @@ function filterValidOptions() {
 }
 
 function findValidConfiguration() {
-    let optionCandidates = new KVMap<string, List<ProductOption>>();
+    const optionCandidates = new KVMap<string, List<ProductOption>>();
 
-    let materialOption1 = new ProductOption({ "id": "1" });
-    let materialOption2 = new ProductOption({ "id": "2" });
-    let profilOption1 = new ProductOption({ "id": "3" });
-    let profilOption2 = new ProductOption({ "id": "4" });
-    let profilOption3 = new ProductOption({ "id": "5" });
+    const materialOption1 = new ProductOption({ "id": "1" });
+    const materialOption2 = new ProductOption({ "id": "2" });
+    const profilOption1 = new ProductOption({ "id": "3" });
+    const profilOption2 = new ProductOption({ "id": "4" });
+    const profilOption3 = new ProductOption({ "id": "5" });
 
     materialOption1.productOptionType = new ProductOptionType({ "title": "material" });
     materialOption2.productOptionType = new ProductOptionType({ "title": "material" });
@@ -243,13 +243,13 @@ function findValidConfiguration() {
 }
 
 function fillMissingProductOptionsWithDefault() {
-    let optionCandidates = new List<ProductOption>();
+    const optionCandidates = new List<ProductOption>();
 
-    let materialOption1 = new ProductOption({ "id": "1" });
-    let materialOption2 = new ProductOption({ "id": "2" });
-    let profilOption1 = new ProductOption({ "id": "3" });
-    let profilOption2 = new ProductOption({ "id": "4" });
-    let profilOption3 = new ProductOption({ "id": "5" });
+    const materialOption1 = new ProductOption({ "id": "1" });
+    const materialOption2 = new ProductOption({ "id": "2" });
+    const profilOption1 = new ProductOption({ "id": "3" });
+    const profilOption2 = new ProductOption({ "id": "4" });
+    const profilOption3 = new ProductOption({ "id": "5" });
 
     materialOption1.productOptionType = new ProductOptionType({ "title": "material" });
     materialOption2.productOptionType = new ProductOptionType({ "title": "material" });
@@ -283,13 +283,13 @@ function fillMissingProductOptionsWithDefault() {
 }
 
 function fillMissingProductOptionsWithInvalidDefault() {
-    let optionCandidates = new List<ProductOption>();
+    const optionCandidates = new List<ProductOption>();
 
-    let materialOption1 = new ProductOption({ "id": "1" });
-    let materialOption2 = new ProductOption({ "id": "2" });
-    let profilOption1 = new ProductOption({ "id": "3" });
-    let profilOption2 = new ProductOption({ "id": "4" });
-    let profilOption3 = new ProductOption({ "id": "5" });
+    const materialOption1 = new ProductOption({ "id": "1" });
+    const materialOption2 = new ProductOption({ "id": "2" });
+    const profilOption1 = new ProductOption({ "id": "3" });
+    const profilOption2 = new ProductOption({ "id": "4" });
+    const profilOption3 = new ProductOption({ "id": "5" });
 
     materialOption1.productOptionType = new ProductOptionType({ "title": "material" });
     materialOption2.productOptionType = new ProductOptionType({ "title": "material" });

@@ -1,14 +1,14 @@
 import TestShoppingCart from "./testData/TestShoppingCart";
 import TestShoppingCartItem from "./testData/TestShoppingCartItem";
 import TestUser from "./testData/TestUser";
-import WixDatabase, { Query } from "../../../../../main/common/orm/WixDatabase";
+import WixDatabase from "../../../../../main/common/orm/WixDatabase";
 import { Tests, Test, truthly, unspecified, value } from "../../../../../main/common/test/Test";
 import AbstractModel from "../../../../../main/common/orm/AbstractModel";
-import List from "../../../../../main/common/util/collections/list/List";
 import InvalidOperationError from "../../../../../main/common/util/error/InvalidOperationError";
 import QueryResult from "../../../../../main/common/orm/QueryResult";
 import JsTypes from "../../../../../main/common/util/jsTypes/JsTypes";
 const PATH = "test/public/main/common/orm/AbstractModel.test.js"
+// @ts-ignore
 import wixData from 'wix-data';
 
 let testShoppingCarts: QueryResult<TestShoppingCart>;
