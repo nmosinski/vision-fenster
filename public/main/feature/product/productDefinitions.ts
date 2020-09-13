@@ -290,13 +290,13 @@ const productDefinitions =
                     },
                     3:
                     {
-                        "tags": [FensterTags.EINTEILIG, FensterTags.OHNELICHT],
+                        "tags": [FensterTags.ZWEITEILIG, FensterTags.OHNELICHT],
                         "requirements":
                         {
                             0:
                             {
                                 "productOptionType": FensterProductOptionTypes.FENSTERTYP,
-                                "tags": [FensterTags.EINTEILIG]
+                                "tags": [FensterTags.ZWEITEILIG]
                             },
                             1:
                             {
@@ -305,6 +305,142 @@ const productDefinitions =
                             }
                         }
                     },
+                    4:
+                    {
+                        "tags": [FensterTags.ZWEITEILIG, FensterTags.OBERLICHT],
+                        "requirements":
+                        {
+                            0:
+                            {
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.ZWEITEILIG]
+                            },
+                            1:
+                            {
+                                "productOptionType": FensterProductOptionTypes.FENSTERLICHT,
+                                "tags": [FensterTags.OBERLICHT]
+                            }
+                        }
+                    },
+                    5:
+                    {
+                        "tags": [FensterTags.ZWEITEILIG, FensterTags.UNTERLICHT],
+                        "requirements":
+                        {
+                            0:
+                            {
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.ZWEITEILIG]
+                            },
+                            1:
+                            {
+                                "productOptionType": FensterProductOptionTypes.FENSTERLICHT,
+                                "tags": [FensterTags.UNTERLICHT]
+                            }
+                        }
+                    },
+                    6:
+                    {
+                        "tags": [FensterTags.DREITEILIG, FensterTags.OHNELICHT],
+                        "requirements":
+                        {
+                            0:
+                            {
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.DREITEILIG]
+                            },
+                            1:
+                            {
+                                "productOptionType": FensterProductOptionTypes.FENSTERLICHT,
+                                "tags": [FensterTags.OHNELICHT]
+                            }
+                        }
+                    },
+                    7:
+                    {
+                        "tags": [FensterTags.DREITEILIG, FensterTags.OBERLICHT],
+                        "requirements":
+                        {
+                            0:
+                            {
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.DREITEILIG]
+                            },
+                            1:
+                            {
+                                "productOptionType": FensterProductOptionTypes.FENSTERLICHT,
+                                "tags": [FensterTags.OBERLICHT]
+                            }
+                        }
+                    },
+                    8:
+                    {
+                        "tags": [FensterTags.VIERTEILIG, FensterTags.UNTERLICHT],
+                        "requirements":
+                        {
+                            0:
+                            {
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.VIERTEILIG]
+                            },
+                            1:
+                            {
+                                "productOptionType": FensterProductOptionTypes.FENSTERLICHT,
+                                "tags": [FensterTags.UNTERLICHT]
+                            }
+                        }
+                    },
+                    9:
+                    {
+                        "tags": [FensterTags.VIERTEILIG, FensterTags.OHNELICHT],
+                        "requirements":
+                        {
+                            0:
+                            {
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.VIERTEILIG]
+                            },
+                            1:
+                            {
+                                "productOptionType": FensterProductOptionTypes.FENSTERLICHT,
+                                "tags": [FensterTags.OHNELICHT]
+                            }
+                        }
+                    },
+                    10:
+                    {
+                        "tags": [FensterTags.VIERTEILIG, FensterTags.OBERLICHT],
+                        "requirements":
+                        {
+                            0:
+                            {
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.VIERTEILIG]
+                            },
+                            1:
+                            {
+                                "productOptionType": FensterProductOptionTypes.FENSTERLICHT,
+                                "tags": [FensterTags.OBERLICHT]
+                            }
+                        }
+                    },
+                    11:
+                    {
+                        "tags": [FensterTags.VIERTEILIG, FensterTags.UNTERLICHT],
+                        "requirements":
+                        {
+                            0:
+                            {
+                                "productOptionType": FensterProductOptionTypes.FENSTERTYP,
+                                "tags": [FensterTags.VIERTEILIG]
+                            },
+                            1:
+                            {
+                                "productOptionType": FensterProductOptionTypes.FENSTERLICHT,
+                                "tags": [FensterTags.UNTERLICHT]
+                            }
+                        }
+                    }
                 }
             }
         }
