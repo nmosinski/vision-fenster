@@ -40,6 +40,8 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
     private _parent: AbstractModel<any>;
     private _relations: KVMap<new () => AbstractModel<any>, Relation<AbstractModel<any>, T>>;
     protected abstract Constructor: new () => T;
+    protected abstract modelName: string;
+    protected _tableName: string;
     protected _properties: Properties;
     private _id: string;
     private _lastQueryResult: QueryResult<T> | AbstractModel<T>;
@@ -279,11 +281,12 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
 
         // tslint:disable-next-line: max-classes-per-file
         const roleModelClass = class RoleModel extends AbstractModel<RoleModel> implements IComparable {
-
+            protected modelName: string;
             protected Constructor: new () => RoleModel;
 
             init(): void {
                 this.Constructor = RoleModel;
+                this.modelName = 'RoleModel';
             }
 
             addProperties(): void {
@@ -741,15 +744,7 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable 
      * @returns {string} The name of the table of this model.
      */
     get tableName(): string {
-        return this.Constructor.name;
-    }
-
-    /**
-     * Get the name of this model. Resolves into the name of the model/class by default.
-     * @returns {string} The name of the table of this model.
-     */
-    get modelName(): string {
-        return this.Constructor.name;
+        return (this._tableName) ? this._tableName : this.modelName;
     }
 
     /**

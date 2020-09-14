@@ -4,11 +4,13 @@ import ProductOption from "./ProductOption";
 
 
 class Tag extends AbstractModel<Tag>{
+    protected modelName: string;
     protected Constructor: new () => Tag;
     private _productOptions: QueryResult<ProductOption>;
 
     init(): void {
         this.Constructor = Tag;
+        this.modelName = 'Tag';
         this.productOptions = new QueryResult<ProductOption>();
     }
 

@@ -8,6 +8,7 @@ import QueryResult from "../../../../../../main/common/orm/QueryResult";
 
 class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
 {
+    protected modelName: string;
     private _count: number;
     private _price: number;
 
@@ -17,6 +18,7 @@ class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
 
     init(): void {
         this.Constructor = TestShoppingCartItem;
+        this.modelName = 'TestShoppingCartItem';
     }
 
     addProperties(): void {

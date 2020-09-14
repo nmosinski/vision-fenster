@@ -7,6 +7,7 @@ import { Query } from "../../../common/orm/WixDatabase";
 
 
 class ProductOption extends AbstractModel<ProductOption>{
+    protected modelName: string;
     private _productOptionType: ProductOptionType;
     private _value: string;
     private _presentationde: string;
@@ -16,6 +17,7 @@ class ProductOption extends AbstractModel<ProductOption>{
     protected Constructor: new () => ProductOption;
     init(): void {
         this.Constructor = ProductOption;
+        this.modelName = 'ProductOption';
         this.tags = new QueryResult<Tag>();
     }
 

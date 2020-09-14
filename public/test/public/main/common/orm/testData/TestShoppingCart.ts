@@ -6,12 +6,14 @@ import AbstractModel from "../../../../../../main/common/orm/AbstractModel";
 
 class TestShoppingCart extends AbstractModel<TestShoppingCart>
 {
+    protected modelName: string;
     protected Constructor: new () => TestShoppingCart;
     private _testUser: TestUser;
     private _testShoppingCartItems: any;
 
     init(): void {
         this.Constructor = TestShoppingCart;
+        this.modelName = 'TestShoppingCart';
     }
 
     addProperties(): void {

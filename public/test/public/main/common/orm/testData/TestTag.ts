@@ -5,36 +5,32 @@ import AbstractModel from "../../../../../../main/common/orm/AbstractModel";
 
 class TestTag extends AbstractModel<TestTag>
 {
+    protected modelName: string;
     protected Constructor: new () => TestTag;
     private _testShoppingCartItems: any;
-    
-    init(): void 
-    {
+
+    init(): void {
         this.Constructor = TestTag;
+        this.modelName = 'TestTag';
     }
 
-    addProperties(): void 
-    {
+    addProperties(): void {
         this.properties.string("title");
     }
-    
-    addRelations(): void 
-    {
+
+    addRelations(): void {
         this.manyToMany(TestShoppingCartItem);
     }
 
-    testShoppingCartItemsQ()
-    {
+    testShoppingCartItemsQ() {
         return this.relative(TestShoppingCartItem);
     }
 
-    set testShoppingCartItems(items)
-    {
+    set testShoppingCartItems(items) {
         this._testShoppingCartItems = items;
     }
 
-    get testShoppingCartItems()
-    {
+    get testShoppingCartItems() {
         return this._testShoppingCartItems;
     }
 }

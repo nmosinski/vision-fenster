@@ -6,6 +6,7 @@ import Product from "./Product";
 import QueryResult from "../../../common/orm/QueryResult";
 
 class ProductModel extends AbstractModel<ProductModel>{
+    protected modelName: string;
     protected Constructor: new () => ProductModel;
     private _productOptionTypes: QueryResult<ProductOptionType>;
     private _title: string;
@@ -13,6 +14,7 @@ class ProductModel extends AbstractModel<ProductModel>{
 
     init(): void {
         this.Constructor = ProductModel;
+        this.modelName = 'ProductModel';
         this.productOptionTypes = new QueryResult<ProductOptionType>();
     }
 
