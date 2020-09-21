@@ -23,8 +23,8 @@ class FensterProductConfigurationService extends AbstractProductConfigurationSer
             product.image = productOption.image;
     }
 
-    calculatePrice(product: Product): void {
-        product.price = 2;
+    async calculatePrice(product: Product): Promise<number> {
+        return 2;
     }
 }
 

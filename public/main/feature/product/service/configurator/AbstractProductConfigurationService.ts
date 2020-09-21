@@ -18,11 +18,36 @@ abstract class AbstractProductConfigurationService {
         this.productDefinition = productDefinition;
     }
 
+    /**
+     * A hook function which allows to perform operations on the product before setting an option.
+     * @param {ProductOption} productOption The ProductOption that will be set. 
+     * @param {Product} product The product for which the option will be set.
+     */
     abstract beforeSetOption(productOption: ProductOption, product: Product): void;
 
+    /**
+     * A hook function which allows to perform operations on the product after setting an option.
+     * @param {ProductOption} productOption The ProductOption that will be set. 
+     * @param {Product} product The product for which the option will be set.
+     */
     abstract afterSetOption(productOption: ProductOption, product: Product): void;
 
-    abstract calculatePrice(product: Product): void;
+    /**
+     * Calculates the price of the given product.
+     * @param {Product} product The product for which the price will be calculated.
+     * @returns {Promise<number>} The calculated price. 
+     */
+    abstract async calculatePrice(product: Product): Promise<number>;
+
+    /**
+     * Calculates and sets the new price.
+     * @param {Product} product The product for which the price will be calculated.
+     * @returns {Promise<number>} The calculated price. 
+     */
+    async calculateAndSetPrice(product: Product): Promise<number> {
+        product.price = await this.calculatePrice(product);
+        return product.price;
+    }
 
     /**
      * Set a product option.
@@ -33,7 +58,6 @@ abstract class AbstractProductConfigurationService {
         if (this.productSatisfiesOption(productOption, product)) {
             this.beforeSetOption(productOption, product);
             product.saveOption(productOption);
-            this.calculatePrice(product);
             this.afterSetOption(productOption, product);
         }
         else
