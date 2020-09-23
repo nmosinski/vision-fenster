@@ -4,23 +4,24 @@ import AbstractModel from "../../../../../../main/common/orm/AbstractModel";
 import TestTag from "./TestTag";
 import List from "../../../../../../main/common/util/collections/list/List";
 import QueryResult from "../../../../../../main/common/orm/QueryResult";
-import TestShoppingCartDiffColName from "./TestShoppingCartDiffColName";
+import TestUser from "./TestUser";
+import TestShoppingCartItem from "./TestShoppingCartItem";
 
 
-class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
+class TestShoppingCartDiffColName extends AbstractModel<TestShoppingCartDiffColName>
 {
     protected modelName: string;
     private _count: number;
     private _price: number;
 
-    protected Constructor: new () => TestShoppingCartItem;
+    protected Constructor: new () => TestShoppingCartDiffColName;
     private _testShoppingCart: TestShoppingCart;
     private _testTags: QueryResult<TestTag>;
 
     init(): void
     {
-        this.Constructor = TestShoppingCartItem;
-        this.modelName = 'TestShoppingCartItem';
+        this.Constructor = TestShoppingCartDiffColName;
+        this.modelName = 'TestShoppingCartDiffColName';
     }
 
     addProperties(): void
@@ -32,19 +33,13 @@ class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
 
     addRelations(): void
     {
-        this.manyToOne(TestShoppingCart);
-        this.manyToMany(TestTag);
-        this.manyToOne(TestShoppingCartDiffColName, 'aCart');
+        this.zeroOrOneToOne(TestUser, 'aTestUser');
+        this.oneToMany(TestShoppingCartItem, 'aCartItem');
     }
 
-    testShoppingCartQ()
+    testShoppingCartItemQ()
     {
-        return this.relative(TestShoppingCart);
-    }
-
-    testShoppingCartDiffColNameQ()
-    {
-        return this.relative(TestShoppingCartDiffColName);
+        return this.relative(TestShoppingCartItem);
     }
 
     testTagsQ()
@@ -94,4 +89,4 @@ class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
 
 }
 
-export default TestShoppingCartItem;
+export default TestShoppingCartDiffColName;

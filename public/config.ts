@@ -1,5 +1,5 @@
 const CONFIG = {
-    'DEBUG': false,
+    'DEBUG': true,
     'LOGS': true
 }
 

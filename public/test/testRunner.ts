@@ -4,37 +4,44 @@ import { runAllTests as aHoldsReferenceToBTests } from "./public/main/common/orm
 import { runAllTests as aHoldsNoReferenceToBTests } from "./public/main/common/orm/AHoldsNoReferenceToB.test";
 import { runAllTests as manyToManyTests } from "./public/main/common/orm/ManyToMany.test";
 import { runAllTests as productConfigurationServiceTests } from "./public/main/feature/product/ProductConfigurationService.test";
+import { runAllTests as differentColumnNameForModels } from "./public/main/common/orm/DifferentColumnNameForModels.test";
 import KVMap from "../main/common/util/collections/map/KVMap";
 import List from "../main/common/util/collections/list/List";
 
 const tests = new KVMap<string, () => Promise<void>>();
 
-function init() {
+function init()
+{
     tests.add("list", listTests);
     tests.add("abstractModel", abstractModelTests);
     tests.add("aHoldsReferenceToB", aHoldsReferenceToBTests);
     tests.add("aHoldsNoReferenceToB", aHoldsNoReferenceToBTests);
     tests.add("manyToMany", manyToManyTests);
     tests.add("productConfigurationService", productConfigurationServiceTests);
+    tests.add("differentColumnNameForModels", differentColumnNameForModels);
 }
 
-async function run(toRun: List<() => Promise<void>>) {
+async function run(toRun: List<() => Promise<void>>)
+{
     await toRun.foreachAsync(async (testFunction) => await testFunction());
 }
 
-export async function runAllTests() {
+export async function runAllTests()
+{
     init();
     await tests.values().foreachAsync(async (testFunction) => await testFunction());
 }
 
-export async function runTests(...testNames: string[]) {
+export async function runTests(...testNames: string[])
+{
     init();
     const toRun = new List<string>(testNames);
 
     await toRun.foreachAsync(async name => await (tests.get(name)()));
 }
 
-export async function runAllTestsExcept(...testNames: string[]) {
+export async function runAllTestsExcept(...testNames: string[])
+{
     init();
     const notToRun = new List<string>(testNames);
 

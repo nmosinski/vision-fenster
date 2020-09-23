@@ -11,41 +11,50 @@ class TestShoppingCart extends AbstractModel<TestShoppingCart>
     private _testUser: TestUser;
     private _testShoppingCartItems: any;
 
-    init(): void {
+    init(): void
+    {
         this.Constructor = TestShoppingCart;
         this.modelName = 'TestShoppingCart';
     }
 
-    addProperties(): void {
+    addProperties(): void
+    {
 
     }
 
-    addRelations(): void {
+    addRelations(): void
+    {
         this.oneToMany(TestShoppingCartItem);
         this.zeroOrOneToOne(TestUser);
     }
 
-    testUserQ() {
+    testUserQ()
+    {
         return this.relative(TestUser);
     }
 
-    testShoppingCartItemsQ() {
+    testShoppingCartItemsQ()
+    {
         return this.relative(TestShoppingCartItem);
     }
 
-    set testShoppingCartItems(items) {
+    set testShoppingCartItems(items)
+    {
         this._testShoppingCartItems = items;
     }
 
-    get testShoppingCartItems() {
+    get testShoppingCartItems()
+    {
         return this._testShoppingCartItems;
     }
 
-    set testUser(user: TestUser) {
+    set testUser(user: TestUser)
+    {
         this._testUser = user;
     }
 
-    get testUser() {
+    get testUser()
+    {
         return this._testUser;
     }
 }

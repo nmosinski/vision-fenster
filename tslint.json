@@ -7,6 +7,7 @@
         "suppressWhileTypeErrorsPresent": false,
         "no-console": false,
         "no-trailing-whitespace": false,
-        "no-string-literal": false
+        "no-string-literal": false,
+        "no-empty": false
     }
 }
