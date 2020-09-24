@@ -102,7 +102,6 @@ async function relationalDestroyMultiple()
 
 async function differentColumnName()
 {
-    const testShoppingCartDiffColName = testShoppingCartsDiffColName.first();
     const testShoppingCartItem = testShoppingCartItems.first();
 
     await testShoppingCartDiffColName.assignAndLink(testShoppingCartItem);
@@ -114,6 +113,15 @@ async function differentColumnName()
         console.log('first if');
         console.log('retrievedTestShoppingCartDiffColName', retrievedTestShoppingCartDiffColName);
         console.log('testShoppingCartDiffColName', testShoppingCartDiffColName);
+        return false;
+    }
+
+    await testShoppingCartDiffColName.load('aCartItem');
+
+    if (!testShoppingCartDiffColName.aCartItems)
+    {
+        console.log('second if');
+        console.log(testShoppingCartDiffColName);
         return false;
     }
 

@@ -128,5 +128,14 @@ async function differentColumnName()
         return false;
     }
 
+    await testShoppingCartItem.load('aCart');
+
+    if (!testShoppingCartItem.aCart)
+    {
+        console.log('second if');
+        console.log(testShoppingCartItem);
+        return false;
+    }
+
     return true;
 }
