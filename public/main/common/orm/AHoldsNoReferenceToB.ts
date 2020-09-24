@@ -10,22 +10,26 @@ const PATH = "public/main/common/orm/AHoldsNoReferenceToB.js";
 
 abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends AbstractModel<B>> extends NotManyToMany<A, B>
 {
-    async assign(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void> {
+    async assign(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void>
+    {
         const a: A = new List<A>(as).first();
         const bsList: List<B> = new List<B>(bs);
 
-        bsList.foreach((b: B) => {
-            b[AbstractModel.asFk(this.relativeA)] = a.id;
+        bsList.foreach((b: B) =>
+        {
+            b[this.aAsFkForB()] = a.id;
         });
 
-        await AbstractModel.update(bsList, AbstractModel.asFk(this.relativeA));
+        await AbstractModel.update(bsList, this.aAsFkForB());
     }
 
-    async relationalGet(relative: A): Promise<B | never> {
-        return (await this.queryOfRelativeB().eq(relative.asFk(), relative.id).execute(1)).first();
+    async relationalGet(relative: A): Promise<B | never>
+    {
+        return (await this.queryOfRelativeB().eq(this.aAsFkForB(), relative.id).execute(1)).first();
     }
 
-    async relationalDestroy(relatives: AnyNumber<A>): Promise<void> {
+    async relationalDestroy(relatives: AnyNumber<A>): Promise<void>
+    {
         const relativesList = new List<A>(relatives);
 
         if (relativesList.isEmpty())
@@ -36,18 +40,20 @@ abstract class AHoldsNoReferenceToB<A extends AbstractModel<A>, B extends Abstra
         await AbstractModel.destroy(toDestroy);
     }
 
-    areRelated(a: A, b: B): boolean {
-        if (b[a.asFk()] === a.id)
+    areRelated(a: A, b: B): boolean
+    {
+        if (b[this.aAsFkForB()] === a.id)
             return true;
         return false;
     }
 
-    async relationalFind(relatives: AnyNumber<A>): Promise<QueryResult<B>> {
+    async relationalFind(relatives: AnyNumber<A>): Promise<QueryResult<B>>
+    {
         const relativesList = new QueryResult<A>(relatives);
         if (relativesList.isEmpty())
             return new QueryResult();
         let query = this.queryOfRelativeB();
-        query = query.hasSome(AbstractModel.asFk(this.relativeA), relativesList.toPks());
+        query = query.hasSome(this.aAsFkForB(), relativesList.toPks());
 
         const result = await query.execute();
         return result;

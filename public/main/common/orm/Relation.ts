@@ -9,10 +9,13 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
 {
     _relativeA: new () => A;
     _relativeB: new () => B;
+    _aAsPropertyNameForB: string;
 
-    constructor(relativeA: new () => A, relativeB: new () => B) {
+    constructor (relativeA: new () => A, relativeB: new () => B, aAsPropertyNameForB: string)
+    {
         this.relativeA = relativeA;
         this.relativeB = relativeB;
+        this.aAsPropertyNameForB = aAsPropertyNameForB;
     }
 
     abstract inverse(): Relation<B, A>;
@@ -56,45 +59,76 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
      * @param {new()=> U, U extends AbstractModel<U>} Model The model of the query.
      * @returns {Query<U>} A query. 
      */
-    customQuery<U extends AbstractModel<U>>(Model: new () => U): Query<U> {
+    customQuery<U extends AbstractModel<U>>(Model: new () => U): Query<U>
+    {
         return WixDatabase.query(Model);
+    }
+
+    bAsFkForA(): string
+    {
+        return this.inverse().aAsFkForB();
+    }
+
+    aAsFkForB(): string
+    {
+        return this.aAsPropertyNameForB.charAt(0).toLowerCase() + this.aAsPropertyNameForB.slice(1) + "Id";
+    }
+
+    queryOfRelativeA(): Query<A>
+    {
+        return WixDatabase.query(this.relativeA);
+    }
+
+    queryOfRelativeB(): Query<B>
+    {
+        return WixDatabase.query(this.relativeB);
     }
 
     /**
      * Get the name of B as property for A.
      * @returns {string} The name.
      */
-    abstract bAsPropertyNameForA(): string;
+    get bAsPropertyNameForA(): string
+    {
+        return this.inverse().aAsPropertyNameForB;
+    }
+
 
     /**
      * Get the name of A as property for B.
      * @returns {string} The name.
      */
-    aAsPropertyNameForB(): string {
-        return this.inverse().bAsPropertyNameForA();
+    get aAsPropertyNameForB(): string
+    {
+        return this._aAsPropertyNameForB;
     }
 
-    queryOfRelativeA(): Query<A> {
-        return WixDatabase.query(this.relativeA);
+    /**
+     * Set the name of A as property for B.
+     * @param {string} aAsPropertyNameForB The name of a as a property for b.
+     */
+    set aAsPropertyNameForB(aAsPropertyNameForB: string)
+    {
+        this._aAsPropertyNameForB = aAsPropertyNameForB;
     }
 
-    queryOfRelativeB(): Query<B> {
-        return WixDatabase.query(this.relativeB);
-    }
-
-    set relativeA(relative: new () => A) {
+    set relativeA(relative: new () => A)
+    {
         this._relativeA = relative;
     }
 
-    get relativeA(): new () => A {
+    get relativeA(): new () => A
+    {
         return this._relativeA;
     }
 
-    set relativeB(relative: new () => B) {
+    set relativeB(relative: new () => B)
+    {
         this._relativeB = relative;
     }
 
-    get relativeB(): new () => B {
+    get relativeB(): new () => B
+    {
         return this._relativeB;
     }
 }
