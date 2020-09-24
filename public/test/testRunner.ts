@@ -4,7 +4,6 @@ import { runAllTests as aHoldsReferenceToBTests } from "./public/main/common/orm
 import { runAllTests as aHoldsNoReferenceToBTests } from "./public/main/common/orm/AHoldsNoReferenceToB.test";
 import { runAllTests as manyToManyTests } from "./public/main/common/orm/ManyToMany.test";
 import { runAllTests as productConfigurationServiceTests } from "./public/main/feature/product/ProductConfigurationService.test";
-import { runAllTests as differentColumnNameForModels } from "./public/main/common/orm/DifferentColumnNameForModels.test";
 import KVMap from "../main/common/util/collections/map/KVMap";
 import List from "../main/common/util/collections/list/List";
 
@@ -18,7 +17,6 @@ function init()
     tests.add("aHoldsNoReferenceToB", aHoldsNoReferenceToBTests);
     tests.add("manyToMany", manyToManyTests);
     tests.add("productConfigurationService", productConfigurationServiceTests);
-    tests.add("differentColumnNameForModels", differentColumnNameForModels);
 }
 
 async function run(toRun: List<() => Promise<void>>)
