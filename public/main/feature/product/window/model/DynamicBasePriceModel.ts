@@ -1,5 +1,7 @@
-import AbstractModel from "../../../../common/orm/AbstractModel";
-class DynamicBasePriceModel extends AbstractModel<DynamicBasePriceModel>
+import AbstractDynamicModel from "../../../../common/orm/AbstractDynamicModel";
+import FensterBasePriceT from "./FensterBasePriceT";
+
+class DynamicBasePriceModel extends AbstractDynamicModel<DynamicBasePriceModel>
 {
     protected Constructor: new () => DynamicBasePriceModel;
     protected modelName: string;
@@ -21,9 +23,8 @@ class DynamicBasePriceModel extends AbstractModel<DynamicBasePriceModel>
     }
 
     addRelations(): void
-    // tslint:disable-next-line: no-empty
     {
-
+        this.manyToOne(FensterBasePriceT);
     }
 
     get width(): number

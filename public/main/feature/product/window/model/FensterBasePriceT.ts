@@ -4,6 +4,7 @@ import { Query } from "../../../../common/orm/WixDatabase";
 import List from "../../../../common/util/collections/list/List";
 import { AnyNumber } from "../../../../common/util/supportive";
 import ProductOption from "../../model/ProductOption";
+import DynamicBasePriceModel from "./DynamicBasePriceModel";
 
 class FensterBasePriceT extends AbstractModel<FensterBasePriceT>
 {
@@ -28,6 +29,7 @@ class FensterBasePriceT extends AbstractModel<FensterBasePriceT>
     addRelations(): void
     {
         this.manyToMany(ProductOption);
+        this.oneToMany(DynamicBasePriceModel);
     }
 
     hasProductOptions(productOptions: AnyNumber<ProductOption>)
