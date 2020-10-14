@@ -10,6 +10,7 @@ class FensterBasePriceT extends AbstractModel<FensterBasePriceT>
     protected Constructor: new () => FensterBasePriceT;
     protected modelName: string;
     private _productOptions: QueryResult<ProductOption>;
+    private _priceTableName: string;
 
     init(): void
     {
@@ -21,7 +22,7 @@ class FensterBasePriceT extends AbstractModel<FensterBasePriceT>
 
     addProperties(): void
     {
-        this.properties.string('tableName');
+        this.properties.string('priceTableName');
     }
 
     addRelations(): void
@@ -33,6 +34,16 @@ class FensterBasePriceT extends AbstractModel<FensterBasePriceT>
     {
         productOptions = new List<ProductOption>(productOptions);
         return productOptions.isSublistOf(this.productOptions);
+    }
+
+    set priceTableName(priceTableName: string)
+    {
+        this._priceTableName = priceTableName;
+    }
+
+    get priceTableName(): string
+    {
+        return this._priceTableName;
     }
 
     get productOptions(): QueryResult<ProductOption>

@@ -7,12 +7,12 @@ import List from "../../../../../main/common/util/collections/list/List";
 import ProductOptionType from "../../../../../main/feature/product/model/ProductOptionType";
 import KVMap from "../../../../../main/common/util/collections/map/KVMap";
 import InvalidOperationError from "../../../../../main/common/util/error/InvalidOperationError";
-import FensterProductConfigurationService from "../../../../../main/feature/product/service/configurator/FensterProductConfigurationService";
 import QueryResult from "../../../../../main/common/orm/QueryResult";
 import Tag from "../../../../../main/feature/product/model/Tag";
 import { ProductModels } from "../../../../../main/feature/product/productModels";
 import { FensterProductOptionTypes } from "../../../../../main/feature/product/productOptionTypes";
 import { FensterTags } from "../../../../../main/feature/product/tags";
+import FensterProductConfigurationService from "../../../../../main/feature/product/window/service/FensterProductConfigurationService";
 
 const PATH = "test/public/main/feature/product/ProductConfigurationService.test.js"
 
@@ -101,7 +101,8 @@ const productConfigurationService = new FensterProductConfigurationService(produ
 
 
 
-export async function runAllTests() {
+export async function runAllTests()
+{
     const tests = new Tests(undefined, undefined, beforeEach, afterEach);
 
     tests.add(new Test(PATH, "product satisfies option", truthly(), productSatisfiesOption));
@@ -115,7 +116,8 @@ export async function runAllTests() {
     await tests.runAll();
 }
 
-async function beforeEach() {
+async function beforeEach()
+{
     const materialOption = new ProductOption();
     const profilOption = new ProductOption();
     const rolladenOption = new ProductOption();
@@ -132,11 +134,13 @@ async function beforeEach() {
     product.productOptions = new QueryResult([materialOption, profilOption, rolladenOption]);
 }
 
-async function afterEach() {
+async function afterEach()
+{
 
 }
 
-function productSatisfiesOption() {
+function productSatisfiesOption()
+{
     const validOption = new ProductOption();
     const invalidOption = new ProductOption();
 
@@ -146,7 +150,8 @@ function productSatisfiesOption() {
     validOption.tags = new QueryResult<Tag>([new Tag({ "title": FensterTags.KUNSTSTOFF }), new Tag({ "title": FensterTags.KOEMMERLING })]);
     invalidOption.tags = new QueryResult<Tag>([new Tag({ "title": FensterTags.HOLZ })]);
 
-    if (!productConfigurationService.productSatisfiesOption(validOption, product)) {
+    if (!productConfigurationService.productSatisfiesOption(validOption, product))
+    {
         console.log('first if');
         console.log(validOption, 'valid option');
         console.log(product, 'product');
@@ -160,8 +165,10 @@ function productSatisfiesOption() {
     return true;
 }
 
-function productIsValid() {
-    if (!productConfigurationService.productIsValid(product)) {
+function productIsValid()
+{
+    if (!productConfigurationService.productIsValid(product))
+    {
         console.log('first if');
         console.log(product, 'product');
         console.log(productConfigurationService.productDefinition, 'productDefinition');
@@ -179,7 +186,8 @@ function productIsValid() {
     return true;
 }
 
-function filterValidOptions() {
+function filterValidOptions()
+{
     const validOption1 = new ProductOption({ "id": "1" });
     const invalidOption = new ProductOption({ "id": "2" });
     const validOption2 = new ProductOption({ "id": "3" });
@@ -205,7 +213,8 @@ function filterValidOptions() {
     return true;
 }
 
-function findValidConfiguration() {
+function findValidConfiguration()
+{
     const optionCandidates = new KVMap<string, List<ProductOption>>();
 
     const materialOption1 = new ProductOption({ "id": "1" });
@@ -245,7 +254,8 @@ function findValidConfiguration() {
     return true;
 }
 
-function fillMissingProductOptionsWithDefault() {
+function fillMissingProductOptionsWithDefault()
+{
     const optionCandidates = new List<ProductOption>();
 
     const materialOption1 = new ProductOption({ "id": "1" });
@@ -285,7 +295,8 @@ function fillMissingProductOptionsWithDefault() {
     return true;
 }
 
-function fillMissingProductOptionsWithInvalidDefault() {
+function fillMissingProductOptionsWithInvalidDefault()
+{
     const optionCandidates = new List<ProductOption>();
 
     const materialOption1 = new ProductOption({ "id": "1" });
@@ -313,7 +324,8 @@ function fillMissingProductOptionsWithInvalidDefault() {
 
     const success = productConfigurationService.fillMissingProductOptionsWithDefault(optionCandidates, product);
 
-    if (success) {
+    if (success)
+    {
         console.log('first if');
         console.log(product, 'product');
         console.log(optionCandidates, 'optionCandidates');
