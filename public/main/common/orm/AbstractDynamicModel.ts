@@ -12,6 +12,9 @@ abstract class AbstractDynamicModel<Child extends AbstractModel<Child>> extends 
         // @ts-ignore
         if (JsTypes.isUnspecified(data) || JsTypes.isUnspecified(data.tableName))
             throw new MissingTableNameForDynamicAbstractModelError(undefined, PATH, 'constructor');
+
+        // @ts-ignore    
+        this._tableName = data.tableName;
     }
 }
 

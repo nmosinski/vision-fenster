@@ -26,6 +26,7 @@ import AHoldsNoReferenceToB from './AHoldsNoReferenceToB.js';
 import NullPointerException from '../util/error/NullPointerException.js';
 import type { AnyNumber } from "../util/supportive";
 import InternalError from '../util/error/InternalError.js';
+import MissingTableNameForDynamicAbstractModelError from './MissingTableNameForDynamicAbstractModelError.js';
 
 /**
  * @todo Add undo operations for save etc. Important in case a save is not possible but uve updated already some references.
@@ -812,7 +813,18 @@ abstract class AbstractModel<T extends AbstractModel<T>> implements IComparable
 
     static tableName<U extends AbstractModel<U>>(Model: new () => U): string
     {
-        return (new Model()).tableName;
+        try
+        {
+            return (new Model()).tableName;
+        }
+        catch (err)
+        {
+            if (err instanceof MissingTableNameForDynamicAbstractModelError)
+            {
+                throw new MissingTableNameForDynamicAbstractModelError('Trying to access static tableName method of DynamicAbstractModel', PATH, 'tableName');
+            }
+            throw err;
+        }
     }
 
     static modelName<U extends AbstractModel<U>>(Model: new () => U): string

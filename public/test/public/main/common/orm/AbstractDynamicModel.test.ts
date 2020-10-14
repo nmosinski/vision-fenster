@@ -19,13 +19,21 @@ async function childClassIsBeingInitializedProperly()
     try
     {
         // tslint:disable-next-line: no-unused-expression
-        new TestDynamicModel({ 'tableName': 'aTableName' });
+        const model = new TestDynamicModel({ 'tableName': 'aTableName' });
+
+        if (model.tableName !== 'aTableName')
+        {
+            console.log('first if');
+            console.log('tableName:', model.tableName);
+            return false;
+        }
         return true;
     }
     catch (err)
     {
         return false;
     }
+
 
     return false;
 }
