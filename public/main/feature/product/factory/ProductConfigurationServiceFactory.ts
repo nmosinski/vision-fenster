@@ -2,18 +2,21 @@ import ProductModel from "../model/ProductModel";
 import AbstractProductConfigurationService from "../service/configurator/AbstractProductConfigurationService";
 import ProductDefinitionParsingService from "../service/ProductDefinitionParsingService";
 import productDefinitions from "../productDefinitions";
-import FensterProductConfigurationService from "../service/configurator/FensterProductConfigurationService";
+import FensterProductConfigurationService from "../window/service/FensterProductConfigurationService";
 
-class ProductConfigurationServiceFactory {
+class ProductConfigurationServiceFactory
+{
 
-    public static byModelTitle(title: string): AbstractProductConfigurationService {
-        let definitions = ProductDefinitionParsingService.parseFromJson(productDefinitions);
+    public static byModelTitle(title: string): AbstractProductConfigurationService
+    {
+        const definitions = ProductDefinitionParsingService.parseFromJson(productDefinitions);
 
-        let productConfigurationService = new FensterProductConfigurationService();
+        const productConfigurationService = new FensterProductConfigurationService();
         return productConfigurationService;
     }
 
-    public static byModel(model: ProductModel) {
+    public static byModel(model: ProductModel)
+    {
         return ProductConfigurationServiceFactory.byModelTitle(model.title);
     }
 }
