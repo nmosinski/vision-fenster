@@ -12,13 +12,15 @@ const PATH = "public/main/common/util/list/List.js";
  * @class
  * Class representing a List.
  */
-class List<T> implements IComparable {
+class List<T> implements IComparable
+{
 	protected _elements: T[];
 	/**
 	 * Create a List.
 	 * @param {Array<T>} [elements=Array<T>] - An array of elements that the list will contain from the beginning.
 	 */
-	constructor(elements: AnyNumber<T> = []) {
+	constructor (elements: AnyNumber<T> = [])
+	{
 		this._elements = [];
 		let toInsert: T[] = [];
 
@@ -40,7 +42,8 @@ class List<T> implements IComparable {
 	 * @param {List<T>} list - The other list.
 	 * @return {List<T>} A new List containing items that are in both lists.
 	 */
-	AND(list: List<T>): List<T> {
+	AND(list: List<T>): List<T>
+	{
 		if (!(list instanceof List))
 			throw new VariableTypeError(PATH, "List.AND()", list, "List<T>");
 
@@ -52,13 +55,15 @@ class List<T> implements IComparable {
 	 * @param {List<T>} list - The other list.
 	 * @return {List<T>} A new List containing all items from both lists.
 	 */
-	OR(list: List<T>): List<T> {
+	OR(list: List<T>): List<T>
+	{
 		if (!(list instanceof List))
 			throw new VariableTypeError(PATH, "List.AND()", list, "List");
 
 		const l = new List(this.toArray());
 
-		list.foreach((el: T) => {
+		list.foreach((el: T) =>
+		{
 			if (!l.has(el))
 				l.add(el);
 		});
@@ -71,8 +76,10 @@ class List<T> implements IComparable {
 	 * @param e2 The element to be compared to e1.
 	 * @returns {boolean} True if elements are equal, else false.
 	 */
-	protected elementsEqual(e1: any, e2: any): boolean {
-		try {
+	protected elementsEqual(e1: any, e2: any): boolean
+	{
+		try
+		{
 			// @ts-ignore
 			if (e1.equals(e2))
 				return true;
@@ -91,7 +98,8 @@ class List<T> implements IComparable {
 	 * @param {Function} f - The function to be called by each element of this list.
 	 * @returns {Promise<this>} This.
 	 */
-	async foreachAsync(f: (el: T, idx?: number) => Promise<void>): Promise<this> {
+	async foreachAsync(f: (el: T, idx?: number) => Promise<void>): Promise<this>
+	{
 		if (!JsTypes.isFunction(f))
 			throw new VariableTypeError(PATH, "List.foreachAsync(f)", f, "function");
 
@@ -106,7 +114,8 @@ class List<T> implements IComparable {
 	 * @param {Function} f - The function to be called by each element of this list.
 	 * @returns {this} This.
 	 */
-	foreach(f: (el: T, idx?: number) => void): this {
+	foreach(f: (el: T, idx?: number) => void): this
+	{
 		if (!JsTypes.isFunction(f))
 			throw new VariableTypeError(PATH, "List.foreach(f)", f, "function");
 
@@ -121,7 +130,8 @@ class List<T> implements IComparable {
 	 * @param {Function} f - The mapping function to be called by each element of this list.
 	 * @returns {List<T>} A list containing the mapped elements.
 	 */
-	map(f: (el: T, idx?: number) => T): List<T> {
+	map(f: (el: T, idx?: number) => T): List<T>
+	{
 		if (!JsTypes.isFunction(f))
 			throw new VariableTypeError(PATH, "List.foreach(f)", f, "function");
 
@@ -137,13 +147,15 @@ class List<T> implements IComparable {
 	 * @param {Function} f A function representing the filtering expression.
 	 * @return {List} A new list with the filtered elements.
 	 */
-	filter(f: (el: T) => boolean): List<T> {
+	filter(f: (el: T) => boolean): List<T>
+	{
 		if (!JsTypes.isFunction(f))
 			throw new VariableTypeError(PATH, "List.filter(f)", f, "function");
 
 		const ret = new List<T>();
 
-		this.foreach((el) => {
+		this.foreach((el) =>
+		{
 			if (f(el))
 				ret.add(el);
 		});
@@ -156,16 +168,19 @@ class List<T> implements IComparable {
 	 * @param {any} propertyNames The names of the properties the elements in the list will be reduced to.
 	 * @returns {List<any>} A new list containig the reduced elements. If multiple property names were given, will return objects containing those properties.
 	 */
-	reduce(propertyNames: AnyNumber<string>): List<any> {
+	reduce(propertyNames: AnyNumber<string>): List<any>
+	{
 		const propertyNamesList = new List<string>(propertyNames);
 		const reduced = new List<any>();
 		if (propertyNamesList.length === 1)
 			this.foreach((t) => { reduced.add(t[propertyNamesList.first()]); });
 		else
-			this.foreach((t) => {
+			this.foreach((t) =>
+			{
 				const tmp = {};
 
-				propertyNamesList.foreach(propertyName => {
+				propertyNamesList.foreach(propertyName =>
+				{
 					tmp[propertyName] = t[propertyName];
 
 				});
@@ -181,7 +196,8 @@ class List<T> implements IComparable {
 	 * @param {number} [endIndex=null] The end index until which the items will be returned.
 	 * @return {List<T>} The sublist.
 	 */
-	sublist(startIndex: number, endIndex?: number): List<T> {
+	sublist(startIndex: number, endIndex?: number): List<T>
+	{
 		const list = new List<T>();
 
 		if (startIndex >= this.length)
@@ -201,7 +217,8 @@ class List<T> implements IComparable {
 	 * @override
 	 * @inheritdoc
 	 */
-	equals(object: any): boolean {
+	equals(object: any): boolean
+	{
 		if (!(object instanceof List))
 			return false;
 
@@ -220,10 +237,12 @@ class List<T> implements IComparable {
 	 * @param {List<any>} list The list to be checked on.
 	 * @returns {boolean} True if this list is a sublist of the given one, else false.
 	 */
-	isSublistOf(list: List<any>): boolean {
+	isSublistOf(list: List<any>): boolean
+	{
 		let ret = true;
 
-		this.foreach((el) => {
+		this.foreach((el) =>
+		{
 			if (!list.has(el))
 				ret = false;
 		});
@@ -235,7 +254,8 @@ class List<T> implements IComparable {
 	 * Get all elements of this list as array.
 	 * @return {Array<T>} The elements.
 	 */
-	toArray(): T[] {
+	toArray(): T[]
+	{
 		const ret: T[] = [];
 
 		for (const idx in this._elements)
@@ -249,7 +269,8 @@ class List<T> implements IComparable {
 	 * @param {number} [count] The maximum count of items to be returned.
 	 * @returns {List<T>} A list containing items. 
 	 */
-	some(count?: number): List<T> {
+	some(count?: number): List<T>
+	{
 		if (!count)
 			count = this.length;
 		return this.sublist(0, count);
@@ -260,7 +281,8 @@ class List<T> implements IComparable {
 	 * @returns {T} The item.
 	 * @throws {NullPointerException} If list is empty.
 	 */
-	first(): T | never {
+	first(): T | never
+	{
 		if (this.length < 1)
 			throw new NullPointerException(PATH, "first", "The list is empty");
 		return this.get(0);
@@ -270,7 +292,8 @@ class List<T> implements IComparable {
 	 * Get the first item or return null, if the first is empty.
 	 * @returns {T} The item.
 	 */
-	firstOrNull(): T | null {
+	firstOrNull(): T | null
+	{
 		if (this.length < 1)
 			return null;
 		return this.get(0);
@@ -281,7 +304,8 @@ class List<T> implements IComparable {
 	 * @returns {T} The item.
 	 * @throws {NullPointerException} If list is empty.
 	 */
-	last(): T | never {
+	last(): T | never
+	{
 		if (this.length < 1)
 			throw new NullPointerException(PATH, "first", "The list is empty");
 
@@ -292,7 +316,8 @@ class List<T> implements IComparable {
 	 * Add elements.
 	 * @param {...T} elements - The elements.
 	 */
-	add(...elements: T[]): this {
+	add(...elements: T[]): this
+	{
 		return this.addMultiple(elements);
 	}
 
@@ -300,7 +325,9 @@ class List<T> implements IComparable {
 	 * Add elements.
 	 * @param {Array<T>} elements - The elements.
 	 */
-	addMultiple(elements: T[]): this {
+	addMultiple(elements: T[]): this
+	{
+		// tslint:disable-next-line: prefer-for-of
 		for (let idx = 0; idx < elements.length; idx++)
 			this._elements.push(elements[idx]);
 		return this;
@@ -311,7 +338,8 @@ class List<T> implements IComparable {
 	 * @param {number} elementIdx - The index.
 	 * @return {T} The element.
 	 */
-	get(elementIdx: number): T | never {
+	get(elementIdx: number): T | never
+	{
 		if (!JsTypes.isNumber(elementIdx))
 			throw new VariableTypeError(PATH, "List.get(elementIdx)", elementIdx, "Number");
 
@@ -325,7 +353,8 @@ class List<T> implements IComparable {
 	 * Remove the element at the given index.
 	 * @param {number} elementIdx - The index.
 	 */
-	remove(elementIdx: number): this | never {
+	remove(elementIdx: number): this | never
+	{
 		if (!JsTypes.isNumber(elementIdx))
 			throw new VariableTypeError(PATH, "List.remove(elementIdx)", elementIdx, "Number");
 
@@ -342,7 +371,8 @@ class List<T> implements IComparable {
 	 * @param {Function} [matchingFunction] The function that defines how the elements match.
 	 * @return {boolean} True if element is in the list, else false.
 	 */
-	has(element: any): boolean {
+	has(element: any): boolean
+	{
 		if (this.indexOf(element) === -1)
 			return false;
 		return true;
@@ -352,8 +382,10 @@ class List<T> implements IComparable {
 	 * Returns the first element that matches the given filter
 	 * @param {Function} f: The filter.
 	 * @return {T} The found element. 
+	 * @throws {NullPointerException} If list is empty.
 	 */
-	find(f: (el: T) => boolean): T {
+	find(f: (el: T) => boolean): T
+	{
 		return this.filter(f).first();
 	}
 
@@ -362,11 +394,14 @@ class List<T> implements IComparable {
 	 * @param {Function} f: The filter.
 	 * @return {T|null} The found element or null if not found. 
 	 */
-	findOrNull(f: (el: T) => boolean): T | null {
-		try {
+	findOrNull(f: (el: T) => boolean): T | null
+	{
+		try
+		{
 			return this.find(f);
 		}
-		catch (err) {
+		catch (err)
+		{
 			return null;
 		}
 	}
@@ -377,7 +412,8 @@ class List<T> implements IComparable {
 	 * @param {Function} [matchingFunction] The function that defines how the elements match.
 	 * @return {boolean} True if element is not in the list, else false.
 	 */
-	hasNot(element: any): boolean {
+	hasNot(element: any): boolean
+	{
 		return !this.has(element);
 	}
 
@@ -386,8 +422,10 @@ class List<T> implements IComparable {
 	 * @param {any} element - The element.
 	 * @return {number} The index of the element, else -1, if the element is not in the list. 
 	 */
-	indexOf(element: any): number {
-		for (let idx = 0; idx < this.length; idx++) {
+	indexOf(element: any): number
+	{
+		for (let idx = 0; idx < this.length; idx++)
+		{
 			if (this.elementsEqual(this.get(idx), element))
 				return idx;
 		}
@@ -397,15 +435,19 @@ class List<T> implements IComparable {
 	/**
 	 * Create a copy of this list. If T implements clonable, create a deep copy, else a shallow copy.
 	 */
-	copy(): List<T> {
+	copy(): List<T>
+	{
 		const l = new List<T>();
 
-		this.foreach((el: T) => {
-			try {
+		this.foreach((el: T) =>
+		{
+			try
+			{
 				// @ts-ignore
 				l.add(el.clone());
 			}
-			catch (err) {
+			catch (err)
+			{
 				l.add(el);
 			}
 			;
@@ -418,14 +460,16 @@ class List<T> implements IComparable {
 	 * Check if list is empty.
 	 * @return {boolean} True if empty, else false.
 	 */
-	isEmpty(): boolean {
+	isEmpty(): boolean
+	{
 		return this.length === 0;
 	}
 
 	/**
 	 * @param {Array<T>} elements
 	 */
-	private set elements(elements: T[]) {
+	private set elements(elements: T[])
+	{
 		this._elements = elements;
 	}
 
@@ -434,7 +478,8 @@ class List<T> implements IComparable {
 	 * Get lenth of this list.
 	 * @returns {number} The length of this list.
 	 */
-	get length(): number {
+	get length(): number
+	{
 		return this._elements.length;
 	}
 }
