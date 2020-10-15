@@ -7,6 +7,7 @@ class DynamicBasePriceModel extends AbstractDynamicModel<DynamicBasePriceModel>
     protected modelName: string;
     private _width: number;
     private _height: number;
+    private _price: number;
 
     init(): void
     {
@@ -45,6 +46,16 @@ class DynamicBasePriceModel extends AbstractDynamicModel<DynamicBasePriceModel>
     set height(value: number)
     {
         this._height = value;
+    }
+
+    get price(): number
+    {
+        return this._price;
+    }
+
+    set price(value: number)
+    {
+        this._price = value;
     }
 }
 

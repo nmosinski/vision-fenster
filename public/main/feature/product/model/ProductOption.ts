@@ -15,81 +15,98 @@ class ProductOption extends AbstractModel<ProductOption>{
     private _image: string;
 
     protected Constructor: new () => ProductOption;
-    init(): void {
+    init(): void
+    {
         this.Constructor = ProductOption;
         this.modelName = 'ProductOption';
         this.tags = new QueryResult<Tag>();
     }
 
-    addProperties(): void {
+    addProperties(): void
+    {
         this.properties.
             string("value").
             string('presentationde').
             string("image", "nullable");
     }
 
-    addRelations(): void {
+    addRelations(): void
+    {
         this.manyToOne(ProductOptionType);
         this.manyToMany(Tag);
     }
 
-    productOptionTypeQ() {
+    productOptionTypeQ()
+    {
         return this.relative(ProductOptionType);
     }
 
-    tagsQ() {
+    tagsQ()
+    {
         return this.relative(Tag);
     }
 
-    hasTagOfTitle(tagTitle: string): boolean {
+    hasTagOfTitle(tagTitle: string): boolean
+    {
         return this.tags.reduce("title").has(tagTitle);
     }
 
-    addTag(tag: Tag) {
+    addTag(tag: Tag)
+    {
         if (this.tags.hasNot(tag))
             this.tags.add(tag);
     }
 
-    set productOptionType(type: ProductOptionType) {
+    set productOptionType(type: ProductOptionType)
+    {
         this._productOptionType = type;
     }
 
-    get productOptionType(): ProductOptionType {
+    get productOptionType(): ProductOptionType
+    {
         return this._productOptionType;
     }
 
-    set value(value: string) {
-        this._value = value;
+    set value(value: string | number)
+    {
+        this._value = '' + value;
     }
 
-    get value(): string {
-        return this._value;
+    get value(): string | number
+    {
+        return (isNaN(parseInt(this._value, 10))) ? this._value : parseInt(this._value, 10);
     }
 
-    set tags(tags: QueryResult<Tag>) {
+    set tags(tags: QueryResult<Tag>)
+    {
         this._tags = tags;
     }
 
-    get tags(): QueryResult<Tag> {
+    get tags(): QueryResult<Tag>
+    {
         return this._tags;
     }
 
-    set image(image: string) {
+    set image(image: string)
+    {
         if (image)
             this._image = image;
         else
             this._image = "";
     }
 
-    get image(): string {
+    get image(): string
+    {
         return this._image;
     }
 
-    set presentationde(presentation: string) {
+    set presentationde(presentation: string)
+    {
         this._presentationde = presentation;
     }
 
-    get presentationde(): string {
+    get presentationde(): string
+    {
         return this._presentationde;
     }
 }

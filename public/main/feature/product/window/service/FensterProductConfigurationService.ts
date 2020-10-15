@@ -14,6 +14,7 @@ import AbstractModel from "../../../../common/orm/AbstractModel";
 import AbstractProductConfigurationService from "../../service/configurator/AbstractProductConfigurationService";
 import ProductDefinitionParsingService from "../../service/ProductDefinitionParsingService";
 import PriceCalculationImpossibleError from "../../error/PriceCalculationImpossibleError";
+import NullPointerException from "../../../../common/util/error/NullPointerException";
 
 const PATH = 'public/main/feature/product/window/service/FensterProductConfigurationService';
 
@@ -66,12 +67,17 @@ class FensterProductConfigurationService extends AbstractProductConfigurationSer
         {
             basePriceModel = dynamicBasePriceModels.find(dynamicBasePriceModel =>
             {
-                return dynamicBasePriceModel.width == product.getOption(typeTitle).value && dynamicBasePriceModel.height == product.getOption(typeTitle).value;
+                return dynamicBasePriceModel.width === product.getOption(FensterProductOptionTypes.WIDTH).value && dynamicBasePriceModel.height === product.getOption(FensterProductOptionTypes.HEIGHT).value;
             });
+        } catch (err)
+        {
+            if (err instanceof NullPointerException)
+                throw new PriceCalculationImpossibleError('The base price model could not be found for the product ' + product.toString(), PATH, 'calculatePrice');
 
+            throw err;
         }
 
-        return;
+        return basePriceModel.price;
     }
 
     private findBasePriceT(product: Product): FensterBasePriceT
