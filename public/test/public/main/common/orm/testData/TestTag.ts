@@ -1,36 +1,42 @@
 
 import TestShoppingCartItem from "./TestShoppingCartItem";
-import AbstractModel from "../../../../../../main/common/orm/AbstractModel";
+import AbstractStorableModel from "../../../../../../main/common/orm/AbstractStorableModel";
 
 
-class TestTag extends AbstractModel<TestTag>
+class TestTag extends AbstractStorableModel<TestTag>
 {
     protected modelName: string;
     protected Constructor: new () => TestTag;
     private _testShoppingCartItems: any;
 
-    init(): void {
+    init(): void
+    {
         this.Constructor = TestTag;
         this.modelName = 'TestTag';
     }
 
-    addProperties(): void {
+    addProperties(): void
+    {
         this.properties.string("title");
     }
 
-    addRelations(): void {
+    addRelations(): void
+    {
         this.manyToMany(TestShoppingCartItem);
     }
 
-    testShoppingCartItemsQ() {
+    testShoppingCartItemsQ()
+    {
         return this.relative(TestShoppingCartItem);
     }
 
-    set testShoppingCartItems(items) {
+    set testShoppingCartItems(items)
+    {
         this._testShoppingCartItems = items;
     }
 
-    get testShoppingCartItems() {
+    get testShoppingCartItems()
+    {
         return this._testShoppingCartItems;
     }
 }

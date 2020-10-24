@@ -7,10 +7,10 @@ class Combination
     private _tags: List<string>;
     private _requirements: KVMap<string, CombinationRequirement>;
 
-    constructor(tags?: List<string>, requirements?: List<CombinationRequirement>)
+    constructor (tags?: List<string>, requirements?: List<CombinationRequirement>)
     {
-        this.tags = (tags)?tags:new List<string>();
-        this.requirements = (requirements)?requirements:new List<CombinationRequirement>();
+        this.tags = (tags) ? tags : new List<string>();
+        this.requirements = (requirements) ? requirements : new List<CombinationRequirement>();
     }
 
     addTag(tag: string): void
@@ -30,7 +30,7 @@ class Combination
 
     hasRequirement(productOptionType: string): boolean
     {
-        return (this._requirements.hasKey(productOptionType))?true:false;
+        return (this._requirements.hasKey(productOptionType)) ? true : false;
     }
 
     getRequirement(productOptionType: string): CombinationRequirement
@@ -47,16 +47,16 @@ class Combination
     {
         this._tags = tags;
     }
-    
-    set requirements(requirements: List<CombinationRequirement>)
-    {
-        this._requirements = new KVMap<string, CombinationRequirement>();
-        requirements.foreach((requirement)=>{this.setRequirement(requirement);});
-    }
 
     get tags(): List<string>
     {
         return this._tags;
+    }
+
+    set requirements(requirements: List<CombinationRequirement>)
+    {
+        this._requirements = new KVMap<string, CombinationRequirement>();
+        requirements.foreach((requirement) => { this.setRequirement(requirement); });
     }
 
     get requirements(): List<CombinationRequirement>

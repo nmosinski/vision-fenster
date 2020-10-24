@@ -1,20 +1,18 @@
 import productDefinitions from "../../productDefinitions";
 import ProductOption from "../../model/ProductOption";
 import Product from "../../model/Product";
-import ProductConfigurationServiceFactory from "../../factory/ProductConfigurationServiceFactory";
 import ProductDefinition from "../../model/ProductDefinition";
 import { FensterProductOptionTypes } from "../../productOptionTypes";
 import { ProductModels } from "../../productModels";
 import KVMap from "../../../../common/util/collections/map/KVMap";
 import DynamicBasePriceModel from "../../window/model/DynamicBasePriceModel";
 import List from "../../../../common/util/collections/list/List";
-import QueryResult from "../../../../common/orm/QueryResult";
 import FensterBasePriceT from "../../window/model/FensterBasePriceT";
-import AbstractModel from "../../../../common/orm/AbstractModel";
 import AbstractProductConfigurationService from "../../service/configurator/AbstractProductConfigurationService";
 import ProductDefinitionParsingService from "../../service/ProductDefinitionParsingService";
 import PriceCalculationImpossibleError from "../../error/PriceCalculationImpossibleError";
 import NullPointerException from "../../../../common/util/error/NullPointerException";
+import AbstractStorableModel from "../../../../common/orm/AbstractStorableModel";
 
 const PATH = 'public/main/feature/product/window/service/FensterProductConfigurationService';
 
@@ -34,7 +32,7 @@ class FensterProductConfigurationService extends AbstractProductConfigurationSer
 
     async init()
     {
-        this.fensterBasePriceTs = await AbstractModel.find(FensterBasePriceT);
+        this.fensterBasePriceTs = await AbstractStorableModel.find(FensterBasePriceT);
     }
 
     beforeSetOption(productOption: ProductOption, product: Product): void

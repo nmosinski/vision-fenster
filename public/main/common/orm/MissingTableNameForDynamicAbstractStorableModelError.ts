@@ -1,6 +1,6 @@
 import AbstractUncheckedError from "../util/error/AbstractUncheckedError";
 
-class MissingTableNameForDynamicAbstractModelError extends AbstractUncheckedError
+class MissingTableNameForDynamicAbstractStorableModelError extends AbstractUncheckedError
 {
     constructor (description: string = 'Missing table name for dynamic abstract model', file: string, location: string)
     {
@@ -8,4 +8,4 @@ class MissingTableNameForDynamicAbstractModelError extends AbstractUncheckedErro
     }
 }
 
-export default MissingTableNameForDynamicAbstractModelError;
+export default MissingTableNameForDynamicAbstractStorableModelError;

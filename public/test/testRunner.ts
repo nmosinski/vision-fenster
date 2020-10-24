@@ -2,7 +2,7 @@ import { runAllTests as listTests } from "./public/main/common/collections/List.
 import { runAllTests as abstractModelTests } from "./public/main/common/orm/AbstractModel.test"
 import { runAllTests as aHoldsReferenceToBTests } from "./public/main/common/orm/AHoldsReferenceToB.test";
 import { runAllTests as aHoldsNoReferenceToBTests } from "./public/main/common/orm/AHoldsNoReferenceToB.test";
-import { runAllTests as abstractDynamicModelTests } from "./public/main/common/orm/AbstractDynamicModel.test";
+import { runAllTests as abstractDynamicStorableModelTests } from "./public/main/common/orm/AbstractDynamicStorableModel.test";
 import { runAllTests as manyToManyTests } from "./public/main/common/orm/ManyToMany.test";
 import { runAllTests as productConfigurationServiceTests } from "./public/main/feature/product/ProductConfigurationService.test";
 import KVMap from "../main/common/util/collections/map/KVMap";
@@ -18,7 +18,7 @@ function init()
     tests.add("aHoldsNoReferenceToB", aHoldsNoReferenceToBTests);
     tests.add("manyToMany", manyToManyTests);
     tests.add("productConfigurationService", productConfigurationServiceTests);
-    tests.add("abstractDynamicModel", abstractDynamicModelTests);
+    tests.add("abstractDynamicModel", abstractDynamicStorableModelTests);
 }
 
 async function run(toRun: List<() => Promise<void>>)

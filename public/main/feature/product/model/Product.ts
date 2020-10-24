@@ -1,11 +1,10 @@
 import KVMap from "../../../common/util/collections/map/KVMap";
 import ProductOption from "./ProductOption";
-import List from "../../../common/util/collections/list/List";
-import AbstractModel from "../../../common/orm/AbstractModel";
 import ProductModel from "./ProductModel";
 import QueryResult from "../../../common/orm/QueryResult";
+import AbstractStorableModel from "../../../common/orm/AbstractStorableModel";
 
-class Product extends AbstractModel<Product>{
+class Product extends AbstractStorableModel<Product>{
     protected modelName: string;
     protected Constructor: new () => Product;
     private _productOptions: QueryResult<ProductOption>;

@@ -2,11 +2,11 @@
 import TestShoppingCart from "./TestShoppingCart";
 import AbstractModel from "../../../../../../main/common/orm/AbstractModel";
 import TestTag from "./TestTag";
-import List from "../../../../../../main/common/util/collections/list/List";
 import QueryResult from "../../../../../../main/common/orm/QueryResult";
+import AbstractStorableModel from "../../../../../../main/common/orm/AbstractStorableModel";
 
 
-class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
+class TestShoppingCartItem extends AbstractStorableModel<TestShoppingCartItem>
 {
     protected modelName: string;
     private _count: number;
@@ -16,59 +16,72 @@ class TestShoppingCartItem extends AbstractModel<TestShoppingCartItem>
     private _testShoppingCart: TestShoppingCart;
     private _testTags: QueryResult<TestTag>;
 
-    init(): void {
+    init(): void
+    {
         this.Constructor = TestShoppingCartItem;
         this.modelName = 'TestShoppingCartItem';
     }
 
-    addProperties(): void {
+    addProperties(): void
+    {
         this.properties.
             number("count", "positive", 'nullable').
             number("price", "positive", 'nullable');
     }
 
-    addRelations(): void {
+    addRelations(): void
+    {
         this.manyToOne(TestShoppingCart);
         this.manyToMany(TestTag);
     }
 
-    testShoppingCartQ() {
+    testShoppingCartQ()
+    {
         return this.relative(TestShoppingCart);
     }
 
-    testTagsQ() {
+    testTagsQ()
+    {
         return this.relative(TestTag);
     }
 
-    set count(count) {
+    set count(count)
+    {
         this._count = count;
     }
 
-    get count() {
+    get count()
+    {
         return this._count;
     }
 
-    set testShoppingCart(testShoppingCart: TestShoppingCart) {
+    set testShoppingCart(testShoppingCart: TestShoppingCart)
+    {
         this._testShoppingCart = testShoppingCart;
     }
 
-    get testShoppingCart() {
+    get testShoppingCart()
+    {
         return this._testShoppingCart;
     }
 
-    set testTags(testTags: QueryResult<TestTag>) {
+    set testTags(testTags: QueryResult<TestTag>)
+    {
         this._testTags = testTags;
     }
 
-    get testTags(): QueryResult<TestTag> {
+    get testTags(): QueryResult<TestTag>
+    {
         return this._testTags;
     }
 
-    set price(price: number) {
+    set price(price: number)
+    {
         this._price = price;
     }
 
-    get price(): number {
+    get price(): number
+    {
         return this._price;
     }
 

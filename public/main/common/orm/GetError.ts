@@ -1,5 +1,5 @@
 import CrudOperationError from "./CrudOperationError";
-import AbstractModel from "./AbstractModel";
+import AbstractStorableModel from "./AbstractStorableModel";
 
 
 /**
@@ -9,7 +9,7 @@ import AbstractModel from "./AbstractModel";
 class GetError extends CrudOperationError
 {
     private _modelId: string;
-    private _Model: new()=>AbstractModel<any>;
+    private _Model: new () => AbstractStorableModel<any>;
 
     /**
      * Create a GetError.
@@ -18,7 +18,7 @@ class GetError extends CrudOperationError
      * @param {string} modelId The model that couldn't be found.
      * @param {string} Model The models class of the requested model.
      */
-    constructor(path: string, location: string, modelId: string, Model: new()=>AbstractModel<any>)
+    constructor (path: string, location: string, modelId: string, Model: new () => AbstractStorableModel<any>)
     {
         super("An error occurred when trying to get a model.", path, location);
         this.modelId = modelId;
@@ -42,17 +42,17 @@ class GetError extends CrudOperationError
         this._modelId = modelId;
     }
 
-    set Model(Model: new()=>AbstractModel<any>)
-    {
-        this._Model = Model;
-    }
-
     get modelId()
     {
         return this._modelId;
     }
 
-    get Model(): new()=>AbstractModel<any>
+    set Model(Model: new () => AbstractStorableModel<any>)
+    {
+        this._Model = Model;
+    }
+
+    get Model(): new () => AbstractStorableModel<any>
     {
         return this._Model;
     }

@@ -6,7 +6,7 @@ $w.onReady(async () =>
 {
     await runAllTests();
     // await runAllTestsExcept('productConfigurationService');
-    //await runTests('list', "productConfigurationService");
+    // await runTests('list', "productConfigurationService");
     // await runTests("manyToMany");
     // await runTests("list", "abstractModel");
 });

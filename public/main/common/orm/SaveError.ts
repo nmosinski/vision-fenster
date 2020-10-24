@@ -1,5 +1,5 @@
 import CrudOperationError from "./CrudOperationError";
-import AbstractModel from "./AbstractModel";
+import AbstractStorableModel from "./AbstractStorableModel";
 
 /**
  * @class
@@ -7,7 +7,7 @@ import AbstractModel from "./AbstractModel";
  */
 class SaveError extends CrudOperationError
 {
-    private _model: AbstractModel<any>;
+    private _model: AbstractStorableModel<any>;
 
     /**
      * Create a SaveError.
@@ -15,7 +15,7 @@ class SaveError extends CrudOperationError
      * @param {string} location A more specific location hint in the file where the problem occurred.
      * @param {string} model The model that couldn't be saved.
      */
-    constructor(path: string, location: string, model: AbstractModel<any>)
+    constructor (path: string, location: string, model: AbstractStorableModel<any>)
     {
         super("An error occurred when trying to save a model.", path, location);
         this.model = model;
@@ -33,12 +33,12 @@ class SaveError extends CrudOperationError
         return ret;
     }
 
-    set model(model: AbstractModel<any>)
+    set model(model: AbstractStorableModel<any>)
     {
         this._model = model;
     }
 
-    get model(): AbstractModel<any>
+    get model(): AbstractStorableModel<any>
     {
         return this._model;
     }

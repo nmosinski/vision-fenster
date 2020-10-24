@@ -1,6 +1,6 @@
-import MissingTableNameForDynamicAbstractModelError from "../../../../../main/common/orm/MissingTableNameForDynamicAbstractModelError";
+import MissingTableNameForDynamicAbstractStorableModelError from "../../../../../main/common/orm/MissingTableNameForDynamicAbstractStorableModelError";
 import { Tests, Test, truthly } from "../../../../../main/common/test/Test";
-import TestDynamicModel from "./testData/TestDynamicModel";
+import TestDynamicStorableModel from "./testData/TestDynamicStorableModel";
 
 const PATH = 'test/public/main/common/orm/AbstractDynamicModel.test';
 
@@ -19,7 +19,7 @@ async function childClassIsBeingInitializedProperly()
     try
     {
         // tslint:disable-next-line: no-unused-expression
-        const model = new TestDynamicModel({ 'tableName': 'aTableName' });
+        const model = new TestDynamicStorableModel({ 'tableName': 'aTableName' });
 
         if (model.tableName !== 'aTableName')
         {
@@ -43,12 +43,12 @@ async function errorIsBeingThrownIfTableNameIsMissing()
     try
     {
         // tslint:disable-next-line: no-unused-expression
-        new TestDynamicModel();
+        new TestDynamicStorableModel();
         return false;
     }
     catch (err)
     {
-        if (err instanceof MissingTableNameForDynamicAbstractModelError)
+        if (err instanceof MissingTableNameForDynamicAbstractStorableModelError)
             return true;
     }
 

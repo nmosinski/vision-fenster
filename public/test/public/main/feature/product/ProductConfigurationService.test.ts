@@ -135,6 +135,7 @@ async function beforeEach()
 }
 
 async function afterEach()
+// tslint:disable-next-line: no-empty
 {
 
 }

@@ -2,8 +2,9 @@ import AbstractModel from "../../../common/orm/AbstractModel";
 import ProductOption from "./ProductOption"
 import ProductModel from "./ProductModel";
 import QueryResult from "../../../common/orm/QueryResult";
+import AbstractStorableModel from "../../../common/orm/AbstractStorableModel";
 
-class ProductOptionType extends AbstractModel<ProductOptionType>{
+class ProductOptionType extends AbstractStorableModel<ProductOptionType>{
     protected modelName: string;
     protected Constructor: new () => ProductOptionType;
 
@@ -12,65 +13,79 @@ class ProductOptionType extends AbstractModel<ProductOptionType>{
     private _productOptions: QueryResult<ProductOption>;
     private _productModel: ProductModel;
 
-    init(): void {
+    init(): void
+    {
         this.Constructor = ProductOptionType;
         this.modelName = 'ProductOptionType';
         this.productOptions = new QueryResult<ProductOption>();
     }
 
-    addProperties(): void {
+    addProperties(): void
+    {
         this.properties.
             string('presentationde').
             string("title");
     }
 
-    addRelations(): void {
+    addRelations(): void
+    {
         this.oneToMany(ProductOption);
         this.manyToOne(ProductModel);
     }
 
-    productOptionsQ() {
+    productOptionsQ()
+    {
         return this.relative(ProductOption);
     }
 
-    productModelQ() {
+    productModelQ()
+    {
         return this.relative(ProductModel);
     }
 
-    addProductOption(productOption: ProductOption) {
+    addProductOption(productOption: ProductOption)
+    {
         if (this.productOptions.hasNot(productOption))
             this.productOptions.add(productOption);
     }
 
-    set title(title: string) {
+    set title(title: string)
+    {
         this._title = title;
     }
 
-    get title(): string {
+    get title(): string
+    {
         return this._title;
     }
 
-    set productOptions(productOptions: QueryResult<ProductOption>) {
+    set productOptions(productOptions: QueryResult<ProductOption>)
+    {
         this._productOptions = productOptions;
     }
 
-    get productOptions(): QueryResult<ProductOption> {
+    get productOptions(): QueryResult<ProductOption>
+    {
         return this._productOptions;
     }
 
-    set productModel(productModel: ProductModel) {
+    set productModel(productModel: ProductModel)
+    {
         this._productModel = productModel;
     }
 
-    get productModel() {
+    get productModel()
+    {
         return this._productModel;
     }
 
-    set presentationde(presentation: string) {
+    set presentationde(presentation: string)
+    {
         this._presentationde = presentation;
     }
 
-    get presentationde(): string {
+    get presentationde(): string
+    {
         return this._presentationde;
     }
 }

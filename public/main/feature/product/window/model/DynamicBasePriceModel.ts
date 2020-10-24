@@ -1,7 +1,7 @@
-import AbstractDynamicModel from "../../../../common/orm/AbstractDynamicModel";
+import AbstractDynamicStorableModel from "../../../../common/orm/AbstractDynamicStorableModel";
 import FensterBasePriceT from "./FensterBasePriceT";
 
-class DynamicBasePriceModel extends AbstractDynamicModel<DynamicBasePriceModel>
+class DynamicBasePriceModel extends AbstractDynamicStorableModel<DynamicBasePriceModel>
 {
     protected Constructor: new () => DynamicBasePriceModel;
     protected modelName: string;

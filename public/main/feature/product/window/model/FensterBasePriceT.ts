@@ -1,4 +1,5 @@
 import AbstractModel from "../../../../common/orm/AbstractModel";
+import AbstractStorableModel from "../../../../common/orm/AbstractStorableModel";
 import QueryResult from "../../../../common/orm/QueryResult";
 import { Query } from "../../../../common/orm/WixDatabase";
 import List from "../../../../common/util/collections/list/List";
@@ -6,7 +7,7 @@ import { AnyNumber } from "../../../../common/util/supportive";
 import ProductOption from "../../model/ProductOption";
 import DynamicBasePriceModel from "./DynamicBasePriceModel";
 
-class FensterBasePriceT extends AbstractModel<FensterBasePriceT>
+class FensterBasePriceT extends AbstractStorableModel<FensterBasePriceT>
 {
     protected Constructor: new () => FensterBasePriceT;
     protected modelName: string;

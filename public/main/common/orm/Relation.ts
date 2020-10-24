@@ -1,16 +1,17 @@
 import AbstractModel from "./AbstractModel";
-import List from "../util/collections/list/List";
 import QueryResult from "./QueryResult";
 import WixDatabase, { Query } from "./WixDatabase";
 import { AnyNumber } from "../util/supportive";
+import AbstractStorableModel from "./AbstractStorableModel";
 
 
-abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
+abstract class Relation<A extends AbstractStorableModel<A>, B extends AbstractStorableModel<B>>
 {
     _relativeA: new () => A;
     _relativeB: new () => B;
 
-    constructor(relativeA: new () => A, relativeB: new () => B) {
+    constructor (relativeA: new () => A, relativeB: new () => B)
+    {
         this.relativeA = relativeA;
         this.relativeB = relativeB;
     }
@@ -53,10 +54,11 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
 
     /**
      * Get a custom query.
-     * @param {new()=> U, U extends AbstractModel<U>} Model The model of the query.
+     * @param {new()=> U, U extends AbstractStorableModel<U>} Model The model of the query.
      * @returns {Query<U>} A query. 
      */
-    customQuery<U extends AbstractModel<U>>(Model: new () => U): Query<U> {
+    customQuery<U extends AbstractStorableModel<U>>(Model: new () => U): Query<U>
+    {
         return WixDatabase.query(Model);
     }
 
@@ -70,31 +72,38 @@ abstract class Relation<A extends AbstractModel<A>, B extends AbstractModel<B>>
      * Get the name of A as property for B.
      * @returns {string} The name.
      */
-    aAsPropertyNameForB(): string {
+    aAsPropertyNameForB(): string
+    {
         return this.inverse().bAsPropertyNameForA();
     }
 
-    queryOfRelativeA(): Query<A> {
+    queryOfRelativeA(): Query<A>
+    {
         return WixDatabase.query(this.relativeA);
     }
 
-    queryOfRelativeB(): Query<B> {
+    queryOfRelativeB(): Query<B>
+    {
         return WixDatabase.query(this.relativeB);
     }
 
-    set relativeA(relative: new () => A) {
+    set relativeA(relative: new () => A)
+    {
         this._relativeA = relative;
     }
 
-    get relativeA(): new () => A {
+    get relativeA(): new () => A
+    {
         return this._relativeA;
     }
 
-    set relativeB(relative: new () => B) {
+    set relativeB(relative: new () => B)
+    {
         this._relativeB = relative;
     }
 
-    get relativeB(): new () => B {
+    get relativeB(): new () => B
+    {
         return this._relativeB;
     }
 }

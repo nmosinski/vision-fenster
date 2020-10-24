@@ -5,10 +5,10 @@ class CombinationRequirement
     private _productOptionType: string;
     private _tags: List<string>;
 
-    constructor(productOptionType: string, tags?: List<string>)
+    constructor (productOptionType: string, tags?: List<string>)
     {
         this.productOptionType = productOptionType;
-        this.tags = (tags)?tags: new List<string>();
+        this.tags = (tags) ? tags : new List<string>();
     }
 
     addTag(tag: string): void
@@ -26,14 +26,14 @@ class CombinationRequirement
         this._productOptionType = productOptionType;
     }
 
-    set tags(tags: List<string>)
-    {
-        this._tags = tags;
-    }
-
     get productOptionType(): string
     {
         return this._productOptionType;
+    }
+
+    set tags(tags: List<string>)
+    {
+        this._tags = tags;
     }
 
     get tags(): List<string>

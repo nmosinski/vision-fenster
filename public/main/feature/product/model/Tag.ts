@@ -1,39 +1,46 @@
 import AbstractModel from "../../../common/orm/AbstractModel";
+import AbstractStorableModel from "../../../common/orm/AbstractStorableModel";
 import QueryResult from "../../../common/orm/QueryResult";
 import ProductOption from "./ProductOption";
 
 
-class Tag extends AbstractModel<Tag>{
+class Tag extends AbstractStorableModel<Tag>{
     protected modelName: string;
     protected Constructor: new () => Tag;
     private _productOptions: QueryResult<ProductOption>;
 
-    init(): void {
+    init(): void
+    {
         this.Constructor = Tag;
         this.modelName = 'Tag';
         this.productOptions = new QueryResult<ProductOption>();
     }
 
-    addProperties(): void {
+    addProperties(): void
+    {
         this.properties.
             string("title");
     }
 
-    addRelations(): void {
+    addRelations(): void
+    {
         this.manyToMany(ProductOption);
     }
 
-    addProductOption(productOption: ProductOption) {
+    addProductOption(productOption: ProductOption)
+    {
         if (this.productOptions.hasNot(productOption))
             this.productOptions.add(productOption);
 
     }
 
-    set productOptions(productOptions: QueryResult<ProductOption>) {
+    set productOptions(productOptions: QueryResult<ProductOption>)
+    {
         this._productOptions = productOptions;
     }
 
-    get productOptions(): QueryResult<ProductOption> {
+    get productOptions(): QueryResult<ProductOption>
+    {
         return this._productOptions;
     }
 }

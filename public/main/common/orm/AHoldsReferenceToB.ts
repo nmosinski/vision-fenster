@@ -5,38 +5,45 @@ import Set from "../util/collections/set/Set";
 import QueryResult from "./QueryResult";
 import NotManyToMany from "./NotManyToMany";
 import { AnyNumber } from "../util/supportive";
+import AbstractStorableModel from "./AbstractStorableModel";
 
 const PATH = "public/main/common/orm/AHoldsReferenceToB.js";
 
 
-abstract class AHoldsReferenceToB<A extends AbstractModel<A>, B extends AbstractModel<B>> extends NotManyToMany<A, B>
+abstract class AHoldsReferenceToB<A extends AbstractStorableModel<A>, B extends AbstractStorableModel<B>> extends NotManyToMany<A, B>
 {
-    async assign(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void> {
+    async assign(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void>
+    {
         const asList: List<A> = new List<A>(as);
         const b: B = new List<B>(bs).first();
 
-        asList.foreach((a: A) => {
-            a[AbstractModel.asFk(this.relativeB)] = b.id;
+        asList.foreach((a: A) =>
+        {
+            a[AbstractStorableModel.asFk(this.relativeB)] = b.id;
         });
 
-        await AbstractModel.update(asList, AbstractModel.asFk(this.relativeB));
+        await AbstractStorableModel.update(asList, AbstractStorableModel.asFk(this.relativeB));
     }
 
-    async relationalGet(relative: A): Promise<B | never> {
-        return await AbstractModel.get(relative[AbstractModel.asFk(this.relativeB)], this.relativeB);
+    async relationalGet(relative: A): Promise<B | never>
+    {
+        return await AbstractStorableModel.get(relative[AbstractStorableModel.asFk(this.relativeB)], this.relativeB);
     }
 
-    async relationalDestroy(relatives: AnyNumber<A>): Promise<void> {
+    async relationalDestroy(relatives: AnyNumber<A>): Promise<void>
+    {
         // Nothing to do
     }
 
-    areRelated(a: A, b: B): boolean {
+    areRelated(a: A, b: B): boolean
+    {
         if (a[b.asFk()] === b.id)
             return true;
         return false;
     }
 
-    async relationalFind(relatives: AnyNumber<A>): Promise<QueryResult<B>> {
+    async relationalFind(relatives: AnyNumber<A>): Promise<QueryResult<B>>
+    {
         const relativesList = new QueryResult(relatives);
         if (relativesList.isEmpty())
             return new QueryResult();

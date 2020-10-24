@@ -1,51 +1,61 @@
 
 import TestShoppingCartItem from "./TestShoppingCartItem";
 import TestUser from "./TestUser";
-import AbstractModel from "../../../../../../main/common/orm/AbstractModel";
+import AbstractStorableModel from "../../../../../../main/common/orm/AbstractStorableModel";
 
 
-class TestShoppingCart extends AbstractModel<TestShoppingCart>
+class TestShoppingCart extends AbstractStorableModel<TestShoppingCart>
 {
     protected modelName: string;
     protected Constructor: new () => TestShoppingCart;
     private _testUser: TestUser;
     private _testShoppingCartItems: any;
 
-    init(): void {
+    init(): void
+    {
         this.Constructor = TestShoppingCart;
         this.modelName = 'TestShoppingCart';
     }
 
-    addProperties(): void {
+    addProperties(): void
+    // tslint:disable-next-line: no-empty
+    {
 
     }
 
-    addRelations(): void {
+    addRelations(): void
+    {
         this.oneToMany(TestShoppingCartItem);
         this.zeroOrOneToOne(TestUser);
     }
 
-    testUserQ() {
+    testUserQ()
+    {
         return this.relative(TestUser);
     }
 
-    testShoppingCartItemsQ() {
+    testShoppingCartItemsQ()
+    {
         return this.relative(TestShoppingCartItem);
     }
 
-    set testShoppingCartItems(items) {
+    set testShoppingCartItems(items)
+    {
         this._testShoppingCartItems = items;
     }
 
-    get testShoppingCartItems() {
+    get testShoppingCartItems()
+    {
         return this._testShoppingCartItems;
     }
 
-    set testUser(user: TestUser) {
+    set testUser(user: TestUser)
+    {
         this._testUser = user;
     }
 
-    get testUser() {
+    get testUser()
+    {
         return this._testUser;
     }
 }
