@@ -1,5 +1,4 @@
 // @ts-ignore
-import wixData from "wix-data";
 import List from "../util/collections/list/List";
 import QueryResult from "./QueryResult";
 import GetError from "./GetError";
@@ -301,11 +300,6 @@ export class Query<T extends AbstractStorableModel<T>>
      */
     async execute(limit: number = 1000): Promise<QueryResult<T>>
     {
-        /*
-        let previousQueryResult: QueryResult<AbstractModel<any>>;
-        if(this.subquery)
-            previousQueryResult = await this.subquery.execute();
-        */
         const wixQueryResult = await this.query.limit(limit).find();
         return itemsToQueryResult(wixQueryResult.items, this.Model);
     }
@@ -328,13 +322,6 @@ export class Query<T extends AbstractStorableModel<T>>
         this._query = query;
     }
 
-    /*
-    private set subquery(subquery: Query<AbstractModel<any>>)
-    {
-        this._subquery = subquery;
-    }
-    */
-
     /**
      * Get the model representing the model of the items returned by this query.
      * @returns {new()=>T} The model.
@@ -352,13 +339,6 @@ export class Query<T extends AbstractStorableModel<T>>
     {
         this._model = model;
     }
-
-    /*
-    private get subquery(): Query<AbstractModel<any>>
-    {
-        return this._subquery;
-    }
-    */
 }
 
 function itemToModelPropertyMapping(itemPropertyName: string): string
