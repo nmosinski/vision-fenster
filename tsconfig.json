@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ES2017",
     "sourceMap": false,
+    "outDir": "./../wix-repository/src/",
     "plugins": [
       {
         "name": "typescript-tslint-plugin",

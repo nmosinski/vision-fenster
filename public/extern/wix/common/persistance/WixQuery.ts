@@ -1,15 +1,22 @@
-import List from "../../../../main/common/util/collections/list/List";
 import { AnyNumber } from "../../../../main/common/util/supportive";
 // @ts-ignore
 import wixData from "wix-data";
+import List from "../../../../main/common/util/collections/list/List";
+import IQueryDriver from "../../../../main/common/persistance/model/IQueryDriver";
+import WixDatabase from "./WixDatabase";
+import VariableValueError from "../../../../main/common/util/error/VariableValueError";
+
+const PATH = 'public/extern/wix/common/persistance/WixQuery';
 
 /**
  * @class
  * A class representing a wix-data query.
  */
-export class Query
+class WixQuery implements IQueryDriver
 {
     private _query: any;
+    private _currentLimit: number | null;
+    private static MAX_LIMIT = 1000;
 
     /**
      * Create a Query.
@@ -18,6 +25,13 @@ export class Query
     constructor (tableName: string)
     {
         this.query = wixData.query(tableName);
+        this.currentLimit = null;
+    }
+
+    limit(limit: number): this
+    {
+        this.currentLimit = limit;
+        return this;
     }
 
     /**
@@ -28,7 +42,7 @@ export class Query
      */
     eq(propertyName: string, proeprtyValue: any): this
     {
-        this.query = this.query.eq(propertyName, proeprtyValue);
+        this.query = this.query.eq((propertyName === 'id') ? '_id' : propertyName, proeprtyValue);
         return this;
     }
 
@@ -38,22 +52,23 @@ export class Query
      * @param {List<Number|String|Date>} propertyValues The possible propertyValues.
      * @returns {this} This query.
      */
-    hasSome(propertyName: string, propertyValues: AnyNumber<number | string | Date>): this
+    hasSome(propertyName: string, propertyValues: AnyNumber<any>): this
     {
-        const propertyValuesList = new List<number | string | Date>(propertyValues);
+        const propertyValuesList = new List<any>(propertyValues);
 
-        this.query = this.query.hasSome(propertyName, propertyValuesList.toArray());
+        this.query = this.query.hasSome((propertyName === 'id') ? '_id' : propertyName, propertyValuesList.toArray());
         return this;
     }
 
     /**
      * Execute this query and return its result limited by the given limit.
-     * @param {number} limit The maximum number of items returned by this query. 
-     * @returns {List<object>} The query result.
+     * @returns {List<{id: string}>} The query result.
      */
-    async execute(limit: number = 1000): Promise<List<object>>
+    async execute(): Promise<List<{ [x: string]: any; id?: string; }>>
     {
-        return await this.query.limit(limit).find();
+        this.query = this.query.limit((this.currentLimit) ? this.currentLimit : WixQuery.MAX_LIMIT);
+        const wixQueryResult = await this.query.find();
+        return new List(wixQueryResult.items).map(item => WixDatabase.mapItemToModel(item));
     }
 
     /**
@@ -73,4 +88,18 @@ export class Query
     {
         this._query = query;
     }
+
+    private get currentLimit(): number | null
+    {
+        return this._currentLimit;
+    }
+
+    private set currentLimit(currentLimit: number | null)
+    {
+        if (typeof (currentLimit) === 'number' && currentLimit < 0)
+            throw new VariableValueError(PATH, 'set currentLimit', currentLimit, 'greater than 0');
+        this._currentLimit = currentLimit;
+    }
 }
+
+export default WixQuery;

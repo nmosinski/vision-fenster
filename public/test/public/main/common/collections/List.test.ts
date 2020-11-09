@@ -11,6 +11,7 @@ export async function runAllTests()
     tests.add(new Test(PATH, "new List from List", truthly(), newListFromList));
     tests.add(new Test(PATH, "map", truthly(), map));
     tests.add(new Test(PATH, "isSublistOf", truthly(), isSublistOf));
+    tests.add(new Test(PATH, "without", truthly(), without));
 
     await tests.runAll();
 }
@@ -113,6 +114,23 @@ function isSublistOf()
         console.log('first if');
         console.log(list, 'list');
         console.log(sublist, 'sublist');
+        return false;
+    }
+
+    return true;
+}
+
+function without()
+{
+    const list = new List(['a', 'b', 'c', 'd']);
+    const sublist = new List(['b', 'c']);
+
+    const listWithoutSublist = list.WITHOUT(sublist);
+
+    if (listWithoutSublist.length !== 2 || listWithoutSublist.hasNot('a') || listWithoutSublist.hasNot('d'))
+    {
+        console.log('first if');
+        console.log(listWithoutSublist);
         return false;
     }
 

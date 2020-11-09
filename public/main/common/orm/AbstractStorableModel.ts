@@ -5,7 +5,7 @@ import { v4 as UUID } from 'uuid';
 import NullPointerException from "../util/error/NullPointerException";
 import IComparable from "../util/IComparable";
 import { AnyNumber } from "../util/supportive";
-import AbstractModel from "./AbstractModel";
+import AbstractModel, { Properties } from "./AbstractModel";
 import CreateError from "./CreateError";
 import DestroyError from "./DestroyError";
 import ManyToMany from "./ManyToMany";
@@ -17,9 +17,12 @@ import QueryResult from "./QueryResult";
 import Relation from "./Relation";
 import SaveError from "./SaveError";
 import UpdateError from "./UpdateError";
-import WixDatabase from "./WixDatabase";
 import ZeroOrOneToOne from "./ZeroOrOneToOne";
 import JsTypes from "../util/jsTypes/JsTypes";
+import Storage from "../persistance/model/Storage";
+import IStorageDriver from "../persistance/model/IStorageDriver";
+import WixDatabase from "../../../extern/wix/common/persistance/WixDatabase";
+import InvalidOperationError from "../util/error/InvalidOperationError";
 
 const PATH = 'public/main/common/orm/AbstractStorableModel';
 
@@ -31,12 +34,35 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
     protected _tableName: string;
     private _id: string;
     private _lastQueryResult: QueryResult<T> | AbstractStorableModel<T>;
+    private _storageDriver: IStorageDriver;
 
     constructor (data?: object)
     {
         super(data);
+    }
+
+    /**
+     * @override
+     * @inheritdoc
+     */
+    protected boot(data?: object)
+    {
+        this.init(data);
+
+        this.properties = new Properties();
+        this.properties.
+            string("id");
+        this.addProperties();
+
         this.relations = new KVMap<new () => AbstractStorableModel<any>, Relation<AbstractStorableModel<any>, T>>();
         this.addRelations();
+
+        // @todo make this more global / move to a better place
+        if (!this.storageDriver)
+            this.storageDriver = new WixDatabase();
+
+        if (data)
+            this.fill(data);
     }
 
     /**
@@ -75,7 +101,7 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
      */
     public relative<U extends AbstractStorableModel<U>>(Relative: new () => U): U
     {
-        let relation;
+        let relation: Relation<any, any>;
         try
         {
             relation = this.relations.get(Relative);
@@ -240,7 +266,7 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
         if (modelsList.isEmpty() || relativesList.isEmpty())
             return;
 
-        await modelsList.first().relations.get(relativesList.first().Constructor).assign(models, relatives);
+        return modelsList.first().relations.get(relativesList.first().Constructor).assign(models, relatives);
     }
 
     /**
@@ -287,19 +313,27 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
      * @returns {Promise<this|QueryResult<AbstractStorableModel>>} This if multiple models were passed or
      * the loaded objects if only one model was passed (allowing to chain operations).
      */
-    async load(models: AnyNumber<new () => AbstractStorableModel<any>>): Promise<this | QueryResult<AbstractStorableModel<any>>>
+    async load(Relatives: AnyNumber<new () => AbstractStorableModel<any>>): Promise<void>
     {
-        const modelsList = new List<new () => AbstractStorableModel<any>>(models);
+        const RelativesList = new List<new () => AbstractStorableModel<any>>(Relatives);
 
-        let ret: this | QueryResult<AbstractStorableModel<any>> = this;
-        await modelsList.foreachAsync(async (Model) =>
+        return await AbstractStorableModel.load(this as unknown as T, RelativesList)
+    }
+
+    static async load<U extends AbstractStorableModel<U>, P extends AbstractStorableModel<P>>(models: AnyNumber<U>, Relatives: AnyNumber<new () => P>): Promise<void>
+    {
+        const modelsList = new List<U>(models);
+        const RelativesList = new List<new () => P>(Relatives);
+
+        if (modelsList.isEmpty() || RelativesList.isEmpty())
+            return;
+
+        await RelativesList.foreachAsync(async (relative) =>
         {
-            const relation = this.relations.get(Model).inverse();
-            ret = await relation.relationalFind(this as unknown as T);
-            await ret.link(this);
+            const relatives = await modelsList.first().relations.get(relative).inverse().relationalFind(modelsList);
+            await relatives.link(modelsList);
         });
-
-        return ret;
+        return;
     }
 
     /**
@@ -307,16 +341,28 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
      * @param {AnyNumber<new()=>AbstractStorableModel<any>>} models The models to be loaded in the order of the chain.
      * @returns {this} This.
      */
-    async loadChain(Models: AnyNumber<new () => AbstractStorableModel<any>>): Promise<this>
+    async loadChain(Relatives: AnyNumber<new () => AbstractStorableModel<any>>): Promise<void>
     {
-        const modelsList = new List<new () => AbstractStorableModel<any>>(Models);
+        const RelativesList = new List<new () => AbstractStorableModel<any>>(Relatives);
 
-        let res: QueryResult<AbstractStorableModel<any>> | this = this;
-        await modelsList.foreachAsync(async (Model, idx) =>
+        return await AbstractStorableModel.loadChain(this as unknown as T, RelativesList);
+    }
+
+    static async loadChain<U extends AbstractStorableModel<U>, P extends AbstractStorableModel<P>>(models: AnyNumber<U>, Relatives: AnyNumber<new () => P>): Promise<void>
+    {
+        let modelsList = new List<AbstractStorableModel<any>>(models);
+        const RelativesList = new List<new () => P>(Relatives);
+
+        if (modelsList.isEmpty() || RelativesList.isEmpty())
+            return;
+
+        await RelativesList.foreachAsync(async (relative) =>
         {
-            res = await res.load(Model);
+            const newModelsList = await modelsList.first().relations.get(relative).inverse().relationalFind(modelsList);
+            await AbstractStorableModel.link(modelsList, newModelsList);
+            modelsList = newModelsList;
         });
-        return this;
+        return;
     }
 
     /**
@@ -337,7 +383,8 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
      */
     static async exists<U extends AbstractStorableModel<U>>(id: string, Model: new () => U): Promise<boolean>
     {
-        if (await WixDatabase.has(id, Model))
+        const model = new Model();
+        if (await Storage.has(id, model.tableName, model.storageDriver))
             return true;
 
         return false;
@@ -359,9 +406,10 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
      * @param {new()=>U} model The model of the item to be retrieved.
      * @returns {Promise<U>} The retrueved model.
      */
-    static async get<U extends AbstractStorableModel<U>>(id: string, model: new () => U): Promise<U>
+    static async get<U extends AbstractStorableModel<U>>(id: string, Model: new () => U): Promise<U>
     {
-        return await WixDatabase.get(id, model);
+        const model = new Model();
+        return model.fill(await Storage.get(id, model.tableName, model.storageDriver));
     }
 
     /**
@@ -425,15 +473,16 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
      * @param {model: new()=>U} model The QueryElement to be resolved.
      * @returns {Promise<QueryResult<<U extends AbstractStorableModel<U>>>>} The result of the executed querry.
      */
-    static async find<U extends AbstractStorableModel<U>>(Model: new () => U): Promise<QueryResult<U>>
+    static async find<U extends AbstractStorableModel<U>>(Model: new (data?: object) => U): Promise<QueryResult<U>>
     {
-        return await WixDatabase.query(Model).execute();
+        const model = new Model();
+        return new QueryResult<U>((await Storage.query(model.tableName, model.storageDriver).limit(1000).execute()).map((item: object) => new Model(item)));
     }
 
     /**
      * Create this model (save it in the database).
      */
-    async create(): Promise<void>
+    async create(): Promise<List<string>>
     {
         return await AbstractStorableModel.create(this as unknown as T);
     }
@@ -442,12 +491,12 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
      * Create models.
      * @param {AnyNumber<U>} models The models to be created.
      */
-    static async create<U extends AbstractStorableModel<U>>(models: AnyNumber<U>): Promise<void>
+    static async create<U extends AbstractStorableModel<U>>(models: AnyNumber<U>): Promise<List<string>>
     {
-        const modelsList = new List<U>(models);
+        const modelsList = new QueryResult<U>(models);
 
         if (modelsList.isEmpty())
-            return;
+            return new List<string>();
 
         modelsList.foreach((model) =>
         {
@@ -458,16 +507,16 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
         modelsList.foreach((model) =>
         {
             if (!model.valid())
-                throw new CreateError(PATH, "AbstractModel.create()", model);
+                throw new CreateError('One of the given models is not valid.', PATH, "AbstractStorableModel.create()", model.id, model.tableName, model.storageDriver);
         });
 
-        await WixDatabase.create(modelsList);
+        return await modelsList.storage.create(modelsList.strip(), modelsList.tableName);
     }
 
     /**
      * Save this model (save it in the database).
      */
-    async save(): Promise<void>
+    async save(): Promise<List<string>>
     {
         return await AbstractStorableModel.save(this as unknown as T);
     }
@@ -476,12 +525,12 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
      * Save models.
      * @param {U|List<U>} models The models to be saved.
      */
-    static async save<U extends AbstractStorableModel<U>>(models: AnyNumber<U>): Promise<void>
+    static async save<U extends AbstractStorableModel<U>>(models: AnyNumber<U>): Promise<List<string>>
     {
-        const modelsList = new List<U>(models);
+        const modelsList = new QueryResult<U>(models);
 
         if (modelsList.isEmpty())
-            return;
+            return new List<string>();
 
         modelsList.foreach((model) =>
         {
@@ -492,10 +541,10 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
         modelsList.foreach((model) =>
         {
             if (!model.valid())
-                throw new SaveError(PATH, "AbstractModel.save()", model);
+                throw new SaveError(null, PATH, "AbstractStorableModel.save()", model.id, model.tableName, model.storageDriver);
         });
 
-        await WixDatabase.save(modelsList);
+        return await modelsList.storage.save(modelsList.strip(), modelsList.tableName);
     }
 
     /**
@@ -508,33 +557,48 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
 
     /**
      * Update models.
-     * @param {U | List<U>} models The models to be updated.
+     * @param {U | List<U>} toUpdate The models to be updated.
      */
-    static async update<U extends AbstractStorableModel<U>>(models: AnyNumber<U>, fieldsToUpdate?: AnyNumber<string>): Promise<void>
+    static async update<U extends AbstractStorableModel<U>>(toUpdate: AnyNumber<U>, fieldsToUpdate?: AnyNumber<string>): Promise<void>
     {
-        const modelsList = new List<U>(models);
-        const fieldsToUpdateList = new List<string>(fieldsToUpdate);
-        let toUpdateList = modelsList;
+        const toUpdateList = new QueryResult<U>(toUpdate);
+        let fieldsToUpdateList = new List<string>(fieldsToUpdate);
 
-        if (modelsList.isEmpty())
+        if (toUpdateList.isEmpty())
             return;
 
-        if (!fieldsToUpdateList.isEmpty())
-        {
-            fieldsToUpdateList.add('id');
-            const existentItems = await WixDatabase.query(modelsList.first().Constructor).hasSome('_id', modelsList.reduce('id')).execute();
-            const reducedList = modelsList.reduce(fieldsToUpdateList);
-            existentItems.foreach(item => item.fill(reducedList.find(model => model.id === item.id)));
-            toUpdateList = existentItems;
-        }
+        if (fieldsToUpdateList.isEmpty())
+            fieldsToUpdateList = toUpdateList.first().properties.keys();
 
-        modelsList.foreach(model =>
+        if (fieldsToUpdateList.has('id'))
+            fieldsToUpdateList.remove(fieldsToUpdateList.indexOf('id'));
+
+        const fieldsNotToBeUpdated = toUpdateList.properties.keys().WITHOUT(fieldsToUpdateList);
+
+        const existentItems: List<object> = await toUpdateList.storage.query(toUpdateList.tableName).hasSome('_id', toUpdateList.pluck('id')).execute();
+
+        const reducedExistentItems = existentItems.map(item =>
         {
-            if (!model.valid(fieldsToUpdateList))
-                throw new UpdateError(PATH, "AbstractModel.update()", model);
+            const reducedItem = {};
+
+            fieldsNotToBeUpdated.foreach(fieldName => reducedItem[fieldName] = item[fieldName]);
+
+            return reducedItem;
         });
 
-        await WixDatabase.update(toUpdateList);
+        toUpdateList.foreach((model) =>
+        {
+            try
+            {
+                // @ts-ignore
+                model.fill(reducedExistentItems.find(item => item.id === model.id));
+            } catch (error)
+            {
+                throw new UpdateError('Some of the items that are meant to be updated do not exist in the given storage.', PATH, 'update', toUpdateList.pluck('id').toString(), toUpdateList.tableName, toUpdateList.first().storageDriver);
+            }
+        });
+
+        return await toUpdateList.storage.update(toUpdateList.map(model => model.strip()), toUpdateList.tableName);
     }
 
     /**
@@ -542,7 +606,7 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
      * If called over relations, destroy the models returned by the query.
      * @param {boolean} [doNotCascade=false] Will not destroy relatives that belong to this model if true.
      */
-    async destroy(doNotCascade: boolean = false): Promise<void>
+    async destroy(doNotCascade = false): Promise<void>
     {
         let toDestroy: List<AbstractStorableModel<any>> = new List<AbstractStorableModel<any>>(this);
         // Called over previous.
@@ -559,18 +623,12 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
      * @param {U | List<U>} models The models to be destroyed.
      * @param {boolean} [doNotCascade=false] Will not destroy relatives that belong to this model if true.
      */
-    static async destroy<U extends AbstractStorableModel<U>>(models: AnyNumber<U>, doNotCascade: boolean = false): Promise<void>
+    static async destroy<U extends AbstractStorableModel<U>>(models: AnyNumber<U>, doNotCascade = false): Promise<void>
     {
-        const modelsList = new List<U>(models);
+        const modelsList = new QueryResult<U>(models);
 
         if (modelsList.isEmpty())
             return;
-
-        modelsList.foreach((model) =>
-        {
-            if (!model.valid())
-                throw new DestroyError(PATH, "AbstractModel.destroy()", model);
-        });
 
         if (!doNotCascade)
             await modelsList.first().relations.values().foreachAsync(async (relation) =>
@@ -578,7 +636,7 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
                 await relation.inverse().relationalDestroy(modelsList);
             });
 
-        await WixDatabase.remove(modelsList);
+        await modelsList.storage.remove(modelsList.pluck('id'), modelsList.tableName);
     }
 
     /**
@@ -761,6 +819,21 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
     private get relations(): KVMap<new () => AbstractStorableModel<any>, Relation<AbstractStorableModel<any>, T>>
     {
         return this._relations;
+    }
+
+    public set storageDriver(storageDriver: IStorageDriver)
+    {
+        this._storageDriver = storageDriver;
+    }
+
+    public get storageDriver(): IStorageDriver
+    {
+        return this._storageDriver;
+    }
+
+    public get storage(): Storage
+    {
+        return new Storage(this.storageDriver);
     }
 }
 

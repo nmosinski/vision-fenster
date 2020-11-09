@@ -1,5 +1,5 @@
+import IStorageDriver from "../persistance/model/IStorageDriver";
 import CrudOperationError from "./CrudOperationError";
-import AbstractStorableModel from "./AbstractStorableModel";
 
 
 /**
@@ -8,53 +8,18 @@ import AbstractStorableModel from "./AbstractStorableModel";
  */
 class GetError extends CrudOperationError
 {
-    private _modelId: string;
-    private _Model: new () => AbstractStorableModel<any>;
-
     /**
      * Create a GetError.
+     * @param {string} description The description if the error.
      * @param {string} path The path to the file where the problem occurred.
      * @param {string} location A more specific location hint in the file where the problem occurred.
-     * @param {string} modelId The model that couldn't be found.
-     * @param {string} Model The models class of the requested model.
+     * @param {string} itemId The id of the item that caused the error.
+     * @param {string} tableName The name of the table.
+     * @param {IStorageDriver} storageDriver the storage driver that has been used.
      */
-    constructor (path: string, location: string, modelId: string, Model: new () => AbstractStorableModel<any>)
+    constructor (description: string = "An error occurred when trying to get a model.", path: string, location: string, itemId: string, tableName: string, storageDriver: IStorageDriver)
     {
-        super("An error occurred when trying to get a model.", path, location);
-        this.modelId = modelId;
-        this.Model = Model;
-    }
-
-    /**
-     * @override
-     * @inheritdoc
-     */
-    toString(): string
-    {
-        let ret = super.toString();
-        ret += "\nModel: " + (new this.Model()).tableName;
-        ret += "\n" + JSON.stringify(this.Model);
-        return ret;
-    }
-
-    set modelId(modelId: string)
-    {
-        this._modelId = modelId;
-    }
-
-    get modelId()
-    {
-        return this._modelId;
-    }
-
-    set Model(Model: new () => AbstractStorableModel<any>)
-    {
-        this._Model = Model;
-    }
-
-    get Model(): new () => AbstractStorableModel<any>
-    {
-        return this._Model;
+        super(description, path, location, itemId, tableName, storageDriver);
     }
 }
 

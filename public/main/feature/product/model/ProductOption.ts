@@ -3,7 +3,6 @@ import ProductOptionType from "./ProductOptionType";
 import List from "../../../common/util/collections/list/List";
 import QueryResult from "../../../common/orm/QueryResult";
 import Tag from "./Tag";
-import { Query } from "../../../common/orm/WixDatabase";
 import AbstractStorableModel from "../../../common/orm/AbstractStorableModel";
 
 
@@ -49,7 +48,7 @@ class ProductOption extends AbstractStorableModel<ProductOption>{
 
     hasTagOfTitle(tagTitle: string): boolean
     {
-        return this.tags.reduce("title").has(tagTitle);
+        return this.tags.pluck("title").has(tagTitle);
     }
 
     addTag(tag: Tag)

@@ -10,6 +10,7 @@ import List from "../../public/main/common/util/collections/list/List";
 import { index } from "backend/main/feature/product/controllers/ProductController.jsw";
 import Tag from "../../public/main/feature/product/model/Tag";
 import { FensterProductOptionTypes } from "../../public/main/feature/product/productOptionTypes";
+import AbstractStorableModel from "../../public/main/common/orm/AbstractStorableModel";
 
 let productModel: ProductModel;
 let product: Product;
@@ -17,37 +18,39 @@ let productConfiguationService: AbstractProductConfigurationService;
 let allProductOptions: List<ProductOption>;
 
 // @ts-ignore
-$w.onReady(async () => {
+$w.onReady(async function ()
+{
 	// retrieve data
-	productModel = (await ProductModel.find(ProductModel)).first();
+	productModel = (await AbstractStorableModel.find(ProductModel)).first();
 	await productModel.loadChain([ProductOptionType, ProductOption, Tag]);
+
 
 	// merge all product options
 	allProductOptions = new List<ProductOption>();
-	productModel.productOptionTypes.foreach(types => allProductOptions = allProductOptions.OR(types.productOptions));
+	productModel.productOptionTypes.foreach(types => allProductOptions = allProductOptions.WITH(types.productOptions));
 
 	product = new Product();
 
 	productConfiguationService = ProductConfigurationServiceFactory.byModel(productModel);
-
-
 	productConfiguationService.fillMissingProductOptionsWithDefault(allProductOptions, product);
 
 	initRepeater();
 	applyFilterForRepeater();
 	displayProductAsActualConfiguration();
-	updateallSelectedItemViews();
+	updateAllSelectedItemViews();
 });
 
-function onProductOptionSelection(productOption: ProductOption) {
+function onProductOptionSelection(productOption: ProductOption)
+{
 	updateSelectedItemView(productOption.productOptionType.title);
 	productConfiguationService.setOptionAndDefaultOnComplications(productOption, product, allProductOptions);
 	displayProductAsActualConfiguration();
 	applyFilterForRepeater();
-	updateallSelectedItemViews();
+	updateAllSelectedItemViews();
 }
 
-function displayProductAsActualConfiguration(): void {
+function displayProductAsActualConfiguration(): void
+{
 	// @ts-ignore
 	$w("#imageConfiguration").src = (product.hasOption(FensterProductOptionTypes.PROFIL)) ? product.getOption(FensterProductOptionTypes.PROFIL).image : 'https://wuerdest-du-eher.de/ratgeber/wp-content/uploads/2017/07/was-heisst-nope-auf-deutsch.jpg';
 	// @ts-ignore
@@ -57,52 +60,71 @@ function displayProductAsActualConfiguration(): void {
 	$w("#repeaterConfigurationDetails").data = product.productOptions.toArray();
 }
 
-function repeaterConfigurationDetailsOnItemReadyFunction($item: any, productOption: ProductOption): void {
+function repeaterConfigurationDetailsOnItemReadyFunction($item: any, productOption: ProductOption): void
+{
 	$item("#textConfigurationDetails").text = productOption.productOptionType.presentationde + ": " + productOption.presentationde;
 }
 
-function updateallSelectedItemViews() {
+function updateAllSelectedItemViews()
+{
+	console.log('before foreach');
 	product.productOptions.foreach(option => updateSelectedItemView(option.productOptionType.title));
+	console.log('after foreach');
+
 }
 
-function updateSelectedItemView(productOptionTypeTitle: string): void {
-	repeaterByProductOptionTypeTitle(productOptionTypeTitle).forEachItem(($item: any, productOption: ProductOption) => {
+function updateSelectedItemView(productOptionTypeTitle: string): void
+{
+	console.log('before repeater foreach');
+	repeaterByProductOptionTypeTitle(productOptionTypeTitle).forEachItem(($item: any, productOption: ProductOption) =>
+	{
 		if (product.getOption(productOptionTypeTitle).id === productOption.id)
 			$item("#vectorImage" + productOptionTypeTitleAsGuiElementName(productOptionTypeTitle)).show();
 		else
 			$item("#vectorImage" + productOptionTypeTitleAsGuiElementName(productOptionTypeTitle)).hide();
 	});
+	console.log('after repeater foreach');
+
 }
 
-function getDefaultOnItemReadyRepeaterFunction(optionTypeTitle: string): (item: any, productOption: ProductOption) => void {
-	return ($item, productOption: ProductOption) => {
+function getDefaultOnItemReadyRepeaterFunction(optionTypeTitle: string): (item: any, productOption: ProductOption) => void
+{
+	return ($item, productOption: ProductOption) =>
+	{
 		$item("#image" + optionTypeTitle).src = productOption.image;
 		$item("#vectorImage" + productOptionTypeTitleAsGuiElementName(optionTypeTitle)).hide();
 		$item("#text" + productOptionTypeTitleAsGuiElementName(optionTypeTitle)).text = productOption.presentationde;
-		$item("#image" + optionTypeTitle).onClick((event: any) => {
+		$item("#image" + optionTypeTitle).onClick((event: any) =>
+		{
 			onProductOptionSelection(productOption);
 		});
 	};
 }
 
-function productOptionTypeTitleAsGuiElementName(productOptionTypeTitle: string): string {
+function productOptionTypeTitleAsGuiElementName(productOptionTypeTitle: string): string
+{
 	return JsString.capitalizeFirstLetter(JsString.replaceGermanSpecialLetters(productOptionTypeTitle));
 }
-function repeaterByProductOptionTypeTitle(productOptionTypeTitle: string): any {
+function repeaterByProductOptionTypeTitle(productOptionTypeTitle: string): any
+{
 	// @ts-ignore
 	return $w("#repeater" + productOptionTypeTitleAsGuiElementName(productOptionTypeTitle));
 }
 
-function applyFilterForRepeater(): void {
-	productModel.productOptionTypes.foreach((productOptionType) => {
+function applyFilterForRepeater(): void
+{
+	productModel.productOptionTypes.foreach((productOptionType) =>
+	{
 		const filteredData = productConfiguationService.filterValidOptions(allProductOptions, product, productOptionType.title);
 		repeaterByProductOptionTypeTitle(productOptionType.title).data = filteredData.toArray();
 
 	});
 }
 
-function initRepeater(): void {
-	productModel.productOptionTypes.foreach((productOptionType) => {
+function initRepeater(): void
+{
+	productModel.productOptionTypes.foreach((productOptionType) =>
+	{
 		const optionTypeTitle = productOptionTypeTitleAsGuiElementName(productOptionType.title);
 		const onItemReadyFunction = getDefaultOnItemReadyRepeaterFunction(optionTypeTitle);
 		repeaterByProductOptionTypeTitle(optionTypeTitle).onItemReady(onItemReadyFunction);

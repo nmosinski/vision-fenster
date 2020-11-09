@@ -1,7 +1,7 @@
 import WixDatabase from "../../../../extern/wix/common/persistance/WixDatabase";
 import StorageTypeEnum from "../enum/StorageTypeEnum";
 import UnknownStorageTypeError from "../error/UnknownStorageTypeError";
-import IStorage from "../IStorage";
+import IStorageDriver from "../model/IStorageDriver";
 
 const PATH = 'public/main/common/persistance/StorageFactory';
 
@@ -13,7 +13,7 @@ class StorageFactory
      * @returns {StorageTypeEnum} The requested storage.
      * @throws {UnknownStorageTypeError} If the requested storage dype doesnt exist of has not beed registered. 
      */
-    public static create(factory: StorageTypeEnum): IStorage
+    public static create(factory: StorageTypeEnum): IStorageDriver
     {
         switch (factory)
         {

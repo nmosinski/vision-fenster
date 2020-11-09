@@ -1,19 +1,18 @@
 import TestShoppingCartItem from "./testData/TestShoppingCartItem";
-import WixDatabase from "../../../../../main/common/orm/WixDatabase";
 import { Tests, Test, truthly, unspecified, value } from "../../../../../main/common/test/Test";
-import List from "../../../../../main/common/util/collections/list/List";
 import TestTag from "./testData/TestTag";
 // @ts-ignore
 import wixData from "wix-data"
-import ManyToMany from "../../../../../main/common/orm/ManyToMany";
 import QueryResult from "../../../../../main/common/orm/QueryResult";
 import JsTypes from "../../../../../main/common/util/jsTypes/JsTypes";
-import AbstractModel from "../../../../../main/common/orm/AbstractModel";
 import AbstractStorableModel from "../../../../../main/common/orm/AbstractStorableModel";
+import WixDatabase from "../../../../../extern/wix/common/persistance/WixDatabase";
+import Storage from "../../../../../main/common/persistance/model/Storage";
 const PATH = "test/public/main/common/orm/ManyToMany.test.js"
 
 let testShoppingCartItems: QueryResult<TestShoppingCartItem>;
 let testTags: QueryResult<TestTag>;
+const wixDatabase = new Storage(new WixDatabase());
 
 export async function runAllTests()
 {
@@ -38,8 +37,8 @@ async function beforeEach()
 {
     testTags = new QueryResult(TestTag.dummies(TestTag, 5));
     testShoppingCartItems = new QueryResult(TestShoppingCartItem.dummies(TestShoppingCartItem, 5));
-    await WixDatabase.create(testTags);
-    await WixDatabase.create(testShoppingCartItems);
+    await wixDatabase.create(testTags, testTags.tableName);
+    await wixDatabase.create(testShoppingCartItems, testShoppingCartItems.tableName);
 
     // the first shopping cart item has all tags / each tag has the first shopping cart
     const roleItems: object[] = [];
@@ -61,9 +60,9 @@ async function beforeEach()
 
 async function afterEach()
 {
-    await WixDatabase.removeAll(TestTag);
-    await WixDatabase.removeAll(TestShoppingCartItem);
-    await wixData.truncate("RoleTestShoppingCartItemTestTag");
+    await wixDatabase.truncate(TestTag.tableName(TestTag));
+    await wixDatabase.truncate(TestShoppingCartItem.tableName(TestShoppingCartItem));
+    await wixDatabase.truncate("RoleTestShoppingCartItemTestTag");
 }
 
 

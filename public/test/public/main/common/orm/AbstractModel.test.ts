@@ -1,9 +1,7 @@
 import TestShoppingCart from "./testData/TestShoppingCart";
 import TestShoppingCartItem from "./testData/TestShoppingCartItem";
 import TestUser from "./testData/TestUser";
-import WixDatabase from "../../../../../main/common/orm/WixDatabase";
-import { Tests, Test, truthly, unspecified, value } from "../../../../../main/common/test/Test";
-import AbstractModel from "../../../../../main/common/orm/AbstractModel";
+import { Tests, Test, truthly, unspecified, value, test } from "../../../../../main/common/test/Test";
 import InvalidOperationError from "../../../../../main/common/util/error/InvalidOperationError";
 import QueryResult from "../../../../../main/common/orm/QueryResult";
 import JsTypes from "../../../../../main/common/util/jsTypes/JsTypes";
@@ -11,10 +9,13 @@ const PATH = "test/public/main/common/orm/AbstractModel.test.js"
 // @ts-ignore
 import wixData from 'wix-data';
 import AbstractStorableModel from "../../../../../main/common/orm/AbstractStorableModel";
+import Storage from "../../../../../main/common/persistance/model/Storage";
+import WixDatabase from "../../../../../extern/wix/common/persistance/WixDatabase";
 
 let testShoppingCarts: QueryResult<TestShoppingCart>;
 let testShoppingCartItems: QueryResult<TestShoppingCartItem>;
 let testUsers: QueryResult<TestUser>;
+const wixDatabase = new Storage(new WixDatabase());
 
 export async function runAllTests()
 {
@@ -59,20 +60,21 @@ async function beforeEach()
     testShoppingCarts = new QueryResult(TestShoppingCart.dummies(TestShoppingCart, 3));
     testShoppingCartItems = new QueryResult(TestShoppingCartItem.dummies(TestShoppingCartItem, 5));
     testUsers = new QueryResult(TestUser.dummies(TestUser, 2));
+
+    await wixDatabase.create(testShoppingCarts, testShoppingCarts.tableName);
+    await wixDatabase.create(testShoppingCartItems, testShoppingCartItems.tableName);
+    await wixDatabase.create(testUsers, testUsers.tableName);
+
     await testShoppingCartItems.first().assign(testShoppingCarts.first());
     await testShoppingCartItems.get(1).assign(testShoppingCarts.first());
     await testShoppingCarts.first().assign(testUsers.first());
-
-    await WixDatabase.create(testShoppingCarts);
-    await WixDatabase.create(testShoppingCartItems);
-    await WixDatabase.create(testUsers);
 }
 
 async function afterEach()
 {
-    await WixDatabase.removeAll(TestUser);
-    await WixDatabase.removeAll(TestShoppingCart);
-    await WixDatabase.removeAll(TestShoppingCartItem);
+    await wixDatabase.truncate(new TestUser().tableName);
+    await wixDatabase.truncate(new TestShoppingCart().tableName);
+    await wixDatabase.truncate(new TestShoppingCartItem().tableName);
 }
 
 async function assign()
@@ -314,7 +316,7 @@ async function simpleCreate()
 
 async function simpleCreateMultiple()
 {
-    await WixDatabase.removeAll(TestShoppingCartItem);
+    await wixDatabase.truncate(new TestShoppingCartItem().tableName);
     await TestShoppingCartItem.create(testShoppingCartItems);
     const result = await TestShoppingCartItem.find(TestShoppingCartItem);
     if (!result.equals(testShoppingCartItems))
@@ -343,7 +345,6 @@ async function simpleUpdate()
         console.log(updatedItem, 'updatedItem');
         return false;
     }
-
 
     item.count = 4;
     item.price = 7;
@@ -378,7 +379,7 @@ async function simpleUpdateMultiple()
 
 async function simpleSave()
 {
-    await WixDatabase.removeAll(TestShoppingCartItem);
+    await wixDatabase.truncate(new TestShoppingCartItem().tableName);
     await TestShoppingCartItem.save(testShoppingCartItems.first());
     const result = await TestShoppingCartItem.find(TestShoppingCartItem);
     return result.has(testShoppingCartItems.first());
@@ -386,7 +387,7 @@ async function simpleSave()
 
 async function simpleSaveMultiple()
 {
-    await WixDatabase.removeAll(TestShoppingCartItem);
+    await wixDatabase.truncate(new TestShoppingCartItem().tableName);
     await TestShoppingCartItem.save(testShoppingCartItems);
     const result = await TestShoppingCartItem.find(TestShoppingCartItem);
     return result.equals(testShoppingCartItems);
@@ -395,7 +396,7 @@ async function simpleSaveMultiple()
 async function simpleDestroy()
 {
     await TestUser.destroy(testUsers.first());
-    if (await (TestUser.exists(testUsers.first().id, TestUser)))
+    if (await TestUser.exists(testUsers.first().id, TestUser))
         return false;
     return true;
 }

@@ -104,7 +104,7 @@ class ManyToMany<A extends AbstractStorableModel<A>, B extends AbstractStorableM
     async relationalDestroy(relatives: AnyNumber<A>): Promise<void>
     {
         const relativesList = new List<A>(relatives);
-        await (await this.getRoles(relativesList)).destroy();
+        return await (await this.getRoles(relativesList)).destroy();
     }
 
     areRelated(a: A, b: B, roles: AnyNumber<AbstractStorableModel<any>>): boolean
@@ -165,7 +165,7 @@ class ManyToMany<A extends AbstractStorableModel<A>, B extends AbstractStorableM
     {
         const roleToB = new ManyToOne(this.roleModel, this.relativeB);
         const roles = await this.getRoles(relatives);
-        return await roleToB.relationalFind(await (this.getRoles(relatives)));
+        return await roleToB.relationalFind(roles);
     }
 
     set roleModel(roleModel: new () => AbstractStorableModel<any>)

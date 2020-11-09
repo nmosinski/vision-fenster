@@ -1,19 +1,19 @@
 import TestShoppingCart from "./testData/TestShoppingCart";
 import TestShoppingCartItem from "./testData/TestShoppingCartItem";
-import WixDatabase from "../../../../../main/common/orm/WixDatabase";
 import { Tests, Test, truthly, unspecified, value } from "../../../../../main/common/test/Test";
-import List from "../../../../../main/common/util/collections/list/List";
 import AHoldsNoReferenceToB from "../../../../../main/common/orm/AHoldsNoReferenceToB";
 import OneToMany from "../../../../../main/common/orm/OneToMany";
 import QueryResult from "../../../../../main/common/orm/QueryResult";
-import JsTypes from "../../../../../main/common/util/jsTypes/JsTypes";
-import AbstractModel from "../../../../../main/common/orm/AbstractModel";
 import AbstractStorableModel from "../../../../../main/common/orm/AbstractStorableModel";
+import Storage from "../../../../../main/common/persistance/model/Storage";
+import WixDatabase from "../../../../../extern/wix/common/persistance/WixDatabase";
+import AbstractModel from "../../../../../main/common/orm/AbstractModel";
 const PATH = "test/public/main/common/orm/AHoldsNoReferenceToB.test.js"
 
 let testShoppingCarts: QueryResult<TestShoppingCart>;
 let testShoppingCartItems: QueryResult<TestShoppingCartItem>;
 let relation: AHoldsNoReferenceToB<TestShoppingCart, TestShoppingCartItem>;
+
 
 export async function runAllTests()
 {
@@ -37,14 +37,14 @@ async function beforeEach()
 {
     testShoppingCarts = new QueryResult(TestShoppingCart.dummies(TestShoppingCart, 5));
     testShoppingCartItems = new QueryResult(TestShoppingCartItem.dummies(TestShoppingCartItem, 5));
-    await WixDatabase.create(testShoppingCarts);
-    await WixDatabase.create(testShoppingCartItems);
+    await AbstractStorableModel.create(testShoppingCarts);
+    await AbstractStorableModel.create(testShoppingCartItems);
 }
 
 async function afterEach()
 {
-    await WixDatabase.removeAll(TestShoppingCart);
-    await WixDatabase.removeAll(TestShoppingCartItem);
+    await Storage.truncate(new TestShoppingCart().tableName, new TestShoppingCart().storageDriver);
+    await Storage.truncate(new TestShoppingCartItem().tableName, new TestShoppingCartItem().storageDriver);
 }
 
 async function relationalDestroy()
@@ -90,6 +90,7 @@ async function relationalAssign()
 async function relationalGet()
 {
     testShoppingCartItems.first()[testShoppingCarts.first().asFk()] = testShoppingCarts.first().id;
+
     await TestShoppingCartItem.update(testShoppingCartItems.first());
 
     const item = (await relation.relationalGet(testShoppingCarts.first()));

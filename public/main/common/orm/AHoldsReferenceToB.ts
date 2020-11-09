@@ -1,5 +1,3 @@
-import AbstractModel from "./AbstractModel";
-import Relation from "./Relation";
 import List from "../util/collections/list/List";
 import Set from "../util/collections/set/Set";
 import QueryResult from "./QueryResult";
@@ -49,10 +47,12 @@ abstract class AHoldsReferenceToB<A extends AbstractStorableModel<A>, B extends 
             return new QueryResult();
         const aRelativeB = new this.relativeB();
         let bQuery = this.queryOfRelativeB();
-        const toFindIds: Set<string> = new Set<string>(relativesList.reduce(aRelativeB.asFk()));
+        const toFindIds: Set<string> = new Set<string>(relativesList.pluck(aRelativeB.asFk()));
         bQuery = bQuery.hasSome("_id", toFindIds);
 
-        return await bQuery.execute();
+        const result = new QueryResult<B>();
+        (await bQuery.execute()).foreach(item => result.add(new this.relativeB(item)));
+        return result;
     }
 }
 

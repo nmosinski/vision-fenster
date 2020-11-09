@@ -1,11 +1,9 @@
-import AbstractModel from "./AbstractModel";
-import Relation from "./Relation";
 import List from "../util/collections/list/List";
 import QueryResult from "./QueryResult";
 import NotManyToMany from "./NotManyToMany";
-import WixDatabase, { Query } from "./WixDatabase";
 import { AnyNumber } from "../util/supportive";
 import AbstractStorableModel from "./AbstractStorableModel";
+import GetError from "./GetError";
 
 const PATH = "public/main/common/orm/AHoldsNoReferenceToB.js";
 
@@ -26,7 +24,13 @@ abstract class AHoldsNoReferenceToB<A extends AbstractStorableModel<A>, B extend
 
     async relationalGet(relative: A): Promise<B | never>
     {
-        return (await this.queryOfRelativeB().eq(relative.asFk(), relative.id).execute(1)).first();
+        try
+        {
+            return new this.relativeB((await this.queryOfRelativeB().eq(relative.asFk(), relative.id).limit(1).execute()).first());
+        } catch (err)
+        {
+            throw new GetError('A relative for the given model doesnt exist.', PATH, 'relationalGet', relative.id, relative.tableName, relative.storageDriver);
+        }
     }
 
     async relationalDestroy(relatives: AnyNumber<A>): Promise<void>
@@ -56,7 +60,10 @@ abstract class AHoldsNoReferenceToB<A extends AbstractStorableModel<A>, B extend
         let query = this.queryOfRelativeB();
         query = query.hasSome(AbstractStorableModel.asFk(this.relativeA), relativesList.toPks());
 
-        const result = await query.execute();
+        const result = new QueryResult<B>();
+
+        (await query.execute()).foreach(item => result.add(new this.relativeB(item)));
+
         return result;
     }
 }

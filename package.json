@@ -1,0 +1,29 @@
+{
+  "name": "vision-fenster",
+  "version": "1.0.0",
+  "description": "Online-Shop Vision-Fenster",
+  "main": ".eslintrc.js",
+  "dependencies": {
+    "@typescript-eslint/experimental-utils": "^4.7.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.7.0",
+    "@typescript-eslint/parser": "^4.7.0",
+    "eslint": "^7.13.0",
+    "typescript": "^4.0.5"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nmosinski/vision-fenster.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nmosinski/vision-fenster/issues"
+  },
+  "homepage": "https://github.com/nmosinski/vision-fenster#readme"
+}

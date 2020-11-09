@@ -55,7 +55,7 @@ class List<T> implements IComparable
 	 * @param {List<T>} list - The other list.
 	 * @return {List<T>} A new List containing all items from both lists.
 	 */
-	OR(list: List<T>): List<T>
+	WITH(list: List<T>): List<T>
 	{
 		if (!(list instanceof List))
 			throw new VariableTypeError(PATH, "List.AND()", list, "List");
@@ -67,7 +67,13 @@ class List<T> implements IComparable
 			if (!l.has(el))
 				l.add(el);
 		});
+
 		return l;
+	}
+
+	WITHOUT(list: List<T>): List<T>
+	{
+		return this.filter(el => list.hasNot(el));
 	}
 
 	/**
@@ -128,14 +134,14 @@ class List<T> implements IComparable
 	/**
 	 * Iterate through all elements of this list and calls the mapping function which returns the mapped element.
 	 * @param {Function} f - The mapping function to be called by each element of this list.
-	 * @returns {List<T>} A list containing the mapped elements.
+	 * @returns {List<U>} A list containing the mapped elements.
 	 */
-	map(f: (el: T, idx?: number) => T): List<T>
+	map<U>(f: (el: T, idx?: number) => U): List<U>
 	{
 		if (!JsTypes.isFunction(f))
 			throw new VariableTypeError(PATH, "List.foreach(f)", f, "function");
 
-		const mappedElements = new List<T>();
+		const mappedElements = new List<U>();
 		for (let idx = 0; idx < this.length; idx++)
 			mappedElements.add(f(this.get(idx), idx));
 
@@ -164,30 +170,17 @@ class List<T> implements IComparable
 	}
 
 	/**
-	 * Reduce the elements of the list to the properties passed to the list.
-	 * @param {any} propertyNames The names of the properties the elements in the list will be reduced to.
-	 * @returns {List<any>} A new list containig the reduced elements. If multiple property names were given, will return objects containing those properties.
+	 * Pluck the given property from all elements of the list and return a new list containing only the given property.
+	 * @param {any} propertyName The name of the property the elements in the list will be reduced to.
+	 * @returns {List<any>} A new list containig the reduced element.
 	 */
-	reduce(propertyNames: AnyNumber<string>): List<any>
+	pluck(propertyName: string): List<any>
 	{
-		const propertyNamesList = new List<string>(propertyNames);
-		const reduced = new List<any>();
-		if (propertyNamesList.length === 1)
-			this.foreach((t) => { reduced.add(t[propertyNamesList.first()]); });
-		else
-			this.foreach((t) =>
-			{
-				const tmp = {};
+		const plucked = new List<any>();
 
-				propertyNamesList.foreach(propertyName =>
-				{
-					tmp[propertyName] = t[propertyName];
+		this.foreach((t) => plucked.add(t[propertyName]));
 
-				});
-				reduced.add(tmp);
-			});
-
-		return reduced;
+		return plucked;
 	}
 
 	/**

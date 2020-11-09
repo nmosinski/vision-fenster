@@ -8,6 +8,7 @@ import List from '../util/collections/list/List';
 import JsTypes from '../util/jsTypes/JsTypes';
 import InvalidOperationError from '../util/error/InvalidOperationError';
 import type { AnyNumber } from "../util/supportive";
+import VariableValueError from '../util/error/VariableValueError.js';
 
 /**
  * @todo Add undo operations for save etc. Important in case a save is not possible but uve updated already some references.
@@ -29,14 +30,20 @@ abstract class AbstractModel<T extends AbstractModel<T>>
      */
     constructor (data?: object)
     {
-        this.properties = new Properties();
+        this.boot(data);
+    }
 
+    protected boot(data?: object): void
+    {
+        this.properties = new Properties();
         this.properties.
             string("id");
 
         this.addProperties();
+
         if (data)
             this.fill(data);
+
         this.init(data);
     }
 
@@ -96,7 +103,7 @@ abstract class AbstractModel<T extends AbstractModel<T>>
     {
         let valid = true;
         const propertyNamesToCheckList = new List<string>(propertyNamesToCheck);
-        const toCheck = (propertyNamesToCheckList.isEmpty()) ? this._properties : this._properties.filter(name => propertyNamesToCheckList.has(name));
+        const toCheck = (propertyNamesToCheckList.isEmpty()) ? this.properties : this.properties.filter(name => propertyNamesToCheckList.has(name));
         toCheck.foreach((propertyName, property) =>
         {
             if (!property.valid(this[propertyName]))
@@ -106,31 +113,36 @@ abstract class AbstractModel<T extends AbstractModel<T>>
     }
 
     /**
-     * Return an object holding all properties defined for this model.
+     * Return an object holding the properties given and defined for this model.
+     * @param {AnyNumber<string>} propertyNamesToConsider The property names to be considered. If empty, all properties of the given model will be considered.
      * @returns {object} The object holding the properties defined for this model.
      */
-    strip(propertyNamesToConsider?: AnyNumber<string>): object
+    strip(propertyNamesToConsider?: AnyNumber<string>): { [x: string]: any; id?: string; }
     {
-        return AbstractModel.strip(this, propertyNamesToConsider);
+        const propertyNamesToConsiderList = new List<string>(propertyNamesToConsider);
+        return AbstractModel.strip(this, (propertyNamesToConsiderList.isEmpty()) ? this.properties.keys() : propertyNamesToConsiderList);
     }
 
     /**
-     * @todo Remove this? Moved to WixDatabase?
-     * Return an object holding all properties defined for the given model.
-     * @param {AbstractModel<any>} model The model to be translated.
-     * @returns {object} The object holding the properties defined for the given model.
+     * Return an object holding only properties of the property names passed to this function.
+     * @param {object} object The object containing the properties.
+     * @param {AnyNumber<string>} propertyNamesToConsider The property names to be considered.
+     * @returns {object} An object holding the given properties.
      */
-    static strip<U extends AbstractModel<U>>(model: AbstractModel<U>, propertyNamesToConsider?: AnyNumber<string>): object
+    static strip(object: object, propertyNamesToConsider: AnyNumber<string>): { [x: string]: any; id?: string; }
     {
-        const item = {};
         const propertyNamesToConsiderList = new List<string>(propertyNamesToConsider);
-        const properties = (propertyNamesToConsiderList.isEmpty()) ? model.properties : model.properties.filter((name) => propertyNamesToConsiderList.has(name));
+        if (propertyNamesToConsiderList.isEmpty())
+            throw new VariableValueError(PATH, 'static strip', propertyNamesToConsider, 'Not empty');
 
-        properties.foreach((propertyName) =>
+        const item: { [x: string]: any; id?: string; } = {};
+
+        propertyNamesToConsiderList.foreach((propertyName) =>
         {
-            if (model[propertyName] !== undefined)
-                item[propertyName] = model[propertyName];
+            if (object[propertyName] !== undefined)
+                item[propertyName] = object[propertyName];
         });
+
         return item;
     }
 
@@ -282,13 +294,20 @@ export class StringProperty extends Property
 
     valid(toCheck: any): boolean
     {
+        if (JsTypes.isUnspecified(toCheck))
+        {
+            if (this.attributes.has('nullable'))
+                return true;
+            return false;
+        }
+
         if (!super.valid(toCheck))
             return false;
 
-        if (typeof (toCheck) !== "string")
+        if (JsTypes.isEmpty(toCheck) && this.attributes.hasNot("emptiable"))
             return false;
 
-        if (JsTypes.isEmpty(toCheck) && this.attributes.hasNot("emptiable"))
+        if (typeof (toCheck) !== "string")
             return false;
 
         return true;
@@ -319,6 +338,13 @@ export class NumberProperty extends Property
     {
         if (!super.valid(toCheck))
             return false;
+
+        if (JsTypes.isUnspecified(toCheck))
+        {
+            if (this.attributes.has('nullable'))
+                return true;
+            return false;
+        }
 
         if (typeof (toCheck) !== "number")
             return false;

@@ -5,6 +5,7 @@ import { runAllTests as aHoldsNoReferenceToBTests } from "./public/main/common/o
 import { runAllTests as abstractDynamicStorableModelTests } from "./public/main/common/orm/AbstractDynamicStorableModel.test";
 import { runAllTests as manyToManyTests } from "./public/main/common/orm/ManyToMany.test";
 import { runAllTests as productConfigurationServiceTests } from "./public/main/feature/product/ProductConfigurationService.test";
+import { runAllTests as WixDatabaseTests } from "./public/main/extern/wix/common/persistance/WixDatabase.test";
 import KVMap from "../main/common/util/collections/map/KVMap";
 import List from "../main/common/util/collections/list/List";
 
@@ -13,6 +14,7 @@ const tests = new KVMap<string, () => Promise<void>>();
 function init()
 {
     tests.add("list", listTests);
+    tests.add("wixDatabase", WixDatabaseTests);
     tests.add("abstractModel", abstractModelTests);
     tests.add("aHoldsReferenceToB", aHoldsReferenceToBTests);
     tests.add("aHoldsNoReferenceToB", aHoldsNoReferenceToBTests);

@@ -1,8 +1,7 @@
-import AbstractModel from "./AbstractModel";
 import QueryResult from "./QueryResult";
-import WixDatabase, { Query } from "./WixDatabase";
 import { AnyNumber } from "../util/supportive";
 import AbstractStorableModel from "./AbstractStorableModel";
+import IQueryDriver from "../persistance/model/IQueryDriver";
 
 
 abstract class Relation<A extends AbstractStorableModel<A>, B extends AbstractStorableModel<B>>
@@ -23,7 +22,7 @@ abstract class Relation<A extends AbstractStorableModel<A>, B extends AbstractSt
      * @param {AnyNumber<B>} bs The Bs that will be assigned to As.
      * @param {AnyNumber<A>} as The As the Bs will be assigned to.
      */
-    abstract async assign(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void>;
+    async abstract assign(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void>;
 
     /**
      * Link Bs to relatives of type A and reverse.
@@ -57,9 +56,10 @@ abstract class Relation<A extends AbstractStorableModel<A>, B extends AbstractSt
      * @param {new()=> U, U extends AbstractStorableModel<U>} Model The model of the query.
      * @returns {Query<U>} A query. 
      */
-    customQuery<U extends AbstractStorableModel<U>>(Model: new () => U): Query<U>
+    customQuery<U extends AbstractStorableModel<U>>(Model: new () => U): IQueryDriver
     {
-        return WixDatabase.query(Model);
+        const model = new Model();
+        return model.storageDriver.query(model.tableName);
     }
 
     /**
@@ -77,32 +77,34 @@ abstract class Relation<A extends AbstractStorableModel<A>, B extends AbstractSt
         return this.inverse().bAsPropertyNameForA();
     }
 
-    queryOfRelativeA(): Query<A>
+    queryOfRelativeA(): IQueryDriver
     {
-        return WixDatabase.query(this.relativeA);
+        const model = new this.relativeA();
+        return model.storage.query(model.tableName);
     }
 
-    queryOfRelativeB(): Query<B>
+    queryOfRelativeB(): IQueryDriver
     {
-        return WixDatabase.query(this.relativeB);
+        const model = new this.relativeB();
+        return model.storage.query(model.tableName);
     }
 
-    set relativeA(relative: new () => A)
+    set relativeA(relative: new (data?: object) => A)
     {
         this._relativeA = relative;
     }
 
-    get relativeA(): new () => A
+    get relativeA(): new (data?: object) => A
     {
         return this._relativeA;
     }
 
-    set relativeB(relative: new () => B)
+    set relativeB(relative: new (data?: object) => B)
     {
         this._relativeB = relative;
     }
 
-    get relativeB(): new () => B
+    get relativeB(): new (data?: object) => B
     {
         return this._relativeB;
     }

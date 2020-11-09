@@ -1,5 +1,5 @@
+import IStorageDriver from "../persistance/model/IStorageDriver";
 import CrudOperationError from "./CrudOperationError";
-import AbstractStorableModel from "./AbstractStorableModel";
 
 /**
  * @class
@@ -7,40 +7,18 @@ import AbstractStorableModel from "./AbstractStorableModel";
  */
 class DestroyError extends CrudOperationError
 {
-    private _model: AbstractStorableModel<any>;
-
     /**
-     * Create a DestroyError.
+     * Create a CrudOperationError.
+     * @param {string} description The description if the error.
      * @param {string} path The path to the file where the problem occurred.
      * @param {string} location A more specific location hint in the file where the problem occurred.
-     * @param {string} model The model that couldn't be destroyed.
+     * @param {string} itemId The id of the item that caused the error.
+     * @param {string} tableName The name of the table.
+     * @param {IStorageDriver} storageDriver the storage driver that has been used.
      */
-    constructor (path: string, location: string, model: AbstractStorableModel<any>)
+    constructor (description: string = "An error occurred when trying to destroy a model.", path: string, location: string, itemId: string, tableName: string, storageDriver: IStorageDriver)
     {
-        super("An error occurred when trying to destroy a model.", path, location);
-        this.model = model;
-    }
-
-    /**
-     * @override
-     * @inheritdoc
-     */
-    toString(): string
-    {
-        let ret = super.toString();
-        ret += "\nModel: " + this.model.tableName;
-        ret += "\n" + JSON.stringify(this.model);
-        return ret;
-    }
-
-    set model(model: AbstractStorableModel<any>)
-    {
-        this._model = model;
-    }
-
-    get model(): AbstractStorableModel<any>
-    {
-        return this._model;
+        super(description, path, location, itemId, tableName, storageDriver);
     }
 }
 

@@ -6,6 +6,7 @@
         "ignoreDefinitionFiles": true,
         "suppressWhileTypeErrorsPresent": false,
         "no-console": false,
+        "no-return-await": true,
         "no-trailing-whitespace": false,
         "no-string-literal": false
     }

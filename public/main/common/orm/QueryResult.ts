@@ -1,6 +1,11 @@
 import List from "../util/collections/list/List";
+import InvalidOperationError from "../util/error/InvalidOperationError";
 import { AnyNumber } from "../util/supportive";
 import AbstractStorableModel from "./AbstractStorableModel";
+import Storage from "../persistance/model/Storage";
+import { Properties } from "./AbstractModel";
+
+const PATH = 'public/main/common/orm/QueryResult'
 
 class QueryResult<T extends AbstractStorableModel<T>> extends List<T>
 {
@@ -15,107 +20,104 @@ class QueryResult<T extends AbstractStorableModel<T>> extends List<T>
      */
     toPks(): List<string>
     {
-        return this.reduce('id');
+        return this.pluck('id');
     }
 
     /**
      * Create this models.
      */
-    async create()
+    async create(): Promise<List<string>>
     {
-        await AbstractStorableModel.create(this);
+        return await AbstractStorableModel.create(this);
     }
 
     /**
      * Save this models.
      */
-    async save()
+    async save(): Promise<List<string>>
     {
-        await AbstractStorableModel.save(this);
+        return await AbstractStorableModel.save(this);
     }
 
     /**
      * Update this models.
      */
-    async update()
+    async update(): Promise<void>
     {
-        await AbstractStorableModel.update(this);
+        return await AbstractStorableModel.update(this);
     }
 
     /**
      * Destroy this models.
      */
-    async destroy()
+    async destroy(): Promise<void>
     {
-        await AbstractStorableModel.destroy(this);
+        return await AbstractStorableModel.destroy(this);
     }
 
     /**
      * Assign this models to the given models.
      */
-    async assign(models: AnyNumber<AbstractStorableModel<any>>)
+    async assign(models: AnyNumber<AbstractStorableModel<any>>): Promise<void>
     {
-        await AbstractStorableModel.assign(models, this);
+        return await AbstractStorableModel.assign(models, this);
     }
 
     /**
      * Link this models to the given models.
      */
-    async link(models: AnyNumber<AbstractStorableModel<any>>)
+    async link(models: AnyNumber<AbstractStorableModel<any>>): Promise<void>
     {
-        await AbstractStorableModel.link(models, this);
+        return await AbstractStorableModel.link(models, this);
     }
 
-    async assignAndLink(models: AnyNumber<AbstractStorableModel<any>>)
+    async assignAndLink(relatives: AnyNumber<AbstractStorableModel<any>>): Promise<void>
     {
-        await this.assign(models);
-        await this.link(models);
+        return await AbstractStorableModel.assignAndLink(this, relatives);
     }
 
     /**
      * Loads related models.
-     * If passed only one model, returns a QueryResult containing relatives of all items of this List allowing a chaining load operation.
-     * If passed many models, returns this.
-     * @param {...AbstractStorableModel<any>} models The models to be loaded.
-     * @return {QueryResult<any>} this or a QueryResult containing relatives of all items of this List.
+     * @param {...AbstractStorableModel<any>} Relatives The models to be loaded.
      */
-    async load(models: AnyNumber<new () => AbstractStorableModel<any>>): Promise<QueryResult<AbstractStorableModel<any>>>
+    async load(Relatives: AnyNumber<new () => AbstractStorableModel<any>>): Promise<void>
     {
-        if (this.isEmpty())
-            return new QueryResult();
-
-        const modelsList = new List<new () => AbstractStorableModel<any>>(models);
-        let result: QueryResult<AbstractStorableModel<any>> = this;
-
-        await modelsList.foreachAsync(async (Model: new () => AbstractStorableModel<any>) =>
-        {
-            result = await this.first().getRelation(Model).inverse().relationalFind(this);
-            await result.link(this);
-        });
-
-        if (modelsList.length === 1)
-            return result;
-        return this;
+        return await AbstractStorableModel.load(this, Relatives);
     }
 
     /**
      * Load models in chain mode.
-     * @param {AnyNumber<new()=>AbstractStorableModel<any>>} models The chain containing all models to be loaded in the corresponding order.
-     * @returns {this} This. 
+     * @param {AnyNumber<new()=>AbstractStorableModel<any>>} Relatives The chain containing all models to be loaded in the corresponding order.
      */
-    async loadChain(models: AnyNumber<new () => AbstractStorableModel<any>>): Promise<this>
+    async loadChain(Relatives: AnyNumber<new () => AbstractStorableModel<any>>): Promise<void>
+    {
+        return await AbstractStorableModel.loadChain(this, Relatives);
+    }
+
+    strip(propertyNamesToConsider?: List<string>): List<object>
+    {
+        return this.map(model => model.strip(propertyNamesToConsider));
+    }
+
+    get tableName(): string
     {
         if (this.isEmpty())
-            return this;
+            throw new InvalidOperationError(PATH, 'get tableName', 'The list is empty. Therefore no table name can be returned as the first element is missing.');
+        return this.first().tableName;
+    }
 
-        const modelsList = new List<new () => AbstractStorableModel<any>>(models);
-        let res: QueryResult<AbstractStorableModel<any>> = this;
+    get storage(): Storage
+    {
+        if (this.isEmpty())
+            throw new InvalidOperationError(PATH, 'get storage', 'The list is empty. Therefore no storage can be returned as the first element is missing.');
+        return this.first().storage;
+    }
 
-        await modelsList.foreachAsync(async (Model, idx) =>
-        {
-            res = await res.load(Model);
-        });
-        return this;
+    get properties(): Properties
+    {
+        if (this.isEmpty())
+            throw new InvalidOperationError(PATH, 'get properties', 'The list is empty. Therefore no properties can be returned as the first element is missing.');
+        return this.first().properties;
     }
 }
 

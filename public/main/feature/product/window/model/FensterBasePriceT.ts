@@ -1,7 +1,6 @@
 import AbstractModel from "../../../../common/orm/AbstractModel";
 import AbstractStorableModel from "../../../../common/orm/AbstractStorableModel";
 import QueryResult from "../../../../common/orm/QueryResult";
-import { Query } from "../../../../common/orm/WixDatabase";
 import List from "../../../../common/util/collections/list/List";
 import { AnyNumber } from "../../../../common/util/supportive";
 import ProductOption from "../../model/ProductOption";
