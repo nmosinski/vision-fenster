@@ -40,17 +40,6 @@ class ManyToMany<A extends AbstractStorableModel<A>, B extends AbstractStorableM
             return;
         const roles = await this.getRoles(as);
 
-        asList.foreach((a: A) =>
-        {
-            const related = new QueryResult<B>();
-            bsList.foreach((b: B) =>
-            {
-                if (this.areRelated(a, b, roles))
-                    related.add(b);
-            });
-            a[this.bAsPropertyNameForA()] = related;
-        });
-
         bsList.foreach((b: B) =>
         {
             const related = new QueryResult<A>();

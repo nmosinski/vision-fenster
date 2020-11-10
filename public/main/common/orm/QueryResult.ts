@@ -56,21 +56,24 @@ class QueryResult<T extends AbstractStorableModel<T>> extends List<T>
     }
 
     /**
-     * Assign this models to the given models.
+     * Assign the given relatives to this models.
      */
-    async assign(models: AnyNumber<AbstractStorableModel<any>>): Promise<void>
+    async assign(relatives: AnyNumber<AbstractStorableModel<any>>): Promise<void>
     {
-        return await AbstractStorableModel.assign(models, this);
+        return await AbstractStorableModel.assign(this, relatives);
     }
 
     /**
-     * Link this models to the given models.
+     * Link the given relatives to this models.
      */
-    async link(models: AnyNumber<AbstractStorableModel<any>>): Promise<void>
+    async link(relatives: AnyNumber<AbstractStorableModel<any>>): Promise<void>
     {
-        return await AbstractStorableModel.link(models, this);
+        return await AbstractStorableModel.link(this, relatives);
     }
 
+    /**
+     * Assign and link the given relatives to this models.
+     */
     async assignAndLink(relatives: AnyNumber<AbstractStorableModel<any>>): Promise<void>
     {
         return await AbstractStorableModel.assignAndLink(this, relatives);
@@ -94,11 +97,20 @@ class QueryResult<T extends AbstractStorableModel<T>> extends List<T>
         return await AbstractStorableModel.loadChain(this, Relatives);
     }
 
+    /**
+     * Strip this models.
+     * @param {List<string>} [propertyNamesToConsider] The properties to be considered.
+     * @returns {List<object>} this models stripped.
+     */
     strip(propertyNamesToConsider?: List<string>): List<object>
     {
         return this.map(model => model.strip(propertyNamesToConsider));
     }
 
+    /**
+     * Get the table name of this models.
+     * @returns {string} the table name.
+     */
     get tableName(): string
     {
         if (this.isEmpty())
@@ -106,6 +118,10 @@ class QueryResult<T extends AbstractStorableModel<T>> extends List<T>
         return this.first().tableName;
     }
 
+    /**
+     * Get the storage of this models.
+     * @returns {Storage} the storage.
+     */
     get storage(): Storage
     {
         if (this.isEmpty())
@@ -113,6 +129,10 @@ class QueryResult<T extends AbstractStorableModel<T>> extends List<T>
         return this.first().storage;
     }
 
+    /**
+     * Get the properties of this models.
+     * @returns {Properties} the properties.
+     */
     get properties(): Properties
     {
         if (this.isEmpty())

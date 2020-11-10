@@ -18,16 +18,16 @@ abstract class Relation<A extends AbstractStorableModel<A>, B extends AbstractSt
     abstract inverse(): Relation<B, A>;
 
     /**
-     * Assign Bs to relatives of type A and reverse if they are linked. 
+     * Assign Bs to relatives of type A and reverse. 
      * @param {AnyNumber<B>} bs The Bs that will be assigned to As.
      * @param {AnyNumber<A>} as The As the Bs will be assigned to.
      */
     async abstract assign(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void>;
 
     /**
-     * Link Bs to relatives of type A and reverse.
-     * @param {AnyNumber<B>} bs The Bs that will be linked to As.
-     * @param {AnyNumber<A>} as The As the Bs will be linked to.
+     * Link As to relatives of type B.
+     * @param {AnyNumber<B>} bs The Bs that the As will be linked to.
+     * @param {AnyNumber<A>} as The As that will be linked to the Bs.
      */
     abstract async link(bs: AnyNumber<B>, as: AnyNumber<A>): Promise<void>;
 

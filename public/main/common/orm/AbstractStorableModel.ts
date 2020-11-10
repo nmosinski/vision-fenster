@@ -270,9 +270,9 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
     }
 
     /**
-     * Link the given model (this by default) to the given relative it has been assigned to the relatives.
-     * @param {U extends AbstractStorableModel<U>, AnyNumber<U>} relatives The relatives the given model will be linked to.
-     * @returns {this} This.
+     * Link the given relatives to this model if it has been assigned to the relatives.
+     * @param {U extends AbstractStorableModel<U>, AnyNumber<U>} relatives The relatives that will be linked to this model.
+     * @returns {Promise<this>} This.
      */
     async link<U extends AbstractStorableModel<U>>(relatives: AnyNumber<U>): Promise<this>
     {
@@ -281,9 +281,9 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
     }
 
     /**
-     * Link the given models to the given relatives if they have been assigned to each other.
-     * @param {T extends AbstractStorableModel<T>, AnyNumber<T>} models The models to be linked.
-     * @param {U extends AbstractStorableModel<U>, AnyNumber<U>} relatives The relatives the given model will be linked to.
+     * Link the given relatives to the given models if they have been assigned to each other (models will hold relatives).
+     * @param {T extends AbstractStorableModel<T>, AnyNumber<T>} models The models.
+     * @param {U extends AbstractStorableModel<U>, AnyNumber<U>} relatives The relatives to be linked to the models.
      */
     static async link<P extends AbstractStorableModel<P>, U extends AbstractStorableModel<U>>(models: AnyNumber<P>, relatives: AnyNumber<U>): Promise<void>
     {
@@ -294,6 +294,11 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
         await modelsList.first().relations.get(relativesList.first().Constructor).link(models, relatives);
     }
 
+    /**
+     * Assign and link the given relatives to this model.
+     * @param {AnyNumber<U>} relatives The relatives to be linked to this model.
+     * @returns {Promise<this>} this.
+     */
     async assignAndLink<U extends AbstractStorableModel<U>>(relatives: AnyNumber<U>): Promise<this>
     {
         await this.assign(relatives);
@@ -301,6 +306,12 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
         return this;
     }
 
+    /**
+     * Assign and link the given relatives to the given models.
+     * @param {AnyNumber<U>} models The models.
+     * @param {AnyNumber<U>} relatives The relatives to be linked to this model.
+     * @returns {Promise<this>} this.
+     */
     static async assignAndLink<U extends AbstractStorableModel<U>, P extends AbstractStorableModel<P>>(models: AnyNumber<U>, relatives: AnyNumber<P>): Promise<void>
     {
         await AbstractStorableModel.assign(models, relatives);
@@ -322,7 +333,7 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
 
     static async load<U extends AbstractStorableModel<U>, P extends AbstractStorableModel<P>>(models: AnyNumber<U>, Relatives: AnyNumber<new () => P>): Promise<void>
     {
-        const modelsList = new List<U>(models);
+        const modelsList = new QueryResult<U>(models);
         const RelativesList = new List<new () => P>(Relatives);
 
         if (modelsList.isEmpty() || RelativesList.isEmpty())
@@ -331,7 +342,7 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
         await RelativesList.foreachAsync(async (relative) =>
         {
             const relatives = await modelsList.first().relations.get(relative).inverse().relationalFind(modelsList);
-            await relatives.link(modelsList);
+            await modelsList.link(relatives);
         });
         return;
     }

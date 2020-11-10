@@ -16,17 +16,6 @@ class OneToZeroOrOne<A extends AbstractStorableModel<A>, B extends AbstractStora
         const asList: List<A> = (as instanceof List) ? as : new List<A>([as]);
         const bsList: List<B> = (bs instanceof List) ? bs : new List<B>([bs]);
 
-        asList.foreach((a: A) =>
-        {
-            const related = new QueryResult<B>();
-            bsList.foreach((b: B) =>
-            {
-                if (this.areRelated(a, b))
-                    related.add(b);
-            });
-            a[this.bAsPropertyNameForA()] = related.firstOrNull();
-        });
-
         bsList.foreach((b: B) =>
         {
             const related = new QueryResult<A>();
