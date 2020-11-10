@@ -67,15 +67,12 @@ function repeaterConfigurationDetailsOnItemReadyFunction($item: any, productOpti
 
 function updateAllSelectedItemViews()
 {
-	console.log('before foreach');
 	product.productOptions.foreach(option => updateSelectedItemView(option.productOptionType.title));
-	console.log('after foreach');
 
 }
 
 function updateSelectedItemView(productOptionTypeTitle: string): void
 {
-	console.log('before repeater foreach');
 	repeaterByProductOptionTypeTitle(productOptionTypeTitle).forEachItem(($item: any, productOption: ProductOption) =>
 	{
 		if (product.getOption(productOptionTypeTitle).id === productOption.id)
@@ -83,8 +80,6 @@ function updateSelectedItemView(productOptionTypeTitle: string): void
 		else
 			$item("#vectorImage" + productOptionTypeTitleAsGuiElementName(productOptionTypeTitle)).hide();
 	});
-	console.log('after repeater foreach');
-
 }
 
 function getDefaultOnItemReadyRepeaterFunction(optionTypeTitle: string): (item: any, productOption: ProductOption) => void
