@@ -11,23 +11,21 @@ import { index } from "backend/main/feature/product/controllers/ProductControlle
 import Tag from "../../public/main/feature/product/model/Tag";
 import { FensterProductOptionTypes } from "../../public/main/feature/product/productOptionTypes";
 import AbstractStorableModel from "../../public/main/common/orm/AbstractStorableModel";
+import AbstractModel from "../../public/main/common/orm/AbstractModel";
+import QueryResult from "../../public/main/common/orm/QueryResult";
 
 let productModel: ProductModel;
 let product: Product;
 let productConfiguationService: AbstractProductConfigurationService;
-let allProductOptions: List<ProductOption>;
+let allProductOptions: QueryResult<ProductOption>;
 
 // @ts-ignore
 $w.onReady(async function ()
 {
 	// retrieve data
 	productModel = (await AbstractStorableModel.find(ProductModel)).first();
-	await productModel.loadChain([ProductOptionType, ProductOption, Tag]);
-
-
-	// merge all product options
-	allProductOptions = new List<ProductOption>();
-	productModel.productOptionTypes.foreach(types => allProductOptions = allProductOptions.WITH(types.productOptions));
+	allProductOptions = await productModel.productOptionTypesQ().productOptionsQ().find();
+	await allProductOptions.load([ProductOptionType, Tag]);
 
 	product = new Product();
 
