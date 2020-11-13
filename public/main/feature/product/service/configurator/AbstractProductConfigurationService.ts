@@ -5,7 +5,7 @@ import ProductOption from "../../model/ProductOption";
 import ProductOptionDefinition from "../../model/ProductOptionDefinition";
 import Combination from "../../model/Combination";
 import CombinationRequirement from "../../model/CombinationRequirement";
-import Product from "../../model/Product";
+import ProductConfiguration from "../../model/ProductConfiguration";
 import InvalidOperationError from "../../../../common/util/error/InvalidOperationError";
 import { FensterTags } from "../../tags";
 
@@ -25,28 +25,28 @@ abstract class AbstractProductConfigurationService
      * @param {ProductOption} productOption The ProductOption that will be set. 
      * @param {Product} product The product for which the option will be set.
      */
-    abstract beforeSetOption(productOption: ProductOption, product: Product): void;
+    abstract beforeSetOption(productOption: ProductOption, product: ProductConfiguration): void;
 
     /**
      * A hook function which allows to perform operations on the product after setting an option.
      * @param {ProductOption} productOption The ProductOption that will be set. 
      * @param {Product} product The product for which the option will be set.
      */
-    abstract afterSetOption(productOption: ProductOption, product: Product): void;
+    abstract afterSetOption(productOption: ProductOption, product: ProductConfiguration): void;
 
     /**
      * Calculates the price of the given product.
      * @param {Product} product The product for which the price will be calculated.
      * @returns {Promise<number>} The calculated price. 
      */
-    abstract async calculatePrice(product: Product): Promise<number>;
+    abstract async calculatePrice(product: ProductConfiguration): Promise<number>;
 
     /**
      * Calculates and sets the new price.
      * @param {Product} product The product for which the price will be calculated.
      * @returns {Promise<number>} The calculated price. 
      */
-    async calculateAndSetPrice(product: Product): Promise<number>
+    async calculateAndSetPrice(product: ProductConfiguration): Promise<number>
     {
         product.price = await this.calculatePrice(product);
         return product.price;
@@ -57,7 +57,7 @@ abstract class AbstractProductConfigurationService
      * @param productOption The product option to be set.
      * @returns {boolean} True if the option has been set or false, if the option couldn't be set due to complications with higher ranked options.
      */
-    setProductOption(productOption: ProductOption, product: Product): boolean
+    setProductOption(productOption: ProductOption, product: ProductConfiguration): boolean
     {
         if (this.productSatisfiesOption(productOption, product))
         {
@@ -75,7 +75,7 @@ abstract class AbstractProductConfigurationService
      * @param {string} [productOptionTypeTile] The type to be filtered for.
      * @returns {List<ProductOption>} A list containing all valid options considering the request.
      */
-    filterValidOptions(allProductOptions: List<ProductOption>, product: Product, productOptionTypeTitle?: string): List<ProductOption>
+    filterValidOptions(allProductOptions: List<ProductOption>, product: ProductConfiguration, productOptionTypeTitle?: string): List<ProductOption>
     {
         let relevantProductOptions = allProductOptions;
         const filteredProductOptions = new List<ProductOption>();
@@ -99,7 +99,7 @@ abstract class AbstractProductConfigurationService
      * @param {Product} product The product to be configurated.
      * @returns {boolean} True if a valid configuration was found, else false.
      */
-    findValidConfiguration(startOptionTypeTitle: string, optionCandidates: KVMap<string, List<ProductOption>>, product: Product): boolean
+    findValidConfiguration(startOptionTypeTitle: string, optionCandidates: KVMap<string, List<ProductOption>>, product: ProductConfiguration): boolean
     {
         const oldOption: ProductOption | undefined = (product.hasOption(startOptionTypeTitle)) ? product.getOption(startOptionTypeTitle) : undefined;
         const optionCandidatesList: List<ProductOption> = optionCandidates.get(startOptionTypeTitle);
@@ -155,7 +155,7 @@ abstract class AbstractProductConfigurationService
      * @param {bolean} [fillNotRequired=false] The option that defines if the products not required options will be filled as well.
      * @returns {boolean} True if the product could be filled with all required product options, else false.
      */
-    fillMissingProductOptionsWithDefault(allProductOptions: List<ProductOption>, product: Product, fillNotRequired: boolean = false): boolean
+    fillMissingProductOptionsWithDefault(allProductOptions: List<ProductOption>, product: ProductConfiguration, fillNotRequired: boolean = false): boolean
     {
         const ret = true;
         const relevantOptionDefinitions = (fillNotRequired) ? this.productDefinition.productOptionDefinitions : this.productDefinition.getRequiredProductOptionDefinitions();
@@ -201,7 +201,7 @@ abstract class AbstractProductConfigurationService
      * @param {ProductOption} productOption The product option to be set.
      * @returns {boolean} True if no complications appeared, else false.
      */
-    setOptionOrRejectOnComplications(productOption: ProductOption, product: Product): boolean
+    setOptionOrRejectOnComplications(productOption: ProductOption, product: ProductConfiguration): boolean
     {
         const oldOption = product.getOption(productOption.productOptionType.title);
         if (!this.setProductOption(productOption, product))
@@ -222,7 +222,7 @@ abstract class AbstractProductConfigurationService
      * @param {ProductOption} productOption The product option to be set.
      * @returns {boolean} True if no complications appeared, else false.
      */
-    setOptionAndRemoveOtherOptionsOnComplications(productOption: ProductOption, product: Product): boolean
+    setOptionAndRemoveOtherOptionsOnComplications(productOption: ProductOption, product: ProductConfiguration): boolean
     {
         if (!this.setProductOption(productOption, product))
             return false;
@@ -246,21 +246,21 @@ abstract class AbstractProductConfigurationService
      * @param {boolean} fillNotRequired Defines of either to fill optional options with default or not.
      * @returns {boolean} True if the configured product is valid, else false.
      */
-    setOptionAndDefaultOnComplications(productOption: ProductOption, product: Product, productOptions: List<ProductOption>, fillNotRequired: boolean = false): boolean
+    setOptionAndDefaultOnComplications(productOption: ProductOption, product: ProductConfiguration, productOptions: List<ProductOption>, fillNotRequired: boolean = false): boolean
     {
         this.setOptionAndRemoveOtherOptionsOnComplications(productOption, product);
         this.fillMissingProductOptionsWithDefault(productOptions, product, fillNotRequired);
         return this.productIsValid(product);
     }
 
-    productIsValid(product: Product): boolean
+    productIsValid(product: ProductConfiguration): boolean
     {
         if (this.nextUnsatisfiedOption(product))
             return false;
         return true;
     }
 
-    productSatisfiesOption(productOption: ProductOption, product: Product)
+    productSatisfiesOption(productOption: ProductOption, product: ProductConfiguration)
     {
         let productOptionDefinition: ProductOptionDefinition;
         let relevantCombinations: List<Combination>;
@@ -310,7 +310,7 @@ abstract class AbstractProductConfigurationService
         return foundValidCombination;
     }
 
-    private nextUnsatisfiedOption(product: Product): ProductOption | null
+    private nextUnsatisfiedOption(product: ProductConfiguration): ProductOption | null
     {
         for (let idx = 0; idx < product.productOptions.length; idx++)
             if (!this.productSatisfiesOption(product.productOptions.get(idx), product))

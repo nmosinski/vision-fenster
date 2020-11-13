@@ -2,7 +2,7 @@ import ProductModel from "../../public/main/feature/product/model/ProductModel";
 import ProductOptionType from "../../public/main/feature/product/model/ProductOptionType";
 import ProductOption from "../../public/main/feature/product/model/ProductOption";
 import JsString from "../../public/main/common/util/jsTypes/JsString";
-import Product from "../../public/main/feature/product/model/Product";
+import ProductConfiguration from "../../public/main/feature/product/model/ProductConfiguration";
 import AbstractProductConfigurationService from "../../public/main/feature/product/service/configurator/AbstractProductConfigurationService";
 import ProductConfigurationServiceFactory from "../../public/main/feature/product/factory/ProductConfigurationServiceFactory";
 import List from "../../public/main/common/util/collections/list/List";
@@ -15,7 +15,7 @@ import AbstractModel from "../../public/main/common/orm/AbstractModel";
 import QueryResult from "../../public/main/common/orm/QueryResult";
 
 let productModel: ProductModel;
-let product: Product;
+let product: ProductConfiguration;
 let productConfiguationService: AbstractProductConfigurationService;
 let allProductOptions: QueryResult<ProductOption>;
 
@@ -27,7 +27,7 @@ $w.onReady(async function ()
 	allProductOptions = await productModel.productOptionTypesQ().productOptionsQ().find();
 	await allProductOptions.load([ProductOptionType, Tag]);
 
-	product = new Product();
+	product = new ProductConfiguration();
 
 	productConfiguationService = ProductConfigurationServiceFactory.byModel(productModel);
 	productConfiguationService.fillMissingProductOptionsWithDefault(allProductOptions, product);

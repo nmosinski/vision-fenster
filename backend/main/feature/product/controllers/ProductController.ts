@@ -1,4 +1,4 @@
-import Product from "../../../../../public/main/feature/product/model/Product";
+import ProductConfiguration from "../../../../../public/main/feature/product/model/ProductConfiguration";
 import AbstractProductConfigurationService from "../../../../../public/main/feature/product/service/configurator/AbstractProductConfigurationService";
 import ProductConfigurationServiceFactory from "../../../../../public/main/feature/product/factory/ProductConfigurationServiceFactory";
 import ProductModel from "../../../../../public/main/feature/product/model/ProductModel";
@@ -12,7 +12,8 @@ const PATH = "public/feature/product/controllers/ProductController.js";
 const PRODUCT_MODEL_ID = "70b29f09-263e-4eaf-b7f9-8bcdc411b389";
 
 
-export async function index() {
+export async function index()
+{
     let productModel = await ProductModel.get(PRODUCT_MODEL_ID, ProductModel);
     await productModel.loadChain([ProductOptionType, ProductOption, Tag]);
     /*await productModel.productOptionTypes.foreachAsync(async (el) => {
@@ -32,8 +33,9 @@ export async function index() {
  * @param {object} request The request containing the product information for the product to be created.
  * @returns {string} The id of the new created product.
  */
-async function create(request: object): Promise<string | null> {
-    let product = new Product(request);
+async function create(request: object): Promise<string | null>
+{
+    let product = new ProductConfiguration(request);
     let configurationService = ProductConfigurationServiceFactory.byModel(await product.productModelQ());
 
     if (!configurationService.productIsValid(product))
@@ -46,7 +48,8 @@ async function create(request: object): Promise<string | null> {
  * Update a product.
  * @param {object} request The request containing the product information for the product to be updated.
  */
-async function update(request: object) {
+async function update(request: object)
+{
 
 }
 
@@ -54,6 +57,7 @@ async function update(request: object) {
  * Destroy a product.
  * @param {object} request The request containing the product information to for the product to be destroyed.
  */
-async function destroy(request: object) {
+async function destroy(request: object)
+{
 
 }

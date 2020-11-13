@@ -4,9 +4,9 @@ import ProductModel from "./ProductModel";
 import QueryResult from "../../../common/orm/QueryResult";
 import AbstractStorableModel from "../../../common/orm/AbstractStorableModel";
 
-class Product extends AbstractStorableModel<Product>{
+class ProductConfiguration extends AbstractStorableModel<ProductConfiguration>{
     protected modelName: string;
-    protected Constructor: new () => Product;
+    protected Constructor: new () => ProductConfiguration;
     private _productOptions: QueryResult<ProductOption>;
     private _image: string;
     private _price: number;
@@ -14,7 +14,7 @@ class Product extends AbstractStorableModel<Product>{
 
     init(): void
     {
-        this.Constructor = Product;
+        this.Constructor = ProductConfiguration;
         this.modelName = 'Product';
         this.productOptions = new QueryResult<ProductOption>();
     }
@@ -108,4 +108,4 @@ class Product extends AbstractStorableModel<Product>{
     }
 }
 
-export default Product;
+export default ProductConfiguration;

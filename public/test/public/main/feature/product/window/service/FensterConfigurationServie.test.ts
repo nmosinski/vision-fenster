@@ -1,6 +1,6 @@
 import QueryResult from "../../../../../../../main/common/orm/QueryResult";
 import { Tests, Test, truthly, value } from "../../../../../../../main/common/test/Test";
-import Product from "../../../../../../../main/feature/product/model/Product";
+import ProductConfiguration from "../../../../../../../main/feature/product/model/ProductConfiguration";
 import ProductModel from "../../../../../../../main/feature/product/model/ProductModel";
 import ProductOption from "../../../../../../../main/feature/product/model/ProductOption";
 import ProductOptionType from "../../../../../../../main/feature/product/model/ProductOptionType";
@@ -13,7 +13,7 @@ import FensterProductConfigurationService from "../../../../../../../main/featur
 
 const PATH = "test/public/main/feature/product/FensterConfigurationService.test.js"
 
-let product: Product;
+let product: ProductConfiguration;
 let fensterProductConfigurationService: FensterProductConfigurationService;
 
 export async function runAllTests()
@@ -27,7 +27,7 @@ export async function runAllTests()
 
 async function beforeAll()
 {
-    product = new Product();
+    product = new ProductConfiguration();
     fensterProductConfigurationService = new FensterProductConfigurationService();
 
     const productModel = (await ProductModel.find(ProductModel)).first();

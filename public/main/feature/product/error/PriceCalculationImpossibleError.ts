@@ -1,5 +1,5 @@
 import AbstractCheckedError from "../../../common/util/error/AbstractCheckedError";
-import Product from "../model/Product";
+import ProductConfiguration from "../model/ProductConfiguration";
 
 class PriceCalculationImpossibleError extends AbstractCheckedError
 {

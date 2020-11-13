@@ -2,7 +2,7 @@ import AbstractModel from "../../../common/orm/AbstractModel";
 import ProductOptionType from "./ProductOptionType";
 import List from "../../../common/util/collections/list/List";
 import KVMap from "../../../common/util/collections/map/KVMap";
-import Product from "./Product";
+import ProductConfiguration from "./ProductConfiguration";
 import QueryResult from "../../../common/orm/QueryResult";
 import AbstractStorableModel from "../../../common/orm/AbstractStorableModel";
 
@@ -30,7 +30,7 @@ class ProductModel extends AbstractStorableModel<ProductModel>{
     addRelations(): void
     {
         this.oneToMany(ProductOptionType);
-        this.oneToZeroOrOne(Product);
+        this.oneToZeroOrOne(ProductConfiguration);
     }
 
     productOptionTypesQ()

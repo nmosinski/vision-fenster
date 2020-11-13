@@ -1,6 +1,6 @@
 import productDefinitions from "../../productDefinitions";
 import ProductOption from "../../model/ProductOption";
-import Product from "../../model/Product";
+import ProductConfiguration from "../../model/ProductConfiguration";
 import ProductDefinition from "../../model/ProductDefinition";
 import { FensterProductOptionTypes } from "../../productOptionTypes";
 import { ProductModels } from "../../productModels";
@@ -35,19 +35,19 @@ class FensterProductConfigurationService extends AbstractProductConfigurationSer
         this.fensterBasePriceTs = await AbstractStorableModel.find(FensterBasePriceT);
     }
 
-    beforeSetOption(productOption: ProductOption, product: Product): void
+    beforeSetOption(productOption: ProductOption, product: ProductConfiguration): void
     // tslint:disable-next-line: no-empty
     {
 
     }
 
-    afterSetOption(productOption: ProductOption, product: Product): void
+    afterSetOption(productOption: ProductOption, product: ProductConfiguration): void
     {
         if (productOption.productOptionType.title === FensterProductOptionTypes.PROFIL)
             product.image = productOption.image;
     }
 
-    async calculatePrice(product: Product): Promise<number>
+    async calculatePrice(product: ProductConfiguration): Promise<number>
     {
         const basePriceT = this.findBasePriceT(product);
         let dynamicBasePriceModels: List<DynamicBasePriceModel>;
@@ -78,7 +78,7 @@ class FensterProductConfigurationService extends AbstractProductConfigurationSer
         return basePriceModel.price;
     }
 
-    private findBasePriceT(product: Product): FensterBasePriceT
+    private findBasePriceT(product: ProductConfiguration): FensterBasePriceT
     {
         try
         {

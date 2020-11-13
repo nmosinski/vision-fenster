@@ -1,7 +1,7 @@
 import { Tests, Test, truthly } from "../../../../../main/common/test/Test";
 import ProductDefinitionParsingService from "../../../../../main/feature/product/service/ProductDefinitionParsingService";
 import AbstractProductConfigurationService from "../../../../../main/feature/product/service/configurator/AbstractProductConfigurationService";
-import Product from "../../../../../main/feature/product/model/Product";
+import ProductConfiguration from "../../../../../main/feature/product/model/ProductConfiguration";
 import ProductOption from "../../../../../main/feature/product/model/ProductOption";
 import List from "../../../../../main/common/util/collections/list/List";
 import ProductOptionType from "../../../../../main/feature/product/model/ProductOptionType";
@@ -90,7 +90,7 @@ const productDefinitions =
     }
 }
 
-let product: Product;
+let product: ProductConfiguration;
 
 const productDefinition = ProductDefinitionParsingService.parseFromJson(productDefinitions).get(ProductModels.FENSTER);
 if (!productDefinition)
@@ -130,7 +130,7 @@ async function beforeEach()
     profilOption.tags = new QueryResult<Tag>([new Tag({ "title": FensterTags.KUNSTSTOFF })]);
     rolladenOption.tags = new QueryResult<Tag>([new Tag({ "title": "außen" })]);
 
-    product = new Product();
+    product = new ProductConfiguration();
     product.productOptions = new QueryResult([materialOption, profilOption, rolladenOption]);
 }
 
