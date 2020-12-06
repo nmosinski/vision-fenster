@@ -1,4 +1,6 @@
-class WixProductOptionsChoice
+import IComparable from "../../../../main/common/util/IComparable";
+
+class WixProductOptionsChoice implements IComparable
 {
     value: string;
     description: string;
@@ -11,6 +13,17 @@ class WixProductOptionsChoice
         this.inStock = inStock;
         this.visible = visible;
     }
+
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    equals(object: object): boolean
+    {
+        return object instanceof WixProductOptionsChoice
+            && this.value === object.value
+            && this.description === object.description
+            && this.inStock === object.inStock
+            && this.visible === object.visible;
+    }
+
 }
 
 export default WixProductOptionsChoice;
