@@ -16,7 +16,7 @@ class VariableValueError extends AbstractVariableError
 	 * @param {any} subject - The object that caused the error.
 	 * @param {string} expected - A description of which value was expected.
 	 */
-	constructor(file: string, location: string, subject: any, expected: string)
+	constructor (file: string, location: string, subject: any, expected: string)
 	{
 		super("Variable has an invalid value.", file, location, subject, expected);
 	}
