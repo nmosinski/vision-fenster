@@ -5,9 +5,9 @@ import List from "../../public/main/common/util/collections/list/List";
 $w.onReady(async () =>
 {
     // await runAllTests();
-    await runAllTestsExcept('list', 'wixDatabase');
+    // await runAllTestsExcept('list', 'wixDatabase');
     // await runTests('list', "productConfigurationService");
     // await runTests("aHoldsNoReferenceToB");
     // await runTests("abstractModel");
-    // await runTests("list", "abstractModel");
+    await runTests('wixProductOptionsInfoService');
 });
