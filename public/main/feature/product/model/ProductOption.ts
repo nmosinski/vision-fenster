@@ -12,7 +12,7 @@ class ProductOption extends AbstractStorableModel<ProductOption>{
     private _value: string;
     private _presentationde: string;
     private _tags: QueryResult<Tag>;
-    private _image: string;
+    private _image: string | null;
 
     protected Constructor: new () => ProductOption;
     init(): void
