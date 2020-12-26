@@ -14,8 +14,7 @@ class WixProductOptionsChoice implements IComparable
         this.visible = visible;
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    equals(object: object): boolean
+    equals(object: Record<string, unknown>): boolean
     {
         return object instanceof WixProductOptionsChoice
             && this.value === object.value

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AnyNumber } from "../../../../main/common/util/supportive";
 // @ts-ignore
 import wixData from "wix-data";
@@ -37,12 +38,12 @@ class WixQuery implements IQueryDriver
     /**
      * Set a filter for the query. Match only those items, that have the given value in the property of the given property name.
      * @param {string} propertyName The name of the property. 
-     * @param {any} propertyValue The expected value of the property.
+     * @param {never} propertyValue The expected value of the property.
      * @returns {this} This query.
      */
-    eq(propertyName: string, proeprtyValue: any): this
+    eq(propertyName: string, propertyValue: never): this
     {
-        this.query = this.query.eq((propertyName === 'id') ? '_id' : propertyName, proeprtyValue);
+        this.query = this.query.eq((propertyName === 'id') ? '_id' : propertyName, propertyValue);
         return this;
     }
 
@@ -52,9 +53,9 @@ class WixQuery implements IQueryDriver
      * @param {List<Number|String|Date>} propertyValues The possible propertyValues.
      * @returns {this} This query.
      */
-    hasSome(propertyName: string, propertyValues: AnyNumber<any>): this
+    hasSome(propertyName: string, propertyValues: AnyNumber<never>): this
     {
-        const propertyValuesList = new List<any>(propertyValues);
+        const propertyValuesList = new List<never>(propertyValues);
 
         this.query = this.query.hasSome((propertyName === 'id') ? '_id' : propertyName, propertyValuesList.toArray());
         return this;
@@ -64,7 +65,7 @@ class WixQuery implements IQueryDriver
      * Execute this query and return its result limited by the given limit.
      * @returns {List<{id: string}>} The query result.
      */
-    async execute(): Promise<List<{ [x: string]: any; id?: string; }>>
+    async execute(): Promise<List<{ [x: string]: unknown; id?: string; }>>
     {
         this.query = this.query.limit((this.currentLimit) ? this.currentLimit : WixQuery.MAX_LIMIT);
         const wixQueryResult = await this.query.find();

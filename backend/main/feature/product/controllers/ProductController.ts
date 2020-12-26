@@ -30,10 +30,10 @@ export async function index()
 
 /**
  * Create a product.
- * @param {object} request The request containing the product information for the product to be created.
+ * @param {Record<string, unknown>} request The request containing the product information for the product to be created.
  * @returns {string} The id of the new created product.
  */
-async function create(request: object): Promise<string | null>
+async function create(request: Record<string, unknown>): Promise<string | null>
 {
     let product = new ProductConfiguration(request);
     let configurationService = ProductConfigurationServiceFactory.byModel(await product.productModelQ());
@@ -46,18 +46,18 @@ async function create(request: object): Promise<string | null>
 
 /**
  * Update a product.
- * @param {object} request The request containing the product information for the product to be updated.
+ * @param {Record<string, unknown>} request The request containing the product information for the product to be updated.
  */
-async function update(request: object)
+async function update(request: Record<string, unknown>)
 {
 
 }
 
 /**
  * Destroy a product.
- * @param {object} request The request containing the product information to for the product to be destroyed.
+ * @param {Record<string, unknown>} request The request containing the product information to for the product to be destroyed.
  */
-async function destroy(request: object)
+async function destroy(request: Record<string, unknown>)
 {
 
 }

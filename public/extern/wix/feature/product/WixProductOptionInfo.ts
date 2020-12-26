@@ -4,7 +4,7 @@ import WixProductOptionsChoice from "./WixProductOptionsChoice";
 class WixProductOptionInfo implements IComparable
 {
     name: string;
-    choices: Array<WixProductOptionsChoice>;
+    choices: WixProductOptionsChoice[];
     constructor (name: string, choices: Array<WixProductOptionsChoice>)
     {
         this.name = name;
@@ -12,19 +12,21 @@ class WixProductOptionInfo implements IComparable
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-types
-    equals(object: object): boolean
+    equals(object: Record<string, unknown>): boolean
     {
         if (!(object instanceof WixProductOptionInfo))
             return false;
 
-        if (this.name !== object.name)
+        const castedObject = object as WixProductOptionInfo;
+
+        if (this.name !== castedObject.name)
             return false;
 
-        if (!Array.isArray(object.choices) || this.choices.length !== object.choices.length)
+        if (!Array.isArray(castedObject.choices) || this.choices.length !== object.choices.length)
             return false;
 
         for (let i = 0; i < this.choices.length; i++)
-            if (!this.choices[i].equals(object.choices[i]))
+            if (!this.choices[i].equals(castedObject.choices[i]))
                 return false;
 
         return true;
