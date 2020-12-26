@@ -1,5 +1,4 @@
 import JsTypes from "../util/jsTypes/JsTypes";
-import AbstractModel from "./AbstractModel";
 import AbstractStorableModel from "./AbstractStorableModel";
 import MissingTableNameForDynamicAbstractStorableModelError from "./MissingTableNameForDynamicAbstractStorableModelError";
 

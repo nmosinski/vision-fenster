@@ -7,7 +7,6 @@ import IComparable from "../util/IComparable";
 import { AnyNumber } from "../util/supportive";
 import AbstractModel, { Properties } from "./AbstractModel";
 import CreateError from "./CreateError";
-import DestroyError from "./DestroyError";
 import ManyToMany from "./ManyToMany";
 import ManyToOne from "./ManyToOne";
 import MissingTableNameForDynamicAbstractStorableModelError from "./MissingTableNameForDynamicAbstractStorableModelError";
@@ -22,7 +21,6 @@ import JsTypes from "../util/jsTypes/JsTypes";
 import Storage from "../persistance/model/Storage";
 import IStorageDriver from "../persistance/model/IStorageDriver";
 import WixDatabase from "../../../extern/wix/common/persistance/WixDatabase";
-import InvalidOperationError from "../util/error/InvalidOperationError";
 
 const PATH = 'public/main/common/orm/AbstractStorableModel';
 
@@ -45,7 +43,7 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
      * @override
      * @inheritdoc
      */
-    protected boot(data?: object)
+    protected boot(data?: object): void
     {
         this.init(data);
 
@@ -74,7 +72,7 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
      * @override
      * @inheritdoc
      */
-    equals(model: any): boolean
+    equals(model: unknown): boolean
     {
         if (!(model instanceof AbstractStorableModel))
             return false;
@@ -97,11 +95,11 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
     /**
      * Get a relative.
      * @param {new()=>U, extends AbstractStorableModel<U>} Relative The class obejct/constructor of the relative.
-     * @returns {AbstractStorableModel<any>} The relative.
+     * @returns {AbstractStorableModel<never>} The relative.
      */
     public relative<U extends AbstractStorableModel<U>>(Relative: new () => U): U
     {
-        let relation: Relation<any, any>;
+        let relation: Relation<AbstractStorableModel<U>, AbstractStorableModel<T>>;
         try
         {
             relation = this.relations.get(Relative);
@@ -201,7 +199,7 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
             /**
              * @override
              */
-            equals(object: any): boolean
+            equals(object: object): boolean
             {
                 if (!(object instanceof RoleModel))
                     return false;
@@ -349,12 +347,12 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
 
     /**
      * Loads many models that are stored as property and can be accessed indirectly model by model creating a chain.
-     * @param {AnyNumber<new()=>AbstractStorableModel<any>>} models The models to be loaded in the order of the chain.
+     * @param {AnyNumber<new()=>AbstractStorableModel<never>>} models The models to be loaded in the order of the chain.
      * @returns {this} This.
      */
-    async loadChain(Relatives: AnyNumber<new () => AbstractStorableModel<any>>): Promise<void>
+    async loadChain(Relatives: AnyNumber<new () => AbstractStorableModel<never>>): Promise<void>
     {
-        const RelativesList = new List<new () => AbstractStorableModel<any>>(Relatives);
+        const RelativesList = new List<new () => AbstractStorableModel<never>>(Relatives);
 
         return await AbstractStorableModel.loadChain(this as unknown as T, RelativesList);
     }
@@ -437,7 +435,7 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
             let previousQueryResult: QueryResult<AbstractStorableModel<any>>;
             let propertyTarget: AbstractStorableModel<any> | QueryResult<AbstractStorableModel<any>>;
             let propertyName: string;
-            let relationToParent: Relation<AbstractStorableModel<any>, T>;
+            const relationToParent: Relation<AbstractStorableModel<any>, T> = this.relations.get(this.parent.Constructor);
 
             // If it's a first generation find, find only items that belong to the parent
             if (this.myParentIsTheRoot())
@@ -450,8 +448,6 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
                 previousQueryResult = await this.parent.find();
                 propertyTarget = this.parent.lastQueryResult;
             }
-
-            relationToParent = this.relations.get(this.parent.Constructor);
 
             thisQueryResult = await relationToParent.relationalFind(previousQueryResult);
 
@@ -484,10 +480,10 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
      * @param {model: new()=>U} model The QueryElement to be resolved.
      * @returns {Promise<QueryResult<<U extends AbstractStorableModel<U>>>>} The result of the executed querry.
      */
-    static async find<U extends AbstractStorableModel<U>>(Model: new (data?: object) => U): Promise<QueryResult<U>>
+    static async find<U extends AbstractStorableModel<U>>(Model: new (data?: Record<string, unknown>) => U): Promise<QueryResult<U>>
     {
         const model = new Model();
-        return new QueryResult<U>((await Storage.query(model.tableName, model.storageDriver).limit(1000).execute()).map((item: object) => new Model(item)));
+        return new QueryResult<U>((await Storage.query(model.tableName, model.storageDriver).limit(1000).execute()).map((item: Record<string, unknown>) => new Model(item)));
     }
 
     /**
@@ -609,6 +605,7 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
             }
         });
 
+        // @ts-ignore
         return await toUpdateList.storage.update(toUpdateList.map(model => model.strip()), toUpdateList.tableName);
     }
 
@@ -687,7 +684,7 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
         return this.tableName.charAt(0).toLowerCase() + this.tableName.slice(1);
     }
 
-    public getRelation<U extends AbstractStorableModel<U>>(relative: new () => U): Relation<any, T>
+    public getRelation<U extends AbstractStorableModel<U>>(relative: new () => U): Relation<AbstractStorableModel<any>, T>
     {
         return this.relations.get(relative);
     }
@@ -786,7 +783,7 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
 
     /**
      * Set parent.
-     * @param {AbstractStorableModel<any>} parent The parent.
+     * @param {AbstractStorableModel<never>} parent The parent.
      */
     private set parent(parent: AbstractStorableModel<any>)
     {
@@ -795,7 +792,7 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
 
     /**
      * Get parent.
-     * @returns {AbstractStorableModel<any>} The parent.
+     * @returns {AbstractStorableModel<never>} The parent.
      */
     private get parent(): AbstractStorableModel<any>
     {
@@ -804,14 +801,17 @@ abstract class AbstractStorableModel<T extends AbstractStorableModel<T>> extends
 
     /**
      * Get the root element.
-     * @returns {AbstractStorableModel<any>} The root element or this, if this is the root element.
+     * @returns {AbstractStorableModel<never>} The root element or this, if this is the root element.
      */
     private get root(): AbstractStorableModel<any>
     {
-        let next: AbstractStorableModel<any> = this;
-        while (next.parent)
+        let next: AbstractStorableModel<any>;
+        do
+        {
             next = next.parent;
-        return next;
+        } while (next.parent);
+
+        return next ?? this;
     }
 
     /**

@@ -82,7 +82,7 @@ class List<T> implements IComparable
 	 * @param e2 The element to be compared to e1.
 	 * @returns {boolean} True if elements are equal, else false.
 	 */
-	protected elementsEqual(e1: any, e2: any): boolean
+	protected elementsEqual(e1: unknown, e2: unknown): boolean
 	{
 		try
 		{
@@ -210,7 +210,7 @@ class List<T> implements IComparable
 	 * @override
 	 * @inheritdoc
 	 */
-	equals(object: any): boolean
+	equals(object: unknown): boolean
 	{
 		if (!(object instanceof List))
 			return false;
@@ -227,10 +227,10 @@ class List<T> implements IComparable
 
 	/**
 	 * Check if this list is a sublist of the given one.
-	 * @param {List<any>} list The list to be checked on.
+	 * @param {List<unknown>} list The list to be checked on.
 	 * @returns {boolean} True if this list is a sublist of the given one, else false.
 	 */
-	isSublistOf(list: List<any>): boolean
+	isSublistOf(list: List<unknown>): boolean
 	{
 		let ret = true;
 
@@ -364,7 +364,7 @@ class List<T> implements IComparable
 	 * @param {Function} [matchingFunction] The function that defines how the elements match.
 	 * @return {boolean} True if element is in the list, else false.
 	 */
-	has(element: any): boolean
+	has(element: unknown): boolean
 	{
 		if (this.indexOf(element) === -1)
 			return false;
@@ -401,21 +401,21 @@ class List<T> implements IComparable
 
 	/**
 	 * Check if list does not contain element.
-	 * @param {any} element - The element.
+	 * @param {unknown} element - The element.
 	 * @param {Function} [matchingFunction] The function that defines how the elements match.
 	 * @return {boolean} True if element is not in the list, else false.
 	 */
-	hasNot(element: any): boolean
+	hasNot(element: unknown): boolean
 	{
 		return !this.has(element);
 	}
 
 	/**
 	 * Get the index of the given element.
-	 * @param {any} element - The element.
+	 * @param {unknown} element - The element.
 	 * @return {number} The index of the element, else -1, if the element is not in the list. 
 	 */
-	indexOf(element: any): number
+	indexOf(element: unknown): number
 	{
 		for (let idx = 0; idx < this.length; idx++)
 		{
@@ -443,7 +443,6 @@ class List<T> implements IComparable
 			{
 				l.add(el);
 			}
-			;
 		})
 
 		return l;

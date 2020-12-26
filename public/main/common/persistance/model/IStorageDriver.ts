@@ -10,7 +10,7 @@ interface IStorageDriver
      * @param tableName the name of the table in which the item is stored.
      * @returns {Promise<{id: string}>} the retrieved item.
      */
-    get(id: string, tableName: string): Promise<{ [x: string]: any; id?: string; } | never | undefined | null>;
+    get(id: string, tableName: string): Promise<{ [x: string]: any; id?: string; } | never | null>;
 
     /**
      * Check if an item of the given exists in the storage.
@@ -40,7 +40,7 @@ interface IStorageDriver
      * @param {AnyNumber<{id: string}>} toUpdate the items to be updated.  
      * @param {string} tableName the name of the table in which the items will be updated. 
      */
-    update(toUpdate: AnyNumber<{ [x: string]: any; id?: string; }>, tableName: string): Promise<void>;
+    update(toUpdate: AnyNumber<{ [x: string]: any; id: string; }>, tableName: string): Promise<void>;
 
     /**
      * Remove items.

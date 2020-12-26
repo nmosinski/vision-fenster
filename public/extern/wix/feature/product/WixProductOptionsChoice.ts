@@ -14,7 +14,7 @@ class WixProductOptionsChoice implements IComparable
         this.visible = visible;
     }
 
-    equals(object: Record<string, unknown>): boolean
+    equals(object: object): boolean
     {
         return object instanceof WixProductOptionsChoice
             && this.value === object.value

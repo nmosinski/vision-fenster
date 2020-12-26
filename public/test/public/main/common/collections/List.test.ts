@@ -1,3 +1,5 @@
+// @ts-nocheck
+/* eslint-disable */
 import { Tests, Test, truthly } from "../../../../../main/common/test/Test";
 import List from "../../../../../main/common/util/collections/list/List";
 const PATH = "public/test/public/main/common/collections/List.test"
@@ -60,11 +62,11 @@ function map(): boolean
 {
     const o1 = { 'a1': 1, 'a2': 2, 'a3': 'x' };
     const o2 = { 'a1': 3, 'a2': 4, 'a3': 'y' };
-    // @ts-nocheck
     const mapped = new List([o1, o2]).map(o =>
     {
         return { 'a1': o.a1 * 2, 'a3': 'z' };
     });
+
 
     if (mapped.first().a1 !== 2 || mapped.first().a2 || mapped.first().a3 !== 'z' ||
         mapped.get(1).a1 !== 6 || mapped.get(1).a2 || mapped.get(1).a3 !== 'z')

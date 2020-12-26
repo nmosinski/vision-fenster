@@ -1,3 +1,5 @@
+// @ts-nocheck
+/* eslint-disable */
 import TestShoppingCart from "./testData/TestShoppingCart";
 import TestShoppingCartItem from "./testData/TestShoppingCartItem";
 import TestUser from "./testData/TestUser";
@@ -6,7 +8,6 @@ import InvalidOperationError from "../../../../../main/common/util/error/Invalid
 import QueryResult from "../../../../../main/common/orm/QueryResult";
 import JsTypes from "../../../../../main/common/util/jsTypes/JsTypes";
 const PATH = "test/public/main/common/orm/AbstractModel.test.js"
-// @ts-ignore
 import wixData from 'wix-data';
 import AbstractStorableModel from "../../../../../main/common/orm/AbstractStorableModel";
 import Storage from "../../../../../main/common/persistance/model/Storage";

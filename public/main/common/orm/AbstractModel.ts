@@ -249,7 +249,7 @@ export abstract class Property
         this.attributes = new Set<string>();
     }
 
-    valid(toCheck: any): boolean
+    valid(toCheck: unknown): boolean
     {
         if (JsTypes.isUnspecified(toCheck))
             if (!this.attributes.has("nullable"))
@@ -257,7 +257,7 @@ export abstract class Property
         return true;
     }
 
-    abstract dummy(): any
+    abstract dummy(): unknown
 
     set attributes(attributes: Set<string>)
     {
@@ -292,7 +292,7 @@ export class StringProperty extends Property
         this.attributes = attributes;
     }
 
-    valid(toCheck: any): boolean
+    valid(toCheck: unknown): boolean
     {
         if (JsTypes.isUnspecified(toCheck))
         {
@@ -334,7 +334,7 @@ export class NumberProperty extends Property
         this.attributes = attributes;
     }
 
-    valid(toCheck: any): boolean
+    valid(toCheck: unknown): boolean
     {
         if (!super.valid(toCheck))
             return false;
@@ -361,7 +361,7 @@ export class NumberProperty extends Property
         return true;
     }
 
-    dummy()
+    dummy(): number
     {
         let n = Math.random() * 100;
 

@@ -137,7 +137,7 @@ class Storage
      * @param {AnyNumber<{id: string}>} toUpdate the items to be updated.  
      * @param {string} tableName the name of the table in which the items will be updated. 
      */
-    async update(toUpdate: AnyNumber<{ [x: string]: any; id?: string; }>, tableName: string): Promise<void>
+    async update(toUpdate: AnyNumber<{ [x: string]: any; id: string; }>, tableName: string): Promise<void>
     {
         return await Storage.update(toUpdate, tableName, this.storageDriver);
     }
@@ -148,7 +148,7 @@ class Storage
      * @param {string} tableName the name of the table in which the items will be updated. 
      * @param {IStorageDriver} storageDriver The storage driver to be set.
      */
-    static async update(toUpdate: AnyNumber<{ [x: string]: any; id?: string; }>, tableName: string, storageDriver: IStorageDriver): Promise<void>
+    static async update(toUpdate: AnyNumber<{ [x: string]: any; id: string; }>, tableName: string, storageDriver: IStorageDriver): Promise<void>
     {
         return await storageDriver.update(toUpdate, tableName);
     }

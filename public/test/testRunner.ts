@@ -6,7 +6,7 @@ import { runAllTests as abstractDynamicStorableModelTests } from "./public/main/
 import { runAllTests as manyToManyTests } from "./public/main/common/orm/ManyToMany.test";
 import { runAllTests as productConfigurationServiceTests } from "./public/main/feature/product/ProductConfigurationService.test";
 import { runAllTests as WixDatabaseTests } from "./public/main/extern/wix/common/persistance/WixDatabase.test";
-import { runAllTests as WixProductInfoTranslationServiceTests } from "./public/main/extern/wix/feature/product/service/WixProductInfoService.test";
+import { runAllTests as WixProductInfoTranslationServiceTests } from "./public/main/extern/wix/feature/product/service/WixProductInfoTranslationService.test";
 import KVMap from "../main/common/util/collections/map/KVMap";
 import List from "../main/common/util/collections/list/List";
 
@@ -25,18 +25,19 @@ function init()
     tests.add("wixProductInfoTranslationService", WixProductInfoTranslationServiceTests);
 }
 
-async function run(toRun: List<() => Promise<void>>)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function run(toRun: List<() => Promise<void>>): Promise<void>
 {
     await toRun.foreachAsync(async (testFunction) => await testFunction());
 }
 
-export async function runAllTests()
+export async function runAllTests(): Promise<void>
 {
     init();
     await tests.values().foreachAsync(async (testFunction) => await testFunction());
 }
 
-export async function runTests(...testNames: string[])
+export async function runTests(...testNames: string[]): Promise<void>
 {
     init();
     const toRun = new List<string>(testNames);
@@ -44,10 +45,10 @@ export async function runTests(...testNames: string[])
     await toRun.foreachAsync(async name => await (tests.get(name)()));
 }
 
-export async function runAllTestsExcept(...testNames: string[])
+export async function runAllTestsExcept(...testNames: string[]): Promise<void>
 {
     init();
     const notToRun = new List<string>(testNames);
 
-    await tests.filter((name, test) => !notToRun.has(name)).foreachAsync(async name => await (tests.get(name)()));
+    await tests.filter((name) => !notToRun.has(name)).foreachAsync(async name => await (tests.get(name)()));
 }

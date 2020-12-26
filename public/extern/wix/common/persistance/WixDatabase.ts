@@ -18,7 +18,7 @@ class WixDatabase implements IStorageDriver
      * @override
      * @inheritdoc 
      */
-    async get(id: string, tableName: string): Promise<{ [x: string]: unknown; id?: string | null; } | null>
+    async get(id: string, tableName: string): Promise<{ [x: string]: any; id?: string; } | never | null>
     {
         const item = await wixData.get(tableName, id);
 
@@ -45,9 +45,9 @@ class WixDatabase implements IStorageDriver
      * @override
      * @inheritdoc 
      */
-    async create(toCreate: AnyNumber<Record<string, unknown>>, tableName: string): Promise<List<string>>
+    async create(toCreate: AnyNumber<object>, tableName: string): Promise<List<string>>
     {
-        const toCreateList = new List<Record<string, unknown>>(toCreate).map(item => WixDatabase.mapModelToItem(item));
+        const toCreateList = new List<object>(toCreate).map(item => WixDatabase.mapModelToItem(item));
 
         if (toCreateList.isEmpty())
             return new List();
@@ -61,9 +61,9 @@ class WixDatabase implements IStorageDriver
      * @override
      * @inheritdoc 
      */
-    async save(toSave: AnyNumber<Record<string, unknown>>, tableName: string): Promise<List<string>>
+    async save(toSave: AnyNumber<object>, tableName: string): Promise<List<string>>
     {
-        const toSaveList = new List<Record<string, unknown>>(toSave).map(item => WixDatabase.mapModelToItem(item));
+        const toSaveList = new List<object>(toSave).map(item => WixDatabase.mapModelToItem(item));
 
         if (toSaveList.isEmpty())
             return new List();
@@ -77,9 +77,9 @@ class WixDatabase implements IStorageDriver
      * @override
      * @inheritdoc 
      */
-    async update(toUpdate: AnyNumber<{ id: string }>, tableName: string): Promise<void>
+    async update(toUpdate: AnyNumber<{ [x: string]: any; id: string; }>, tableName: string): Promise<void>
     {
-        const toUpdateList = new List<Record<string, unknown>>(toUpdate).map(item => WixDatabase.mapModelToItem(item));
+        const toUpdateList = new List<object>(toUpdate).map(item => WixDatabase.mapModelToItem(item));
 
         if (toUpdateList.isEmpty())
             return;
@@ -124,22 +124,22 @@ class WixDatabase implements IStorageDriver
         return (itemPropertyName === '_id') ? 'id' : itemPropertyName;
     }
 
-    public static mapModelToItem(item: Record<string, unknown>): Record<string, unknown>
+    public static mapModelToItem(item: object): object
     {
         const keys = new List(Object.keys(item));
 
-        const mappedItem: { [x: string]: unknown; _id?: string; } = {};
+        const mappedItem: { [x: string]: any; _id?: string; } = {};
 
         keys.foreach(key => mappedItem[(key === 'id') ? '_id' : key] = item[key]);
 
         return mappedItem;
     }
 
-    public static mapItemToModel(item: Record<string, unknown>): { [x: string]: unknown; id?: string; }
+    public static mapItemToModel(item: object): { [x: string]: any; id?: string; }
     {
         const keys = new List(Object.keys(item));
 
-        const mappedItem: { [x: string]: unknown; id?: string; } = {};
+        const mappedItem: { [x: string]: any; id?: string; } = {};
 
         keys.foreach(key => mappedItem[(key === '_id') ? 'id' : key] = item[key]);
 

@@ -30,13 +30,13 @@ class FensterProductConfigurationService extends AbstractProductConfigurationSer
 
     }
 
-    async init()
+    async init(): Promise<void>
     {
         this.fensterBasePriceTs = await AbstractStorableModel.find(FensterBasePriceT);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     beforeSetOption(productOption: ProductOption, product: ProductConfiguration): void
-    // tslint:disable-next-line: no-empty
     {
 
     }

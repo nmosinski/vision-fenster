@@ -27,7 +27,7 @@ export class Query
      * @param {any} propertyValue The expected value of the property.
      * @returns {this} This query.
      */
-    eq(propertyName: string, proeprtyValue: any): this
+    eq(propertyName: string, proeprtyValue: unknown): this
     {
         this.query = this.query.eq(propertyName, proeprtyValue);
         return this;

@@ -41,7 +41,7 @@ class WixQuery implements IQueryDriver
      * @param {never} propertyValue The expected value of the property.
      * @returns {this} This query.
      */
-    eq(propertyName: string, propertyValue: never): this
+    eq(propertyName: string, propertyValue: unknown): this
     {
         this.query = this.query.eq((propertyName === 'id') ? '_id' : propertyName, propertyValue);
         return this;
@@ -53,7 +53,7 @@ class WixQuery implements IQueryDriver
      * @param {List<Number|String|Date>} propertyValues The possible propertyValues.
      * @returns {this} This query.
      */
-    hasSome(propertyName: string, propertyValues: AnyNumber<never>): this
+    hasSome(propertyName: string, propertyValues: AnyNumber<any>): this
     {
         const propertyValuesList = new List<never>(propertyValues);
 

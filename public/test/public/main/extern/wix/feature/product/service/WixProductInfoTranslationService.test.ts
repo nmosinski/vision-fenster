@@ -1,3 +1,4 @@
+// @ts-nocheck
 import WixProductOptionsInfoService from "../../../../../../../../extern/wix/feature/product/service/WixProductOptionsInfoService";
 import WixProductOptionInfo from "../../../../../../../../extern/wix/feature/product/WixProductOptionInfo";
 import WixProductOptionsChoice from "../../../../../../../../extern/wix/feature/product/WixProductOptionsChoice";

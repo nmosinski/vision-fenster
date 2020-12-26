@@ -12,7 +12,7 @@ class WixProductOptionInfo implements IComparable
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-types
-    equals(object: Record<string, unknown>): boolean
+    equals(object: object): boolean
     {
         if (!(object instanceof WixProductOptionInfo))
             return false;

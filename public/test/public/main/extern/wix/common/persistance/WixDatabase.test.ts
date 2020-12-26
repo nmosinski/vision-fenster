@@ -1,3 +1,4 @@
+// @ts-nocheck
 import WixDatabase from "../../../../../../../extern/wix/common/persistance/WixDatabase";
 import { Test, Tests, truthly } from "../../../../../../../main/common/test/Test";
 import List from "../../../../../../../main/common/util/collections/list/List";

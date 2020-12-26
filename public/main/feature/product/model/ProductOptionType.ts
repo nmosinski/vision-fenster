@@ -1,4 +1,3 @@
-import AbstractModel from "../../../common/orm/AbstractModel";
 import ProductOption from "./ProductOption"
 import ProductModel from "./ProductModel";
 import QueryResult from "../../../common/orm/QueryResult";
@@ -33,17 +32,17 @@ class ProductOptionType extends AbstractStorableModel<ProductOptionType>{
         this.manyToOne(ProductModel);
     }
 
-    productOptionsQ()
+    productOptionsQ(): ProductOption
     {
         return this.relative(ProductOption);
     }
 
-    productModelQ()
+    productModelQ(): ProductModel
     {
         return this.relative(ProductModel);
     }
 
-    addProductOption(productOption: ProductOption)
+    addProductOption(productOption: ProductOption): void
     {
         if (this.productOptions.hasNot(productOption))
             this.productOptions.add(productOption);
@@ -74,7 +73,7 @@ class ProductOptionType extends AbstractStorableModel<ProductOptionType>{
         this._productModel = productModel;
     }
 
-    get productModel()
+    get productModel(): ProductModel
     {
         return this._productModel;
     }

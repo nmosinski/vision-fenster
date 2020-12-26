@@ -5,13 +5,9 @@ import JsString from "../../public/main/common/util/jsTypes/JsString";
 import ProductConfiguration from "../../public/main/feature/product/model/ProductConfiguration";
 import AbstractProductConfigurationService from "../../public/main/feature/product/service/configurator/AbstractProductConfigurationService";
 import ProductConfigurationServiceFactory from "../../public/main/feature/product/factory/ProductConfigurationServiceFactory";
-import List from "../../public/main/common/util/collections/list/List";
-// @ts-ignore
-import { index } from "backend/main/feature/product/controllers/ProductController.jsw";
 import Tag from "../../public/main/feature/product/model/Tag";
 import { FensterProductOptionTypes } from "../../public/main/feature/product/productOptionTypes";
 import AbstractStorableModel from "../../public/main/common/orm/AbstractStorableModel";
-import AbstractModel from "../../public/main/common/orm/AbstractModel";
 import QueryResult from "../../public/main/common/orm/QueryResult";
 
 let productModel: ProductModel;
@@ -87,7 +83,7 @@ function getDefaultOnItemReadyRepeaterFunction(optionTypeTitle: string): (item: 
 		$item("#image" + optionTypeTitle).src = productOption.image;
 		$item("#vectorImage" + productOptionTypeTitleAsGuiElementName(optionTypeTitle)).hide();
 		$item("#text" + productOptionTypeTitleAsGuiElementName(optionTypeTitle)).text = productOption.presentationde;
-		$item("#image" + optionTypeTitle).onClick((event: any) =>
+		$item("#image" + optionTypeTitle).onClick(() =>
 		{
 			onProductOptionSelection(productOption);
 		});

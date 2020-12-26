@@ -1,6 +1,4 @@
-import AbstractModel from "../../../common/orm/AbstractModel";
 import ProductOptionType from "./ProductOptionType";
-import List from "../../../common/util/collections/list/List";
 import QueryResult from "../../../common/orm/QueryResult";
 import Tag from "./Tag";
 import AbstractStorableModel from "../../../common/orm/AbstractStorableModel";
@@ -36,12 +34,12 @@ class ProductOption extends AbstractStorableModel<ProductOption>{
         this.manyToMany(Tag);
     }
 
-    productOptionTypeQ()
+    productOptionTypeQ(): ProductOptionType
     {
         return this.relative(ProductOptionType);
     }
 
-    tagsQ()
+    tagsQ(): Tag
     {
         return this.relative(Tag);
     }
@@ -51,7 +49,7 @@ class ProductOption extends AbstractStorableModel<ProductOption>{
         return this.tags.pluck("title").has(tagTitle);
     }
 
-    addTag(tag: Tag)
+    addTag(tag: Tag): void
     {
         if (this.tags.hasNot(tag))
             this.tags.add(tag);
