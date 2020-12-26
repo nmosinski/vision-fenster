@@ -1,3 +1,5 @@
+// @ts-nocheck
+/* eslint-disable */
 import MissingTableNameForDynamicAbstractStorableModelError from "../../../../../main/common/orm/MissingTableNameForDynamicAbstractStorableModelError";
 import { Tests, Test, truthly } from "../../../../../main/common/test/Test";
 import TestDynamicStorableModel from "./testData/TestDynamicStorableModel";

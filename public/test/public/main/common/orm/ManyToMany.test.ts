@@ -1,7 +1,8 @@
+// @ts-nocheck
+/* eslint-disable */
 import TestShoppingCartItem from "./testData/TestShoppingCartItem";
 import { Tests, Test, truthly, unspecified, value } from "../../../../../main/common/test/Test";
 import TestTag from "./testData/TestTag";
-// @ts-ignore
 import wixData from "wix-data"
 import QueryResult from "../../../../../main/common/orm/QueryResult";
 import JsTypes from "../../../../../main/common/util/jsTypes/JsTypes";

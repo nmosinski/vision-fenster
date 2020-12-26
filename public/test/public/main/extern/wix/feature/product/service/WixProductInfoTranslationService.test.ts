@@ -1,4 +1,5 @@
 // @ts-nocheck
+/* eslint-disable */
 import WixProductOptionsInfoService from "../../../../../../../../extern/wix/feature/product/service/WixProductOptionsInfoService";
 import WixProductOptionInfo from "../../../../../../../../extern/wix/feature/product/WixProductOptionInfo";
 import WixProductOptionsChoice from "../../../../../../../../extern/wix/feature/product/WixProductOptionsChoice";
@@ -6,7 +7,6 @@ import QueryResult from "../../../../../../../../main/common/orm/QueryResult";
 import { Tests, Test, truthly } from "../../../../../../../../main/common/test/Test";
 import { instantiate } from "../../../../../../../../main/common/util/supportive";
 import ProductConfiguration from "../../../../../../../../main/feature/product/model/ProductConfiguration";
-import ProductModel from "../../../../../../../../main/feature/product/model/ProductModel";
 import ProductOption from "../../../../../../../../main/feature/product/model/ProductOption";
 import ProductOptionType from "../../../../../../../../main/feature/product/model/ProductOptionType";
 

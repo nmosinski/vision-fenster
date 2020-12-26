@@ -1,3 +1,5 @@
+// @ts-nocheck
+/* eslint-disable */
 import TestShoppingCart from "./testData/TestShoppingCart";
 import TestShoppingCartItem from "./testData/TestShoppingCartItem";
 import { Tests, Test, truthly, unspecified, value } from "../../../../../main/common/test/Test";
