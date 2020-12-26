@@ -18,7 +18,7 @@ export async function runAllTests()
 {
     const tests = new Tests(beforeAll);
 
-    tests.add(new Test(PATH, "to wix product options info", truthly(), toWixProductOptionsInfo));
+    tests.add(new Test(PATH, "from product configuration", truthly(), fromProductConfiguration));
 
     await tests.runAll();
 }
@@ -27,7 +27,7 @@ function beforeAll()
 {
     productConfiguration = new ProductConfiguration();
 
-    productConfiguration.productOptions = new QueryResult([
+    const productOptions = new QueryResult([
         new ProductOption({ presentationde: 'Bratwurst' }),
         new ProductOption({ presentationde: 'Kochwurst' }),
         new ProductOption({ presentationde: 'Scheißwurst' })
@@ -37,11 +37,11 @@ function beforeAll()
     productConfiguration.productOptions.foreach((productOption: ProductOption, idx) => productOption.productOptionType = new ProductOptionType({ presentationde: productOptionTypePresentationsDe[idx] }));
 }
 
-function toWixProductOptionsInfo()
+function fromProductConfiguration()
 {
     let ret = true;
 
-    const wixProductOptionsInfo = instantiate(WixProductOptionsInfoService).fromProductConfiguration(productConfiguration);
+    const wixProductOptionsInfo = instantiate(WixProductOptionsInfoService).fromProductOptions(productConfiguration);
 
     productConfiguration.productOptions.foreach(productOption =>
     {

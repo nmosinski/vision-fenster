@@ -5,7 +5,7 @@ class TestDynamicStorableModel extends AbstractDynamicStorableModel<TestDynamicS
     protected Constructor: new () => TestDynamicStorableModel;
     protected modelName: string;
 
-    init(data?: object): void
+    init(data?: Record<string, unknown>): void
     // tslint:disable-next-line: no-empty
     {
 

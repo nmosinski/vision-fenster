@@ -149,7 +149,7 @@ async function remove(): Promise<boolean>
 async function get(): Promise<boolean>
 {
     const toSave = { '_id': 'this-is-an-id', aNumber: 4 };
-    let retrieved: object;
+    let retrieved: Record<string, unknown>;
 
     await wixDatabase.save(toSave, tableName);
     try

@@ -5,7 +5,7 @@ class TestUser extends AbstractStorableModel<TestUser>
 {
     protected modelName: string;
     protected Constructor: new () => TestUser;
-    private _testShoppingCart: any;
+    private _testShoppingCart: never;
 
     init(): void
     {

@@ -41,7 +41,7 @@ async function beforeEach()
     await wixDatabase.create(testShoppingCartItems, testShoppingCartItems.tableName);
 
     // the first shopping cart item has all tags / each tag has the first shopping cart
-    const roleItems: object[] = [];
+    const roleItems: Record<string, unknown>[] = [];
     testTags.foreach((tag: TestTag) =>
     {
         roleItems.push({

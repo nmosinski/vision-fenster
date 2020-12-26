@@ -7,7 +7,7 @@ class TestTag extends AbstractStorableModel<TestTag>
 {
     protected modelName: string;
     protected Constructor: new () => TestTag;
-    private _testShoppingCartItems: any;
+    private _testShoppingCartItems: never;
 
     init(): void
     {
@@ -22,7 +22,7 @@ class TestTag extends AbstractStorableModel<TestTag>
 
     addRelations(): void
     {
-        this.manyToMany(TestShoppingCartItem);
+        this.manyToMnever(TestShoppingCartItem);
     }
 
     testShoppingCartItemsQ()
