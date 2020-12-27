@@ -13,7 +13,7 @@ class JsTypes
 	 */
 	static isPrimitive(o: any): boolean
 	{
-		if(["string", "boolean", "number"].indexOf(typeof(o)) > -1)
+		if (["string", "boolean", "number"].indexOf(typeof (o)) > -1)
 			return true;
 		return false;
 	}
@@ -25,7 +25,7 @@ class JsTypes
 	 */
 	static isNumber(o: any): boolean
 	{
-		if(typeof(o) === "number" && !isNaN(o))
+		if (typeof (o) === "number" && !isNaN(o))
 			return true;
 		return false;
 	}
@@ -37,13 +37,13 @@ class JsTypes
 	 */
 	static isEmpty(o: any): boolean
 	{
-		if(JsTypes.isString(o) && o === "")
+		if (JsTypes.isString(o) && o === "")
 			return true;
-		if(JsTypes.isArray(o) && o.length === 0)
+		if (JsTypes.isArray(o) && o.length === 0)
 			return true;
-		if(JsTypes.isObject(o) && Object.keys(o).length === 0)
+		if (JsTypes.isObject(o) && Object.keys(o).length === 0)
 			return true;
-			
+
 		return false;
 	}
 
@@ -54,10 +54,20 @@ class JsTypes
 	 */
 	static isUnspecified(o: any): boolean
 	{
-		if(o === null || o === undefined)
+		if (o === null || o === undefined)
 			return true;
 
 		return false;
+	}
+
+	/**
+	 * Check if the given object is specified (not null and not undefined).
+	 * @param {any} o The object to be checked for.
+	 * @returns {boolean} True if not null and not undefined, else false.
+	 */
+	static isSpecified(o: any): boolean
+	{
+		return !JsTypes.isUnspecified(o);
 	}
 
 	/**
@@ -67,7 +77,7 @@ class JsTypes
 	 */
 	static isFunction(o: any): boolean
 	{
-		return typeof(o) === "function";
+		return typeof (o) === "function";
 	}
 
 	/**
@@ -75,41 +85,41 @@ class JsTypes
 	 * @param {any} o The object to be checked for.
 	 * @returns {boolean} True if is an array, else false.
 	 */
-    static isArray(o: any): boolean
-    {
-        return Array.isArray(o);
-    }
+	static isArray(o: any): boolean
+	{
+		return Array.isArray(o);
+	}
 
-    /**
+	/**
 	 * Check if the given object is a string.
 	 * @param {any} o The object to be checked for.
 	 * @returns {boolean} True if is a string, else false.
 	 */
-    static isString(o: any): boolean
-    {
-    	return typeof(o) === "string";
-    }
+	static isString(o: any): boolean
+	{
+		return typeof (o) === "string";
+	}
 
-    /**
+	/**
 	 * Check if the given object is a boolean.
 	 * @param {any} o The object to be checked for.
 	 * @returns {boolean} True if is boolean, else false.
 	 */
-    static isBoolean(o: any): boolean
-    {
-    	return typeof(o) === "boolean";
-    }
+	static isBoolean(o: any): boolean
+	{
+		return typeof (o) === "boolean";
+	}
 
-    /**
+	/**
 	 * Check if the given object is of type object and not null.
 	 * @param {any} o The object to be checked for.
 	 * @returns {boolean} True if is an object and not unspecified, else false.
 	 */
-    static isObject(o: any): boolean
-    {
-    	return typeof(o) === "object" && !JsTypes.isUnspecified(o);
+	static isObject(o: any): boolean
+	{
+		return typeof (o) === "object" && !JsTypes.isUnspecified(o);
 	}
-	
+
 	static belongToTheSameClass(a: object, b: object)
 	{
 		return a.constructor === b.constructor;

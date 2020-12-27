@@ -5,9 +5,10 @@ import { runAllTests as aHoldsNoReferenceToBTests } from "./public/main/common/o
 import { runAllTests as abstractDynamicStorableModelTests } from "./public/main/common/orm/AbstractDynamicStorableModel.test";
 import { runAllTests as manyToManyTests } from "./public/main/common/orm/ManyToMany.test";
 import { runAllTests as productConfigurationServiceTests } from "./public/main/feature/product/ProductConfigurationService.test";
-import { runAllTests as WixDatabaseTests } from "./public/main/extern/wix/common/persistance/WixDatabase.test";
-import { runAllTests as WixProductOptionsInfoServiceTests } from "./public/main/extern/wix/feature/product/service/WixProductOptionsInfoService.test";
-import { runAllTests as WixProductInfoTranslationServiceTests } from "./public/main/extern/wix/feature/product/service/WixProductInfoTranslationService.test";
+import { runAllTests as wixDatabaseTests } from "./public/main/extern/wix/common/persistance/WixDatabase.test";
+import { runAllTests as wixProductOptionsInfoServiceTests } from "./public/main/extern/wix/feature/product/service/WixProductOptionsInfoService.test";
+import { runAllTests as wixProductInfoTranslationServiceTests } from "./public/main/extern/wix/feature/product/service/WixProductInfoTranslationService.test";
+import { runAllTests as supportiveTests } from "./public/main/common/util/supportive.test";
 import KVMap from "../main/common/util/collections/map/KVMap";
 import List from "../main/common/util/collections/list/List";
 
@@ -16,15 +17,16 @@ const tests = new KVMap<string, () => Promise<void>>();
 function init()
 {
     tests.add("list", listTests);
-    tests.add("wixDatabase", WixDatabaseTests);
+    tests.add("wixDatabase", wixDatabaseTests);
     tests.add("abstractModel", abstractModelTests);
     tests.add("aHoldsReferenceToB", aHoldsReferenceToBTests);
     tests.add("aHoldsNoReferenceToB", aHoldsNoReferenceToBTests);
     tests.add("manyToMany", manyToManyTests);
     tests.add("productConfigurationService", productConfigurationServiceTests);
     tests.add("abstractDynamicModel", abstractDynamicStorableModelTests);
-    tests.add("wixProductOptionsInfoService", WixProductOptionsInfoServiceTests);
-    tests.add("wixProductInfoTranslationService", WixProductInfoTranslationServiceTests);
+    tests.add("wixProductOptionsInfoService", wixProductOptionsInfoServiceTests);
+    tests.add("wixProductInfoTranslationService", wixProductInfoTranslationServiceTests);
+    tests.add("supportive", supportiveTests);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

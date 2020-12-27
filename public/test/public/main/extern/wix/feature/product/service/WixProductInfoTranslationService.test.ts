@@ -6,10 +6,12 @@ import WixProductInfo from "../../../../../../../../extern/wix/feature/product/W
 import WixProductType from "../../../../../../../../extern/wix/feature/product/WixProductType";
 import QueryResult from "../../../../../../../../main/common/orm/QueryResult";
 import { Tests, Test, truthly } from "../../../../../../../../main/common/test/Test";
-import { instantiate } from "../../../../../../../../main/common/util/supportive";
+import { areEqual, instantiate } from "../../../../../../../../main/common/util/supportive";
 import ProductConfiguration from "../../../../../../../../main/feature/product/model/ProductConfiguration";
+import ProductModel from "../../../../../../../../main/feature/product/model/ProductModel";
 import ProductOption from "../../../../../../../../main/feature/product/model/ProductOption";
 import ProductOptionType from "../../../../../../../../main/feature/product/model/ProductOptionType";
+import { ProductModels } from "../../../../../../../../main/feature/product/productModels";
 
 
 const PATH = 'public/test/public/main/extern/wix/feature/WixProductInfoTranslationService.test.ts';
@@ -38,6 +40,7 @@ function beforeAll()
 
     productConfiguration = new ProductConfiguration();
     productOptions.foreach(productOption => productConfiguration.saveOption(productOption));
+    productConfiguration.productModel = new ProductModel({ title: ProductModels.FENSTER });
 }
 
 function fromProductConfiguration()
@@ -58,7 +61,7 @@ function fromProductConfiguration()
         true
     );
 
-    if (!wixProductInfo.equals(expectedWixProductInfo))
+    if (!areEqual(expectedWixProductInfo, wixProductInfo))
     {
         console.log({ wixProductInfo, expectedWixProductInfo });
         return false;
