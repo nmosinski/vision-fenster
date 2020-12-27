@@ -11,5 +11,5 @@ $w.onReady(async () =>
     // await runTests('list', "productConfigurationService");
     // await runTests("aHoldsNoReferenceToB");
     // await runTests("abstractModel");
-    await runTests('wixProductInfoTranslationService');
+    await runTests('wixProductOptionsInfoService', 'wixProductInfoTranslationService');
 });

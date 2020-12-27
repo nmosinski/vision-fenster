@@ -6,6 +6,7 @@ import { runAllTests as abstractDynamicStorableModelTests } from "./public/main/
 import { runAllTests as manyToManyTests } from "./public/main/common/orm/ManyToMany.test";
 import { runAllTests as productConfigurationServiceTests } from "./public/main/feature/product/ProductConfigurationService.test";
 import { runAllTests as WixDatabaseTests } from "./public/main/extern/wix/common/persistance/WixDatabase.test";
+import { runAllTests as WixProductOptionsInfoServiceTests } from "./public/main/extern/wix/feature/product/service/WixProductOptionsInfoService.test";
 import { runAllTests as WixProductInfoTranslationServiceTests } from "./public/main/extern/wix/feature/product/service/WixProductInfoTranslationService.test";
 import KVMap from "../main/common/util/collections/map/KVMap";
 import List from "../main/common/util/collections/list/List";
@@ -22,6 +23,7 @@ function init()
     tests.add("manyToMany", manyToManyTests);
     tests.add("productConfigurationService", productConfigurationServiceTests);
     tests.add("abstractDynamicModel", abstractDynamicStorableModelTests);
+    tests.add("wixProductOptionsInfoService", WixProductOptionsInfoServiceTests);
     tests.add("wixProductInfoTranslationService", WixProductInfoTranslationServiceTests);
 }
 

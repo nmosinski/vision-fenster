@@ -1,8 +1,9 @@
-// @ts-nocheck
 /* eslint-disable */
-import WixProductOptionsInfoService from "../../../../../../../../extern/wix/feature/product/service/WixProductOptionsInfoService";
-import WixProductOptionInfo from "../../../../../../../../extern/wix/feature/product/WixProductOptionInfo";
-import WixProductOptionsChoice from "../../../../../../../../extern/wix/feature/product/WixProductOptionsChoice";
+import WixProductInfoTranslationService from "../../../../../../../../extern/wix/feature/product/service/WixProductInfoTranslationService";
+import WixProductDiscount from "../../../../../../../../extern/wix/feature/product/WixProductDiscount";
+import WixProductDiscountType from "../../../../../../../../extern/wix/feature/product/WixProductDiscountType";
+import WixProductInfo from "../../../../../../../../extern/wix/feature/product/WixProductInfo";
+import WixProductType from "../../../../../../../../extern/wix/feature/product/WixProductType";
 import QueryResult from "../../../../../../../../main/common/orm/QueryResult";
 import { Tests, Test, truthly } from "../../../../../../../../main/common/test/Test";
 import { instantiate } from "../../../../../../../../main/common/util/supportive";
@@ -11,7 +12,7 @@ import ProductOption from "../../../../../../../../main/feature/product/model/Pr
 import ProductOptionType from "../../../../../../../../main/feature/product/model/ProductOptionType";
 
 
-const PATH = 'public/test/public/main/extern/wix/feature/';
+const PATH = 'public/test/public/main/extern/wix/feature/WixProductInfoTranslationService.test.ts';
 
 let productConfiguration: ProductConfiguration;
 
@@ -26,8 +27,6 @@ export async function runAllTests()
 
 function beforeAll()
 {
-    productConfiguration = new ProductConfiguration();
-
     const productOptions = new QueryResult([
         new ProductOption({ presentationde: 'Bratwurst' }),
         new ProductOption({ presentationde: 'Kochwurst' }),
@@ -35,28 +34,35 @@ function beforeAll()
     ]);
 
     const productOptionTypePresentationsDe = ['Breakfast', 'Lunch', 'Dinner'];
-    productConfiguration.productOptions.foreach((productOption: ProductOption, idx) => productOption.productOptionType = new ProductOptionType({ presentationde: productOptionTypePresentationsDe[idx] }));
+    productOptions.foreach((productOption: ProductOption, idx: number) => productOption.productOptionType = new ProductOptionType({ presentationde: productOptionTypePresentationsDe[idx] }));
+
+    productConfiguration = new ProductConfiguration();
+    productOptions.foreach(productOption => productConfiguration.saveOption(productOption));
 }
 
 function fromProductConfiguration()
 {
     let ret = true;
 
-    const wixProductOptionsInfo = instantiate(WixProductOptionsInfoService).fromProductOptions(productConfiguration);
+    const wixProductInfo = instantiate(WixProductInfoTranslationService).fromProductConfiguration(productConfiguration);
+    const expectedWixProductInfo = new WixProductInfo(
+        'Fenster',
+        '',
+        '',
+        productConfiguration.price,
+        new WixProductDiscount(WixProductDiscountType.NONE, ''),
+        wixProductInfo.productOptions,
+        false,
+        WixProductType.PHYSICAL,
+        1,
+        true
+    );
 
-    productConfiguration.productOptions.foreach(productOption =>
+    if (!wixProductInfo.equals(expectedWixProductInfo))
     {
-        if (!(wixProductOptionsInfo[productOption.productOptionType.presentationde] instanceof WixProductOptionInfo))
-        {
-            console.log({ productOption, wixProductOptionsInfo });
-            ret = false;
-        }
-        else if (!wixProductOptionsInfo[productOption.productOptionType.presentationde].equals(new WixProductOptionInfo(productOption.productOptionType.presentationde, [new WixProductOptionsChoice(productOption.presentationde, '', true, true)])))
-        {
-            console.log({ productOption, wixProductOptionsInfo });
-            ret = false;
-        }
-    });
+        console.log({ wixProductInfo, expectedWixProductInfo });
+        return false;
+    }
 
     return ret;
 }
