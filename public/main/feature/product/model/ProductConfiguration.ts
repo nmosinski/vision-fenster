@@ -1,4 +1,3 @@
-import KVMap from "../../../common/util/collections/map/KVMap";
 import ProductOption from "./ProductOption";
 import ProductModel from "./ProductModel";
 import QueryResult from "../../../common/orm/QueryResult";
@@ -8,6 +7,7 @@ class ProductConfiguration extends AbstractStorableModel<ProductConfiguration>{
     protected modelName: string;
     protected Constructor: new () => ProductConfiguration;
     private _productOptions: QueryResult<ProductOption>;
+    private _productModel: ProductModel;
     private _image: string;
     private _price: number;
     private _productModelId: string;
@@ -62,9 +62,9 @@ class ProductConfiguration extends AbstractStorableModel<ProductConfiguration>{
             this._productOptions.remove(optIdx);
     }
 
-    productModelQ()
+    productModelQ(): ProductModel
     {
-        return this.relative(ProductModel).synchronize();
+        return this.relative(ProductModel);
     }
 
     set productModelId(productModelId: string)
@@ -105,6 +105,16 @@ class ProductConfiguration extends AbstractStorableModel<ProductConfiguration>{
     get productOptions(): QueryResult<ProductOption>
     {
         return this._productOptions;
+    }
+
+    set productModel(productModel: ProductModel)
+    {
+        this._productModel = productModel;
+    }
+
+    get productModel(): ProductModel | null
+    {
+        return this._productModel;
     }
 }
 

@@ -1,7 +1,4 @@
-import AbstractModel from "../../../common/orm/AbstractModel";
 import ProductOptionType from "./ProductOptionType";
-import List from "../../../common/util/collections/list/List";
-import KVMap from "../../../common/util/collections/map/KVMap";
 import ProductConfiguration from "./ProductConfiguration";
 import QueryResult from "../../../common/orm/QueryResult";
 import AbstractStorableModel from "../../../common/orm/AbstractStorableModel";
@@ -33,7 +30,7 @@ class ProductModel extends AbstractStorableModel<ProductModel>{
         this.oneToZeroOrOne(ProductConfiguration);
     }
 
-    productOptionTypesQ()
+    productOptionTypesQ(): ProductOptionType
     {
         return this.relative(ProductOptionType);
     }
@@ -43,7 +40,7 @@ class ProductModel extends AbstractStorableModel<ProductModel>{
         return this._productOptionTypes.find((el) => el.title === title.toLowerCase());
     }
 
-    addProductOptionType(productOptionType: ProductOptionType)
+    addProductOptionType(productOptionType: ProductOptionType): void
     {
         if (this.productOptionTypes.hasNot(productOptionType))
             this.productOptionTypes.add(productOptionType);
