@@ -1,19 +1,23 @@
 import ProductConfiguration from "../../../../../main/feature/product/model/ProductConfiguration";
+import ProductModel from "../../../../../main/feature/product/model/ProductModel";
+import { ProductModels } from "../../../../../main/feature/product/productModels";
+import AbstractWixProductInfoTranslationStrategy from "../AbstractWixProductInfoTranslationStrategy";
+import WindowWixProductInfoTranslationStrategy from "../WindowWixProductInfoTranslationStrategy";
+import WixProductInfo from "../WixProductInfo";
 
 class WixProductInfoTranslationService
 {
-    public fromProductConfiguration(productConfiguration: ProductConfiguration)
+    public fromProductConfiguration(productConfiguration: ProductConfiguration): WixProductInfo
     {
-        /*
-        switch (productConfiguration.productModel)
-        {
-            case ...
-        }
-        */
+        let strategy: AbstractWixProductInfoTranslationStrategy;
 
-        // set strategy
-        // create product
-        // return product
+        switch (productConfiguration.productModel.title)
+        {
+            case ProductModels.FENSTER:
+                strategy = new WindowWixProductInfoTranslationStrategy();
+        }
+
+        return strategy.translate(productConfiguration);
     }
 }
 

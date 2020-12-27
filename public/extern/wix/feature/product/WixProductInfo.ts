@@ -1,5 +1,6 @@
 import WixProductDiscount from "./WixProductDiscount";
 import WixProductOptionsInfo from "./WixProductOptionsInfo";
+import WixProductType from "./WixProductType";
 
 class WixProductInfo
 {
@@ -13,7 +14,7 @@ class WixProductInfo
     productType: string;
     weight: number;
     visible: boolean;
-    constructor (name: string, description: string, sku: string, price: number, discount: WixProductDiscount, productOptions: WixProductOptionsInfo, manageVariants: boolean, productType: string, weight: number, visible: boolean)
+    constructor (name: string, description: string, sku: string, price: number, discount: WixProductDiscount, productOptions: WixProductOptionsInfo, manageVariants: boolean, productType: WixProductType, weight: number, visible: boolean)
     {
         this.name = name;
         this.description = description;

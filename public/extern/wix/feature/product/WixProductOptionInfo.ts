@@ -1,7 +1,7 @@
 import IComparable from "../../../../main/common/util/IComparable";
 import WixProductOptionsChoice from "./WixProductOptionsChoice";
 
-class WixProductOptionInfo implements IComparable
+class WixProductOptionInfo
 {
     name: string;
     choices: WixProductOptionsChoice[];
@@ -11,7 +11,6 @@ class WixProductOptionInfo implements IComparable
         this.choices = choices;
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-types
     equals(object: object): boolean
     {
         if (!(object instanceof WixProductOptionInfo))
