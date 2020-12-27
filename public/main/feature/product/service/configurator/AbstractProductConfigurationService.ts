@@ -2,13 +2,10 @@ import List from "../../../../common/util/collections/list/List";
 import KVMap from "../../../../common/util/collections/map/KVMap";
 import ProductDefinition from "../../model/ProductDefinition";
 import ProductOption from "../../model/ProductOption";
-import ProductOptionDefinition from "../../model/ProductOptionDefinition";
-import Combination from "../../model/Combination";
-import CombinationRequirement from "../../model/CombinationRequirement";
 import ProductConfiguration from "../../model/ProductConfiguration";
-import InvalidOperationError from "../../../../common/util/error/InvalidOperationError";
 import { FensterTags } from "../../tags";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const PATH = "public/main/feature/product/service/ProductConfigurationService.js";
 
 abstract class AbstractProductConfigurationService
@@ -39,7 +36,7 @@ abstract class AbstractProductConfigurationService
      * @param {Product} product The product for which the price will be calculated.
      * @returns {Promise<number>} The calculated price. 
      */
-    abstract async calculatePrice(product: ProductConfiguration): Promise<number>;
+    abstract calculatePrice(product: ProductConfiguration): Promise<number>;
 
     /**
      * Calculates and sets the new price.
@@ -155,9 +152,8 @@ abstract class AbstractProductConfigurationService
      * @param {bolean} [fillNotRequired=false] The option that defines if the products not required options will be filled as well.
      * @returns {boolean} True if the product could be filled with all required product options, else false.
      */
-    fillMissingProductOptionsWithDefault(allProductOptions: List<ProductOption>, product: ProductConfiguration, fillNotRequired: boolean = false): boolean
+    fillMissingProductOptionsWithDefault(allProductOptions: List<ProductOption>, product: ProductConfiguration, fillNotRequired = false): boolean
     {
-        const ret = true;
         const relevantOptionDefinitions = (fillNotRequired) ? this.productDefinition.productOptionDefinitions : this.productDefinition.getRequiredProductOptionDefinitions();
         const unfilledOptionDefinitions = relevantOptionDefinitions.filter((optionDefinition) => { return !product.hasOption(optionDefinition.type); });
         const productOptionCandidates: KVMap<string, List<ProductOption>> = new KVMap<string, List<ProductOption>>();
@@ -246,7 +242,7 @@ abstract class AbstractProductConfigurationService
      * @param {boolean} fillNotRequired Defines of either to fill optional options with default or not.
      * @returns {boolean} True if the configured product is valid, else false.
      */
-    setOptionAndDefaultOnComplications(productOption: ProductOption, product: ProductConfiguration, productOptions: List<ProductOption>, fillNotRequired: boolean = false): boolean
+    setOptionAndDefaultOnComplications(productOption: ProductOption, product: ProductConfiguration, productOptions: List<ProductOption>, fillNotRequired = false): boolean
     {
         this.setOptionAndRemoveOtherOptionsOnComplications(productOption, product);
         this.fillMissingProductOptionsWithDefault(productOptions, product, fillNotRequired);
@@ -260,17 +256,15 @@ abstract class AbstractProductConfigurationService
         return true;
     }
 
-    productSatisfiesOption(productOption: ProductOption, product: ProductConfiguration)
+    productSatisfiesOption(productOption: ProductOption, product: ProductConfiguration): boolean
     {
-        let productOptionDefinition: ProductOptionDefinition;
-        let relevantCombinations: List<Combination>;
         let foundValidCombination = false;
 
         // find the definition that belongs to this option (by type/name)
-        productOptionDefinition = this.productDefinition.getProductOptionDefinition(productOption.productOptionType.title);
+        const productOptionDefinition = this.productDefinition.getProductOptionDefinition(productOption.productOptionType.title);
 
         // filter for the combinations that match the tags of the given option. Only those are relevant
-        relevantCombinations = productOptionDefinition.combinations.filter((combination) =>
+        const relevantCombinations = productOptionDefinition.combinations.filter((combination) =>
         {
             return combination.tags.isSublistOf(productOption.tags.pluck("title"));
         });
